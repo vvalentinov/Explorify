@@ -1,4 +1,5 @@
-﻿using Explorify.Domain.Abstractions.Contracts;
+﻿using Explorify.Domain.Entities;
+using Explorify.Domain.Abstractions.Contracts;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -11,4 +12,10 @@ public class ApplicationUser :
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
+    public ICollection<Place> Places { get; set; }
+        = new List<Place>();
+
+    public ICollection<Review> Reviews { get; set; }
+        = new List<Review>();
 }

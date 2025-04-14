@@ -1,4 +1,6 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Reflection;
+
+using Explorify.Domain.Entities;
 using Explorify.Persistence.Identity;
 using Explorify.Domain.Abstractions.Contracts;
 
@@ -29,6 +31,8 @@ public class ExplorifyDbContext :
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
         var entityTypes = builder.Model.GetEntityTypes();
 
         var foreignKeys = entityTypes
