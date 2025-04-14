@@ -1,4 +1,6 @@
-﻿namespace Explorify.Persistence.Seeding;
+﻿using Explorify.Persistence.Seeding.Seeders;
+
+namespace Explorify.Persistence.Seeding;
 
 public class ExplorifyDbContextSeeder : ISeeder
 {
@@ -8,7 +10,9 @@ public class ExplorifyDbContextSeeder : ISeeder
     {
         ArgumentNullException.ThrowIfNull(dbContext);
 
-        IEnumerable<ISeeder> seeders = [];
+        IEnumerable<ISeeder> seeders = [
+            new RolesSeeder()
+        ];
 
         foreach (var seeder in seeders)
         {
