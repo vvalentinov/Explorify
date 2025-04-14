@@ -18,5 +18,9 @@
 		</PackageReference>
 		
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Explorify.Application\Explorify.Application.csproj" />
+	</ItemGroup>
 
 </Project>

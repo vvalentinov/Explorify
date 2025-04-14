@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Explorify.Domain\Explorify.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
