@@ -27,6 +27,8 @@ public class ExplorifyDbContext :
 
     public DbSet<Review> Reviews { get; set; }
 
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(ExplorifyDbContext).Assembly);
