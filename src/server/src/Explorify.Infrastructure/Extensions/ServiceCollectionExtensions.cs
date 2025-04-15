@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using Explorify.Application;
+using Explorify.Application.Identity;
+using Explorify.Infrastructure.Identity;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         services
             .AddTransient<ITokenService, TokenService>()
+            .AddScoped<IIdentityService, IdentityService>()
             .AddJwtAuthentication(configuration);
 
         return services;
