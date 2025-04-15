@@ -30,7 +30,7 @@ public static class ServiceCollectionExtensions
 
         services
             .AddPersistence(configuration)
-            .AddInfrastructure()
+            .AddInfrastructure(configuration)
             .AddApplication()
             .AddSwaggerGen()
             .AddAuthorization()
