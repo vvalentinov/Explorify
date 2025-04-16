@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Explorify.Domain\Explorify.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstractions\Models\" />
-  </ItemGroup>
-
 </Project>
