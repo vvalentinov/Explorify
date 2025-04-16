@@ -13,7 +13,7 @@ const menuItems = [
         key: "explorify",
     },
     {
-        label: <NavLink to={paths.homePath}>Categories</NavLink>,
+        label: <NavLink to={paths.categoriesPath}>Categories</NavLink>,
         key: "categories",
     },
 ];
