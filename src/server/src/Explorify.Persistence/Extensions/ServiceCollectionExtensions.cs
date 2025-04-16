@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Explorify.Application.Abstractions.Interfaces;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,8 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<ExplorifyDbContext>(options =>
             options.UseSqlServer(dbConnection));
+
+        services.AddScoped<IRepository, Repository>();
 
         return services;
     }
