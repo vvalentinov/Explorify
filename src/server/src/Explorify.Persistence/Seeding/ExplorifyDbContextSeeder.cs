@@ -11,7 +11,8 @@ public class ExplorifyDbContextSeeder : ISeeder
         ArgumentNullException.ThrowIfNull(dbContext);
 
         IEnumerable<ISeeder> seeders = [
-            new RolesSeeder()
+            new RolesSeeder(),
+            new CategoriesSeeder(),
         ];
 
         foreach (var seeder in seeders)
