@@ -1,11 +1,12 @@
 ﻿using Explorify.Application.Identity.Login;
 using Explorify.Application.Identity.Register;
+using Explorify.Application.Abstractions.Models;
 
 namespace Explorify.Application.Identity;
 
 public interface IIdentityService
 {
-    Task<(IdentityResponseModel, string)> LoginUserAsync(LoginRequestModel model);
+    Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> LoginUserAsync(LoginRequestModel model);
 
-    Task<(IdentityResponseModel, string)> RegisterUserAsync(RegisterRequestModel model);
+    Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> RegisterUserAsync(RegisterRequestModel model);
 }

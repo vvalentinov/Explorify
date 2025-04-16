@@ -20,26 +20,26 @@ public class UserController : BaseController
     [HttpPost(nameof(Login))]
     public async Task<IActionResult> Login(LoginRequestModel model)
     {
-        var request = new LoginRequest(model);
+        var loginRequestQuery = new LoginQuery(model);
 
-        var loginResult = await _mediator.Send(request);
+        var loginResult = await _mediator.Send(loginRequestQuery);
 
         //Response.AppendRefreshTokenCookie(loginResult.Item2);
 
-        return Ok(loginResult.Item1);
+        return Ok(loginResult.Data.IdentityModel);
     }
 
     [AllowAnonymous]
     [HttpPost(nameof(Register))]
     public async Task<IActionResult> Register(RegisterRequestModel model)
     {
-        var request = new RegisterRequest(model);
+        var registerCommand = new RegisterCommand(model);
 
-        var registerResult = await _mediator.Send(request);
+        var registerResult = await _mediator.Send(registerCommand);
 
         //Response.AppendRefreshTokenCookie(registerResult.Item2);
 
-        return Ok(registerResult.Item1);
+        return Ok(registerResult.Data.IdentityModel);
     }
 
     //[AllowAnonymous]

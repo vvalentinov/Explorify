@@ -1,5 +1,4 @@
 ﻿using Explorify.Application;
-using Explorify.Persistence;
 using System.Security.Claims;
 using Explorify.Domain.Entities;
 using Explorify.Application.Identity;
@@ -10,34 +9,43 @@ using Explorify.Application.Identity.Register;
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Identity;
 
 public class IdentityService : IIdentityService
 {
+    private readonly IRepository _repository;
     private readonly ITokenService _tokenService;
-    private readonly ExplorifyDbContext _dbContext;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public IdentityService(
+        IRepository repository,
         ITokenService tokenService,
-        UserManager<ApplicationUser> userManager,
-        ExplorifyDbContext dbContext)
+        UserManager<ApplicationUser> userManager)
     {
-        _dbContext = dbContext;
+        _repository = repository;
         _userManager = userManager;
         _tokenService = tokenService;
     }
 
-    public async Task<(IdentityResponseModel, string)> LoginUserAsync(LoginRequestModel model)
+    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> LoginUserAsync(LoginRequestModel model)
     {
-        var user = await _userManager.FindByNameAsync(model.UserName) ?? throw new InvalidOperationException("Login failed. Try, again!");
+        var user = await _userManager.FindByNameAsync(model.UserName);
+
+        if (user is null)
+        {
+            var error = new Error("Login failed. Try, again!", ErrorType.Validation);
+            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+        }
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
 
         if (passwordValid == false)
         {
-            throw new InvalidOperationException("Login failed. Try, again!");
+            var error = new Error("Login failed. Try, again!", ErrorType.Validation);
+            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, AdminRoleName);
@@ -60,32 +68,35 @@ public class IdentityService : IIdentityService
 
         var refreshTokenRecord = new RefreshToken
         {
-            Token = refreshToken,
             UserId = user.Id,
+            Token = refreshToken,
             ExpiresOn = DateTime.UtcNow.AddDays(7),
         };
 
-        _dbContext.RefreshTokens.Add(refreshTokenRecord);
-        await _dbContext.SaveChangesAsync();
+        await _repository.AddAsync(refreshTokenRecord);
+        await _repository.SaveChangesAsync();
 
         var identityResponseModel = new IdentityResponseModel
         {
-            UserId = user.Id.ToString(),
             IsAdmin = isAdmin,
+            AccessToken = accessToken,
+            UserId = user.Id.ToString(),
             UserName = user.UserName ?? string.Empty,
-            AccessToken = accessToken
         };
 
-        return (identityResponseModel, refreshToken);
+        return Result.Success<(IdentityResponseModel IdentityModel, string RefreshToken)>(
+            (identityResponseModel, refreshToken),
+            "Successfull login!");
     }
 
-    public async Task<(IdentityResponseModel, string)> RegisterUserAsync(RegisterRequestModel model)
+    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> RegisterUserAsync(RegisterRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
 
         if (user is not null)
         {
-            throw new InvalidOperationException("Looks like username is taken!");
+            var error = new Error("Looks like username is taken!", ErrorType.Validation);
+            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
         }
 
         user = new ApplicationUser { UserName = model.UserName };
@@ -94,16 +105,16 @@ public class IdentityService : IIdentityService
 
         if (createUserResult.Succeeded == false)
         {
-            var error = string.Join("; ", createUserResult.Errors.Select(e => e.Description));
-            throw new InvalidOperationException(error);
+            var error = new Error("Error: Could not create a user!", ErrorType.Failure);
+            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
         }
 
         var addToUserRoleResult = await _userManager.AddToRoleAsync(user, UserRoleName);
 
         if (addToUserRoleResult.Succeeded == false)
         {
-            var error = string.Join("; ", addToUserRoleResult.Errors.Select(e => e.Description));
-            throw new InvalidOperationException(error);
+            var error = new Error("Error: Could not add user to role!", ErrorType.Failure);
+            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
         }
 
         var claims = new List<Claim>
@@ -123,8 +134,8 @@ public class IdentityService : IIdentityService
             ExpiresOn = DateTime.UtcNow.AddDays(7),
         };
 
-        _dbContext.RefreshTokens.Add(refreshTokenRecord);
-        await _dbContext.SaveChangesAsync();
+        await _repository.AddAsync(refreshTokenRecord);
+        await _repository.SaveChangesAsync();
 
         var identityResponseModel = new IdentityResponseModel
         {
@@ -134,6 +145,8 @@ public class IdentityService : IIdentityService
             UserName = user.UserName ?? string.Empty,
         };
 
-        return (identityResponseModel, refreshToken);
+        return Result.Success<(IdentityResponseModel IdentityModel, string RefreshToken)>(
+            (identityResponseModel, refreshToken),
+            "Successfull register!");
     }
 }
