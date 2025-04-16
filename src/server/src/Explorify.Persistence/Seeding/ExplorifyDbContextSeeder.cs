@@ -13,6 +13,7 @@ public class ExplorifyDbContextSeeder : ISeeder
         IEnumerable<ISeeder> seeders = [
             new RolesSeeder(),
             new CategoriesSeeder(),
+            new CountriesSeeder(),
         ];
 
         foreach (var seeder in seeders)
