@@ -1,4 +1,5 @@
-﻿using Explorify.Application.Countries;
+﻿using Explorify.Api.Extensions;
+using Explorify.Application.Countries;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,11 @@ public class CountryController : BaseController
 
         var result = await _mediator.Send(query);
 
-        return Ok(result.Data);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Data);
+        }
+
+        return result.ToProblemDetails();
     }
 }

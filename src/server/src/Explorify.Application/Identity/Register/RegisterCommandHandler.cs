@@ -1,5 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
+using Explorify.Application.Identity.Models;
 
 namespace Explorify.Application.Identity.Register;
 

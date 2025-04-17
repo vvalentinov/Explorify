@@ -3,14 +3,13 @@ using System.Security.Claims;
 using Explorify.Domain.Entities;
 using Explorify.Application.Identity;
 using Explorify.Persistence.Identity;
-using Explorify.Application.Identity.Login;
-using Explorify.Application.Identity.Register;
+using Explorify.Application.Identity.Models;
+using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Abstractions.Interfaces;
 
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
 
 using Microsoft.AspNetCore.Identity;
-using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Identity;
 
@@ -30,7 +29,7 @@ public class IdentityService : IIdentityService
         _tokenService = tokenService;
     }
 
-    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> LoginUserAsync(LoginRequestModel model)
+    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> LoginUserAsync(IdentityRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
 
@@ -89,7 +88,7 @@ public class IdentityService : IIdentityService
             "Successfull login!");
     }
 
-    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> RegisterUserAsync(RegisterRequestModel model)
+    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> RegisterUserAsync(IdentityRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
 

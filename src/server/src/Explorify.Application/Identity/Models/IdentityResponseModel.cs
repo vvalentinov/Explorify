@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.Identity;
+﻿namespace Explorify.Application.Identity.Models;
 
 public class IdentityResponseModel
 {

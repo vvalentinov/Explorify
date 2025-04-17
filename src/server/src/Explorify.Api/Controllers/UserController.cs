@@ -1,5 +1,6 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Identity.Login;
+using Explorify.Application.Identity.Models;
 using Explorify.Application.Identity.Register;
 
 using MediatR;
@@ -19,27 +20,37 @@ public class UserController : BaseController
 
     [AllowAnonymous]
     [HttpPost(nameof(Login))]
-    public async Task<IActionResult> Login(LoginRequestModel model)
+    public async Task<IActionResult> Login(IdentityRequestModel model)
     {
         var loginRequestQuery = new LoginQuery(model);
 
         var loginResult = await _mediator.Send(loginRequestQuery);
 
-        Response.AppendRefreshTokenCookie(loginResult.Data.RefreshToken);
+        if (loginResult.IsSuccess)
+        {
+            Response.AppendRefreshTokenCookie(loginResult.Data.RefreshToken);
 
-        return Ok(loginResult.Data.IdentityModel);
+            return Ok(loginResult.Data.IdentityModel);
+        }
+
+        return loginResult.ToProblemDetails();
     }
 
     [AllowAnonymous]
     [HttpPost(nameof(Register))]
-    public async Task<IActionResult> Register(RegisterRequestModel model)
+    public async Task<IActionResult> Register(IdentityRequestModel model)
     {
         var registerCommand = new RegisterCommand(model);
 
         var registerResult = await _mediator.Send(registerCommand);
 
-        Response.AppendRefreshTokenCookie(registerResult.Data.RefreshToken);
+        if (registerResult.IsSuccess)
+        {
+            Response.AppendRefreshTokenCookie(registerResult.Data.RefreshToken);
 
-        return Ok(registerResult.Data.IdentityModel);
+            return Ok(registerResult.Data.IdentityModel);
+        }
+
+        return registerResult.ToProblemDetails();
     }
 }
