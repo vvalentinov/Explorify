@@ -5,10 +5,14 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
 
+import { ConfigProvider } from 'antd';
+
 createRoot(document.getElementById('root')).render(
     <StrictMode>
         <BrowserRouter>
-            <App />
+            <ConfigProvider theme={{ cssVar: true }}>
+                <App />
+            </ConfigProvider>
         </BrowserRouter>
     </StrictMode>
 )

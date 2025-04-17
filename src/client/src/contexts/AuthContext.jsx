@@ -14,11 +14,11 @@ export const AuthProvider = ({ children }) => {
     const contextValue = {
         userLogin,
         userLogout,
-        token: auth.token,
+        token: auth.accessToken,
         userId: auth.userId,
         isAdmin: auth.isAdmin,
         username: auth.userName,
-        isAuthenticated: !!auth.token,
+        isAuthenticated: !!auth.accessToken,
     };
 
     return (
