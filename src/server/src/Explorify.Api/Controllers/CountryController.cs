@@ -21,14 +21,7 @@ public class CountryController : BaseController
     public async Task<IActionResult> GetCountries(string nameFilter)
     {
         var query = new GetCountriesQuery(nameFilter);
-
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result.Data);
-        }
-
-        return result.ToProblemDetails();
+        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
     }
 }

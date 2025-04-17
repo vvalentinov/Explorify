@@ -22,15 +22,8 @@ public class CategoryController : BaseController
     public async Task<IActionResult> GetCategories()
     {
         var query = new GetCategoriesQuery();
-
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result.Data);
-        }
-
-        return result.ToProblemDetails();
+        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
     }
 
     [AllowAnonymous]
@@ -38,14 +31,7 @@ public class CategoryController : BaseController
     public async Task<IActionResult> GetSubcategories(int categoryId)
     {
         var query = new GetSubcategoriesQuery(categoryId);
-
         var result = await _mediator.Send(query);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result.Data);
-        }
-
-        return result.ToProblemDetails();
+        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
     }
 }
