@@ -21,11 +21,14 @@ public static class ResultExtensions
             type: GetType(errorType),
             extensions: new Dictionary<string, object?>
             {
-                {"errors", new[] { result.Error } }
+                {"errors", result.Error.Description }
             }
         );
 
-        return new ObjectResult(problemDetails);
+        return new ObjectResult(problemDetails)
+        {
+            StatusCode = StatusCodes.Status400BadRequest
+        };
     }
 
     private static int GetStatusCode(ErrorType type)

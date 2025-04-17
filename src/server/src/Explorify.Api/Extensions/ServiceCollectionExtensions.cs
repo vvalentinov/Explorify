@@ -4,6 +4,8 @@ using Explorify.Persistence.Extensions;
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+
 namespace Explorify.Api.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -18,6 +20,11 @@ public static class ServiceCollectionExtensions
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
+        services.AddFluentValidationAutoValidation(config =>
+        {
+            config.OverrideDefaultResultFactoryWith<CustomResultFactory>();
+        });
 
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {
