@@ -105,7 +105,15 @@ public class IdentityService : IIdentityService
 
         if (createUserResult.Succeeded == false)
         {
-            var error = new Error("Error: Could not create a user!", ErrorType.Failure);
+            var errorType = ErrorType.Validation;
+
+            if (createUserResult.Errors.Any(e => e.Code == "DuplicateUserName" ||
+                e.Code == "DuplicateEmail"))
+            {
+                errorType = ErrorType.Conflict;
+            }
+
+            var error = new Error("Error: Could not create a user!", errorType);
             return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
         }
 
