@@ -34,7 +34,15 @@ public static class ServiceCollectionExtensions
             .AddApplication()
             .AddSwaggerGen()
             .AddAuthorization()
-            .AddEndpointsApiExplorer();
+            .AddEndpointsApiExplorer()
+            .AddCors(options => options.AddPolicy("CorsPolicy",
+                builder =>
+                {
+                    builder.AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .SetIsOriginAllowed((host) => true)
+                           .AllowCredentials();
+                }));
 
         return services;
     }

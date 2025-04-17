@@ -1,4 +1,5 @@
-﻿using Explorify.Application.Identity.Login;
+﻿using Explorify.Api.Extensions;
+using Explorify.Application.Identity.Login;
 using Explorify.Application.Identity.Register;
 
 using MediatR;
@@ -24,7 +25,7 @@ public class UserController : BaseController
 
         var loginResult = await _mediator.Send(loginRequestQuery);
 
-        //Response.AppendRefreshTokenCookie(loginResult.Item2);
+        Response.AppendRefreshTokenCookie(loginResult.Data.RefreshToken);
 
         return Ok(loginResult.Data.IdentityModel);
     }
@@ -37,63 +38,8 @@ public class UserController : BaseController
 
         var registerResult = await _mediator.Send(registerCommand);
 
-        //Response.AppendRefreshTokenCookie(registerResult.Item2);
+        Response.AppendRefreshTokenCookie(registerResult.Data.RefreshToken);
 
         return Ok(registerResult.Data.IdentityModel);
     }
-
-    //[AllowAnonymous]
-    //[HttpPost(nameof(Refresh))]
-    //public async Task<IActionResult> Refresh()
-    //{
-    //    var refreshToken = Request.Cookies["refreshToken"];
-
-    //    if (string.IsNullOrEmpty(refreshToken))
-    //    {
-    //        return Unauthorized("Refresh token missing!");
-    //    }
-
-    //    var refreshTokenRecord = await _dbContext.RefreshTokens
-    //        .FirstOrDefaultAsync(rt => rt.Token == refreshToken);
-
-    //    if (refreshTokenRecord == null || refreshTokenRecord.ExpiresOn < DateTime.UtcNow)
-    //    {
-    //        return Unauthorized("Invalid or expired refresh token");
-    //    }
-
-    //    var user = await _userManager
-    //        .FindByIdAsync(refreshTokenRecord.UserId.ToString());
-
-    //    if (user == null)
-    //    {
-    //        return Unauthorized("User not found");
-    //    }
-
-    //    var claims = new List<Claim>
-    //    {
-    //        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-    //        new(ClaimTypes.Name, user.UserName ?? string.Empty),
-    //    };
-
-    //    var roles = await _userManager.GetRolesAsync(user);
-
-    //    foreach (var role in roles)
-    //    {
-    //        claims.Add(new Claim(ClaimTypes.Role, role));
-    //    }
-
-    //    var newAccessToken = _tokenService.GenerateAccessToken(claims);
-
-    //    bool isAdmin = await _userManager.IsInRoleAsync(user, "Administrator");
-
-    //    var result = new IdentityResponseModel
-    //    {
-    //        AccessToken = newAccessToken,
-    //        IsAdmin = isAdmin,
-    //        UserId = user.Id.ToString(),
-    //        UserName = user.UserName ?? string.Empty,
-    //    };
-
-    //    return Ok(result);
-    //}
 }
