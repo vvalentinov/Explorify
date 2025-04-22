@@ -17,9 +17,22 @@ public static class ServiceCollectionExtensions
        IConfiguration configuration)
     {
         services
+            .ConfigureSettings(configuration)
             .AddTransient<ITokenService, TokenService>()
             .AddScoped<IIdentityService, IdentityService>()
+            .AddScoped<IBlobService, BlobService>()
             .AddJwtAuthentication(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection ConfigureSettings(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services
+            .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)))
+            .Configure<AzureStorageSettings>(configuration.GetSection(nameof(AzureStorageSettings)));
 
         return services;
     }
@@ -28,12 +41,9 @@ public static class ServiceCollectionExtensions
             this IServiceCollection services,
             IConfiguration configuration)
     {
-        IConfigurationSection jwtSettingsConfigSection = configuration
-            .GetSection(nameof(JwtSettings));
+        var jwtSettingsConfigSection = configuration.GetSection(nameof(JwtSettings));
 
-        services.Configure<JwtSettings>(jwtSettingsConfigSection);
-
-        JwtSettings jwtSettings = jwtSettingsConfigSection.Get<JwtSettings>() ??
+        var jwtSettings = jwtSettingsConfigSection.Get<JwtSettings>() ??
             throw new InvalidOperationException("The JwtSettings are missing!");
 
         var signKey = Encoding.ASCII.GetBytes(jwtSettings.SignKey);
