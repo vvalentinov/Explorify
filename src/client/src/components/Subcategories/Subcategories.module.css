@@ -1,0 +1,38 @@
+.subcategoriesSection {
+    gap: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.subcategoryCard {
+    border: solid 1px black;
+}
+
+.cardLink {
+    text-decoration: none;
+    color: inherit;
+    flex-basis: 25%;
+}
+
+.spinnerContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 100px);
+}
+
+.zoomCard {
+    transition: transform 0.3s ease;
+}
+
+.zoomCard:hover {
+    transform: scale(1.05);
+    z-index: 1;
+}
+
+.meta {
+    background-color: red;
+    text-align: center;
+}

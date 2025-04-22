@@ -1,7 +1,7 @@
 import styles from './SignIn.module.css';
 
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Grid, Input, theme, Typography, ConfigProvider } from "antd";
+import { Button, Form, Input, Typography, ConfigProvider, Image } from "antd";
 
 import { useContext } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
@@ -10,15 +10,13 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { signUpPath, homePath } from '../../constants/paths';
 import { authServiceFactory } from '../../services/authService';
 
-const { useToken } = theme;
-const { useBreakpoint } = Grid;
-const { Text, Title } = Typography;
+import myImage from '../../assets/image.png';
+import logoImage from '../../assets/logo.png';
+
+const { Text, Title, Paragraph } = Typography;
 
 const SignIn = () => {
     const navigate = useNavigate();
-
-    const { token } = useToken();
-    const screens = useBreakpoint();
 
     const authService = authServiceFactory();
 
@@ -47,16 +45,36 @@ const SignIn = () => {
             <section className={styles.section}>
                 <div className={styles.container}>
                     <div className={styles.header}>
-                        <Title style={{ textAlign: 'center' }} level={2} className={styles.title}>Sign In</Title>
+
+                        <div style={{ display: "flex", justifyContent: 'center' }}>
+                            <Image preview={false} src={logoImage} height={'60px'} width={'60px'} />
+
+                        </div>
+
+
+                        <Title
+                            style={{ textAlign: 'center' }}
+                            level={2}
+                            className={styles.title}>
+                            Sign In
+                        </Title>
+                        <Paragraph style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                            Welcome back to Explorify!
+                        </Paragraph>
+                        <Paragraph style={{ fontStyle: 'italic', textAlign: 'center' }}>
+                            Please enter your details below to sign in.
+                        </Paragraph>
                     </div>
                     <Form
                         name="normal_login"
                         onFinish={onFinish}
                         layout="vertical"
-                        requiredMark="optional"
                     >
                         <Form.Item
                             name="username"
+                            layout='vertical'
+                            label='Username'
+                            style={{ marginBottom: '30px' }}
                             rules={[
                                 {
                                     type: "string",
@@ -64,27 +82,36 @@ const SignIn = () => {
                                     message: "Please input your Username!",
                                 },
                             ]}
+
                         >
                             <Input
                                 size='large'
-                                style={{ fontSize: '18px' }}
                                 prefix={<UserOutlined />}
-                                placeholder="Username"
+                                placeholder="Some cool username here..."
                             />
                         </Form.Item>
                         <Form.Item
                             name="password"
+                            layout="vertical"
+                            label="Password"
+                            style={{ marginBottom: '30px' }}
                             rules={[
                                 {
                                     required: true,
                                     message: "Please input your Password!",
                                 },
+                                {
+                                    min: 6,
+                                    message: "Password must be at least 6 characters long!"
+                                }
                             ]}
                         >
-                            <Input.Password size='large' style={{ fontSize: '18px' }}
+                            <Input.Password
+                                size='large'
+                                // style={{ fontSize: '18px' }}
                                 prefix={<LockOutlined />}
                                 type="password"
-                                placeholder="Password"
+                                placeholder="Some strong password here..."
                             />
                         </Form.Item>
                         <Form.Item style={{ marginBottom: "0px" }}>
@@ -97,6 +124,14 @@ const SignIn = () => {
                             </div>
                         </Form.Item>
                     </Form>
+                </div>
+                <div className={styles.imageContainer}>
+                    <Image
+                        preview={false}
+                        width={'100%'}
+                        height={'calc(100vh - 64px)'}
+                        src={myImage}
+                    />
                 </div>
             </section>
         </ConfigProvider>

@@ -1,0 +1,20 @@
+.categoriesSection {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.cardLink {
+    text-decoration: none;
+    color: inherit;
+    flex-basis: 25%;
+}
+
+.zoomCard {
+    transition: transform 0.3s ease;
+}
+
+.zoomCard:hover {
+    transform: scale(1.05);
+    z-index: 1;
+}
