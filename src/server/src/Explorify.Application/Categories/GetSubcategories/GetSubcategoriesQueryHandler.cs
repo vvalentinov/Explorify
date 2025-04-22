@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Explorify.Application.Categories.GetSubcategories;
 
 public class GetSubcategoriesQueryHandler
-    : IQueryHandler<GetSubcategoriesQuery, IEnumerable<string>>
+    : IQueryHandler<GetSubcategoriesQuery, SubcategoriesResponseModel>
 {
     private readonly IRepository _repository;
 
@@ -17,7 +17,7 @@ public class GetSubcategoriesQueryHandler
         _repository = repository;
     }
 
-    public async Task<Result<IEnumerable<string>>> Handle(
+    public async Task<Result<SubcategoriesResponseModel>> Handle(
         GetSubcategoriesQuery request,
         CancellationToken cancellationToken)
     {
@@ -27,15 +27,41 @@ public class GetSubcategoriesQueryHandler
                 "Category id must be a positive integer!",
                 ErrorType.Validation);
 
-            return Result.Failure<IEnumerable<string>>(error);
+            return Result.Failure<SubcategoriesResponseModel>(error);
         }
 
-        var subcategories = (IEnumerable<string>)await _repository
+        var category = await _repository
+            .AllAsNoTracking<Category>()
+            .Select(x => new {x.Id, x.Name, x.Description })
+            .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken);
+
+        if (category == null)
+        {
+            var error = new Error(
+                "No category with given id was found!",
+                ErrorType.Validation);
+
+            return Result.Failure<SubcategoriesResponseModel>(error);
+        }
+
+        var responseModel = new SubcategoriesResponseModel
+        {
+            CategoryName = category.Name,
+            CategoryDescription = category.Description ?? string.Empty,
+        };
+
+        var subcategories = await _repository
             .AllAsNoTracking<Category>()
             .Where(x => x.ParentId == request.CategoryId)
-            .Select(x => x.Name)
-            .ToListAsync(cancellationToken);
+            .Select(x => new CategoryResponseModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ImageUrl = x.ImageUrl,
+            }).ToListAsync(cancellationToken);
 
-        return Result.Success(subcategories);
+        responseModel.Subcategories = subcategories;
+
+        return Result.Success(responseModel);
     }
 }

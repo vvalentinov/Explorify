@@ -3,4 +3,4 @@
 namespace Explorify.Application.Categories.GetSubcategories;
 
 public record GetSubcategoriesQuery(int CategoryId)
-    : IQuery<IEnumerable<string>>;
+    : IQuery<SubcategoriesResponseModel>;

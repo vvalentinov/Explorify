@@ -26,9 +26,10 @@ public class GetCategoriesQueryHandler
             .Where(x => x.ParentId == null)
             .Select(x => new CategoryResponseModel
             {
+                Id = x.Id,
                 Name = x.Name,
-                Description = x.Description ?? string.Empty,
                 ImageUrl = x.ImageUrl,
+                Description = x.Description ?? string.Empty,
             }).ToListAsync(cancellationToken);
 
         return Result.Success(categories);
