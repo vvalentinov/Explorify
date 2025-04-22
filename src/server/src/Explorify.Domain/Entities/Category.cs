@@ -8,6 +8,8 @@ public class Category : BaseEntity<int>
 
     public string? Description { get; set; }
 
+    public string ImageUrl { get; set; } = string.Empty;
+
     public int? ParentId { get; set; }
 
     public Category? Parent { get; set; }

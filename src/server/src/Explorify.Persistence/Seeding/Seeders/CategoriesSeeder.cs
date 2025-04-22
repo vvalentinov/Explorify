@@ -1,18 +1,21 @@
 ﻿using Explorify.Domain.Entities;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Explorify.Persistence.Seeding.Seeders;
 
 public class CategoriesSeeder : ISeeder
 {
     private readonly List<Category> _categories = [];
+    private readonly IConfiguration _configuration;
 
-    public CategoriesSeeder()
+    public CategoriesSeeder(IConfiguration configuration)
     {
+        _configuration = configuration;
         AddNatureCategory();
         AddHistoricalCategory();
-        AddFoodAndDrinkCategory();
+        //AddFoodAndDrinkCategory();
     }
 
     public async Task SeedAsync(
@@ -63,7 +66,8 @@ public class CategoriesSeeder : ISeeder
         var historicalCategory = new Category
         {
             Name = "Historical",
-            Description = "Locations that offer a glimpse into the past — showcasing heritage, architecture, and stories from ancient to modern history."
+            Description = "Locations that offer a glimpse into the past — showcasing heritage, architecture, and stories from ancient to modern history.",
+            ImageUrl = _configuration["CategoriesUrls:Historical:Url"]!,
         };
 
         var historicalSubcategoriesNames = new List<string>
@@ -73,15 +77,15 @@ public class CategoriesSeeder : ISeeder
             "Temple",
             "Cathedral",
             "Ancient Ruins",
-            "Archaeological Site",
             "Museum",
         };
 
         var historicalSubcategories = historicalSubcategoriesNames
-            .Select(x => new Category
+            .Select(categoryName => new Category
             {
-                Name = x,
-                Parent = historicalCategory
+                Name = categoryName,
+                Parent = historicalCategory,
+                ImageUrl = _configuration[$"CategoriesUrls:Historical:{categoryName}"]!,
             });
 
         _categories.Add(historicalCategory);
@@ -93,7 +97,8 @@ public class CategoriesSeeder : ISeeder
         var natureCategory = new Category
         {
             Name = "Nature",
-            Description = "Places that highlight the natural beauty of the world. From relaxing beaches to dramatic mountains, these locations offer scenic landscapes and outdoor experiences."
+            Description = "Places that highlight the natural beauty of the world. From relaxing beaches to dramatic mountains, these locations offer scenic landscapes and outdoor experiences.",
+            ImageUrl = _configuration["CategoriesUrls:Nature:Url"]!,
         };
 
         var natureSubcategoriesNames = new List<string>
@@ -106,10 +111,11 @@ public class CategoriesSeeder : ISeeder
         };
 
         var natureSubcategories = natureSubcategoriesNames
-            .Select(x => new Category
+            .Select(categoryName => new Category
             {
-                Name = x,
-                Parent = natureCategory
+                Name = categoryName,
+                Parent = natureCategory,
+                ImageUrl = _configuration[$"CategoriesUrls:Nature:{categoryName}"]!,
             });
 
         _categories.Add(natureCategory);

@@ -17,6 +17,11 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .HasMaxLength(CategoryNameMaxLength);
 
         builder
+            .Property(c => c.ImageUrl)
+            .IsRequired()
+            .HasMaxLength(250);
+
+        builder
             .Property(c => c.Description)
             .IsRequired(false)
             .HasMaxLength(CategoryDescriptionMaxLength);

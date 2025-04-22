@@ -27,7 +27,8 @@ public class GetCategoriesQueryHandler
             .Select(x => new CategoryResponseModel
             {
                 Name = x.Name,
-                Description = x.Description ?? string.Empty
+                Description = x.Description ?? string.Empty,
+                ImageUrl = x.ImageUrl,
             }).ToListAsync(cancellationToken);
 
         return Result.Success(categories);

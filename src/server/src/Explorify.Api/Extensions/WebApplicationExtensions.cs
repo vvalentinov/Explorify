@@ -38,7 +38,7 @@ public static class WebApplicationExtensions
 
         if (dbExists)
         {
-            var dbContextSeeder = new ExplorifyDbContextSeeder();
+            var dbContextSeeder = new ExplorifyDbContextSeeder(app.Configuration);
 
             await dbContextSeeder.SeedAsync(dbContext, app.Services);
         }
