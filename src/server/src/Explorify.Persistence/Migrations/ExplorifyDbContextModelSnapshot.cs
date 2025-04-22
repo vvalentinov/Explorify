@@ -52,7 +52,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.Country", b =>
@@ -75,7 +75,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Countries");
+                    b.ToTable("Countries", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.FavoritePlace", b =>
@@ -90,7 +90,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FavoritePlaces");
+                    b.ToTable("FavoritePlaces", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.Place", b =>
@@ -138,7 +138,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Places");
+                    b.ToTable("Places", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.PlacePhoto", b =>
@@ -172,7 +172,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("PlacePhotos");
+                    b.ToTable("PlacePhotos", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.RefreshToken", b =>
@@ -211,7 +211,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Domain.Entities.Review", b =>
@@ -255,7 +255,7 @@ namespace Explorify.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Explorify.Persistence.Identity.ApplicationRole", b =>

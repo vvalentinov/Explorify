@@ -5,3 +5,5 @@ export const signInPath = '/account/sign-in';
 export const signUpPath = '/account/sign-up';
 
 export const categoriesPath = '/categories';
+
+export const profilePath = '/account';

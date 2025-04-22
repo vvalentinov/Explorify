@@ -1,6 +1,10 @@
+import { Image } from "antd";
+
 const Categories = () => {
     return (
-        <h2>This is the categories page!</h2>
+        <>
+            <h2>This is the categories page!</h2>
+        </>
     );
 };
 

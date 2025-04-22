@@ -7,7 +7,11 @@ import {
     theme,
     Grid,
     ConfigProvider,
+    Avatar,
+    Dropdown
 } from "antd";
+
+import { UserOutlined } from '@ant-design/icons';
 
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -27,6 +31,18 @@ const menuItems = [
         label: <NavLink to={paths.categoriesPath}>Categories</NavLink>,
         key: "categories",
     }
+];
+
+const dropDownItems = [
+    {
+        key: '1',
+        label: (
+            // <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+            //     My Profile
+            // </a>
+            <NavLink to={paths.profilePath}>My Profile</NavLink>
+        ),
+    },
 ];
 
 const Header = () => {
@@ -83,6 +99,11 @@ const Header = () => {
                         // fontSize: 20,
                         // colorText: 'coral',
                     },
+                    // Menu: {
+                    //     colorBgContainer: '#ffebee', // Light red background
+                    //     colorItemBg: '#ffcdd2',      // Item hover background
+                    //     colorItemText: '#b71c1c',    // Item text color
+                    // },
                 },
             }}
         >
@@ -97,12 +118,22 @@ const Header = () => {
                     </div>
                     {/* {screens.md ? <Button type="text">Log in</Button> : ""} */}
                     <Space>
-                        <NavLink to={paths.signInPath}>
-                            <Button color='cyan' variant='text' size='large'>Sign In</Button>
-                        </NavLink>
-                        <NavLink to={paths.signUpPath}>
-                            <Button color='cyan' variant='solid' size='large'>Sign Up</Button>
-                        </NavLink>
+                        {
+                            !isAuthenticated
+                                ?
+                                <>
+                                    <NavLink to={paths.signInPath}>
+                                        <Button color='cyan' variant='text' size='large'>Sign In</Button>
+                                    </NavLink>
+                                    <NavLink to={paths.signUpPath}>
+                                        <Button color='cyan' variant='solid' size='large'>Sign Up</Button>
+                                    </NavLink>
+                                </>
+                                :
+                                <Dropdown arrow={true} menu={{ items: dropDownItems }} placement="bottom">
+                                    <Avatar style={{ marginRight: '2rem' }} size="large" icon={<UserOutlined />} />
+                                </Dropdown>
+                        }
                     </Space>
                 </div>
             </nav>
