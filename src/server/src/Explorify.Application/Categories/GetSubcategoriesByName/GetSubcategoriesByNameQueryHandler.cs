@@ -10,7 +10,7 @@ namespace Explorify.Application.Categories.GetSubcategoriesByName;
 public class GetSubcategoriesByNameQueryHandler
     : IQueryHandler<
         GetSubcategoriesByNameQuery,
-        IEnumerable<CategoryResponseModel>>
+        SubcategoriesResponseModel>
 {
     private readonly IRepository _repository;
 
@@ -19,7 +19,7 @@ public class GetSubcategoriesByNameQueryHandler
         _repository = repository;
     }
 
-    public async Task<Result<IEnumerable<CategoryResponseModel>>> Handle(
+    public async Task<Result<SubcategoriesResponseModel>> Handle(
         GetSubcategoriesByNameQuery request,
         CancellationToken cancellationToken)
     {
@@ -29,18 +29,26 @@ public class GetSubcategoriesByNameQueryHandler
                 "Category name cannot be null or whitespace!",
                 ErrorType.Validation);
 
-            return Result.Failure<IEnumerable<CategoryResponseModel>>(error);
+            return Result.Failure<SubcategoriesResponseModel>(error);
         }
 
-        var categoryId = await _repository
-            .AllAsNoTracking<Category>()
-            .Where(x => x.Name.ToLower() == request.CategoryName.ToLower())
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var category = await _repository
+          .AllAsNoTracking<Category>()
+          .Select(x => new { x.Id, x.Name, x.Description })
+          .FirstOrDefaultAsync(x => x.Name == request.CategoryName, cancellationToken);
+
+        if (category == null)
+        {
+            var error = new Error(
+                "No category with given name was found!",
+                ErrorType.Validation);
+
+            return Result.Failure<SubcategoriesResponseModel>(error);
+        }
 
         var subcategories = (IEnumerable<CategoryResponseModel>)await _repository
             .AllAsNoTracking<Category>()
-            .Where(x => x.ParentId == categoryId)
+            .Where(x => x.ParentId == category.Id)
             .Select(x => new CategoryResponseModel
             {
                 Name = x.Name,
@@ -48,6 +56,13 @@ public class GetSubcategoriesByNameQueryHandler
                 Id = x.Id,
             }).ToListAsync(cancellationToken);
 
-        return Result.Success(subcategories);
+        var responseModel = new SubcategoriesResponseModel
+        {
+            CategoryName = category.Name,
+            CategoryDescription = category.Description ?? string.Empty,
+            Subcategories = subcategories,
+        };
+
+        return Result.Success(responseModel);
     }
 }
