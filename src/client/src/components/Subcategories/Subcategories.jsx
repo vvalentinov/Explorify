@@ -71,9 +71,10 @@ const Subcategories = () => {
                                     }}>
                                         {categoryData.categoryDescription}
                                     </Paragraph> */}
-                                    <Card style={{ margin: '1rem 3rem', border: 'solid 1px black' }}>
-
-                                        <Paragraph style={{ textAlign: 'center', fontSize: '15px', margin: '0' }}>{categoryData.categoryDescription}</Paragraph>
+                                    <Card style={{ margin: '1rem 3rem' }}>
+                                        <Paragraph style={{ textAlign: 'center', fontSize: '15px', margin: '0' }}>
+                                            {categoryData.categoryDescription}
+                                        </Paragraph>
                                     </Card>
                                     <div className={styles.subcategoriesSection}>
                                         {categoryData.subcategories.map(x =>

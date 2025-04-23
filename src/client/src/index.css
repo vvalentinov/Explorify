@@ -6,3 +6,16 @@ body {
 body {
     margin: 0;
 }
+
+main {
+    min-height: calc(100vh - 192px);
+    margin-top: 63px;
+}
+
+#root {
+    margin: 0;
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+
+}

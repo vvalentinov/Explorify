@@ -40,7 +40,7 @@ const dropDownItems = [
             // <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
             //     My Profile
             // </a>
-            <NavLink to={paths.profilePath}>My Profile</NavLink>
+            <NavLink to={paths.profilePath}><UserOutlined style={{ marginRight: '0.5rem' }} />Profile</NavLink>
         ),
     },
 ];
@@ -64,7 +64,12 @@ const Header = () => {
         header: {
             backgroundColor: token.colorBgContainer,
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-            position: "relative",
+
+            position: "fixed",
+            top: 0,
+            width: '100%',
+            zIndex: '100'
+            // overflow: "hidden",
         },
         logo: {
             display: "block",
