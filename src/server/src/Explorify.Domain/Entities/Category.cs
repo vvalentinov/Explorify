@@ -16,4 +16,7 @@ public class Category : BaseEntity<int>
 
     public ICollection<Place> Places { get; set; }
         = new List<Place>();
+
+    public ICollection<Category> Children { get; set; }
+        = new List<Category>();
 }

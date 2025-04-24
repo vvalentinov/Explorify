@@ -25,5 +25,10 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .Property(c => c.Description)
             .IsRequired(false)
             .HasMaxLength(CategoryDescriptionMaxLength);
+
+        builder
+            .HasOne(c => c.Parent)
+            .WithMany(c => c.Children)
+            .HasForeignKey(c => c.ParentId);
     }
 }

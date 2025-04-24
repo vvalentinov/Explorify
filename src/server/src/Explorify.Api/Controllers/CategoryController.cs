@@ -1,11 +1,12 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Categories.GetCategories;
 using Explorify.Application.Categories.GetSubcategories;
+using Explorify.Application.Categories.GetCategoryOptions;
+using Explorify.Application.Categories.GetSubcategoriesByName;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.Categories.GetSubcategoriesByName;
 
 namespace Explorify.Api.Controllers;
 
@@ -41,6 +42,15 @@ public class CategoryController : BaseController
     public async Task<IActionResult> GetSubcategoriesByName(string categoryName)
     {
         var query = new GetSubcategoriesByNameQuery(categoryName);
+        var result = await _mediator.Send(query);
+        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet(nameof(GetCategoryOptions))]
+    public async Task<IActionResult> GetCategoryOptions()
+    {
+        var query = new GetCategoryOptionsQuery();
         var result = await _mediator.Send(query);
         return ControllerBaseExtensions.OkOrProblemDetails(this, result);
     }
