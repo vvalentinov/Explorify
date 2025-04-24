@@ -27,7 +27,7 @@ const SignIn = () => {
             .login(values)
             .then(res => {
                 userLogin(res);
-                navigate(homePath);
+                navigate(homePath, { state: { username: res.userName } });
             }).catch(err => console.log(err));
     };
 

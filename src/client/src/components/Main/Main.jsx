@@ -6,6 +6,8 @@ import SignUp from '../SignUp/SignUp';
 import Categories from '../Categories/Categories';
 import Profile from '../Profile/Profile';
 import Subcategories from '../Subcategories/Subcategories';
+import NoPathFound from '../NoPathFound/NoPathFound';
+import Logout from '../Logout/Logout';
 
 import * as paths from '../../constants/paths';
 
@@ -19,6 +21,8 @@ const Main = () => {
                 <Route path={paths.categoriesPath} element={<Categories />} />
                 <Route path={paths.profilePath} element={<Profile />} />
                 <Route path={paths.subcategoriesPath} element={<Subcategories />} />
+                <Route path={paths.logoutPath} element={<Logout />} />
+                <Route path='*' element={<NoPathFound />} />
             </Routes>
         </main>
     )

@@ -4,10 +4,14 @@ import slugify from 'slugify';
 import { useState, useEffect } from 'react';
 import { useLocation, Link, useParams, useNavigate } from 'react-router-dom';
 
-import { Card, Empty, Flex, Spin, Typography } from "antd";
+import { Card, Empty, Spin, Typography } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
 
+import Spinner from '../Spinner/Spinner';
+
 import { categoriesServiceFactory } from '../../services/categoriesService';
+
+import ImageOverlayContainer from '../ImageOverlayContainer/ImageOverlayContainer';
 
 const { Meta } = Card;
 
@@ -40,12 +44,18 @@ const Subcategories = () => {
                 .then(res => {
                     setCategoryData(res);
                     setShowSpinner(false);
+                }).catch(err => {
+                    console.log(err);
+                    setShowSpinner(false);
                 });
         } else {
             categoriesService
                 .getSubcategoriesByName(categoryName)
                 .then(res => {
                     setCategoryData(res);
+                    setShowSpinner(false);
+                }).catch(err => {
+                    console.log(err);
                     setShowSpinner(false);
                 });
         }
@@ -57,20 +67,11 @@ const Subcategories = () => {
             <section>
                 {
                     showSpinner ?
-                        <div className={styles.spinnerContainer}>
-                            <Spin indicator={<LoadingOutlined style={{ fontSize: 70, color: '#13c2c2' }} spin />} />
-                        </div> :
-                        categoryData.subcategories.length > 0 ?
+                        <Spinner /> :
+                        categoryData.subcategories?.length > 0 ?
                             (
                                 <>
                                     <Title level={2} style={{ textAlign: 'center' }}>{categoryData.categoryName}</Title>
-                                    {/* <Paragraph style={{
-                                        textAlign: 'center',
-                                        fontSize: '20px',
-                                        border: 'solid 2px black'
-                                    }}>
-                                        {categoryData.categoryDescription}
-                                    </Paragraph> */}
                                     <Card style={{ margin: '1rem 3rem' }}>
                                         <Paragraph style={{ textAlign: 'center', fontSize: '15px', margin: '0' }}>
                                             {categoryData.categoryDescription}
@@ -84,14 +85,7 @@ const Subcategories = () => {
                                                 className={styles.cardLink}
                                                 state={{ categoryId: x.id }}
                                             >
-                                                <Card
-                                                    hoverable
-                                                    className={styles.zoomCard}
-                                                    // style={{ backgroundColor: '#fcfcd4' }}
-                                                    cover={<img style={{ height: 200 }} alt={x.name} src={x.imageUrl} />}
-                                                >
-                                                    <Meta style={{ textAlign: 'center' }} title={x.name} />
-                                                </Card>
+                                                <ImageOverlayContainer imageUrl={x.imageUrl} text={x.name} />
                                             </Link>)
                                         }
                                     </div>

@@ -1,20 +1,18 @@
 .container {
-    width: 100%;
     position: relative;
     transition: transform 0.3s ease;
     border-radius: 10px;
-    border: solid 1px black;
+    height: 100% !important;
 }
-
-/* .image {
-    height: 50px !important;
-    width: 50px !important;
-} */
 
 .container:hover {
     z-index: 1;
     transform: scale(1.05);
     border-radius: 10px !important;
+}
+
+.container .ant-image {
+    border: solid 2px green;
 }
 
 .container img {
@@ -38,6 +36,7 @@
 
 .container:hover .overlay {
     opacity: 1;
+    width: 100%;
 }
 
 .text {

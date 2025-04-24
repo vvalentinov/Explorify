@@ -7,9 +7,9 @@ const ImageOverlayContainer = ({ imageUrl, text }) => {
         <div className={styles.container}>
             <Image
                 preview={false}
-                className={styles.image}
                 src={imageUrl}
                 alt={text}
+                style={{ height: '100%' }}
             />
             <div className={styles.overlay}>
                 <div className={styles.text}>{text}</div>

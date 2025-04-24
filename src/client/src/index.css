@@ -8,7 +8,7 @@ body {
 }
 
 main {
-    min-height: calc(100vh - 192px);
+    min-height: calc(100vh - (158px + 63px));
     margin-top: 63px;
 }
 
@@ -17,5 +17,8 @@ main {
     display: flex;
     min-height: 100%;
     flex-direction: column;
+}
 
+.ant-image {
+    height: 100%;
 }

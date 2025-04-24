@@ -5,14 +5,16 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
 
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, App as AntdApp } from 'antd';
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <BrowserRouter>
-            <ConfigProvider theme={{ cssVar: true }}>
+    // <StrictMode>
+    <BrowserRouter>
+        <ConfigProvider theme={{ cssVar: true }}>
+            <AntdApp>
                 <App />
-            </ConfigProvider>
-        </BrowserRouter>
-    </StrictMode>
+            </AntdApp>
+        </ConfigProvider>
+    </BrowserRouter>
+    // </StrictMode>
 )

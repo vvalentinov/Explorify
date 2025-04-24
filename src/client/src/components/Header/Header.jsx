@@ -11,7 +11,7 @@ import {
     Dropdown
 } from "antd";
 
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -37,10 +37,13 @@ const dropDownItems = [
     {
         key: '1',
         label: (
-            // <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-            //     My Profile
-            // </a>
             <NavLink to={paths.profilePath}><UserOutlined style={{ marginRight: '0.5rem' }} />Profile</NavLink>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <NavLink to={paths.logoutPath}><LogoutOutlined style={{ marginRight: '0.5rem' }} />Logout</NavLink>
         ),
     },
 ];

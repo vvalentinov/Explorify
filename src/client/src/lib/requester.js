@@ -16,8 +16,8 @@ const request = async (method, token, url, data) => {
     const result = await response.json();
 
     if (!response.ok) {
-        if (result.errors.length > 0) {
-            throw result.errors;
+        if (result.problemDetails.errors.length > 0) {
+            throw result.problemDetails.errors;
         }
 
         throw result;
