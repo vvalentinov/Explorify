@@ -1,0 +1,7 @@
+.uploadPlaceSection {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 200px);
+}

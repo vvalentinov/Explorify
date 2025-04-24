@@ -12,9 +12,8 @@
 }
 
 .centeredMenu {
-    justify-content: end;
     width: 100%;
-    /* Centers the items horizontally */
+    justify-content: end;
 }
 
 .menu {
@@ -42,4 +41,8 @@
 :global(.ant-menu > .ant-menu-submenu-selected) {
     color: black !important;
     border-bottom: none !important;
+}
+
+.dropdown {
+    background-color: red !;
 }

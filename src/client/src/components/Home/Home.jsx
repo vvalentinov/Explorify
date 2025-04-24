@@ -11,7 +11,7 @@ const Home = () => {
 
     useEffect(() => {
         if (location.state?.username) {
-            messageApi.success(`Hello ${location.state.username}! 👋`);
+            messageApi.success(`Hello, ${location.state.username}! 👋`);
             window.history.replaceState({}, '');
         }
     }, [location.state]);

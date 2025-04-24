@@ -11,7 +11,7 @@ import {
     Dropdown
 } from "antd";
 
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, UploadOutlined } from '@ant-design/icons';
 
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -37,20 +37,35 @@ const dropDownItems = [
     {
         key: '1',
         label: (
-            <NavLink to={paths.profilePath}><UserOutlined style={{ marginRight: '0.5rem' }} />Profile</NavLink>
+            <NavLink to={paths.profilePath}>
+                <UserOutlined style={{ marginRight: '0.5rem' }} />
+                Profile
+            </NavLink>
         ),
     },
     {
         key: '2',
         label: (
-            <NavLink to={paths.logoutPath}><LogoutOutlined style={{ marginRight: '0.5rem' }} />Logout</NavLink>
+            <NavLink to={paths.uploadPlacePath}>
+                <UploadOutlined style={{ marginRight: '0.5rem' }} />
+                Upload
+            </NavLink>
+        ),
+    },
+    {
+        key: '3',
+        label: (
+            <NavLink to={paths.logoutPath}>
+                <LogoutOutlined style={{ marginRight: '0.5rem' }} />
+                Logout
+            </NavLink>
         ),
     },
 ];
 
 const Header = () => {
 
-    const { isAuthenticated, username } = useContext(AuthContext);
+    const { isAuthenticated } = useContext(AuthContext);
 
     const { token } = useToken();
     const screens = useBreakpoint();
@@ -99,21 +114,7 @@ const Header = () => {
 
     return (
         <ConfigProvider
-            theme={{
-                components: {
-                    Button: {
-                        // colorPrimary: '#e91e63',
-                        // borderRadius: ,
-                        // fontSize: 20,
-                        // colorText: 'coral',
-                    },
-                    // Menu: {
-                    //     colorBgContainer: '#ffebee', // Light red background
-                    //     colorItemBg: '#ffcdd2',      // Item hover background
-                    //     colorItemText: '#b71c1c',    // Item text color
-                    // },
-                },
-            }}
+            theme={{}}
         >
             <nav style={dynamicStyles.header}>
                 <div style={dynamicStyles.container}>
@@ -138,7 +139,7 @@ const Header = () => {
                                     </NavLink>
                                 </>
                                 :
-                                <Dropdown arrow={true} menu={{ items: dropDownItems }} placement="bottom">
+                                <Dropdown className={styles.dropdown} arrow={true} menu={{ items: dropDownItems }} placement="bottom">
                                     <Avatar style={{ marginRight: '2rem' }} size="large" icon={<UserOutlined />} />
                                 </Dropdown>
                         }

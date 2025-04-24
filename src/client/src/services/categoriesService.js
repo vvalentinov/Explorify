@@ -7,6 +7,7 @@ export const categoriesServiceFactory = () => {
     return {
         getCategories: () => request.get(`${baseUrl}/Category/GetCategories`),
         getSubcategories: (categoryId) => request.get(`${baseUrl}/Category/GetSubcategories?categoryId=${categoryId}`),
-        getSubcategoriesByName: (categoryName) => request.get(`${baseUrl}/Category/GetSubcategoriesByName?categoryName=${categoryName}`)
+        getSubcategoriesByName: (categoryName) => request.get(`${baseUrl}/Category/GetSubcategoriesByName?categoryName=${categoryName}`),
+        getCategoriesOptions: () => request.get(`${baseUrl}/Category/GetCategoryOptions`)
     }
 };

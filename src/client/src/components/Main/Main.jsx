@@ -8,6 +8,7 @@ import Profile from '../Profile/Profile';
 import Subcategories from '../Subcategories/Subcategories';
 import NoPathFound from '../NoPathFound/NoPathFound';
 import Logout from '../Logout/Logout';
+import UploadPlace from '../UploadPlace/UploadPlace';
 
 import * as paths from '../../constants/paths';
 
@@ -22,6 +23,7 @@ const Main = () => {
                 <Route path={paths.profilePath} element={<Profile />} />
                 <Route path={paths.subcategoriesPath} element={<Subcategories />} />
                 <Route path={paths.logoutPath} element={<Logout />} />
+                <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                 <Route path='*' element={<NoPathFound />} />
             </Routes>
         </main>

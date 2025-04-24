@@ -11,3 +11,5 @@ export const subcategoriesPath = '/categories/:categoryName';
 export const profilePath = '/account';
 
 export const logoutPath = '/account/logout';
+
+export const uploadPlacePath = '/place/upload';
