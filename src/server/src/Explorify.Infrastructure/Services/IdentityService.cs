@@ -1,5 +1,4 @@
-﻿using Explorify.Application;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Explorify.Domain.Entities;
 using Explorify.Application.Identity;
 using Explorify.Persistence.Identity;
@@ -11,7 +10,7 @@ using static Explorify.Domain.Constants.ApplicationRoleConstants;
 
 using Microsoft.AspNetCore.Identity;
 
-namespace Explorify.Infrastructure.Identity;
+namespace Explorify.Infrastructure.Services;
 
 public class IdentityService : IIdentityService
 {

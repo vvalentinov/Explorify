@@ -3,6 +3,10 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.CountryConstants;
+using static Explorify.Domain.Constants.CategoryConstants;
+using static Explorify.Domain.Constants.AzureBlobStorageConstants;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Places.Upload;
@@ -11,53 +15,70 @@ public class UploadPlaceCommandHandler
     : ICommandHandler<UploadPlaceCommand>
 {
     private readonly IRepository _repository;
+    private readonly IBlobService _blobService;
 
-    public UploadPlaceCommandHandler(IRepository repository)
+    public UploadPlaceCommandHandler(
+        IRepository repository,
+        IBlobService blobService)
     {
         _repository = repository;
+        _blobService = blobService;
     }
 
     public async Task<Result> Handle(
         UploadPlaceCommand request,
         CancellationToken cancellationToken)
     {
+        UploadPlaceRequestModel model = request.Model;
+
         var category = await _repository
             .AllAsNoTracking<Category>()
             .Include(x => x.Children)
-            .FirstOrDefaultAsync(x => x.Id == request.Model.CategoryId, cancellationToken);
+            .FirstOrDefaultAsync(x =>
+                x.Id == model.CategoryId, cancellationToken);
 
         if (category == null)
         {
-            var error = new Error("No category with given id was found!", ErrorType.Validation);
-            return Result.Failure(error);
+            return Result.Failure(new Error(NoCategoryWithIdError, ErrorType.Validation));
         }
 
-        if (category.Children.Any(x => x.Id == request.Model.SubcategoryId) == false)
+        if (category.Children.Any(x => x.Id == model.SubcategoryId) == false)
         {
-            var error = new Error("Subcategory in the given category was not found!", ErrorType.Validation);
-            return Result.Failure(error);
+            return Result.Failure(new Error(NoSubcategoryInGivenCategoryError, ErrorType.Validation));
         }
 
-        var country = await _repository.GetByIdAsync<Country>(request.Model.CountryId);
+        var country = await _repository.GetByIdAsync<Country>(model.CountryId);
 
         if (country == null)
         {
-            var error = new Error("Country with given id was not found!", ErrorType.Validation);
-            return Result.Failure(error);
+            return Result.Failure(new Error(NoCountryWithIdError, ErrorType.Validation));
+        }
+
+        var placePhotos = new List<PlacePhoto>();
+
+        foreach (var file in model.Files)
+        {
+            var url = await _blobService.UploadBlobAsync(
+                file.Content,
+                file.FileName,
+                PlacesImagesPath);
+
+            placePhotos.Add(new PlacePhoto { Url = url });
         }
 
         var place = new Place
         {
-            Name = request.Model.Name,
-            Description = request.Model.Description,
-            CountryId = request.Model.CountryId,
-            CategoryId = request.Model.SubcategoryId,
-            UserId = request.Model.UserId,
+            Name = model.Name,
+            Description = model.Description,
+            CountryId = model.CountryId,
+            CategoryId = model.SubcategoryId,
+            UserId = model.UserId,
+            Photos = placePhotos,
         };
 
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();
 
-        return Result.Success("Successfully uploaded place!");
+        return Result.Success();
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Text;
-using Explorify.Application;
 using Explorify.Application.Identity;
-using Explorify.Infrastructure.Identity;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Explorify.Infrastructure.Settings;
+using Explorify.Infrastructure.Services;
+using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Extensions;
 

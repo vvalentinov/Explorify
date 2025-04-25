@@ -1,5 +1,8 @@
-﻿using Explorify.Application.Abstractions.Models;
+﻿using System.Security.Claims;
 using Explorify.Application.Places.Upload;
+using Explorify.Application.Abstractions.Models;
+
+using static System.Security.Claims.ClaimTypes;
 
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -16,12 +19,12 @@ public class UploadPlaceRequestModelBinder : IModelBinder
         var model = new UploadPlaceRequestModel
         {
             Name = form["Name"]!,
+            Files = new List<UploadFile>(),
             Description = form["Description"]!,
             CountryId = int.TryParse(form["CountryId"], out int countryId) ? countryId : 0,
             CategoryId = int.TryParse(form["CategoryId"], out int categoryId) ? categoryId : 0,
             SubcategoryId = int.TryParse(form["SubcategoryId"], out int subcategoryId) ? subcategoryId : 0,
-            UserId = Guid.TryParse(form["UserId"], out Guid userId) ? userId : Guid.Empty,
-            Files = new List<UploadFile>(),
+            UserId = Guid.Parse(bindingContext.HttpContext.User.FindFirstValue(NameIdentifier) ?? string.Empty),
         };
 
         foreach (var file in form.Files)

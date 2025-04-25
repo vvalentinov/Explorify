@@ -1,4 +1,5 @@
-﻿using Explorify.Application.Places.Upload;
+﻿using Explorify.Api.Extensions;
+using Explorify.Application.Places.Upload;
 using Explorify.Infrastructure.Attributes;
 
 using static Explorify.Api.Extensions.ControllerBaseExtensions;

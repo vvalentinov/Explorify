@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Explorify.Application;
+namespace Explorify.Application.Abstractions.Interfaces;
 
 public interface ITokenService
 {

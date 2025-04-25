@@ -1,4 +1,4 @@
-﻿namespace Explorify.Infrastructure;
+﻿namespace Explorify.Infrastructure.Settings;
 
 public class AzureStorageSettings
 {
