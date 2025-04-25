@@ -1,4 +1,5 @@
 ﻿using Explorify.Application.Places.Upload;
+using Explorify.Infrastructure.Attributes;
 
 using static Explorify.Api.Extensions.ControllerBaseExtensions;
 
@@ -17,7 +18,7 @@ public class PlaceController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
-    public async Task<IActionResult> Upload(UploadPlaceRequestModel model)
+    public async Task<IActionResult> Upload([FromUploadForm] UploadPlaceRequestModel model)
     {
         var command = new UploadPlaceCommand(model);
         var result = await _mediator.Send(command);

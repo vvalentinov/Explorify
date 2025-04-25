@@ -1,4 +1,6 @@
-﻿namespace Explorify.Application.Places.Upload;
+﻿using Explorify.Application.Abstractions.Models;
+
+namespace Explorify.Application.Places.Upload;
 
 public class UploadPlaceRequestModel
 {
@@ -13,4 +15,6 @@ public class UploadPlaceRequestModel
     public int SubcategoryId { get; set; }
 
     public Guid UserId { get; set; }
+
+    public List<UploadFile> Files { get; set; } = [];
 }
