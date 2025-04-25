@@ -5,8 +5,12 @@ const request = async (method, token, url, data) => {
     options.method = method;
 
     if (data) {
-        options.body = JSON.stringify(data);
-        options.headers = { 'Content-Type': 'application/json' };
+        if (data instanceof FormData) {
+            options.body = data;
+        } else {
+            options.body = JSON.stringify(data);
+            options.headers = { 'Content-Type': 'application/json' };
+        }
     }
 
     if (token) { options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` }; }
