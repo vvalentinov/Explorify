@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { PlusOutlined } from '@ant-design/icons';
 
+import Swal from 'sweetalert2'
+
 import {
     Button,
     Cascader,
@@ -161,7 +163,7 @@ const UploadPlace = () => {
         formData.append("SubcategoryId", data.CategoryId[1]);
         formData.append("CountryId", data.CountryId);
 
-        data.Images.forEach(file => {
+        data.Images?.forEach(file => {
             if (file.originFileObj) {
                 formData.append("Files", file.originFileObj);
             }
@@ -171,8 +173,24 @@ const UploadPlace = () => {
             .uploadPlace(formData)
             .then(res => {
                 navigate(homePath, { state: { successfullPlaceUpload: true } });
-                console.log(res);
-            }).catch(err => console.log(err));
+            }).catch(err => {
+                const errorMessages = err.join('<br>');
+
+                Swal.fire({
+                    // title: 'Oops!',
+                    html: errorMessages,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    position: 'top-right',
+                    timer: 7000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'sweetAlertPopup',
+                        confirmButton: 'sweetAlertConfirmBtn',
+                        htmlContainer: 'sweetAlertHtmlContainer'
+                    }
+                });
+            });
     }
 
     const onChange = value => {

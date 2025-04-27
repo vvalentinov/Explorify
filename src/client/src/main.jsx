@@ -8,13 +8,13 @@ import App from './App.jsx';
 import { ConfigProvider, App as AntdApp } from 'antd';
 
 createRoot(document.getElementById('root')).render(
-    // <StrictMode>
-    <BrowserRouter>
-        <ConfigProvider theme={{ cssVar: true }}>
-            <AntdApp>
-                <App />
-            </AntdApp>
-        </ConfigProvider>
-    </BrowserRouter>
-    // </StrictMode>
+    <StrictMode>
+        <BrowserRouter>
+            <ConfigProvider theme={{ cssVar: true }}>
+                <AntdApp>
+                    <App />
+                </AntdApp>
+            </ConfigProvider>
+        </BrowserRouter>
+    </StrictMode>
 )

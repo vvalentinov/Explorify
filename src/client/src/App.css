@@ -1,0 +1,13 @@
+.sweetAlertPopup {
+    /* background-color: #4dd0b9; */
+}
+
+.sweetAlertConfirmBtn {
+    background-color: #43c0c1;
+    /* width: 25rem; */
+}
+
+.sweetAlertHtmlContainer {
+    color: red;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
