@@ -1,17 +1,9 @@
 ﻿using Explorify.Persistence.Seeding.Seeders;
-using Microsoft.Extensions.Configuration;
 
 namespace Explorify.Persistence.Seeding;
 
 public class ExplorifyDbContextSeeder : ISeeder
 {
-    private readonly IConfiguration _configuration;
-
-    public ExplorifyDbContextSeeder(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public async Task SeedAsync(
         ExplorifyDbContext dbContext,
         IServiceProvider serviceProvider)
@@ -20,7 +12,7 @@ public class ExplorifyDbContextSeeder : ISeeder
 
         IEnumerable<ISeeder> seeders = [
             new RolesSeeder(),
-            new CategoriesSeeder(_configuration),
+            new CategoriesSeeder(),
             new CountriesSeeder(),
         ];
 
