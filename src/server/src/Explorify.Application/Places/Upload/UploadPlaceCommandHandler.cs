@@ -66,6 +66,13 @@ public class UploadPlaceCommandHandler
             placePhotos.Add(new PlacePhoto { Url = url });
         }
 
+        var review = new Review
+        {
+            UserId = model.UserId,
+            Rating = (short)model.ReviewRating,
+            Content = model.ReviewContent,
+        };
+
         var place = new Place
         {
             Name = model.Name,
@@ -74,6 +81,7 @@ public class UploadPlaceCommandHandler
             CategoryId = model.SubcategoryId,
             UserId = model.UserId,
             Photos = placePhotos,
+            Reviews = new List<Review> { review },
         };
 
         await _repository.AddAsync(place);

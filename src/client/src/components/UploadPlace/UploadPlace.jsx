@@ -12,7 +12,8 @@ import {
     Input,
     Select,
     Card,
-    ConfigProvider
+    ConfigProvider,
+    Rate
 } from 'antd';
 
 import { useDebounce } from 'use-debounce';
@@ -85,6 +86,8 @@ const UploadPlace = () => {
         formData.append("CategoryId", data.CategoryId[0]);
         formData.append("SubcategoryId", data.CategoryId[1]);
         formData.append("CountryId", data.CountryId);
+        formData.append("ReviewRating", data.ReviewRating);
+        formData.append("ReviewContent", data.ReviewContent);
 
         data.Images?.forEach(file => {
             if (file.originFileObj) { formData.append("Files", file.originFileObj); }
@@ -130,7 +133,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="Name"
                             label="Name"
-                            rules={[{ required: true, message: 'Please provide a name!' }]}
+                            rules={[{ required: true }]}
                         >
                             <Input placeholder="Enter place name..." />
                         </Form.Item>
@@ -138,7 +141,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="CategoryId"
                             label="Category"
-                            rules={[{ required: true, message: 'Please select a category!' }]}
+                            rules={[{ required: true }]}
                         >
                             <Cascader options={categoryOptions} changeOnSelect placeholder="Select category" />
                         </Form.Item>
@@ -146,7 +149,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="CountryId"
                             label="Country"
-                            rules={[{ required: true, message: 'Please select a country!' }]}
+                            rules={[{ required: true }]}
                         >
                             <Select
                                 loading={selectLoading}
@@ -162,16 +165,42 @@ const UploadPlace = () => {
                         <Form.Item
                             name="Description"
                             label="Description"
-                            rules={[
-                                { required: true, message: 'Please write a description!' },
-                                { min: 50, message: 'Minimum 50 characters!' },
-                                { max: 500, message: 'Maximum 500 characters!' }
-                            ]}
+                            rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                         >
-                            <Input.TextArea placeholder="Write your best description for this place..." rows={6} />
+                            <Input.TextArea showCount placeholder="Write your best description for this place..." rows={6} />
                         </Form.Item>
 
                         <ImageUpload />
+
+                        <Card
+                            title="Review"
+                            style={{ marginTop: 24, marginBottom: 20 }}
+                            type="inner"
+                        >
+                            <Form.Item
+                                name="ReviewRating"
+                                label="ReviewRating"
+                                rules={[{ required: true, message: 'Please give a rating!' }]}
+                            >
+                                <Rate allowClear />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="ReviewContent"
+                                label="Content"
+                                rules={[
+                                    { required: true, message: 'Please write a review!' },
+                                    { min: 100 },
+                                    { max: 1000 }
+                                ]}
+                            >
+                                <Input.TextArea
+                                    placeholder="Share your experience..."
+                                    rows={4}
+                                    showCount
+                                />
+                            </Form.Item>
+                        </Card>
 
                         <Button
                             color='cyan'

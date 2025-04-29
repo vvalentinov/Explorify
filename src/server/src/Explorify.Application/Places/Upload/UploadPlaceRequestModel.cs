@@ -14,6 +14,10 @@ public class UploadPlaceRequestModel
 
     public int SubcategoryId { get; set; }
 
+    public int ReviewRating { get; set; }
+
+    public string ReviewContent { get; set; } = string.Empty;
+
     public Guid UserId { get; set; }
 
     public List<UploadFile> Files { get; set; } = [];

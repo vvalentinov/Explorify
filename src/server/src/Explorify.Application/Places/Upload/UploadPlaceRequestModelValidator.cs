@@ -2,6 +2,7 @@
 
 using static Explorify.Domain.Constants.PlaceConstants;
 using static Explorify.Domain.Constants.ImageConstants;
+using static Explorify.Domain.Constants.ReviewConstants;
 
 namespace Explorify.Application.Places.Upload;
 
@@ -25,6 +26,18 @@ public class UploadPlaceRequestModelValidator
             .WithMessage(PlaceDescriptionMinLengthError)
             .MaximumLength(PlaceDescriptionMaxLength)
             .WithMessage(PlaceDescriptionMaxLengthError);
+
+        RuleFor(x => x.ReviewRating)
+            .InclusiveBetween(ReviewRatingMin, ReviewRatingMax)
+            .WithMessage(ReviewRatingError);
+
+        RuleFor(x => x.ReviewContent)
+            .NotEmpty()
+            .WithMessage(ReviewContentEmtpyError)
+            .MinimumLength(ReviewContentMinLength)
+            .WithMessage(ReviewContentMinLenghtError)
+            .MaximumLength(ReviewContentMaxLength)
+            .WithMessage(ReviewContentMaxLenghtError);
 
         RuleFor(x => x.Files)
             .Must(files => files.Count >= 1 && files.Count <= 10)

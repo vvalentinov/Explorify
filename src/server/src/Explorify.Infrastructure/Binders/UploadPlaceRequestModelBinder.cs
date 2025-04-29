@@ -21,9 +21,11 @@ public class UploadPlaceRequestModelBinder : IModelBinder
             Name = form["Name"]!,
             Files = new List<UploadFile>(),
             Description = form["Description"]!,
+            ReviewContent = form["ReviewContent"]!,
             CountryId = int.TryParse(form["CountryId"], out int countryId) ? countryId : 0,
             CategoryId = int.TryParse(form["CategoryId"], out int categoryId) ? categoryId : 0,
             SubcategoryId = int.TryParse(form["SubcategoryId"], out int subcategoryId) ? subcategoryId : 0,
+            ReviewRating = int.TryParse(form["ReviewRating"], out int reviewRating) ? reviewRating : 0,
             UserId = Guid.Parse(bindingContext.HttpContext.User.FindFirstValue(NameIdentifier) ?? string.Empty),
         };
 
