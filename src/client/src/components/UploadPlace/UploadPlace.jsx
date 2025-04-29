@@ -1,12 +1,9 @@
 import styles from './UploadPlace.module.css';
 
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 
-import { useNavigate } from 'react-router-dom';
-
-import { PlusOutlined } from '@ant-design/icons';
-
-import Swal from 'sweetalert2'
+import { fireError } from '../../utils/fireError';
 
 import {
     Button,
@@ -14,69 +11,19 @@ import {
     Form,
     Input,
     Select,
-    Upload,
-    Image,
     Card,
     ConfigProvider
 } from 'antd';
 
 import { useDebounce } from 'use-debounce';
-const { TextArea } = Input;
-
-const normFile = e => {
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e === null || e === void 0 ? void 0 : e.fileList;
-};
-
-import { categoriesServiceFactory } from '../../services/categoriesService';
-import { countriesServiceFactory } from '../../services/countriesService';
-import { placesServiceFactory } from '../../services/placesService';
-
-import { AuthContext } from '../../contexts/AuthContext';
 
 import { homePath } from '../../constants/paths';
+import { AuthContext } from '../../contexts/AuthContext';
+import { placesServiceFactory } from '../../services/placesService';
+import { countriesServiceFactory } from '../../services/countriesService';
+import { categoriesServiceFactory } from '../../services/categoriesService';
 
-var __awaiter =
-    (this && this.__awaiter) ||
-    function (thisArg, _arguments, P, generator) {
-        function adopt(value) {
-            return value instanceof P
-                ? value
-                : new P(function (resolve) {
-                    resolve(value);
-                });
-        }
-        return new (P || (P = Promise))(function (resolve, reject) {
-            function fulfilled(value) {
-                try {
-                    step(generator.next(value));
-                } catch (e) {
-                    reject(e);
-                }
-            }
-            function rejected(value) {
-                try {
-                    step(generator['throw'](value));
-                } catch (e) {
-                    reject(e);
-                }
-            }
-            function step(result) {
-                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-            }
-            step((generator = generator.apply(thisArg, _arguments || [])).next());
-        });
-    };
-
-const getBase64 = file =>
-    new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
+import ImageUpload from '../ImageUpload/ImageUpload';
 
 const UploadPlace = () => {
 
@@ -84,58 +31,34 @@ const UploadPlace = () => {
 
     const { token } = useContext(AuthContext);
 
-    const categoriesService = categoriesServiceFactory();
-    const countriesService = countriesServiceFactory();
     const placesService = placesServiceFactory(token);
-
-    const [categoryOptions, setCategoryOptions] = useState([]);
-    const [countryOptions, setCountryOptions] = useState([]);
+    const countriesService = countriesServiceFactory();
+    const categoriesService = categoriesServiceFactory();
 
     const [countryName, setCountryName] = useState('');
-
+    const [countryOptions, setCountryOptions] = useState([]);
     const [selectLoading, setSelectLoading] = useState(false);
+    const [categoryOptions, setCategoryOptions] = useState([]);
 
     const [debounced] = useDebounce(countryName, 1000);
 
-    // images
-    const [previewOpen, setPreviewOpen] = useState(false);
-    const [previewImage, setPreviewImage] = useState('');
-    const [fileList, setFileList] = useState([]);
-
-    const handlePreview = file =>
-        __awaiter(void 0, void 0, void 0, function* () {
-            if (!file.url && !file.preview) {
-                file.preview = yield getBase64(file.originFileObj);
-            }
-            setPreviewImage(file.url || file.preview);
-            setPreviewOpen(true);
-        });
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none', cursor: 'pointer' }} type="button">
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Images</div>
-        </button>
-    );
-
     useEffect(() => {
-        categoriesService
-            .getCategoriesOptions()
-            .then(res => {
-                const options = res.map(category => ({
-                    value: category.id,
-                    label: category.name,
-                    children: category.subcategories.map(child => ({
-                        value: child.id,
-                        label: child.name,
-                    })),
-                }));
-                setCategoryOptions(options);
-            })
-            .catch(err => console.log(err));
-    }, []);
+        if (categoryOptions.length == 0) {
+            categoriesService
+                .getCategoriesOptions()
+                .then(res => {
+                    const options = res.map(category => ({
+                        value: category.id,
+                        label: category.name,
+                        children: category.subcategories.map(child => ({
+                            value: child.id,
+                            label: child.name,
+                        })),
+                    }));
+                    setCategoryOptions(options);
+                }).catch(err => console.log(err));
+        }
 
-    useEffect(() => {
         if (debounced) {
             setSelectLoading(true);
 
@@ -149,11 +72,10 @@ const UploadPlace = () => {
 
                     setCountryOptions(options);
                     setSelectLoading(false);
-                })
-                .catch(err => console.log(err));
+                }).catch(err => console.log(err));
         }
 
-    }, [debounced]);
+    }, [debounced])
 
     const onSubmit = (data) => {
         const formData = new FormData();
@@ -165,38 +87,14 @@ const UploadPlace = () => {
         formData.append("CountryId", data.CountryId);
 
         data.Images?.forEach(file => {
-            if (file.originFileObj) {
-                formData.append("Files", file.originFileObj);
-            }
+            if (file.originFileObj) { formData.append("Files", file.originFileObj); }
         });
 
         placesService
             .uploadPlace(formData)
-            .then(res => {
-                navigate(homePath, { state: { successfullPlaceUpload: true } });
-            }).catch(err => {
-                const errorMessages = err.join('<br>');
-
-                Swal.fire({
-                    // title: 'Oops!',
-                    html: errorMessages,
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    position: 'top-right',
-                    timer: 7000,
-                    timerProgressBar: true,
-                    customClass: {
-                        popup: 'sweetAlertPopup',
-                        confirmButton: 'sweetAlertConfirmBtn',
-                        htmlContainer: 'sweetAlertHtmlContainer'
-                    }
-                });
-            });
+            .then(res => navigate(homePath, { state: { successfullPlaceUpload: true } }))
+            .catch(err => fireError(err));
     }
-
-    const onChange = value => {
-        console.log(value);
-    };
 
     const onSearch = value => setCountryName(value);
 
@@ -255,7 +153,6 @@ const UploadPlace = () => {
                                 showSearch
                                 placeholder="Type and select a country..."
                                 optionFilterProp="label"
-                                onChange={onChange}
                                 onSearch={onSearch}
                                 onBlur={() => setCountryOptions([])}
                                 options={countryOptions}
@@ -271,37 +168,10 @@ const UploadPlace = () => {
                                 { max: 500, message: 'Maximum 500 characters!' }
                             ]}
                         >
-                            <TextArea placeholder="Write your best description for this place..." rows={6} />
+                            <Input.TextArea placeholder="Write your best description for this place..." rows={6} />
                         </Form.Item>
 
-                        <Form.Item
-                            name="Images"
-                            label="Upload Images"
-                            valuePropName="fileList"
-                            getValueFromEvent={normFile}
-                        >
-                            <Upload className={styles.uploadPlaceUploadButton}
-                                beforeUpload={() => false}
-                                listType="picture-card"
-                                fileList={fileList}
-                                onPreview={handlePreview}
-                                onChange={handleChange}
-                            >
-                                {fileList.length >= 8 ? null : uploadButton}
-                            </Upload>
-                        </Form.Item>
-
-                        {previewImage && (
-                            <Image
-                                src={previewImage}
-                                wrapperStyle={{ display: 'none' }}
-                                preview={{
-                                    visible: previewOpen,
-                                    onVisibleChange: visible => setPreviewOpen(visible),
-                                    afterOpenChange: visible => !visible && setPreviewImage(''),
-                                }}
-                            />
-                        )}
+                        <ImageUpload />
 
                         <Button
                             color='cyan'
