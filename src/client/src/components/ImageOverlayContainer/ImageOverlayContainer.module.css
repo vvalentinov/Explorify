@@ -3,6 +3,7 @@
     transition: transform 0.3s ease;
     border-radius: 10px;
     height: 100% !important;
+    /* width: 100% !important; */
 }
 
 .container:hover {
@@ -41,7 +42,7 @@
 
 .text {
     color: white;
-    font-size: 30px;
+    font-size: 20px;
     position: absolute;
     top: 50%;
     left: 50%;

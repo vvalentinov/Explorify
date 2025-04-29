@@ -1,7 +1,21 @@
 .uploadPlaceSection {
     display: flex;
     align-items: center;
-    flex-direction: column;
     justify-content: center;
+    padding: 3rem 1rem;
     min-height: calc(100vh - 200px);
+    background-color: #f5f7fa;
+}
+
+.uploadPlaceCard {
+    width: 100%;
+    max-width: 700px;
+    padding: 2rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background-color: #fff;
+}
+
+.uploadButton {
+    width: 100%;
 }

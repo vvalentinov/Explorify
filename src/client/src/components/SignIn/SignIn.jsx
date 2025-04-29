@@ -48,7 +48,6 @@ const SignIn = () => {
 
                         <div style={{ display: "flex", justifyContent: 'center' }}>
                             <Image preview={false} src={logoImage} height={'60px'} width={'60px'} />
-
                         </div>
 
 

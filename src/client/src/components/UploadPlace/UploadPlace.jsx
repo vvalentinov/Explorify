@@ -14,9 +14,10 @@ import {
     Form,
     Input,
     Select,
-    FloatButton,
     Upload,
-    Image
+    Image,
+    Card,
+    ConfigProvider
 } from 'antd';
 
 import { useDebounce } from 'use-debounce';
@@ -200,104 +201,121 @@ const UploadPlace = () => {
     const onSearch = value => setCountryName(value);
 
     return (
-        <section className={styles.uploadPlaceSection}>
-            <Form
-                onFinish={onSubmit}
-                layout="vertical"
-                style={{ width: '50%', padding: '1rem 0' }}>
-                <Form.Item
-                    name="Name"
-                    label="Name"
-                // rules={[{ required: true, message: 'Provide a name!' }]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    name="CategoryId"
-                    label="Category"
-                    rules={[{ required: true, message: 'Please select a category!' }]}
-                >
-                    <Cascader options={categoryOptions} changeOnSelect />
-                </Form.Item>
-                <Form.Item
-                    name='CountryId'
-                    label='Country'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please select a country!'
-                        }
-                    ]}>
-                    <Select
-                        loading={selectLoading}
-                        showSearch
-                        placeholder="Type a country name..."
-                        optionFilterProp="label"
-                        onChange={onChange}
-                        onSearch={onSearch}
-                        onBlur={() => setCountryOptions([])}
-                        options={countryOptions}
-                    />
-                </Form.Item>
-                <Form.Item
-                    name="Description"
-                    label="Description"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Provide a description!'
-                        },
-                        {
-                            min: 50,
-                            message: 'Description must be between 50 and 500 characters!'
-                        },
-                        {
-                            max: 500,
-                            message: 'Description must be between 50 and 500 characters!'
-                        },
-                    ]}
-                >
-                    <TextArea placeholder='Write your best description for this place...' rows={8} />
-                </Form.Item>
-                <Form.Item
-                    name="Images"
-                    // label="Upload"
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                >
-                    <Upload
-                        beforeUpload={() => false}
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
+        <ConfigProvider theme={{
+            components: {
+                Input: {
+                    activeShadow: '#13c2c2',
+                    colorPrimary: '#13c2c2',
+                    hoverBorderColor: '#13c2c2'
+                },
+                Select: {
+                    activeBorderColor: '#13c2c2',
+                    hoverBorderColor: '#13c2c2',
+                },
+                Cascader: {
+                    controlItemBgHover: '#e6fffb',
+                    controlHeight: 40,
+                    controlOutlineWidth: 2,
+                    controlOutline: '#13c2c2',
+                    colorPrimary: '#13c2c2',
+                    controlItemBgActive: '#e6fffb',
+                },
+            }
+        }}>
+            <section className={styles.uploadPlaceSection}>
+                <Card className={styles.uploadPlaceCard} title="Upload a New Place">
+                    <Form
+                        onFinish={onSubmit}
+                        layout="vertical"
+                        size="large"
                     >
-                        {fileList.length >= 8 ? null : uploadButton}
-                    </Upload>
-                </Form.Item>
+                        <Form.Item
+                            name="Name"
+                            label="Name"
+                            rules={[{ required: true, message: 'Please provide a name!' }]}
+                        >
+                            <Input placeholder="Enter place name..." />
+                        </Form.Item>
 
-                {previewImage && (
-                    <Image
-                        wrapperStyle={{ display: 'none' }}
-                        preview={{
-                            visible: previewOpen,
-                            onVisibleChange: visible => setPreviewOpen(visible),
-                            afterOpenChange: visible => !visible && setPreviewImage(''),
-                        }}
-                        src={previewImage}
-                    />
-                )}
+                        <Form.Item
+                            name="CategoryId"
+                            label="Category"
+                            rules={[{ required: true, message: 'Please select a category!' }]}
+                        >
+                            <Cascader options={categoryOptions} changeOnSelect placeholder="Select category" />
+                        </Form.Item>
 
-                <Button
-                    color='cyan'
-                    variant='solid'
-                    size='large'
-                    block="true"
-                    htmlType="submit">
-                    Upload
-                </Button>
-            </Form>
-        </section>
+                        <Form.Item
+                            name="CountryId"
+                            label="Country"
+                            rules={[{ required: true, message: 'Please select a country!' }]}
+                        >
+                            <Select
+                                loading={selectLoading}
+                                showSearch
+                                placeholder="Type and select a country..."
+                                optionFilterProp="label"
+                                onChange={onChange}
+                                onSearch={onSearch}
+                                onBlur={() => setCountryOptions([])}
+                                options={countryOptions}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="Description"
+                            label="Description"
+                            rules={[
+                                { required: true, message: 'Please write a description!' },
+                                { min: 50, message: 'Minimum 50 characters!' },
+                                { max: 500, message: 'Maximum 500 characters!' }
+                            ]}
+                        >
+                            <TextArea placeholder="Write your best description for this place..." rows={6} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="Images"
+                            label="Upload Images"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                        >
+                            <Upload className={styles.uploadPlaceUploadButton}
+                                beforeUpload={() => false}
+                                listType="picture-card"
+                                fileList={fileList}
+                                onPreview={handlePreview}
+                                onChange={handleChange}
+                            >
+                                {fileList.length >= 8 ? null : uploadButton}
+                            </Upload>
+                        </Form.Item>
+
+                        {previewImage && (
+                            <Image
+                                src={previewImage}
+                                wrapperStyle={{ display: 'none' }}
+                                preview={{
+                                    visible: previewOpen,
+                                    onVisibleChange: visible => setPreviewOpen(visible),
+                                    afterOpenChange: visible => !visible && setPreviewImage(''),
+                                }}
+                            />
+                        )}
+
+                        <Button
+                            color='cyan'
+                            variant='solid'
+                            size='large'
+                            block="true"
+                            htmlType="submit">
+                            Upload
+                        </Button>
+
+                    </Form>
+                </Card>
+            </section>
+        </ConfigProvider>
     );
 };
 

@@ -10,6 +10,8 @@ import NoPathFound from '../NoPathFound/NoPathFound';
 import Logout from '../Logout/Logout';
 import UploadPlace from '../UploadPlace/UploadPlace';
 
+import { FloatButton } from 'antd';
+
 import * as paths from '../../constants/paths';
 
 const Main = () => {
@@ -26,6 +28,7 @@ const Main = () => {
                 <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                 <Route path='*' element={<NoPathFound />} />
             </Routes>
+            <FloatButton.BackTop />
         </main>
     )
 };

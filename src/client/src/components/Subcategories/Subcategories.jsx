@@ -86,7 +86,8 @@ const Subcategories = () => {
                                                 state={{ categoryId: x.id }}
                                             >
                                                 <ImageOverlayContainer imageUrl={x.imageUrl} text={x.name} />
-                                            </Link>)
+                                            </Link>
+                                        )
                                         }
                                     </div>
                                 </>
