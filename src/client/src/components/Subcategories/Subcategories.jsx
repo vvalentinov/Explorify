@@ -4,18 +4,13 @@ import slugify from 'slugify';
 import { useState, useEffect } from 'react';
 import { useLocation, Link, useParams, useNavigate } from 'react-router-dom';
 
-import { Card, Empty, Spin, Typography } from "antd";
-import { LoadingOutlined } from '@ant-design/icons';
+import { Card, Empty, Typography } from "antd";
 
 import Spinner from '../Spinner/Spinner';
 
 import { categoriesServiceFactory } from '../../services/categoriesService';
 
 import ImageOverlayContainer from '../ImageOverlayContainer/ImageOverlayContainer';
-
-const { Meta } = Card;
-
-const { Title, Paragraph } = Typography;
 
 const Subcategories = () => {
 
@@ -71,25 +66,31 @@ const Subcategories = () => {
                         categoryData.subcategories?.length > 0 ?
                             (
                                 <>
-                                    <Title level={2} style={{ textAlign: 'center' }}>{categoryData.categoryName}</Title>
+                                    <Typography.Title
+                                        level={2}
+                                        style={{ textAlign: 'center' }}>
+                                        {categoryData.categoryName}
+                                    </Typography.Title>
+
                                     <Card style={{ margin: '1rem 3rem' }}>
-                                        <Paragraph style={{ textAlign: 'center', fontSize: '15px', margin: '0' }}>
+                                        <Typography.Paragraph style={{ textAlign: 'center', fontSize: '15px', margin: '0' }}>
                                             {categoryData.categoryDescription}
-                                        </Paragraph>
+                                        </Typography.Paragraph>
                                     </Card>
+
                                     <div className={styles.subcategoriesSection}>
                                         {categoryData.subcategories.map(x =>
                                             <Link
                                                 key={x.id}
-                                                to={`/account/sign-in`}
+                                                to={`/categories/${categoryName}/${slugify(x.name, { lower: true })}`}
                                                 className={styles.cardLink}
-                                                state={{ categoryId: x.id }}
+                                                state={{ subcategoryId: x.id }}
                                             >
                                                 <ImageOverlayContainer imageUrl={x.imageUrl} text={x.name} />
                                             </Link>
-                                        )
-                                        }
+                                        )}
                                     </div>
+
                                 </>
                             )
                             :

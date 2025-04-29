@@ -9,6 +9,7 @@ import Subcategories from '../Subcategories/Subcategories';
 import NoPathFound from '../NoPathFound/NoPathFound';
 import Logout from '../Logout/Logout';
 import UploadPlace from '../UploadPlace/UploadPlace';
+import PlacesInSubcategory from '../PlacesInSubcategory/PlacesInSubcategory';
 
 import { FloatButton } from 'antd';
 
@@ -26,6 +27,8 @@ const Main = () => {
                 <Route path={paths.subcategoriesPath} element={<Subcategories />} />
                 <Route path={paths.logoutPath} element={<Logout />} />
                 <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
+                <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
+
                 <Route path='*' element={<NoPathFound />} />
             </Routes>
             <FloatButton.BackTop />

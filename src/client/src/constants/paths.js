@@ -8,6 +8,8 @@ export const categoriesPath = '/categories';
 
 export const subcategoriesPath = '/categories/:categoryName';
 
+export const placesInSubcategoryPath = '/categories/:categoryName/:subcategoryName';
+
 export const profilePath = '/account';
 
 export const logoutPath = '/account/logout';
