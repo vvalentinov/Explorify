@@ -1,6 +1,7 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Places.Upload;
 using Explorify.Infrastructure.Attributes;
+using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Places.GetPlacesInCategory;
 using Explorify.Application.Places.GetPlacesInSubcategory;
 
@@ -43,6 +44,15 @@ public class PlaceController : BaseController
     public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId)
     {
         var query = new GetPlacesInSubcategoryQuery(subcategoryId);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet(nameof(GetPlaceDetails))]
+    public async Task<IActionResult> GetPlaceDetails(Guid placeId)
+    {
+        var query = new GetPlaceQuery(placeId);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
