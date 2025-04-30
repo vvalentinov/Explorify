@@ -18,6 +18,11 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
             .IsRequired();
 
         builder
+            .Property(p => p.SlugifiedName)
+            .HasMaxLength(200)
+            .IsRequired();
+
+        builder
             .Property(p => p.Description)
             .HasMaxLength(PlaceDescriptionMaxLength)
             .IsRequired();

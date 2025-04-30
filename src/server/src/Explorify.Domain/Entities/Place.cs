@@ -6,6 +6,8 @@ public class Place : BaseDeletableEntity<Guid>
 {
     public string Name { get; set; } = string.Empty;
 
+    public string SlugifiedName { get; set; } = string.Empty;
+
     public string Description { get; set; } = string.Empty;
 
     public int CountryId { get; set; }
