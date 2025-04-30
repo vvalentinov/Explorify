@@ -1,5 +1,6 @@
 ﻿using Explorify.Persistence;
 using Explorify.Persistence.Seeding;
+using Explorify.Application.Abstractions.Interfaces;
 
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -34,12 +35,18 @@ public static class WebApplicationExtensions
             .ServiceProvider
             .GetRequiredService<ExplorifyDbContext>();
 
-        bool dbExists = dbContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
+        var slugGenerator = serviceScope
+            .ServiceProvider
+            .GetRequiredService<ISlugGenerator>();
+
+        bool dbExists = dbContext
+            .Database
+            .GetService<IRelationalDatabaseCreator>()
+            .Exists();
 
         if (dbExists)
         {
-            var dbContextSeeder = new ExplorifyDbContextSeeder();
-
+            var dbContextSeeder = new ExplorifyDbContextSeeder(slugGenerator);
             await dbContextSeeder.SeedAsync(dbContext, app.Services);
         }
     }

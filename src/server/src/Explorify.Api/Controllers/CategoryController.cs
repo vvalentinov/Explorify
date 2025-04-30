@@ -22,36 +22,28 @@ public class CategoryController : BaseController
     [AllowAnonymous]
     [HttpGet(nameof(GetCategories))]
     public async Task<IActionResult> GetCategories()
-    {
-        var query = new GetCategoriesQuery();
-        var result = await _mediator.Send(query);
-        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetCategoriesQuery()));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetSubcategories))]
     public async Task<IActionResult> GetSubcategories(int categoryId)
-    {
-        var query = new GetSubcategoriesQuery(categoryId);
-        var result = await _mediator.Send(query);
-        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetSubcategoriesQuery(categoryId)));
 
     [AllowAnonymous]
-    [HttpGet(nameof(GetSubcategoriesByName))]
-    public async Task<IActionResult> GetSubcategoriesByName(string categoryName)
-    {
-        var query = new GetSubcategoriesByNameQuery(categoryName);
-        var result = await _mediator.Send(query);
-        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
-    }
+    [HttpGet(nameof(GetSubcategoriesBySlugName))]
+    public async Task<IActionResult> GetSubcategoriesBySlugName(string categoryName)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetSubcategoriesBySlugNameQuery(categoryName)));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetCategoryOptions))]
     public async Task<IActionResult> GetCategoryOptions()
-    {
-        var query = new GetCategoryOptionsQuery();
-        var result = await _mediator.Send(query);
-        return ControllerBaseExtensions.OkOrProblemDetails(this, result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetCategoryOptionsQuery()));
 }

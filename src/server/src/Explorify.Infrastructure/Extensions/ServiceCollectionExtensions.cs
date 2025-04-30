@@ -24,6 +24,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IBlobService, BlobService>()
             .AddJwtAuthentication(configuration);
 
+        services.AddScoped<ISlugGenerator, SlugGenerator>();
+
         return services;
     }
 

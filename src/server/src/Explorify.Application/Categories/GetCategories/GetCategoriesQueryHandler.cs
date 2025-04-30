@@ -28,6 +28,7 @@ public class GetCategoriesQueryHandler
             {
                 Id = x.Id,
                 Name = x.Name,
+                SlugifiedName = x.SlugifiedName,
                 ImageUrl = x.ImageUrl,
                 Description = x.Description ?? string.Empty,
             }).ToListAsync(cancellationToken);

@@ -15,6 +15,7 @@ public static class Constants
 
         public const string NoCategoryWithIdError = "Category with given id doesnt exist!";
         public const string NoSubcategoryInGivenCategoryError = "Subcategory in the given category was not found!";
+        public const string NoCategoryWithNameError = "No category with given name was found!";
     }
 
     public static class PlaceConstants

@@ -1,9 +1,17 @@
-﻿using Explorify.Persistence.Seeding.Seeders;
+﻿using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Persistence.Seeding.Seeders;
 
 namespace Explorify.Persistence.Seeding;
 
 public class ExplorifyDbContextSeeder : ISeeder
 {
+    private readonly ISlugGenerator _slugGenerator;
+
+    public ExplorifyDbContextSeeder(ISlugGenerator slugGenerator)
+    {
+        _slugGenerator = slugGenerator;
+    }
+
     public async Task SeedAsync(
         ExplorifyDbContext dbContext,
         IServiceProvider serviceProvider)
@@ -12,7 +20,7 @@ public class ExplorifyDbContextSeeder : ISeeder
 
         IEnumerable<ISeeder> seeders = [
             new RolesSeeder(),
-            new CategoriesSeeder(),
+            new CategoriesSeeder(_slugGenerator),
             new CountriesSeeder(),
         ];
 

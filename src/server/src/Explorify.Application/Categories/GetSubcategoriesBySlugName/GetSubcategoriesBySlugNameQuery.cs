@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Categories.GetSubcategoriesByName;
 
-public record GetSubcategoriesByNameQuery(string CategoryName)
+public record GetSubcategoriesBySlugNameQuery(string CategoryName)
     : IQuery<SubcategoriesResponseModel>;

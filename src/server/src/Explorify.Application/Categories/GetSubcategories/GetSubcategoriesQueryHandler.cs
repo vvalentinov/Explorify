@@ -45,6 +45,7 @@ public class GetSubcategoriesQueryHandler
                 {
                     Id = x.Id,
                     Name = x.Name,
+                    SlugifiedName = x.SlugifiedName,
                     ImageUrl = x.ImageUrl
                 })
         };
