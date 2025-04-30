@@ -20,6 +20,14 @@ public static class ControllerBaseExtensions
                 ? controller.Ok(result)
                 : result.ToProblemDetails();
 
+    public static IActionResult CreatedAtActionOrProblemDetails(
+       this ControllerBase controller,
+       Result result,
+       string actionName)
+            => result.IsSuccess ?
+                controller.CreatedAtAction(actionName, result) :
+                result.ToProblemDetails();
+
     public static IActionResult CreatedAtActionOrProblemDetails<T>(
        this ControllerBase controller,
        Result<T> result,

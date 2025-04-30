@@ -1,24 +1,25 @@
 ﻿using Explorify.Domain.Entities;
+using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Places.GetPlace;
+namespace Explorify.Application.Places.GetPlaceById;
 
-public class GetPlaceQueryHandler
-    : IQueryHandler<GetPlaceQuery, PlaceDetailsResponseModel>
+public class GetPlaceByIdQueryHandler
+    : IQueryHandler<GetPlaceByIdQuery, PlaceDetailsResponseModel>
 {
     private readonly IRepository _repository;
 
-    public GetPlaceQueryHandler(IRepository repository)
+    public GetPlaceByIdQueryHandler(IRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Result<PlaceDetailsResponseModel>> Handle(
-        GetPlaceQuery request,
+        GetPlaceByIdQuery request,
         CancellationToken cancellationToken)
     {
         var place = await _repository

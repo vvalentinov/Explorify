@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.Places.GetPlace;
+﻿namespace Explorify.Application.Places;
 
 public class GetPlaceResponseModel
 {

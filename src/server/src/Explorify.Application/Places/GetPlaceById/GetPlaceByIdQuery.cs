@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Places.GetPlace;
 
-public record GetPlaceQuery(Guid PlaceId)
+public record GetPlaceByIdQuery(Guid PlaceId)
     : IQuery<PlaceDetailsResponseModel>;

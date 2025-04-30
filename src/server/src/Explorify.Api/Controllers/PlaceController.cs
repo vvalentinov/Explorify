@@ -24,36 +24,28 @@ public class PlaceController : BaseController
 
     [HttpPost(nameof(Upload))]
     public async Task<IActionResult> Upload([FromUploadForm] UploadPlaceRequestModel model)
-    {
-        var command = new UploadPlaceCommand(model);
-        var result = await _mediator.Send(command);
-        return this.OkOrProblemDetails(result);
-    }
+        => this.CreatedAtActionOrProblemDetails(
+                await _mediator.Send(
+                    new UploadPlaceCommand(model)), nameof(Upload));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInCategory))]
     public async Task<IActionResult> GetPlacesInCategory(int categoryId)
-    {
-        var query = new GetPlacesInCategoryQuery(categoryId);
-        var result = await _mediator.Send(query);
-        return this.OkOrProblemDetails(result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetPlacesInCategoryQuery(categoryId)));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInSubcategory))]
     public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId)
-    {
-        var query = new GetPlacesInSubcategoryQuery(subcategoryId);
-        var result = await _mediator.Send(query);
-        return this.OkOrProblemDetails(result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetPlacesInSubcategoryQuery(subcategoryId)));
 
     [AllowAnonymous]
-    [HttpGet(nameof(GetPlaceDetails))]
-    public async Task<IActionResult> GetPlaceDetails(Guid placeId)
-    {
-        var query = new GetPlaceQuery(placeId);
-        var result = await _mediator.Send(query);
-        return this.OkOrProblemDetails(result);
-    }
+    [HttpGet(nameof(GetPlaceDetailsById))]
+    public async Task<IActionResult> GetPlaceDetailsById(Guid placeId)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetPlaceByIdQuery(placeId)));
 }
