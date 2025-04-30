@@ -15,3 +15,5 @@ export const profilePath = '/account';
 export const logoutPath = '/account/logout';
 
 export const uploadPlacePath = '/place/upload';
+
+export const placeDetailsPath = '/place/:placeName';

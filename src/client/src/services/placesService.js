@@ -6,6 +6,7 @@ export const placesServiceFactory = (token) => {
 
     return {
         uploadPlace: (data) => request.post(`${baseUrl}/Place/Upload`, data),
-        getPlacesInSubcategory: (subcategoryId) => request.get(`${baseUrl}/Place/GetPlacesInSubcategory?subcategoryId=${subcategoryId}`)
+        getPlacesInSubcategory: (subcategoryId) => request.get(`${baseUrl}/Place/GetPlacesInSubcategory?subcategoryId=${subcategoryId}`),
+        getPlaceDetailsById: (placeId) => request.get(`${baseUrl}/Place/GetPlaceDetailsById?placeId=${placeId}`)
     }
 };

@@ -86,7 +86,7 @@ const UploadPlace = () => {
         formData.append("CategoryId", data.CategoryId[0]);
         formData.append("SubcategoryId", data.CategoryId[1]);
         formData.append("CountryId", data.CountryId);
-        formData.append("ReviewRating", data.ReviewRating);
+        formData.append("ReviewRating", data.Rating);
         formData.append("ReviewContent", data.ReviewContent);
 
         data.Images?.forEach(file => {
@@ -178,8 +178,8 @@ const UploadPlace = () => {
                             type="inner"
                         >
                             <Form.Item
-                                name="ReviewRating"
-                                label="ReviewRating"
+                                name="Rating"
+                                label="Rating"
                                 rules={[{ required: true, message: 'Please give a rating!' }]}
                             >
                                 <Rate allowClear />

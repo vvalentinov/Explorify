@@ -10,6 +10,7 @@ import NoPathFound from '../NoPathFound/NoPathFound';
 import Logout from '../Logout/Logout';
 import UploadPlace from '../UploadPlace/UploadPlace';
 import PlacesInSubcategory from '../PlacesInSubcategory/PlacesInSubcategory';
+import PlaceDetails from '../PlaceDetails/PlaceDetails';
 
 import { FloatButton } from 'antd';
 
@@ -28,6 +29,7 @@ const Main = () => {
                 <Route path={paths.logoutPath} element={<Logout />} />
                 <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                 <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
+                <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
 
                 <Route path='*' element={<NoPathFound />} />
             </Routes>

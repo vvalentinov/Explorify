@@ -2,7 +2,6 @@ import { Button, Grid, Space, theme, Typography } from "antd";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
-const { Text } = Typography;
 
 const Footer = () => {
     const { token } = useToken();
@@ -26,7 +25,7 @@ const Footer = () => {
         },
         nav: {
             alignItems: "center",
-            marginLeft: screens.md ? `-${token.margin}px` : 0
+            marginLeft: screens.md ? `-${token.margin}px` : 0,
         },
         text: {
             color: token.colorTextSecondary,
@@ -42,19 +41,31 @@ const Footer = () => {
                     direction={screens.md ? "horizontal" : "vertical"}
                     size={screens.md ? 0 : "small"}
                 >
-                    <Button type="text" href="#">
+                    <Button style={{ marginRight: '1rem' }}
+                        color='cyan'
+                        variant='filled'
+                        size='large'>
                         About
                     </Button>
-                    <Button type="text" href="#">
+
+                    <Button style={{ marginRight: '1rem' }}
+                        color='cyan'
+                        variant='filled'
+                        size='large'>
                         Help
                     </Button>
-                    <Button type="text" href="#">
+
+                    <Button
+                        color='cyan'
+                        variant='filled'
+                        size='large'>
                         Terms & Conditions
                     </Button>
+
                 </Space>
-                <Text style={styles.text}>
+                <Typography.Text style={styles.text}>
                     © {new Date().getFullYear()} Explorify. All Rights Reserved.
-                </Text>
+                </Typography.Text>
             </div>
         </footer>
     );
