@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 
 import { categoriesServiceFactory } from "../../services/categoriesService";
 
-import slugify from 'slugify';
-
 const Categories = () => {
 
     const categoriesService = categoriesServiceFactory();
@@ -34,7 +32,7 @@ const Categories = () => {
                 {categories && categories.map(x => (
                     <Link
                         key={x.id}
-                        to={`/categories/${slugify(x.name, { lower: true })}`}
+                        to={`/categories/${x.slugifiedName}`}
                         className={styles.cardLink}
                         state={{ categoryId: x.id }}
                     >

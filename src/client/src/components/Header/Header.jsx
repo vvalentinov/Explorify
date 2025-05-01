@@ -11,26 +11,33 @@ import {
     Dropdown
 } from "antd";
 
-import { UserOutlined, LogoutOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+    UserOutlined,
+    LogoutOutlined,
+    UploadOutlined,
+    MenuOutlined
+} from '@ant-design/icons';
 
 import { useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import * as paths from '../../constants/paths';
 import { AuthContext } from '../../contexts/AuthContext';
+
+import { useState } from 'react';
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
 
 const menuItems = [
     {
-        label: <NavLink to={paths.homePath}>Explorify</NavLink>,
-        key: "explorify",
+        label: <Link to='/'>Explorify</Link>,
+        key: "home",
     },
     {
-        label: <NavLink to={paths.categoriesPath}>Categories</NavLink>,
+        label: <Link to='/categories'>Categories</Link>,
         key: "categories",
-    }
+    },
 ];
 
 const dropDownItems = [
@@ -53,7 +60,10 @@ const dropDownItems = [
         ),
     },
     {
-        key: '3',
+        type: 'divider',
+    },
+    {
+        key: '4',
         label: (
             <NavLink to={paths.logoutPath}>
                 <LogoutOutlined style={{ marginRight: '0.5rem' }} />
@@ -68,6 +78,7 @@ const Header = () => {
     const { isAuthenticated } = useContext(AuthContext);
 
     const { token } = useToken();
+
     const screens = useBreakpoint();
 
     const dynamicStyles = {
@@ -77,17 +88,15 @@ const Header = () => {
             justifyContent: "space-between",
             margin: "0 auto",
             maxWidth: token.screenXL,
-            padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`,
+            padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`
         },
         header: {
             backgroundColor: token.colorBgContainer,
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-
             position: "fixed",
             top: 0,
-            width: '100%',
-            zIndex: '100'
-            // overflow: "hidden",
+            width: "100%",
+            zIndex: 1000
         },
         logo: {
             display: "block",
@@ -95,26 +104,34 @@ const Header = () => {
             left: "50%",
             position: screens.md ? "static" : "absolute",
             top: "50%",
-            transform: screens.md ? " " : "translate(-50%, -50%)",
+            transform: screens.md ? " " : "translate(-50%, -50%)"
         },
         menu: {
             backgroundColor: "transparent",
             borderBottom: "none",
             lineHeight: screens.sm ? "4rem" : "3.5rem",
             marginLeft: screens.md ? "0px" : `-${token.size}px`,
-            width: screens.md ? "inherit" : token.sizeXXL,
+            width: screens.md ? "inherit" : token.sizeXXL
         },
         menuContainer: {
             alignItems: "center",
             display: "flex",
             gap: token.size,
-            width: "100%",
+            width: "100%"
         }
     };
 
+    const [current, setCurrent] = useState("home");
+    const onClick = (e) => setCurrent(e.key);
+
     return (
         <ConfigProvider
-            theme={{}}
+            theme={{
+                token: {
+                    colorPrimary: '#43c0c1',
+                },
+                components: {}
+            }}
         >
             <nav style={dynamicStyles.header}>
                 <div style={dynamicStyles.container}>
@@ -123,9 +140,13 @@ const Header = () => {
                             style={dynamicStyles.menu}
                             mode="horizontal"
                             items={menuItems}
+                            onClick={onClick}
+                            selectedKeys={screens.md ? [current] : ""}
+                            overflowedIndicator={
+                                <Button type="text" icon={<MenuOutlined />}></Button>
+                            }
                         />
                     </div>
-                    {/* {screens.md ? <Button type="text">Log in</Button> : ""} */}
                     <Space>
                         {
                             !isAuthenticated
@@ -139,14 +160,24 @@ const Header = () => {
                                     </NavLink>
                                 </>
                                 :
-                                <Dropdown className={styles.dropdown} arrow={true} menu={{ items: dropDownItems }} placement="bottom">
-                                    <Avatar style={{ marginRight: '2rem' }} size="large" icon={<UserOutlined />} />
+                                <Dropdown
+                                    className={styles.dropdown}
+                                    arrow={true}
+                                    menu={{ items: dropDownItems }}
+                                    placement="bottom"
+                                >
+                                    <Avatar
+                                        style={{ marginRight: '2rem' }}
+                                        size="large"
+                                        icon={<UserOutlined />}
+                                    />
                                 </Dropdown>
                         }
                     </Space>
                 </div>
             </nav>
         </ConfigProvider>
+
     );
 };
 

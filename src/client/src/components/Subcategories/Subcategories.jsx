@@ -27,10 +27,10 @@ const Subcategories = () => {
 
     useEffect(() => {
 
-        const normalized = slugify(categoryName, { lower: true });
+        const slugCategoryName = slugify(categoryName, { lower: true });
 
-        if (categoryName !== normalized) {
-            navigate(`/categories/${normalized}`, { replace: true });
+        if (categoryName !== slugCategoryName) {
+            navigate(`/categories/${slugCategoryName}`, { replace: true });
         }
 
         if (categoryId) {
@@ -45,7 +45,7 @@ const Subcategories = () => {
                 });
         } else {
             categoriesService
-                .getSubcategoriesByName(categoryName)
+                .getSubcategoriesBySlugName(slugCategoryName)
                 .then(res => {
                     setCategoryData(res);
                     setShowSpinner(false);
@@ -82,7 +82,7 @@ const Subcategories = () => {
                                         {categoryData.subcategories.map(x =>
                                             <Link
                                                 key={x.id}
-                                                to={`/categories/${categoryName}/${slugify(x.name, { lower: true })}`}
+                                                to={`/categories/${categoryName}/${x.slugifiedName}`}
                                                 className={styles.cardLink}
                                                 state={{ subcategoryId: x.id }}
                                             >

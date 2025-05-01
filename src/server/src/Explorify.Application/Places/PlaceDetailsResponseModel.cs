@@ -8,5 +8,11 @@ public class PlaceDetailsResponseModel
 
     public string Description { get; set; } = string.Empty;
 
+    public string UserName { get; set; } = string.Empty;
+
+    public int UserReviewRating { get; set; }
+
+    public string UserReviewContent { get; set; } = string.Empty;
+
     public IEnumerable<string> ImagesUrls { get; set; } = [];
 }

@@ -14,6 +14,7 @@ const PlacesList = ({ places }) => {
                         state={{ placeId: place.id }}
                     >
                         <Card
+                            // styles={{ body: { border: 'solid 1px black' } }}
                             hoverable
                             style={{ width: 240 }}
                             cover={<img alt="example" src={place.imageUrl} />}

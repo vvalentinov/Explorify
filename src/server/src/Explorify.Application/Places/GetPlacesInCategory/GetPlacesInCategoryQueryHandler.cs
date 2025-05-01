@@ -1,7 +1,8 @@
-﻿using Explorify.Application.Abstractions.Models;
+﻿using Explorify.Domain.Entities;
+using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
-using Explorify.Domain.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Places.GetPlacesInCategory;
@@ -28,8 +29,11 @@ public class GetPlacesInCategoryQueryHandler
             .Where(x => x.Category.ParentId == request.CategoryId)
             .Select(x => new PlaceDisplayResponseModel
             {
-                ImageUrl = x.Photos.Select(photo => photo.Url).First(),
-                Name = x.Name
+                Name = x.Name,
+                ImageUrl = x.Photos
+                    .OrderBy(x => x.CreatedOn)
+                    .Select(photo => photo.Url)
+                    .First(),
             }).ToListAsync(cancellationToken);
 
         return Result.Success(places);

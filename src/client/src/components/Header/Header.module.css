@@ -1,5 +1,6 @@
 .navbar {
     background-color: aliceblue;
+    border-bottom: solid 1px black;
 }
 
 .buttonsContainer {
@@ -20,29 +21,6 @@
     width: 100%;
 }
 
-:global(.ant-menu-item::after) {
-    display: none !important;
-    border-bottom: none !important;
-    transition: none !important;
-}
-
-:global(.ant-menu-item-selected::after),
-:global(.ant-menu-item:hover::after) {
-    border-bottom: none !important;
-}
-
-:global(.ant-menu > .ant-menu-item:hover),
-:global(.ant-menu > .ant-menu-submenu:hover),
-:global(.ant-menu > .ant-menu-item-active),
-:global(.ant-menu > .ant-menu-submenu-active),
-:global(.ant-menu > .ant-menu-item-open),
-:global(.ant-menu > .ant-menu-submenu-open),
-:global(.ant-menu > .ant-menu-item-selected),
-:global(.ant-menu > .ant-menu-submenu-selected) {
-    color: black !important;
-    border-bottom: none !important;
-}
-
-.dropdown {
-    background-color: red !;
+.navLink {
+    height: 20%;
 }

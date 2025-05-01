@@ -16,13 +16,16 @@ public class UploadPlaceCommandHandler
 {
     private readonly IRepository _repository;
     private readonly IBlobService _blobService;
+    private readonly ISlugGenerator _slugGenerator;
 
     public UploadPlaceCommandHandler(
         IRepository repository,
+        ISlugGenerator slugGenerator,
         IBlobService blobService)
     {
         _repository = repository;
         _blobService = blobService;
+        _slugGenerator = slugGenerator;
     }
 
     public async Task<Result> Handle(
@@ -61,7 +64,7 @@ public class UploadPlaceCommandHandler
             var url = await _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                PlacesImagesPath);
+                $"{PlacesImagesPath}{model.Name}");
 
             placePhotos.Add(new PlacePhoto { Url = url });
         }
@@ -76,6 +79,7 @@ public class UploadPlaceCommandHandler
         var place = new Place
         {
             Name = model.Name,
+            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
             Description = model.Description,
             CountryId = model.CountryId,
             CategoryId = model.SubcategoryId,

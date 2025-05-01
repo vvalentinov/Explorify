@@ -1,3 +1,5 @@
+import styles from './PlaceDetails.module.css';
+
 import { useLocation } from "react-router-dom";
 
 import { useState, useEffect } from "react";
@@ -6,29 +8,9 @@ import { placesServiceFactory } from "../../services/placesService";
 
 import { fireError } from "../../utils/fireError";
 
-import { Carousel, Card } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
-const contentStyle = {
-    margin: 0,
-    height: '160px',
-    color: '#fff',
-    lineHeight: '160px',
-    textAlign: 'center',
-    background: '#364d79',
-};
-
-const carouselWrapperStyle = {
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto 1.5rem auto',
-};
-
-const imageStyle = {
-    width: '100%',
-    height: '350px',
-    objectFit: 'cover',
-    borderRadius: '10px',
-};
+import { Carousel, Card, Typography, Avatar, Rate } from 'antd';
 
 const PlaceDetails = () => {
 
@@ -52,37 +34,89 @@ const PlaceDetails = () => {
     return (
         <>
             {place && (
-                <Card
-                    title={place.name}
-                    style={{
-                        maxWidth: '700px',
-                        margin: '2rem auto',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        borderRadius: '12px',
-                    }}
-                >
-                    {place.imagesUrls?.length > 0 && (
-                        <div style={carouselWrapperStyle}>
-                            <Carousel
-                                arrows
-                                dots
-                                autoplay
-                                infinite
-                                style={{ borderRadius: '10px' }}
-                            >
-                                {place.imagesUrls.map((x, i) => (
-                                    <div key={i}>
-                                        <img src={x} alt={`Slide ${i}`} style={imageStyle} />
-                                    </div>
-                                ))}
-                            </Carousel>
-                        </div>
-                    )}
+                <section className={styles.placeDetailsCardSection}>
+                    <Card
+                        styles={{
+                            header: {
+                                // borderBottom: 'solid 1px black',
+                                backgroundColor: '#e8fffb'
+                            }
+                        }}
+                        title={
+                            <div className={styles.cardHeader}>
+                                <Avatar icon={<UserOutlined />} src={place.avatarUrl} size={40} />
+                                <span className={styles.placeTitle}>{place.name}</span>
+                            </div>
+                        }
+                        className={styles.placeDetailsCard}
+                    >
+                        {place.imagesUrls?.length > 0 && (
+                            <div className={styles.carouselWrapperStyle}>
+                                <Carousel
+                                    arrows
+                                    dots
+                                    // autoplay
+                                    infinite
+                                    style={{ borderRadius: '10px' }}
+                                >
+                                    {place.imagesUrls.map((x, i) => (
+                                        <div key={i}>
+                                            <img className={styles.imageStyle} src={x} alt={`Slide ${i}`} />
+                                        </div>
+                                    ))}
+                                </Carousel>
+                            </div>
+                        )}
 
-                    <p style={{ fontSize: '1rem', color: '#555', lineHeight: '1.6' }}>
-                        {place.description}
-                    </p>
-                </Card>
+                        <Card
+                            styles={{
+                                header: {
+                                    // borderBottom: 'solid 1px black',
+                                    backgroundColor: '#e8fffb'
+                                },
+                                body: {
+                                    backgroundColor: '#f5f7fa'
+                                }
+                            }}
+                            title="Description"
+                            className={styles.placeDescriptionCard}
+                        >
+                            <Typography.Paragraph className={styles.placeDescriptionParagraph}>
+                                {place.description}
+                            </Typography.Paragraph>
+                        </Card>
+
+                    </Card>
+
+                    <Card
+                        styles={{
+                            header: {
+                                // borderBottom: 'solid 1px black',
+                                backgroundColor: '#e8fffb'
+                            }
+                        }}
+                        className={styles.userReviewCard}
+                        title={
+                            <div className={styles.reviewCardHeader}>
+                                <div className={styles.reviewCardHeaderContainer}>
+                                    <Avatar icon={<UserOutlined />} size={40} />
+                                    <span className={styles.placeTitle}>UserName</span>
+                                </div>
+                                <div>
+                                    <Rate style={{ padding: '0', margin: '0' }} disabled value={place.userReviewRating} />
+
+                                </div>
+
+                            </div>
+                        }
+                    >
+                        <Typography.Paragraph className={styles.placeDescriptionParagraph}>
+                            {place.userReviewContent}
+                        </Typography.Paragraph>
+
+                    </Card>
+
+                </section>
             )}
         </>
     )

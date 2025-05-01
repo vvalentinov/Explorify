@@ -20,7 +20,7 @@ const Footer = () => {
         },
         footer: {
             backgroundColor: token.colorBgBase,
-            borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+            // borderTop: `${token.lineWidth}px ${token.lineType} black`,
             padding: `${token.sizeXXL}px 0px`
         },
         nav: {
