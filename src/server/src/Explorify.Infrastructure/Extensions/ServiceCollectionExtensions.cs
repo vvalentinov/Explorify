@@ -1,13 +1,14 @@
 ﻿using System.Text;
 using Explorify.Application.Identity;
+using Explorify.Infrastructure.Settings;
+using Explorify.Infrastructure.Services;
+using Explorify.Application.Abstractions.Email;
+using Explorify.Application.Abstractions.Interfaces;
 
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Explorify.Infrastructure.Settings;
-using Explorify.Infrastructure.Services;
-using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Extensions;
 
@@ -22,11 +23,10 @@ public static class ServiceCollectionExtensions
             .AddTransient<ITokenService, TokenService>()
             .AddScoped<IIdentityService, IdentityService>()
             .AddScoped<IBlobService, BlobService>()
+            .AddScoped<ISlugGenerator, SlugGenerator>()
+            .AddScoped<IUserService, UserService>()
+            .AddScoped<IEmailSender, SendGridEmailSender>()
             .AddJwtAuthentication(configuration);
-
-        services.AddScoped<ISlugGenerator, SlugGenerator>();
-
-        services.AddScoped<IUserService, UserService>();
 
         return services;
     }
