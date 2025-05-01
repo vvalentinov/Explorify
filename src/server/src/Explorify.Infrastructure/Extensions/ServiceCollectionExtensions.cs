@@ -26,6 +26,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<ISlugGenerator, SlugGenerator>();
 
+        services.AddScoped<IUserService, UserService>();
+
         return services;
     }
 

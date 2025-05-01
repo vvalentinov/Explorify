@@ -2,6 +2,7 @@
 using Explorify.Application.Identity.Login;
 using Explorify.Application.Identity.Models;
 using Explorify.Application.Identity.Register;
+using Explorify.Application.User.ChangeUserName;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -53,4 +54,10 @@ public class UserController : BaseController
 
         return registerResult.ToProblemDetails();
     }
+
+    [HttpPost(nameof(ChangeUsername))]
+    public async Task<IActionResult> ChangeUsername(ChangeUserNameRequestModel model)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new ChangeUserNameCommand(User.GetId(), model.UserName)));
 }
