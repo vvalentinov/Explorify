@@ -7,11 +7,12 @@ body {
     margin: 0;
 }
 
-main {
-    min-height: calc(100vh - (158px + 63px));
+.mainContainer {
+    min-height: calc(100vh - 221px);
     margin-top: 63px;
     /* background-color: #f5f7fa; */
     background-color: #e6e9ef;
+    /* border: solid 1px black; */
 }
 
 #root {
@@ -24,4 +25,8 @@ main {
 .ant-image {
     height: 100%;
     width: 100%;
+}
+
+main .ant-layout-content {
+    margin: 0 I !important;
 }
