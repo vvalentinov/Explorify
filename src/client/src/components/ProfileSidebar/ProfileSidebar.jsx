@@ -2,17 +2,24 @@ import { Link } from "react-router-dom";
 
 import { Menu, ConfigProvider } from "antd";
 
-import { AppstoreOutlined, MailOutlined, SettingOutlined, UserOutlined, ProfileOutlined } from '@ant-design/icons';
+import {
+    MailOutlined,
+    SettingOutlined,
+    UserOutlined,
+    ProfileOutlined,
+} from '@ant-design/icons';
+
+import { changeUsernamePath, profilePath } from "../../constants/paths";
 
 const items = [
     {
         key: 'profile',
-        label: 'Profile',
+        label: <Link to={profilePath}>Profile</Link>,
         icon: <ProfileOutlined style={{ fontSize: '1.3rem' }} />,
     },
     {
         key: 'change-username',
-        label: 'Change Username',
+        label: <Link to={changeUsernamePath}>Change Username</Link>,
         icon: <UserOutlined style={{ fontSize: '1.3rem' }} />,
     },
     {
@@ -24,7 +31,7 @@ const items = [
         key: 'change-email',
         label: 'Change Email',
         icon: <MailOutlined style={{ fontSize: '1.3rem' }} />,
-    },
+    }
 ];
 
 const ProfileSidebar = () => {
@@ -47,7 +54,8 @@ const ProfileSidebar = () => {
                     width: '100%',
                     fontSize: '1.3rem',
                     minHeight: 'calc(100vh - 221px)',
-                    backgroundColor: '#e6fffb'
+                    backgroundColor: '#e6fffb',
+                    overflowY: 'auto',
                 }}
                 defaultSelectedKeys={['profile']}
                 mode="vertical"

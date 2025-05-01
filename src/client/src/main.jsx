@@ -10,7 +10,18 @@ import { ConfigProvider, App as AntdApp } from 'antd';
 createRoot(document.getElementById('root')).render(
     // <StrictMode>
     <BrowserRouter>
-        <ConfigProvider theme={{ cssVar: true }}>
+        <ConfigProvider
+            theme={{
+                cssVar: true,
+                components: {
+                    Input: {
+                        activeShadow: '#13c2c2',
+                        colorPrimary: '#13c2c2',
+                        hoverBorderColor: '#13c2c2'
+                    }
+                }
+            }}
+        >
             <AntdApp>
                 <App />
             </AntdApp>

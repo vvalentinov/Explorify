@@ -31,11 +31,11 @@ const { useBreakpoint } = Grid;
 
 const menuItems = [
     {
-        label: <Link to='/'>Explorify</Link>,
+        label: <Link style={{ fontSize: '1.2rem' }} to='/'>Explorify</Link>,
         key: "home",
     },
     {
-        label: <Link to='/categories'>Categories</Link>,
+        label: <Link style={{ fontSize: '1.2rem' }} to='/categories'>Categories</Link>,
         key: "categories",
     },
 ];
@@ -44,7 +44,7 @@ const dropDownItems = [
     {
         key: '1',
         label: (
-            <NavLink to={paths.profilePath}>
+            <NavLink style={{ fontSize: '1.2rem' }} to={paths.profilePath}>
                 <UserOutlined style={{ marginRight: '0.5rem' }} />
                 Profile
             </NavLink>
@@ -53,7 +53,7 @@ const dropDownItems = [
     {
         key: '2',
         label: (
-            <NavLink to={paths.uploadPlacePath}>
+            <NavLink style={{ fontSize: '1.2rem' }} to={paths.uploadPlacePath}>
                 <UploadOutlined style={{ marginRight: '0.5rem' }} />
                 Upload
             </NavLink>
@@ -65,7 +65,7 @@ const dropDownItems = [
     {
         key: '4',
         label: (
-            <NavLink to={paths.logoutPath}>
+            <NavLink style={{ fontSize: '1.2rem' }} to={paths.logoutPath}>
                 <LogoutOutlined style={{ marginRight: '0.5rem' }} />
                 Logout
             </NavLink>
@@ -91,12 +91,15 @@ const Header = () => {
             padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`
         },
         header: {
+            // backgroundColor: '#E9FFF1',
+            // borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBgBase}`,
             backgroundColor: token.colorBgContainer,
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
             position: "fixed",
             top: 0,
             width: "100%",
-            zIndex: 1000
+            zIndex: 1000,
+            minHeight: '63px'
         },
         logo: {
             display: "block",
@@ -129,8 +132,13 @@ const Header = () => {
             theme={{
                 token: {
                     colorPrimary: '#43c0c1',
+                    // colorPrimary: '#4c6a76',
                 },
-                components: {}
+                components: {
+                    // Dropdown: {
+                    //     backgroundColor: '#e6fffb',
+                    // }
+                }
             }}
         >
             <nav style={dynamicStyles.header}>
@@ -145,6 +153,7 @@ const Header = () => {
                             overflowedIndicator={
                                 <Button type="text" icon={<MenuOutlined />}></Button>
                             }
+                            defaultSelectedKeys={['home']}
                         />
                     </div>
                     <Space>
@@ -161,7 +170,6 @@ const Header = () => {
                                 </>
                                 :
                                 <Dropdown
-                                    className={styles.dropdown}
                                     arrow={true}
                                     menu={{ items: dropDownItems }}
                                     placement="bottom"

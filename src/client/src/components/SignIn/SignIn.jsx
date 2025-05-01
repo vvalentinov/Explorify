@@ -33,13 +33,7 @@ const SignIn = () => {
 
     return (
         <ConfigProvider theme={{
-            components: {
-                Input: {
-                    activeShadow: '#13c2c2',
-                    colorPrimary: '#13c2c2',
-                    hoverBorderColor: '#13c2c2'
-                }
-            }
+            components: {}
         }}
         >
             <section className={styles.section}>

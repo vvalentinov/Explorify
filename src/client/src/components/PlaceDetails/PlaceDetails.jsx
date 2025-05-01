@@ -75,7 +75,7 @@ const PlaceDetails = () => {
                                     backgroundColor: '#e8fffb'
                                 },
                                 body: {
-                                    backgroundColor: '#f5f7fa'
+                                    // backgroundColor: '#f5f7fa'
                                 }
                             }}
                             title="Description"

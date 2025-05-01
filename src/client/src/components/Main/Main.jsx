@@ -12,6 +12,7 @@ import UploadPlace from '../UploadPlace/UploadPlace';
 import PlacesInSubcategory from '../PlacesInSubcategory/PlacesInSubcategory';
 import PlaceDetails from '../PlaceDetails/PlaceDetails';
 import ProfileLayout from '../ProfileLayout/ProfileLayout';
+import ChangeUsername from '../ChangeUsername/ChangeUsername';
 
 import { FloatButton } from 'antd';
 
@@ -25,6 +26,7 @@ const Main = () => {
 
                     <Route path={paths.profilePath} element={<ProfileLayout />}>
                         <Route index element={<Profile />} />
+                        <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
                     </Route>
 
                     <Route path={paths.homePath} element={<Home />} />

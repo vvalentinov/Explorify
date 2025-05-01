@@ -20,13 +20,12 @@ const Home = () => {
             window.history.replaceState({}, '');
         }
 
-        if (location.state?.successfullPlaceUpload) {
-            openNotificationWithIcon(
-                'success',
-                'Successfull place upload!',
-                'When an admin approves your place it will become visible on the site!');
+        if (location.state?.successOperation) {
+            const message = location.state?.successOperation?.message;
+            openNotificationWithIcon('success', message);
             window.history.replaceState({}, '');
         }
+
     }, [location.state]);
 
     return (

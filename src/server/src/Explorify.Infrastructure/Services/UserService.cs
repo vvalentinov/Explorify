@@ -29,8 +29,17 @@ public class UserService : IUserService
 
         user.UserName = newUserName;
 
-        await _userManager.UpdateAsync(user);
+        var identityResult = await _userManager.UpdateAsync(user);
 
-        return Result.Success();
+        if (identityResult.Succeeded == false)
+        {
+            var error = new Error(
+                identityResult.Errors.Select(e => e.Description).First(),
+                ErrorType.Validation);
+
+            return Result.Failure(error);
+        }
+
+        return Result.Success($"Successfully changed your username to: {newUserName}");
     }
 }

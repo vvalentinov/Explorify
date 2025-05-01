@@ -12,6 +12,8 @@ export const placesInSubcategoryPath = '/categories/:categoryName/:subcategoryNa
 
 export const profilePath = '/account';
 
+export const changeUsernamePath = '/account/change-username';
+
 export const logoutPath = '/account/logout';
 
 export const uploadPlacePath = '/place/upload';
