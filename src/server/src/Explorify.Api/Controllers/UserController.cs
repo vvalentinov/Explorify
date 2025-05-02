@@ -3,6 +3,7 @@ using Explorify.Application.Identity.Login;
 using Explorify.Application.Identity.Models;
 using Explorify.Application.Identity.Register;
 using Explorify.Application.User.ChangeUserName;
+using Explorify.Application.User.ChangePassword;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -60,4 +61,13 @@ public class UserController : BaseController
         => this.OkOrProblemDetails(
                 await _mediator.Send(
                     new ChangeUserNameCommand(User.GetId(), model.UserName)));
+
+    [HttpPost(nameof(ChangePassword))]
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequestModel model)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new ChangePasswordCommand(
+                        User.GetId(),
+                        model.OldPassword,
+                        model.NewPassword)));
 }

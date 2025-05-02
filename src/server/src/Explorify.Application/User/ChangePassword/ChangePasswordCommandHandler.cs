@@ -2,22 +2,23 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangeUserName;
+namespace Explorify.Application.User.ChangePassword;
 
-public class ChangeUserNameCommandHandler
-    : ICommandHandler<ChangeUserNameCommand>
+public class ChangePasswordCommandHandler
+    : ICommandHandler<ChangePasswordCommand>
 {
     private readonly IUserService _userService;
 
-    public ChangeUserNameCommandHandler(IUserService userService)
+    public ChangePasswordCommandHandler(IUserService userService)
     {
         _userService = userService;
     }
 
     public async Task<Result> Handle(
-        ChangeUserNameCommand request,
+        ChangePasswordCommand request,
         CancellationToken cancellationToken)
-        => await _userService.ChangeUserNameAsync(
+        => await _userService.ChangePasswordAsync(
                 request.UserId,
-                request.NewUserName);
+                request.OldPassword,
+                request.NewPassword);
 }

@@ -7,4 +7,9 @@ public interface IUserService
     Task<Result> ChangeUserNameAsync(
         Guid userId,
         string newUserName);
+
+    Task<Result> ChangePasswordAsync(
+        Guid userId,
+        string oldPassword,
+        string newPassword);
 }

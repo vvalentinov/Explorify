@@ -15,6 +15,36 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
+    public async Task<Result> ChangePasswordAsync(
+        Guid userId,
+        string oldPassword,
+        string newPassword)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user == null)
+        {
+            var error = new Error("No user with given id found!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
+        var changePassResult = await _userManager.ChangePasswordAsync(
+            user,
+            oldPassword,
+            newPassword);
+
+        if (changePassResult.Succeeded == false)
+        {
+            var error = new Error(
+                changePassResult.Errors.Select(e => e.Description).First(),
+                ErrorType.Validation);
+
+            return Result.Failure(error);
+        }
+
+        return Result.Success($"Successfully changed password!");
+    }
+
     public async Task<Result> ChangeUserNameAsync(
         Guid userId,
         string newUserName)
