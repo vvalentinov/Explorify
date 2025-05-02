@@ -9,7 +9,7 @@ import {
     ProfileOutlined,
 } from '@ant-design/icons';
 
-import { changeUsernamePath, profilePath } from "../../constants/paths";
+import { changePasswordPath, changeUsernamePath, profilePath } from "../../constants/paths";
 
 const items = [
     {
@@ -24,7 +24,7 @@ const items = [
     },
     {
         key: 'change-password',
-        label: 'Change Password',
+        label: <Link to={changePasswordPath}>Change Password</Link>,
         icon: <SettingOutlined style={{ fontSize: '1.3rem' }} />,
     },
     {
