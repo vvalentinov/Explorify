@@ -5,18 +5,48 @@ using Explorify.Application.Abstractions.Interfaces;
 
 using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
+using static Explorify.Domain.Constants.EmailConstants;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Application.Abstractions.Email;
+using System.Web;
+using System.Text.Encodings.Web;
 
 namespace Explorify.Infrastructure.Services;
 
 public class UserService : IUserService
 {
+    private readonly IEmailSender _emailSender;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public UserService(
+        UserManager<ApplicationUser> userManager,
+        IEmailSender emailSender)
     {
         _userManager = userManager;
+        _emailSender = emailSender;
+    }
+
+    public async Task<Result> ChangeEmailAsync(
+        string userId,
+        string newEmail,
+        string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Result.Failure(new Error(NoUserWithIdFoundError, ErrorType.Validation));
+        }
+
+        var changeEmailResult = await _userManager.ChangeEmailAsync(user, newEmail, token);
+
+        if (changeEmailResult.Succeeded == false)
+        {
+            return Result.Failure();
+        }
+
+        return Result.Success();
     }
 
     public async Task<Result> ChangePasswordAsync(
@@ -86,5 +116,29 @@ public class UserService : IUserService
         }
 
         return Result.Success();
+    }
+
+    public async Task SendEmailChangeAsync(string newEmail, string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
+
+        var encodedToken = HttpUtility.UrlEncode(token);
+
+        var changeEmailLink = $"https://localhost:7189/api/User/ChangeEmail?userId={user.Id}&token={encodedToken}&newEmail={newEmail}";
+
+        var safeLink = HtmlEncoder.Default.Encode(changeEmailLink);
+
+        var subject = "Email Change!";
+
+        var messageBody = GetEmailChangeBody(safeLink);
+
+        await _emailSender.SendEmailAsync(
+            "noreply@explorify.click",
+            "Explorify",
+            newEmail,
+            subject,
+            messageBody);
     }
 }

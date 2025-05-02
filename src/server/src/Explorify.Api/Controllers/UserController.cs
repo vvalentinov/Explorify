@@ -8,16 +8,22 @@ using Explorify.Application.User.ChangePassword;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.User.ChangeEmail;
+using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Api.Controllers;
 
 public class UserController : BaseController
 {
     private readonly IMediator _mediator;
+    private readonly IUserService _userService;
 
-    public UserController(IMediator mediator)
+    public UserController(
+        IMediator mediator,
+        IUserService userService)
     {
         _mediator = mediator;
+        _userService = userService;
     }
 
     [AllowAnonymous]
@@ -80,5 +86,23 @@ public class UserController : BaseController
         return Redirect(result.IsSuccess
             ? "http://localhost:5173/?emailConfirmed=true"
             : "http://localhost:5173/?emailConfirmed=false");
+    }
+
+    [HttpPost(nameof(RequestEmailChange))]
+    public async Task<IActionResult> RequestEmailChange(EmailChangeRequestModel model)
+    {
+        await _userService.SendEmailChangeAsync(model.NewEmail, User.GetId().ToString());
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpGet(nameof(ChangeEmail))]
+    public async Task<IActionResult> ChangeEmail(string userId, string token, string newEmail)
+    {
+        var result = await _mediator.Send(new ChangeEmailCommand(userId, token, newEmail));
+
+        return Redirect(result.IsSuccess
+            ? "http://localhost:5173/?emailChanged=true"
+            : "http://localhost:5173/?emailChanged=false");
     }
 }
