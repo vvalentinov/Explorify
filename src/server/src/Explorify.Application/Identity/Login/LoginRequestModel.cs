@@ -1,6 +1,6 @@
-﻿namespace Explorify.Application.Identity.Models;
+﻿namespace Explorify.Application.Identity.Login;
 
-public class IdentityRequestModel
+public class LoginRequestModel
 {
     public string UserName { get; set; } = string.Empty;
 

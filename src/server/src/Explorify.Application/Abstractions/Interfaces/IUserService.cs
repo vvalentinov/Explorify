@@ -13,7 +13,7 @@ public interface IUserService
         string oldPassword,
         string newPassword);
 
-    //Task<Result> SendEmailConfirmationLink(
-    //    string email,
-    //    Guid userId);
+    Task<Result> ConfirmEmailAsync(
+        string userId,
+        string token);
 }

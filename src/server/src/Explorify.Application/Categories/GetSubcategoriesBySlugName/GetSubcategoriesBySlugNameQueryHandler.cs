@@ -3,7 +3,7 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using static Explorify.Domain.Constants.CategoryConstants;
+using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
 using Microsoft.EntityFrameworkCore;
 using Explorify.Application.Categories.GetSubcategoriesByName;

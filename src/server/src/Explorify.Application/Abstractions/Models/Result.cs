@@ -32,6 +32,8 @@ public class Result
     public static Result Success(string? successMsg = null)
         => new Result(true, Error.None, successMsg);
 
+    public static Result Failure() => new Result(false, Error.None);
+
     public static Result Failure(Error error)
         => new Result(false, error, string.Empty);
 

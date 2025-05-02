@@ -1,8 +1,11 @@
 ﻿using Explorify.Persistence.Identity;
+using Explorify.Infrastructure.Extensions;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 
-using Microsoft.AspNetCore.Http;
+using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
+using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Explorify.Infrastructure.Services;
@@ -16,23 +19,6 @@ public class UserService : IUserService
         _userManager = userManager;
     }
 
-    //public async Task<Result> SendEmailConfirmationLink(
-    //    string email,
-    //    Guid userId)
-    //{
-    //    var user = await _userManager.FindByIdAsync(userId.ToString());
-
-    //    if (user == null)
-    //    {
-    //        var error = new Error("No user with given id found!", ErrorType.Validation);
-    //        return Result.Failure(error);
-    //    }
-
-    //    string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-    //    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Token = token }, HttpContext.Request.Scheme);
-    //}
-
     public async Task<Result> ChangePasswordAsync(
         Guid userId,
         string oldPassword,
@@ -42,8 +28,7 @@ public class UserService : IUserService
 
         if (user == null)
         {
-            var error = new Error("No user with given id found!", ErrorType.Validation);
-            return Result.Failure(error);
+            return Result.Failure(new Error(NoUserWithIdFoundError, ErrorType.Validation));
         }
 
         var changePassResult = await _userManager.ChangePasswordAsync(
@@ -53,14 +38,11 @@ public class UserService : IUserService
 
         if (changePassResult.Succeeded == false)
         {
-            var error = new Error(
-                changePassResult.Errors.Select(e => e.Description).First(),
-                ErrorType.Validation);
-
+            var error = new Error(changePassResult.GetFirstError(), ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        return Result.Success($"Successfully changed password!");
+        return Result.Success(PasswordChangeSuccess);
     }
 
     public async Task<Result> ChangeUserNameAsync(
@@ -71,8 +53,7 @@ public class UserService : IUserService
 
         if (user == null)
         {
-            var error = new Error("No user with given id found!", ErrorType.Validation);
-            return Result.Failure(error);
+            return Result.Failure(new Error(NoUserWithIdFoundError, ErrorType.Validation));
         }
 
         user.UserName = newUserName;
@@ -81,13 +62,29 @@ public class UserService : IUserService
 
         if (identityResult.Succeeded == false)
         {
-            var error = new Error(
-                identityResult.Errors.Select(e => e.Description).First(),
-                ErrorType.Validation);
-
+            var error = new Error(identityResult.GetFirstError(), ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        return Result.Success($"Successfully changed your username to: {newUserName}");
+        return Result.Success(UsernameChangeSuccess(newUserName));
+    }
+
+    public async Task<Result> ConfirmEmailAsync(string userId, string token)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Result.Failure();
+        }
+
+        var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, token);
+
+        if (confirmEmailResult.Succeeded == false)
+        {
+            return Result.Failure();
+        }
+
+        return Result.Success();
     }
 }

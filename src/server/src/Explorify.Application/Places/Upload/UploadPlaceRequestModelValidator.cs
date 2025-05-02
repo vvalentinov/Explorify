@@ -1,8 +1,13 @@
 ﻿using FluentValidation;
 
 using static Explorify.Domain.Constants.PlaceConstants;
+using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+
 using static Explorify.Domain.Constants.ImageConstants;
+using static Explorify.Domain.Constants.ImageConstants.ErrorMessages;
+
 using static Explorify.Domain.Constants.ReviewConstants;
+using static Explorify.Domain.Constants.ReviewConstants.ErrorMessages;
 
 namespace Explorify.Application.Places.Upload;
 

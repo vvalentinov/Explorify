@@ -1,7 +1,6 @@
-﻿using Explorify.Application.Identity.Models;
-using Explorify.Application.Abstractions.Interfaces.Messaging;
+﻿using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 namespace Explorify.Application.Identity.Register;
 
-public record RegisterCommand(IdentityRequestModel Model)
+public record RegisterCommand(RegisterRequestModel Model)
     : ICommand<AuthResponseModel>;

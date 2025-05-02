@@ -1,7 +1,7 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Identity.Login;
-using Explorify.Application.Identity.Models;
 using Explorify.Application.Identity.Register;
+using Explorify.Application.User.ConfirmEmail;
 using Explorify.Application.User.ChangeUserName;
 using Explorify.Application.User.ChangePassword;
 
@@ -22,7 +22,7 @@ public class UserController : BaseController
 
     [AllowAnonymous]
     [HttpPost(nameof(Login))]
-    public async Task<IActionResult> Login(IdentityRequestModel model)
+    public async Task<IActionResult> Login(LoginRequestModel model)
     {
         var loginRequestQuery = new LoginQuery(model);
 
@@ -40,7 +40,7 @@ public class UserController : BaseController
 
     [AllowAnonymous]
     [HttpPost(nameof(Register))]
-    public async Task<IActionResult> Register(IdentityRequestModel model)
+    public async Task<IActionResult> Register(RegisterRequestModel model)
     {
         var registerCommand = new RegisterCommand(model);
 
@@ -70,4 +70,15 @@ public class UserController : BaseController
                         User.GetId(),
                         model.OldPassword,
                         model.NewPassword)));
+
+    [AllowAnonymous]
+    [HttpGet(nameof(ConfirmEmail))]
+    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    {
+        var result = await _mediator.Send(new ConfirmEmailCommand(userId, token));
+
+        return Redirect(result.IsSuccess
+            ? "http://localhost:5173/?emailConfirmed=true"
+            : "http://localhost:5173/?emailConfirmed=false");
+    }
 }
