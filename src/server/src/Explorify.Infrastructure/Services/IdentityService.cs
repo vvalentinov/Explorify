@@ -12,8 +12,11 @@ using Explorify.Application.Abstractions.Interfaces;
 
 using static Explorify.Domain.Constants.EmailConstants;
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
+using static Explorify.Domain.Constants.IdentityConstants.ErrorMessages;
+using static Explorify.Domain.Constants.IdentityConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Infrastructure.Extensions;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -22,6 +25,7 @@ public class IdentityService : IIdentityService
     private readonly IRepository _repository;
     private readonly IEmailSender _emailSender;
     private readonly ITokenService _tokenService;
+
     private readonly UserManager<ApplicationUser> _userManager;
 
     public IdentityService(
@@ -42,7 +46,7 @@ public class IdentityService : IIdentityService
 
         if (user is null)
         {
-            var error = new Error("Login failed. Try, again!", ErrorType.Validation);
+            var error = new Error(LoginFailedError, ErrorType.Validation);
             return Result.Failure<AuthResponseModel>(error);
         }
 
@@ -50,7 +54,7 @@ public class IdentityService : IIdentityService
 
         if (passwordValid == false)
         {
-            var error = new Error("Login failed. Try, again!", ErrorType.Validation);
+            var error = new Error(LoginFailedError, ErrorType.Validation);
             return Result.Failure<AuthResponseModel>(error);
         }
 
@@ -96,7 +100,7 @@ public class IdentityService : IIdentityService
             RefreshToken = refreshToken
         };
 
-        return Result.Success(authResponseModel, "Successfull login!");
+        return Result.Success(authResponseModel, LoginSuccess);
     }
 
     public async Task<Result<AuthResponseModel>> RegisterUserAsync(RegisterRequestModel model)
@@ -105,7 +109,7 @@ public class IdentityService : IIdentityService
 
         if (user is not null)
         {
-            var error = new Error("Looks like username is taken!", ErrorType.Validation);
+            var error = new Error(TakenUserNameError, ErrorType.Validation);
             return Result.Failure<AuthResponseModel>(error);
         }
 
@@ -117,13 +121,12 @@ public class IdentityService : IIdentityService
         {
             var errorType = ErrorType.Validation;
 
-            if (createUserResult.Errors.Any(e => e.Code == "DuplicateUserName" ||
-                e.Code == "DuplicateEmail"))
+            if (createUserResult.HasDuplicateUserNameOrEmailErrors())
             {
                 errorType = ErrorType.Conflict;
             }
 
-            var error = new Error("Error: Could not create a user!", errorType);
+            var error = new Error(CouldNotCreateUserError, errorType);
             return Result.Failure<AuthResponseModel>(error);
         }
 
@@ -131,7 +134,7 @@ public class IdentityService : IIdentityService
 
         if (addToUserRoleResult.Succeeded == false)
         {
-            var error = new Error("Error: Could not add user to role!", ErrorType.Failure);
+            var error = new Error(CouldNotAddUserToRoleError, ErrorType.Failure);
             return Result.Failure<AuthResponseModel>(error);
         }
 
@@ -171,7 +174,7 @@ public class IdentityService : IIdentityService
 
         await SendConfirmationEmailAsync(model.Email, user);
 
-        return Result.Success(authResponseModel, "Successfull register!");
+        return Result.Success(authResponseModel, RegisterSuccess);
     }
 
     private async Task SendConfirmationEmailAsync(string email, ApplicationUser user)

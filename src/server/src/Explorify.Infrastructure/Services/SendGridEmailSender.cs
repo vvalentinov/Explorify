@@ -4,7 +4,7 @@ using Explorify.Application.Abstractions.Email;
 
 using Microsoft.Extensions.Configuration;
 
-namespace Explorify.Infrastructure;
+namespace Explorify.Infrastructure.Services;
 
 public class SendGridEmailSender : IEmailSender
 {

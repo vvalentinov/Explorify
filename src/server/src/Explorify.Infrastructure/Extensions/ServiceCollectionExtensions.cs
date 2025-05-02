@@ -88,9 +88,11 @@ public static class ServiceCollectionExtensions
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = false,
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.Issuer,
                     ValidateLifetime = true,
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings.Audience,
                     ClockSkew = TimeSpan.Zero,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(signKey),

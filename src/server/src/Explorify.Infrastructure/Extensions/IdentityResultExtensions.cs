@@ -13,4 +13,7 @@ public static class IdentityResultExtensions
 
         return string.Empty;
     }
+
+    public static bool HasDuplicateUserNameOrEmailErrors(this IdentityResult result)
+        => result.Errors.Any(e => e.Code == "DuplicateUserName" || e.Code == "DuplicateEmail");
 }

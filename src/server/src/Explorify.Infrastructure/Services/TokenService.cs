@@ -41,6 +41,8 @@ public class TokenService : ITokenService
             Expires = DateTime.UtcNow.AddMinutes(50),
             SigningCredentials = signingCredentials,
             EncryptingCredentials = encryptingCredentials,
+            Issuer = _jwtSettings.Issuer,
+            Audience = _jwtSettings.Audience
         };
 
         string accessToken = new JsonWebTokenHandler().CreateToken(tokenDescriptor);
