@@ -5,7 +5,7 @@ using Explorify.Application.Abstractions.Interfaces.Messaging;
 namespace Explorify.Application.Identity.Register;
 
 public class RegisterCommandHandler
-    : ICommandHandler<RegisterCommand, (IdentityResponseModel IdentityModel, string RefreshToken)>
+    : ICommandHandler<RegisterCommand, AuthResponseModel>
 {
     private readonly IIdentityService _identityService;
 
@@ -14,7 +14,7 @@ public class RegisterCommandHandler
         _identityService = identityService;
     }
 
-    public async Task<Result<(IdentityResponseModel IdentityModel, string RefreshToken)>> Handle(
+    public async Task<Result<AuthResponseModel>> Handle(
         RegisterCommand request,
         CancellationToken cancellationToken)
             => await _identityService.RegisterUserAsync(request.Model);

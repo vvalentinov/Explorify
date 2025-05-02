@@ -2,6 +2,7 @@
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace Explorify.Infrastructure.Services;
@@ -14,6 +15,23 @@ public class UserService : IUserService
     {
         _userManager = userManager;
     }
+
+    //public async Task<Result> SendEmailConfirmationLink(
+    //    string email,
+    //    Guid userId)
+    //{
+    //    var user = await _userManager.FindByIdAsync(userId.ToString());
+
+    //    if (user == null)
+    //    {
+    //        var error = new Error("No user with given id found!", ErrorType.Validation);
+    //        return Result.Failure(error);
+    //    }
+
+    //    string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+    //    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { UserId = user.Id, Token = token }, HttpContext.Request.Scheme);
+    //}
 
     public async Task<Result> ChangePasswordAsync(
         Guid userId,

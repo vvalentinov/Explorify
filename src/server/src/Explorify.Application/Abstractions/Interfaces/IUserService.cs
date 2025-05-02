@@ -12,4 +12,8 @@ public interface IUserService
         Guid userId,
         string oldPassword,
         string newPassword);
+
+    //Task<Result> SendEmailConfirmationLink(
+    //    string email,
+    //    Guid userId);
 }

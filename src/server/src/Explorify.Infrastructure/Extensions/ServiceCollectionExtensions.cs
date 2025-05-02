@@ -1,10 +1,13 @@
 ﻿using System.Text;
+using Explorify.Persistence;
+using Explorify.Persistence.Identity;
 using Explorify.Application.Identity;
 using Explorify.Infrastructure.Settings;
 using Explorify.Infrastructure.Services;
 using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Interfaces;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +22,7 @@ public static class ServiceCollectionExtensions
        IConfiguration configuration)
     {
         services
+            .AddIdentity()
             .ConfigureSettings(configuration)
             .AddTransient<ITokenService, TokenService>()
             .AddScoped<IIdentityService, IdentityService>()
@@ -27,6 +31,23 @@ public static class ServiceCollectionExtensions
             .AddScoped<IUserService, UserService>()
             .AddScoped<IEmailSender, SendGridEmailSender>()
             .AddJwtAuthentication(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddIdentity(this IServiceCollection services)
+    {
+        services
+            .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<ExplorifyDbContext>()
+            .AddDefaultTokenProviders();
 
         return services;
     }

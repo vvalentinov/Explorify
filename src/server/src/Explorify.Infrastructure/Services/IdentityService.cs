@@ -28,14 +28,14 @@ public class IdentityService : IIdentityService
         _tokenService = tokenService;
     }
 
-    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> LoginUserAsync(IdentityRequestModel model)
+    public async Task<Result<AuthResponseModel>> LoginUserAsync(IdentityRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
 
         if (user is null)
         {
             var error = new Error("Login failed. Try, again!", ErrorType.Validation);
-            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+            return Result.Failure<AuthResponseModel>(error);
         }
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
@@ -43,7 +43,7 @@ public class IdentityService : IIdentityService
         if (passwordValid == false)
         {
             var error = new Error("Login failed. Try, again!", ErrorType.Validation);
-            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+            return Result.Failure<AuthResponseModel>(error);
         }
 
         var isAdmin = await _userManager.IsInRoleAsync(user, AdminRoleName);
@@ -82,19 +82,23 @@ public class IdentityService : IIdentityService
             UserName = user.UserName ?? string.Empty,
         };
 
-        return Result.Success<(IdentityResponseModel IdentityModel, string RefreshToken)>(
-            (identityResponseModel, refreshToken),
-            "Successfull login!");
+        var authResponseModel = new AuthResponseModel
+        {
+            IdentityModel = identityResponseModel,
+            RefreshToken = refreshToken
+        };
+
+        return Result.Success(authResponseModel, "Successfull login!");
     }
 
-    public async Task<Result<(IdentityResponseModel Identity, string RefreshToken)>> RegisterUserAsync(IdentityRequestModel model)
+    public async Task<Result<AuthResponseModel>> RegisterUserAsync(IdentityRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);
 
         if (user is not null)
         {
             var error = new Error("Looks like username is taken!", ErrorType.Validation);
-            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+            return Result.Failure<AuthResponseModel>(error);
         }
 
         user = new ApplicationUser { UserName = model.UserName };
@@ -112,7 +116,7 @@ public class IdentityService : IIdentityService
             }
 
             var error = new Error("Error: Could not create a user!", errorType);
-            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+            return Result.Failure<AuthResponseModel>(error);
         }
 
         var addToUserRoleResult = await _userManager.AddToRoleAsync(user, UserRoleName);
@@ -120,7 +124,7 @@ public class IdentityService : IIdentityService
         if (addToUserRoleResult.Succeeded == false)
         {
             var error = new Error("Error: Could not add user to role!", ErrorType.Failure);
-            return Result.Failure<(IdentityResponseModel Identity, string RefreshToken)>(error);
+            return Result.Failure<AuthResponseModel>(error);
         }
 
         var claims = new List<Claim>
@@ -151,8 +155,12 @@ public class IdentityService : IIdentityService
             UserName = user.UserName ?? string.Empty,
         };
 
-        return Result.Success<(IdentityResponseModel IdentityModel, string RefreshToken)>(
-            (identityResponseModel, refreshToken),
-            "Successfull register!");
+        var authResponseModel = new AuthResponseModel
+        {
+            RefreshToken = refreshToken,
+            IdentityModel = identityResponseModel,
+        };
+
+        return Result.Success(authResponseModel, "Successfull register!");
     }
 }

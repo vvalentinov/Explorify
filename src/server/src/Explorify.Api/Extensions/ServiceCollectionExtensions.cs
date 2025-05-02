@@ -1,6 +1,4 @@
-﻿using Explorify.Persistence;
-using Explorify.Persistence.Identity;
-using Explorify.Persistence.Extensions;
+﻿using Explorify.Persistence.Extensions;
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
@@ -21,20 +19,6 @@ public static class ServiceCollectionExtensions
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-        services.AddFluentValidationAutoValidation(config =>
-        {
-            config.OverrideDefaultResultFactoryWith<CustomResultFactory>();
-        });
-
-        services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
-        {
-            options.Password.RequiredLength = 6;
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-        }).AddEntityFrameworkStores<ExplorifyDbContext>();
-
         services
             .AddPersistence(configuration)
             .AddInfrastructure(configuration)
@@ -42,7 +26,18 @@ public static class ServiceCollectionExtensions
             .AddSwaggerGen()
             .AddAuthorization()
             .AddEndpointsApiExplorer()
-            .AddCors(options => options.AddPolicy("CorsPolicy",
+            .AddCORS()
+            .AddFluentValidationAutoValidation(config =>
+            {
+                config.OverrideDefaultResultFactoryWith<CustomResultFactory>();
+            });
+
+        return services;
+    }
+
+    private static IServiceCollection AddCORS(this IServiceCollection services)
+    {
+        services.AddCors(options => options.AddPolicy("CorsPolicy",
                 builder =>
                 {
                     builder.AllowAnyHeader()
