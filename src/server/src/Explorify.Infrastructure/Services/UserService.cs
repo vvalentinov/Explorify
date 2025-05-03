@@ -1,16 +1,17 @@
-﻿using Explorify.Persistence.Identity;
+﻿using System.Web;
+using System.Text.Encodings.Web;
+
+using Explorify.Persistence.Identity;
 using Explorify.Infrastructure.Extensions;
+using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 
+using static Explorify.Domain.Constants.EmailConstants;
 using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
-using static Explorify.Domain.Constants.EmailConstants;
 
 using Microsoft.AspNetCore.Identity;
-using Explorify.Application.Abstractions.Email;
-using System.Web;
-using System.Text.Encodings.Web;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -147,5 +148,59 @@ public class UserService : IUserService
             messageBody);
 
         return Result.Success($"Successfully send an email to: {newEmail}");
+    }
+
+    // TODO: Handle uncomfirmed emails
+    public async Task<Result> SendForgotPasswordEmailAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            return Result.Failure();
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        var encodedToken = HttpUtility.UrlEncode(token);
+
+        var changeEmailLink = $"http://localhost:5173/account/reset-password?token={encodedToken}&email={email}";
+
+        var safeLink = HtmlEncoder.Default.Encode(changeEmailLink);
+
+        var subject = "Reset Your Password";
+
+        var messageBody = GetPasswordResetBody(
+            user.UserName ?? string.Empty,
+            safeLink);
+
+        await _emailSender.SendEmailAsync(
+            "noreply@explorify.click",
+            "Explorify",
+            email,
+            subject,
+            messageBody);
+
+        return Result.Success($"Successfully send a password reset email to: {email}");
+    }
+
+    public async Task<Result> ResetPasswordAsync(string email, string token, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            return Result.Failure();
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, token, password);
+
+        if (result.Succeeded)
+        {
+            return Result.Success("Successfully reseted password!");
+        }
+
+        var error = new Error(result.GetFirstError(), ErrorType.Validation);
+        return Result.Failure(error);
     }
 }

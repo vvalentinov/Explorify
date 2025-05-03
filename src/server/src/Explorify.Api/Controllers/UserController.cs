@@ -1,4 +1,5 @@
 ﻿using Explorify.Api.Extensions;
+using Explorify.Application.User;
 using Explorify.Application.Identity.Login;
 using Explorify.Application.User.ChangeEmail;
 using Explorify.Application.Identity.Register;
@@ -107,5 +108,26 @@ public class UserController : BaseController
         return Redirect(result.IsSuccess
             ? "http://localhost:5173/?emailChanged=true"
             : "http://localhost:5173/?emailChanged=false");
+    }
+
+    [AllowAnonymous]
+    [HttpPost(nameof(ForgotPassword))]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestModel model)
+    {
+        var result = await _userService.SendForgotPasswordEmailAsync(model.Email);
+
+        return this.OkOrProblemDetails(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost(nameof(ResetPassword))]
+    public async Task<IActionResult> ResetPassword(ResetPasswordRequestModel model)
+    {
+        var result = await _mediator.Send(new ResetPasswordCommand(
+            model.Email,
+            model.Token,
+            model.Password));
+
+        return this.OkOrProblemDetails(result);
     }
 }

@@ -25,4 +25,12 @@ public interface IUserService
     Task<Result> SendEmailChangeAsync(
         string newEmail,
         string userId);
+
+    Task<Result> SendForgotPasswordEmailAsync(
+        string email);
+
+    Task<Result> ResetPasswordAsync(
+        string email,
+        string token,
+        string password);
 }
