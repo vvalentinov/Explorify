@@ -3,7 +3,7 @@ import styles from './SignUp.module.css';
 import { useContext } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Grid, Input, theme, Typography, ConfigProvider, Anchor } from "antd";
 
 import { signInPath, homePath } from '../../constants/paths';
@@ -20,9 +20,9 @@ const SignUp = () => {
 
     const { userLogin } = useContext(AuthContext);
 
-    const onFinish = (values) => {
+    const onFinish = (data) => {
         authService
-            .register(values)
+            .register(data)
             .then(res => {
                 console.log(res);
                 userLogin(res);
@@ -66,6 +66,22 @@ const SignUp = () => {
                                 style={{ fontSize: '18px' }}
                                 prefix={<UserOutlined />}
                                 placeholder="Username"
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="email"
+                            rules={[
+                                {
+                                    type: "email",
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Input
+                                size='large'
+                                style={{ fontSize: '18px' }}
+                                prefix={<MailOutlined />}
+                                placeholder="Email"
                             />
                         </Form.Item>
                         <Form.Item

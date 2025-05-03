@@ -9,7 +9,7 @@ import {
     ProfileOutlined,
 } from '@ant-design/icons';
 
-import { changePasswordPath, changeUsernamePath, profilePath } from "../../constants/paths";
+import { changePasswordPath, changeUsernamePath, profilePath, changeEmailPath } from "../../constants/paths";
 
 const items = [
     {
@@ -29,7 +29,7 @@ const items = [
     },
     {
         key: 'change-email',
-        label: 'Change Email',
+        label: <Link to={changeEmailPath}>Change Email</Link>,
         icon: <MailOutlined style={{ fontSize: '1.3rem' }} />,
     }
 ];

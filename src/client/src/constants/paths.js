@@ -16,6 +16,8 @@ export const changeUsernamePath = '/account/change-username';
 
 export const changePasswordPath = '/account/change-password';
 
+export const changeEmailPath = '/account/change-email';
+
 export const logoutPath = '/account/logout';
 
 export const uploadPlacePath = '/place/upload';

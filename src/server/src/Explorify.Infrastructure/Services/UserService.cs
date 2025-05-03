@@ -118,9 +118,14 @@ public class UserService : IUserService
         return Result.Success();
     }
 
-    public async Task SendEmailChangeAsync(string newEmail, string userId)
+    public async Task<Result> SendEmailChangeAsync(string newEmail, string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Result.Failure();
+        }
 
         var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
 
@@ -140,5 +145,7 @@ public class UserService : IUserService
             newEmail,
             subject,
             messageBody);
+
+        return Result.Success($"Successfully send an email to: {newEmail}");
     }
 }

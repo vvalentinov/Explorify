@@ -14,6 +14,7 @@ import PlaceDetails from '../PlaceDetails/PlaceDetails';
 import ProfileLayout from '../ProfileLayout/ProfileLayout';
 import ChangeUsername from '../ChangeUsername/ChangeUsername';
 import ChangePassword from '../ChangePassword/ChangePassword';
+import ChangeEmail from '../ChangeEmail/ChangeEmail';
 
 import { FloatButton } from 'antd';
 
@@ -29,6 +30,7 @@ const Main = () => {
                         <Route index element={<Profile />} />
                         <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
                         <Route path={paths.changePasswordPath} element={<ChangePassword />} />
+                        <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
                     </Route>
 
                     <Route path={paths.homePath} element={<Home />} />

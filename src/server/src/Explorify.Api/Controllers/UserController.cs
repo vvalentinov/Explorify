@@ -1,15 +1,15 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Identity.Login;
+using Explorify.Application.User.ChangeEmail;
 using Explorify.Application.Identity.Register;
 using Explorify.Application.User.ConfirmEmail;
 using Explorify.Application.User.ChangeUserName;
 using Explorify.Application.User.ChangePassword;
+using Explorify.Application.Abstractions.Interfaces;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.User.ChangeEmail;
-using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Api.Controllers;
 
@@ -91,8 +91,11 @@ public class UserController : BaseController
     [HttpPost(nameof(RequestEmailChange))]
     public async Task<IActionResult> RequestEmailChange(EmailChangeRequestModel model)
     {
-        await _userService.SendEmailChangeAsync(model.NewEmail, User.GetId().ToString());
-        return Ok();
+        var result = await _userService.SendEmailChangeAsync(
+            model.NewEmail,
+            User.GetId().ToString());
+
+        return this.OkOrProblemDetails(result);
     }
 
     [AllowAnonymous]

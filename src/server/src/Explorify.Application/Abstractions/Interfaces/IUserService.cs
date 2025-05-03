@@ -22,5 +22,7 @@ public interface IUserService
         string newEmail,
         string token);
 
-    Task SendEmailChangeAsync(string newEmail, string userId);
+    Task<Result> SendEmailChangeAsync(
+        string newEmail,
+        string userId);
 }

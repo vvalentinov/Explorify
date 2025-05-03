@@ -26,6 +26,48 @@ const Home = () => {
             window.history.replaceState({}, '');
         }
 
+        const searchParams = new URLSearchParams(location.search);
+
+        if (searchParams.get("emailConfirmed") === "true") {
+            openNotificationWithIcon(
+                'success',
+                'Email Confirmed',
+                'Your email has been successfully confirmed.'
+            );
+            const url = new URL(window.location);
+            url.searchParams.delete("emailConfirmed");
+            window.history.replaceState({}, '', url);
+        } else if (searchParams.get("emailConfirmed") === "false") {
+            openNotificationWithIcon(
+                'error',
+                'Error',
+                'Error with confirming your email!'
+            );
+            const url = new URL(window.location);
+            url.searchParams.delete("emailConfirmed");
+            window.history.replaceState({}, '', url);
+        }
+
+        if (searchParams.get("emailChanged") === "true") {
+            openNotificationWithIcon(
+                'success',
+                'Email Changes',
+                'Your email has been successfully changed.'
+            );
+            const url = new URL(window.location);
+            url.searchParams.delete("emailChanged");
+            window.history.replaceState({}, '', url);
+        } else if (searchParams.get("emailChanged") === "false") {
+            openNotificationWithIcon(
+                'error',
+                'Error',
+                'Error with changing your email!'
+            );
+            const url = new URL(window.location);
+            url.searchParams.delete("emailChanged");
+            window.history.replaceState({}, '', url);
+        }
+
     }, [location.state]);
 
     return (
