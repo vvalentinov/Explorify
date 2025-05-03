@@ -15,6 +15,8 @@ import ProfileLayout from '../ProfileLayout/ProfileLayout';
 import ChangeUsername from '../ChangeUsername/ChangeUsername';
 import ChangePassword from '../ChangePassword/ChangePassword';
 import ChangeEmail from '../ChangeEmail/ChangeEmail';
+import ForgotPassword from '../ForgotPassword/ForgotPassword';
+import ResetPassword from '../ResetPassword/ResetPassword';
 
 import { FloatButton } from 'antd';
 
@@ -42,6 +44,9 @@ const Main = () => {
                     <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                     <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
                     <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
+
+                    <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
+                    <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
                     <Route path='*' element={<NoPathFound />} />
                 </Routes>

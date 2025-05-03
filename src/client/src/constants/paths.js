@@ -16,6 +16,10 @@ export const changeUsernamePath = '/account/change-username';
 
 export const changePasswordPath = '/account/change-password';
 
+export const forgotPasswordPath = '/account/forgot-password';
+
+export const resetPasswordPath = '/account/reset-password';
+
 export const changeEmailPath = '/account/change-email';
 
 export const logoutPath = '/account/logout';

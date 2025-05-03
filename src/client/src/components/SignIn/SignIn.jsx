@@ -4,10 +4,10 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Typography, ConfigProvider, Image } from "antd";
 
 import { useContext } from 'react';
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 
 import { AuthContext } from '../../contexts/AuthContext';
-import { signUpPath, homePath } from '../../constants/paths';
+import { signUpPath, homePath, forgotPasswordPath } from '../../constants/paths';
 import { authServiceFactory } from '../../services/authService';
 
 import myImage from '../../assets/image.png';
@@ -114,6 +114,9 @@ const SignIn = () => {
                             <div className={styles.footer}>
                                 <Text className={styles.text}>Don't have an account?</Text>{" "}
                                 <NavLink style={{ color: '#00aed7', fontStyle: 'italic' }} to={signUpPath}>Sign up now</NavLink>
+                            </div>
+                            <div className={styles.footer}>
+                                <Link style={{ color: '#00aed7', fontStyle: 'italic' }} to={forgotPasswordPath}>Forgot Password?</Link>
                             </div>
                         </Form.Item>
                     </Form>

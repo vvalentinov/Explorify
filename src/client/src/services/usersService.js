@@ -7,6 +7,8 @@ export const usersServiceFactory = (token) => {
     return {
         changeUserName: (data) => request.post(`${baseUrl}/User/ChangeUsername`, data),
         changePassword: (data) => request.post(`${baseUrl}/User/ChangePassword`, data),
-        changeEmail: (data) => request.post(`${baseUrl}/User/RequestEmailChange`, data)
+        changeEmail: (data) => request.post(`${baseUrl}/User/RequestEmailChange`, data),
+        forgotPassword: (data) => request.post(`${baseUrl}/User/ForgotPassword`, data),
+        resetPassword: (data) => request.post(`${baseUrl}/User/ResetPassword`, data)
     }
 };
