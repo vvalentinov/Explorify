@@ -26,5 +26,7 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
         builder.Property(x => x.AccessFailedCount).HasColumnOrder(14);
         builder.Property(x => x.CreatedOn).HasColumnOrder(15);
         builder.Property(x => x.ModifiedOn).HasColumnOrder(16);
+
+        builder.Property(x => x.ProfileImageUrl).HasMaxLength(300);
     }
 }

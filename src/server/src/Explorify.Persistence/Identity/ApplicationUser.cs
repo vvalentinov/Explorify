@@ -9,6 +9,8 @@ public class ApplicationUser :
     IdentityUser<Guid>,
     IAuditInfo
 {
+    public string? ProfileImageUrl { get; set; }
+
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
