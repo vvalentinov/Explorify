@@ -1,7 +1,8 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.Extensions.Options;
-using Explorify.Infrastructure.Settings;
+﻿using Explorify.Infrastructure.Settings;
 using Explorify.Application.Abstractions.Interfaces;
+
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Options;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -17,18 +18,21 @@ public class BlobService : IBlobService
     public async Task<string> UploadBlobAsync(
         Stream fileStream,
         string fileName,
-        string? pathPrefix = null)
+        string? pathPrefix = null,
+        bool shouldGenerateUniqueName = true)
     {
         var blobServiceClient = new BlobServiceClient(_azureStorageSettings.ConnectionString);
 
         var containerName = _azureStorageSettings.ContainerName;
         var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
-        string uniqueName = GenerateUniqueName(fileName, pathPrefix ?? string.Empty);
+        string name = shouldGenerateUniqueName ?
+            GenerateUniqueName(fileName, pathPrefix ?? string.Empty) :
+            $"{pathPrefix}{fileName}";
 
-        var blobClient = containerClient.GetBlobClient(uniqueName);
+        var blobClient = containerClient.GetBlobClient(name);
 
-        await blobClient.UploadAsync(fileStream, true);
+        await blobClient.UploadAsync(fileStream, overwrite: true);
 
         return Uri.UnescapeDataString(blobClient.Uri.AbsoluteUri);
     }

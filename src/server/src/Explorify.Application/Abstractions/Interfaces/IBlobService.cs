@@ -5,5 +5,6 @@ public interface IBlobService
     Task<string> UploadBlobAsync(
             Stream fileStream,
             string fileName,
-            string? pathPrefix = null);
+            string? pathPrefix = null,
+            bool shouldGenerateUniqueName = true);
 }

@@ -1,12 +1,16 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.User;
+using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Identity.Login;
 using Explorify.Application.User.ChangeEmail;
 using Explorify.Application.Identity.Register;
 using Explorify.Application.User.ConfirmEmail;
+using Explorify.Application.Abstractions.Models;
 using Explorify.Application.User.ChangeUserName;
 using Explorify.Application.User.ChangePassword;
+using Explorify.Application.User.GetProfileInfo;
 using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.User.ChangeProfileImage;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +29,22 @@ public class UserController : BaseController
     {
         _mediator = mediator;
         _userService = userService;
+    }
+
+    [HttpPost(nameof(ChangeProfilePicture))]
+    public async Task<IActionResult> ChangeProfilePicture([FromUploadProfileImageForm] UploadFile image)
+    {
+        var command = new ChangeProfileImageCommand(User.GetId().ToString(), image);
+        var result = await _mediator.Send(command);
+        return Ok(new { imageUrl = result.Data });
+    }
+
+    [HttpGet(nameof(GetProfileInfo))]
+    public async Task<IActionResult> GetProfileInfo()
+    {
+        var query = new GetProfileInfoQuery(User.GetId().ToString());
+        var result = await _mediator.Send(query);
+        return Ok(result.Data);
     }
 
     [AllowAnonymous]

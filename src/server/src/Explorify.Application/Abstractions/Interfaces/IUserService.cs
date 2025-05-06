@@ -1,4 +1,5 @@
 ﻿using Explorify.Application.Abstractions.Models;
+using Explorify.Application.User.GetProfileInfo;
 
 namespace Explorify.Application.Abstractions.Interfaces;
 
@@ -26,11 +27,24 @@ public interface IUserService
         string newEmail,
         string userId);
 
-    Task<Result> SendForgotPasswordEmailAsync(
-        string email);
+    Task<Result> SendForgotPasswordEmailAsync(string email);
 
     Task<Result> ResetPasswordAsync(
         string email,
         string token,
         string password);
+
+    Task<Result> SendEmailConfirmationAsync(
+        string userId,
+        string userName,
+        string token,
+        string email);
+
+    Task<Result> ChangeProfileImageAsync(
+        string userId,
+        string imageUrl);
+
+    Task<Result<GetProfileInfoResponseModel>> GetProfileInfo(string userId);
+
+    Task<string?> GetUserProfileImageFileNameAsync(string userId);
 }

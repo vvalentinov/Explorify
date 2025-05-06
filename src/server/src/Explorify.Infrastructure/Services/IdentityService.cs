@@ -1,43 +1,42 @@
 ﻿using System.Web;
 using System.Security.Claims;
+
 using Explorify.Domain.Entities;
-using System.Text.Encodings.Web;
 using Explorify.Application.Identity;
 using Explorify.Persistence.Identity;
+using Explorify.Infrastructure.Extensions;
 using Explorify.Application.Identity.Login;
 using Explorify.Application.Identity.Register;
-using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 
-using static Explorify.Domain.Constants.EmailConstants;
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
 using static Explorify.Domain.Constants.IdentityConstants.ErrorMessages;
 using static Explorify.Domain.Constants.IdentityConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
-using Explorify.Infrastructure.Extensions;
 
 namespace Explorify.Infrastructure.Services;
 
 public class IdentityService : IIdentityService
 {
     private readonly IRepository _repository;
-    private readonly IEmailSender _emailSender;
+    private readonly IUserService _userService;
     private readonly ITokenService _tokenService;
 
     private readonly UserManager<ApplicationUser> _userManager;
 
     public IdentityService(
         IRepository repository,
-        IEmailSender emailSender,
         ITokenService tokenService,
+        IUserService userService,
         UserManager<ApplicationUser> userManager)
     {
         _repository = repository;
-        _userManager = userManager;
-        _emailSender = emailSender;
+        _userService = userService;
         _tokenService = tokenService;
+
+        _userManager = userManager;
     }
 
     public async Task<Result<AuthResponseModel>> LoginUserAsync(LoginRequestModel model)
@@ -92,6 +91,7 @@ public class IdentityService : IIdentityService
             AccessToken = accessToken,
             UserId = user.Id.ToString(),
             UserName = user.UserName ?? string.Empty,
+            ProfileImageUrl = user.ProfileImageUrl,
         };
 
         var authResponseModel = new AuthResponseModel
@@ -172,30 +172,15 @@ public class IdentityService : IIdentityService
             IdentityModel = identityResponseModel,
         };
 
-        await SendConfirmationEmailAsync(model.Email, user);
-
-        return Result.Success(authResponseModel, RegisterSuccess);
-    }
-
-    private async Task SendConfirmationEmailAsync(string email, ApplicationUser user)
-    {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
         var encodedToken = HttpUtility.UrlEncode(token);
 
-        var confirmationLink = $"https://localhost:7189/api/User/ConfirmEmail?userId={user.Id}&token={encodedToken}";
+        await _userService.SendEmailConfirmationAsync(
+            user.Id.ToString(),
+            user.UserName ?? string.Empty,
+            encodedToken,
+            model.Email);
 
-        var safeLink = HtmlEncoder.Default.Encode(confirmationLink);
-
-        var subject = "Email Confirmation!";
-
-        var messageBody = GetEmailConfirmBody(user.UserName ?? string.Empty, safeLink);
-
-        await _emailSender.SendEmailAsync(
-            "noreply@explorify.click",
-            "Explorify",
-            email,
-            subject,
-            messageBody);
+        return Result.Success(authResponseModel, RegisterSuccess);
     }
 }

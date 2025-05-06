@@ -12,12 +12,14 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Application.User.GetProfileInfo;
 
 namespace Explorify.Infrastructure.Services;
 
 public class UserService : IUserService
 {
     private readonly IEmailSender _emailSender;
+
     private readonly UserManager<ApplicationUser> _userManager;
 
     public UserService(
@@ -202,5 +204,78 @@ public class UserService : IUserService
 
         var error = new Error(result.GetFirstError(), ErrorType.Validation);
         return Result.Failure(error);
+    }
+
+    public async Task<Result> SendEmailConfirmationAsync(
+        string userId,
+        string userName,
+        string token,
+        string email)
+    {
+        var confirmationLink = $"https://localhost:7189/api/User/ConfirmEmail?userId={userId}&token={token}";
+
+        var safeLink = HtmlEncoder.Default.Encode(confirmationLink);
+
+        var subject = "Email Confirmation!";
+
+        var messageBody = GetEmailConfirmBody(userName ?? string.Empty, safeLink);
+
+        await _emailSender.SendEmailAsync(
+            "noreply@explorify.click",
+            "Explorify",
+            email,
+            subject,
+            messageBody);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> ChangeProfileImageAsync(
+        string userId,
+        string imageUrl)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Result.Failure();
+        }
+
+        user.ProfileImageUrl = imageUrl;
+        await _userManager.UpdateAsync(user);
+
+        return Result.Success();
+    }
+
+    public async Task<Result<GetProfileInfoResponseModel>> GetProfileInfo(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        //if (user == null)
+        //{
+        //    return Result.Failure();
+        //}
+
+        var model = new GetProfileInfoResponseModel
+        {
+            ProfileImageUrl = user?.ProfileImageUrl
+        };
+
+        return Result.Success(model);
+    }
+
+    public async Task<string?> GetUserProfileImageFileNameAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        var url = user?.ProfileImageUrl;
+
+        if (url != null)
+        {
+            var fileName = url[(url.LastIndexOf('/') + 1)..];
+            return fileName;
+        }
+
+        return null;
     }
 }
