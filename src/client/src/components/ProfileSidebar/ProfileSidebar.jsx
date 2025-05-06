@@ -9,7 +9,12 @@ import {
     ProfileOutlined,
 } from '@ant-design/icons';
 
-import { changePasswordPath, changeUsernamePath, profilePath, changeEmailPath } from "../../constants/paths";
+import {
+    changePasswordPath,
+    changeUsernamePath,
+    profilePath,
+    changeEmailPath,
+} from "../../constants/paths";
 
 const items = [
     {
@@ -45,21 +50,21 @@ const ProfileSidebar = () => {
                         itemSelectedColor: '#ffffff',
                         itemColor: '#000000',
                         itemHoverBg: '#b2ebe9',
-                    },
+                    }
                 },
             }}
         >
             <Menu
                 style={{
                     width: '100%',
+                    overflowY: 'auto',
                     fontSize: '1.3rem',
                     minHeight: 'calc(100vh - 221px)',
                     backgroundColor: '#e6fffb',
-                    overflowY: 'auto',
                 }}
-                defaultSelectedKeys={['profile']}
-                mode="vertical"
                 items={items}
+                mode="vertical"
+                defaultSelectedKeys={['profile']}
             />
         </ConfigProvider>
     )

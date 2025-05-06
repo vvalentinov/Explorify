@@ -1,20 +1,26 @@
 import ProfileSidebar from "../ProfileSidebar/ProfileSidebar";
 
 import { Outlet } from "react-router-dom";
-import { Layout } from "antd";
-
-const { Sider, Content } = Layout;
+import { Layout, ConfigProvider } from "antd";
 
 const ProfileLayout = () => {
     return (
-        <Layout>
-            <Sider width={"20%"}>
-                <ProfileSidebar />
-            </Sider>
-            <Content>
-                <Outlet />
-            </Content>
-        </Layout>
+        <ConfigProvider theme={{
+            components: {
+                Layout: {
+                    siderBg: '#e6fffb'
+                }
+            }
+        }}>
+            <Layout>
+                <Layout.Sider width={"20%"}>
+                    <ProfileSidebar />
+                </Layout.Sider>
+                <Layout.Content>
+                    <Outlet />
+                </Layout.Content>
+            </Layout>
+        </ConfigProvider>
     );
 };
 

@@ -75,7 +75,7 @@ const dropDownItems = [
 
 const Header = () => {
 
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, profileImageUrl } = useContext(AuthContext);
 
     const { token } = useToken();
 
@@ -174,11 +174,16 @@ const Header = () => {
                                     menu={{ items: dropDownItems }}
                                     placement="bottom"
                                 >
-                                    <Avatar
-                                        style={{ marginRight: '2rem' }}
-                                        size="large"
-                                        icon={<UserOutlined />}
-                                    />
+                                    {profileImageUrl ?
+                                        (<Avatar
+                                            style={{ marginRight: '2rem' }}
+                                            size="large"
+                                            src={profileImageUrl}
+                                        />) : (<Avatar
+                                            style={{ marginRight: '2rem' }}
+                                            size="large"
+                                            icon={<UserOutlined />}
+                                        />)}
                                 </Dropdown>
                         }
                     </Space>
