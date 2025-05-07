@@ -15,4 +15,7 @@ public class Review : BaseDeletableEntity<Guid>
     public Place Place { get; set; } = default!;
 
     public Guid UserId { get; set; }
+
+    public ICollection<ReviewPhoto> Photos { get; set; }
+         = new List<ReviewPhoto>();
 }
