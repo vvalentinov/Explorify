@@ -113,7 +113,7 @@ public class IdentityService : IIdentityService
             return Result.Failure<AuthResponseModel>(error);
         }
 
-        user = new ApplicationUser { UserName = model.UserName };
+        user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
 
         var createUserResult = await _userManager.CreateAsync(user, model.Password);
 

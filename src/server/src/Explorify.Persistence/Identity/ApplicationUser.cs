@@ -2,6 +2,7 @@
 using Explorify.Domain.Abstractions.Contracts;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Application.Abstractions.Models;
 
 namespace Explorify.Persistence.Identity;
 
@@ -20,4 +21,17 @@ public class ApplicationUser :
 
     public ICollection<Review> Reviews { get; set; }
         = new List<Review>();
+
+    public UserDto MapToUserDto()
+    {
+        var dto = new UserDto
+        {
+            Id = Id,
+            Email = Email,
+            UserName = UserName ?? string.Empty,
+            ProfileImageUrl = ProfileImageUrl,
+        };
+
+        return dto;
+    }
 }

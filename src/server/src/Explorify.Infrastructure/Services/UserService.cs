@@ -5,6 +5,7 @@ using Explorify.Persistence.Identity;
 using Explorify.Infrastructure.Extensions;
 using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Models;
+using Explorify.Application.User.GetProfileInfo;
 using Explorify.Application.Abstractions.Interfaces;
 
 using static Explorify.Domain.Constants.EmailConstants;
@@ -12,7 +13,6 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
-using Explorify.Application.User.GetProfileInfo;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -277,5 +277,20 @@ public class UserService : IUserService
         }
 
         return null;
+    }
+
+    public async Task<Result<UserDto>> GetUserDtoByIdAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<UserDto>(error);
+        }
+
+        var dto = user.MapToUserDto();
+
+        return Result.Success(dto);
     }
 }

@@ -19,5 +19,7 @@ public static class PlaceConstants
         public static readonly string PlaceDescriptionMaxLengthError = $"Place description must not exceed {PlaceDescriptionMaxLength} characters!";
 
         public const string PlaceImagesCountError = "Place images count must be between 1 and 10!";
+
+        public const string NoPlaceWithIdError = "No place with give id was found!";
     }
 }

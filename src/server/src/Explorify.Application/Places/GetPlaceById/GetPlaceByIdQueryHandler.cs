@@ -12,36 +12,58 @@ public class GetPlaceByIdQueryHandler
     : IQueryHandler<GetPlaceByIdQuery, PlaceDetailsResponseModel>
 {
     private readonly IRepository _repository;
+    private readonly IUserService _userService;
 
-    public GetPlaceByIdQueryHandler(IRepository repository)
+    public GetPlaceByIdQueryHandler(
+        IRepository repository,
+        IUserService userService)
     {
         _repository = repository;
+        _userService = userService;
     }
 
     public async Task<Result<PlaceDetailsResponseModel>> Handle(
         GetPlaceByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var place = await _repository
+        var responseModel = await _repository
             .AllAsNoTracking<Place>()
             .Include(x => x.Photos)
-            .Include(x => x.Reviews)
             .Select(x => new PlaceDetailsResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
+                UserId = x.UserId,
                 Description = x.Description,
-                ImagesUrls = x.Photos.OrderByDescending(x => x.CreatedOn).Select(c => c.Url),
-                UserReviewRating = x.Reviews.Where(r => r.UserId == x.UserId).Select(x => x.Rating).First(),
-                UserReviewContent = x.Reviews.Where(r => r.UserId == x.UserId).Select(x => x.Content).First(),
+                ImagesUrls = x.Photos.OrderByDescending(x => x.CreatedOn).Select(c => c.Url)
             }).FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
 
-        if (place == null)
+        if (responseModel == null)
         {
-            var error = new Error("No place with given id!", ErrorType.Validation);
+            var error = new Error("No place with id found!", ErrorType.Validation);
             return Result.Failure<PlaceDetailsResponseModel>(error);
         }
 
-        return Result.Success(place);
+        var userReview = await _repository
+            .AllAsNoTracking<Review>()
+            .FirstOrDefaultAsync(x =>
+                x.PlaceId == request.PlaceId && x.UserId == responseModel.UserId,
+                cancellationToken);
+
+        if (userReview == null)
+        {
+            var error = new Error("No user review for place was found!", ErrorType.Validation);
+            return Result.Failure<PlaceDetailsResponseModel>(error);
+        }
+
+        responseModel.UserReviewRating = userReview.Rating;
+        responseModel.UserReviewContent = userReview.Content;
+
+        var userDto = (await _userService.GetUserDtoByIdAsync(responseModel.UserId.ToString())).Data;
+
+        responseModel.UserName = userDto.UserName;
+        responseModel.UserProfileImageUrl = userDto.ProfileImageUrl ?? string.Empty;
+
+        return Result.Success(responseModel);
     }
 }

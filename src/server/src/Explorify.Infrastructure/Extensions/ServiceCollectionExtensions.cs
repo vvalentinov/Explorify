@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
 
-                options.User.RequireUniqueEmail = true;
+                // options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<ExplorifyDbContext>()
             .AddDefaultTokenProviders();
