@@ -66,6 +66,16 @@
 }
 
 .placeTitle {
-    margin-left: 10px;
+    /* margin-left: 10px; */
     font-size: 1.2rem;
+}
+
+.reviewsSection {
+    /* border: solid 1px black; */
+    padding: 0;
+}
+
+.uploadReviewCard {
+    margin: 0 10rem;
+    padding: 0;
 }

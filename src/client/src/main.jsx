@@ -5,12 +5,14 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
 
+import enUS from 'antd/es/locale/en_US';
 import { ConfigProvider, App as AntdApp } from 'antd';
 
 createRoot(document.getElementById('root')).render(
     // <StrictMode>
     <BrowserRouter>
         <ConfigProvider
+            locale={enUS}
             theme={{
                 cssVar: true,
                 components: {
