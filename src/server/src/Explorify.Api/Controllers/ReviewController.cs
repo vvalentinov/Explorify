@@ -1,9 +1,11 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Reviews.Upload;
+using Explorify.Application.Reviews.GetReviews;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Explorify.Api.Controllers;
 
@@ -21,4 +23,14 @@ public class ReviewController : BaseController
         => this.CreatedAtActionOrProblemDetails(
                 await _mediator.Send(new UploadReviewCommand(model)),
                 nameof(Upload));
+
+    [AllowAnonymous]
+    [HttpGet(nameof(GetReviews))]
+    public async Task<IActionResult> GetReviews(Guid placeId)
+    {
+        var query = new GetReviewsQuery(placeId);
+        var result = await _mediator.Send(query);
+
+        return this.OkOrProblemDetails(result);
+    }
 }

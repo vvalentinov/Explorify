@@ -293,4 +293,19 @@ public class UserService : IUserService
 
         return Result.Success(dto);
     }
+
+    public async Task<Result<UserReviewDto>> GetUserReviewDtoById(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<UserReviewDto>(error);
+        }
+
+        var dto = user.MapToUserReviewDto();
+
+        return Result.Success(dto);
+    }
 }

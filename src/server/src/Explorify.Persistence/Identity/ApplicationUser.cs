@@ -34,4 +34,15 @@ public class ApplicationUser :
 
         return dto;
     }
+
+    public UserReviewDto MapToUserReviewDto()
+    {
+        var dto = new UserReviewDto
+        {
+            UserName = UserName ?? string.Empty,
+            ProfileImageUrl = ProfileImageUrl,
+        };
+
+        return dto;
+    }
 }

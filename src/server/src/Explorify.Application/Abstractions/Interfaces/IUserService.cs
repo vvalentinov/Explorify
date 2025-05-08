@@ -49,4 +49,6 @@ public interface IUserService
     Task<string?> GetUserProfileImageFileNameAsync(string userId);
 
     Task<Result<UserDto>> GetUserDtoByIdAsync(string userId);
+
+    Task<Result<UserReviewDto>> GetUserReviewDtoById(string userId);
 }
