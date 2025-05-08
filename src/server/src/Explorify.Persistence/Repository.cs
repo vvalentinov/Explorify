@@ -16,34 +16,34 @@ public class Repository : IRepository, IDisposable
     }
 
     private DbSet<T> DbSet<T>()
-        where T : BaseEntity
+        where T : BaseModel
             => _dbContext.Set<T>();
 
     public IQueryable<T> All<T>(bool withDeleted = false)
-        where T : BaseEntity
+        where T : BaseModel
             => withDeleted ?
                 DbSet<T>().IgnoreQueryFilters() :
                 DbSet<T>();
 
     public IQueryable<T> AllAsNoTracking<T>(bool withDeleted = false)
-        where T : BaseEntity
+        where T : BaseModel
             => withDeleted ?
                 DbSet<T>().AsNoTracking().IgnoreQueryFilters() :
                 DbSet<T>().AsNoTracking();
 
     public async Task AddAsync<T>(T entity)
-        where T : BaseEntity
+        where T : BaseModel
             => await DbSet<T>().AddAsync(entity);
 
     public async Task<int> SaveChangesAsync()
         => await _dbContext.SaveChangesAsync();
 
     public async Task<T?> GetByIdAsync<T>(object id)
-        where T : BaseEntity
+        where T : BaseModel
             => await DbSet<T>().FindAsync(id);
 
     public async Task HardDeleteByIdAsync<T>(object id)
-        where T : BaseEntity
+        where T : BaseModel
     {
         T? entity = await GetByIdAsync<T>(id);
 
@@ -53,11 +53,11 @@ public class Repository : IRepository, IDisposable
         }
     }
 
-    public void HardDelete<T>(T entity) where T : BaseEntity
+    public void HardDelete<T>(T entity) where T : BaseModel
         => DbSet<T>().Remove(entity);
 
     public async Task SoftDeleteByIdAsync<T>(object id)
-        where T : BaseEntity, IDeletableEntity
+        where T : BaseModel, IDeletableEntity
     {
         T? entity = await GetByIdAsync<T>(id);
 
@@ -68,7 +68,7 @@ public class Repository : IRepository, IDisposable
     }
 
     public void SoftDelete<T>(T entity)
-        where T : BaseEntity, IDeletableEntity
+        where T : BaseModel, IDeletableEntity
     {
         entity.IsDeleted = true;
         entity.DeletedOn = DateTime.UtcNow;

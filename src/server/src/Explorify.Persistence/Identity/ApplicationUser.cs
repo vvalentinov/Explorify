@@ -22,6 +22,9 @@ public class ApplicationUser :
     public ICollection<Review> Reviews { get; set; }
         = new List<Review>();
 
+    public ICollection<ReviewsLikes> ReviewLikes { get; set; }
+        = new List<ReviewsLikes>();
+
     public UserDto MapToUserDto()
     {
         var dto = new UserDto

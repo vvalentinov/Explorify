@@ -2,7 +2,11 @@
 
 namespace Explorify.Domain.Abstractions.Models;
 
-public abstract class BaseEntity : IAuditInfo
+public abstract class BaseModel
+{
+}
+
+public abstract class BaseEntity : BaseModel, IAuditInfo
 {
     public DateTime CreatedOn { get; set; }
 

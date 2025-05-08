@@ -18,4 +18,7 @@ public class Review : BaseDeletableEntity<Guid>
 
     public ICollection<ReviewPhoto> Photos { get; set; }
          = new List<ReviewPhoto>();
+
+    public ICollection<ReviewsLikes> ReviewLikes { get; set; }
+        = new List<ReviewsLikes>();
 }

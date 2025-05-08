@@ -2,11 +2,11 @@
 
 namespace Explorify.Domain.Entities;
 
-public class FavoritePlace : BaseModel
+public class ReviewsLikes : BaseModel
 {
-    public Guid PlaceId { get; set; }
+    public Guid ReviewId { get; set; }
 
-    public Place Place { get; set; } = default!;
+    public Review Review { get; set; } = default!;
 
     public Guid UserId { get; set; }
 }
