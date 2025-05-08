@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Explorify.Application.Reviews.GetReviews;
 
 public class GetReviewsQueryHandler
-    : IQueryHandler<GetReviewsQuery, List<ReviewResponseModel>>
+    : IQueryHandler<GetReviewsQuery, ReviewsListResponseModel>
 {
     private readonly IRepository _repository;
     private readonly IUserService _userService;
@@ -21,7 +21,7 @@ public class GetReviewsQueryHandler
         _userService = userService;
     }
 
-    public async Task<Result<List<ReviewResponseModel>>> Handle(
+    public async Task<Result<ReviewsListResponseModel>> Handle(
         GetReviewsQuery request,
         CancellationToken cancellationToken)
     {
@@ -30,22 +30,30 @@ public class GetReviewsQueryHandler
         if (place == null)
         {
             var error = new Error("No place with id found!", ErrorType.Validation);
-            return Result.Failure<List<ReviewResponseModel>>(error);
+            return Result.Failure<ReviewsListResponseModel>(error);
         }
 
-        var reviews = await _repository
+        var query = _repository
             .AllAsNoTracking<Review>()
             .Include(x => x.Photos)
-            .Where(x => x.PlaceId == request.PlaceId && x.UserId != place.UserId)
+            .Where(x => x.PlaceId == request.PlaceId && x.UserId != place.UserId);
+
+        var recordsCount = await query.CountAsync(cancellationToken);
+
+        query = query.OrderByDescending(x => x.CreatedOn);
+
+        var reviewsData = await query
+            .Skip((request.Page - 1) * 6)
+            .Take(6)
             .ToListAsync(cancellationToken);
 
-        var models = new List<ReviewResponseModel>();
+        var reviews = new List<ReviewResponseModel>();
 
-        foreach (var review in reviews)
+        foreach (var review in reviewsData)
         {
             var userDto = await _userService.GetUserReviewDtoById(review.UserId.ToString());
 
-            models.Add(new ReviewResponseModel
+            reviews.Add(new ReviewResponseModel
             {
                 User = userDto.Data,
                 Rating = review.Rating,
@@ -54,6 +62,14 @@ public class GetReviewsQueryHandler
             });
         }
 
-        return Result.Success(models);
+        var responseModel = new ReviewsListResponseModel
+        {
+            Reviews = reviews,
+            RecordsCount = recordsCount,
+            ItemsPerPage = 6,
+            PageNumber = request.Page,
+        };
+
+        return Result.Success(responseModel);
     }
 }

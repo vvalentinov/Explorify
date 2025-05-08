@@ -26,11 +26,8 @@ public class ReviewController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetReviews))]
-    public async Task<IActionResult> GetReviews(Guid placeId)
-    {
-        var query = new GetReviewsQuery(placeId);
-        var result = await _mediator.Send(query);
-
-        return this.OkOrProblemDetails(result);
-    }
+    public async Task<IActionResult> GetReviews(Guid placeId, int page)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetReviewsQuery(placeId, page)));
 }
