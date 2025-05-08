@@ -1,0 +1,48 @@
+.placeDetailsCardSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.reviewCardHeader {
+    display: flex;
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.reviewCardHeaderContainer {
+    display: flex;
+    align-items: center;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+}
+
+.placeTitle {
+    font-size: 1.2rem;
+}
+
+.placeDetailsCard {
+    width: 60%;
+    margin: 2rem auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.carouselWrapperStyle {
+    width: 100%;
+    margin: 0 auto 1.5rem auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.imageStyle {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+}

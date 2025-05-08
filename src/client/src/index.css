@@ -28,3 +28,7 @@ body {
 .ant-layout-content {
     background-color: white;
 }
+
+.ant-spin-dot-item {
+    background-color: green !important;
+}

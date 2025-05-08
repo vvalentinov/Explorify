@@ -6,5 +6,6 @@ export const reviewsServiceFactory = (token) => {
 
     return {
         uploadReview: (data) => request.post(`${baseUrl}/Review/Upload`, data),
+        getReviews: (placeId, page) => request.get(`${baseUrl}/Review/GetReviews?placeId=${placeId}&page=${page}`)
     }
 };
