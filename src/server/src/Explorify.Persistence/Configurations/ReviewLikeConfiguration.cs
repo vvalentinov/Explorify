@@ -21,7 +21,7 @@ public class ReviewLikeConfiguration
         builder.HasOne<ApplicationUser>()
             .WithMany(u => u.ReviewLikes)
             .HasForeignKey(rl => rl.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasQueryFilter(x => x.Review.IsDeleted == false);
     }

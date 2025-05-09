@@ -1,7 +1,9 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Reviews.Upload;
+using Explorify.Application.ReviewsLikes.Like;
 using Explorify.Application.Reviews.GetReviews;
+using Explorify.Application.ReviewsLikes.Dislike;
 
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,8 +28,20 @@ public class ReviewController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetReviews))]
-    public async Task<IActionResult> GetReviews(Guid placeId, int page)
+    public async Task<IActionResult> GetReviews([FromQuery] GetReviewsRequestModel model)
         => this.OkOrProblemDetails(
                 await _mediator.Send(
-                    new GetReviewsQuery(placeId, page)));
+                    new GetReviewsQuery(model, User.GetId())));
+
+    [HttpPost(nameof(Like))]
+    public async Task<IActionResult> Like([FromQuery] Guid reviewId)
+        => this.CreatedAtActionOrProblemDetails(
+                await _mediator.Send(
+                    new LikeReviewCommand(reviewId, User.GetId())), nameof(Like));
+
+    [HttpDelete(nameof(Dislike))]
+    public async Task<IActionResult> Dislike([FromQuery] Guid reviewId)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new DislikeReviewCommand(reviewId, User.GetId())));
 }

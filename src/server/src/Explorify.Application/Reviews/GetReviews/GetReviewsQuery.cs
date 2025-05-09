@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Reviews.GetReviews;
 
-public record GetReviewsQuery(Guid PlaceId, int Page)
+public record GetReviewsQuery(GetReviewsRequestModel Model, Guid UserId)
     : IQuery<ReviewsListResponseModel>;

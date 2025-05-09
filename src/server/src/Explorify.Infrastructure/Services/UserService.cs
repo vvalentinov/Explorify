@@ -13,6 +13,7 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -294,18 +295,32 @@ public class UserService : IUserService
         return Result.Success(dto);
     }
 
-    public async Task<Result<UserReviewDto>> GetUserReviewDtoById(string userId)
+    public async Task<Dictionary<Guid, UserReviewDto>> GetUsersReviewDtosByIdsAsync(IEnumerable<Guid> userIds)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var users = await _userManager.Users
+            .Where(u => userIds.Contains(u.Id))
+            .ToListAsync();
+
+        return users.ToDictionary(u => u.Id, u => u.MapToUserReviewDto());
+    }
+
+    public async Task<HashSet<Guid>> GetLikedReviewIdsByUserAsync(string userId, IEnumerable<Guid> reviewIds)
+    {
+        var user = await _userManager
+            .Users
+            .Include(u => u.ReviewLikes)
+            .FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
         if (user == null)
         {
-            var error = new Error("No user with id found!", ErrorType.Validation);
-            return Result.Failure<UserReviewDto>(error);
+            return new HashSet<Guid>();
         }
 
-        var dto = user.MapToUserReviewDto();
-
-        return Result.Success(dto);
+        return user
+            .ReviewLikes
+            .Where(like => reviewIds.Contains(like.ReviewId))
+            .Select(like => like.ReviewId)
+            .ToHashSet();
     }
+
 }

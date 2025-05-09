@@ -6,28 +6,31 @@ namespace Explorify.Application.Abstractions.Interfaces;
 public interface IRepository
 {
     IQueryable<T> All<T>(bool withDeleted = false)
-        where T : BaseEntity;
+        where T : BaseModel;
 
     IQueryable<T> AllAsNoTracking<T>(bool withDeleted = false)
-        where T : BaseEntity;
+        where T : BaseModel;
 
     Task AddAsync<T>(T entity)
-        where T : BaseEntity;
+        where T : BaseModel;
 
     Task<T?> GetByIdAsync<T>(object id)
-        where T : BaseEntity;
+        where T : BaseModel;
 
     void HardDelete<T>(T model)
-        where T : BaseEntity;
+        where T : BaseModel;
+
+    void Update<T>(T entity)
+        where T : BaseModel;
 
     Task HardDeleteByIdAsync<T>(object id)
-        where T : BaseEntity;
+        where T : BaseModel;
 
     Task SoftDeleteByIdAsync<T>(object id)
-        where T : BaseEntity, IDeletableEntity;
+        where T : BaseModel, IDeletableEntity;
 
     void SoftDelete<T>(T model)
-        where T : BaseEntity, IDeletableEntity;
+        where T : BaseModel, IDeletableEntity;
 
     Task<int> SaveChangesAsync();
 }

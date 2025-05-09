@@ -50,5 +50,7 @@ public interface IUserService
 
     Task<Result<UserDto>> GetUserDtoByIdAsync(string userId);
 
-    Task<Result<UserReviewDto>> GetUserReviewDtoById(string userId);
+    Task<Dictionary<Guid, UserReviewDto>> GetUsersReviewDtosByIdsAsync(IEnumerable<Guid> userIds);
+
+    Task<HashSet<Guid>> GetLikedReviewIdsByUserAsync(string userId, IEnumerable<Guid> reviewIds);
 }

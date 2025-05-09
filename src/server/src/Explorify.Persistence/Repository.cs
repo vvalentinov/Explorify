@@ -67,6 +67,19 @@ public class Repository : IRepository, IDisposable
         }
     }
 
+    public virtual void Update<T>(T entity)
+        where T : BaseModel
+    {
+        var entry = _dbContext.Entry(entity);
+
+        if (entry.State == EntityState.Detached)
+        {
+            DbSet<T>().Attach(entity);
+        }
+
+        entry.State = EntityState.Modified;
+    }
+
     public void SoftDelete<T>(T entity)
         where T : BaseModel, IDeletableEntity
     {

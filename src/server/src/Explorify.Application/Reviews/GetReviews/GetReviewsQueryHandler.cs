@@ -3,6 +3,8 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Reviews.GetReviews;
@@ -25,49 +27,70 @@ public class GetReviewsQueryHandler
         GetReviewsQuery request,
         CancellationToken cancellationToken)
     {
-        var place = await _repository.GetByIdAsync<Place>(request.PlaceId);
+        var place = await _repository.GetByIdAsync<Place>(request.Model.PlaceId);
 
-        if (place == null)
+        if (place is null)
         {
-            var error = new Error("No place with id found!", ErrorType.Validation);
+            var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure<ReviewsListResponseModel>(error);
         }
 
         var query = _repository
             .AllAsNoTracking<Review>()
             .Include(x => x.Photos)
-            .Where(x => x.PlaceId == request.PlaceId && x.UserId != place.UserId);
+            .Where(x => x.PlaceId == request.Model.PlaceId && x.UserId != place.UserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
-        query = query.OrderByDescending(x => x.CreatedOn);
+        switch (request.Model.Order)
+        {
+            case ReviewsOrderEnum.Newest:
+                query = query.OrderByDescending(x => x.CreatedOn);
+                break;
+            case ReviewsOrderEnum.Oldest:
+                query = query.OrderBy(x => x.CreatedOn);
+                break;
+            case ReviewsOrderEnum.MostHelpful:
+                query = query.OrderByDescending(x => x.Likes);
+                break;
+            default:
+                break;
+        }
 
         var reviewsData = await query
-            .Skip((request.Page - 1) * 6)
+            .Skip((request.Model.Page - 1) * 6)
             .Take(6)
             .ToListAsync(cancellationToken);
 
-        var reviews = new List<ReviewResponseModel>();
+        var userIds = reviewsData.Select(r => r.UserId).Distinct();
+        var reviewIds = reviewsData.Select(r => r.Id);
 
-        foreach (var review in reviewsData)
+        var usersMap = await _userService.GetUsersReviewDtosByIdsAsync(userIds);
+        var likedReviewIds = await _userService.GetLikedReviewIdsByUserAsync(request.UserId.ToString(), reviewIds);
+
+        var reviews = reviewsData.Select(review =>
         {
-            var userDto = await _userService.GetUserReviewDtoById(review.UserId.ToString());
+            var userDto = usersMap[review.UserId];
+            userDto.HasLikedReview = likedReviewIds.Contains(review.Id);
 
-            reviews.Add(new ReviewResponseModel
+            return new ReviewResponseModel
             {
-                User = userDto.Data,
+                Id = review.Id,
+                User = userDto,
+                Likes = review.Likes,
                 Rating = review.Rating,
                 Content = review.Content,
                 ImagesUrls = review.Photos.Select(x => x.Url),
-            });
-        }
+            };
+
+        }).ToList();
 
         var responseModel = new ReviewsListResponseModel
         {
+            ItemsPerPage = 6,
             Reviews = reviews,
             RecordsCount = recordsCount,
-            ItemsPerPage = 6,
-            PageNumber = request.Page,
+            PageNumber = request.Model.Page,
         };
 
         return Result.Success(responseModel);
