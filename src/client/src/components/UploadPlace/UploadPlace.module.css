@@ -1,4 +1,4 @@
-.uploadPlaceSection {
+/* .uploadPlaceSection {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,4 +14,41 @@
 
 .uploadButton {
     width: 100%;
+} */
+
+.uploadPlaceSection {
+    min-height: 100vh;
+    /* background: linear-gradient(to right, #e6fffb, #ffffff); */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 20px;
+}
+
+.uploadPlaceCard {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    border: solid 1px green;
+}
+
+.uploadButton {
+    background-color: #13c2c2 !important;
+    border-color: #13c2c2 !important;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.uploadButton:hover {
+    background-color: #0ea5a5 !important;
+    border-color: #0ea5a5 !important;
+}
+
+.ant-card-head {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #13c2c2;
+    border-bottom: 1px solid #e6f7ff;
 }

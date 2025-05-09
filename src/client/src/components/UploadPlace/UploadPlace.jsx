@@ -13,8 +13,14 @@ import {
     Select,
     Card,
     ConfigProvider,
-    Rate
+    Rate,
+    Spin
 } from 'antd';
+
+import {
+    UploadOutlined,
+    // EnvironmentOutlined
+} from '@ant-design/icons';
 
 import { useDebounce } from 'use-debounce';
 
@@ -78,7 +84,12 @@ const UploadPlace = () => {
 
     }, [debounced])
 
+    const [isPlaceUploading, setIsPlaceUploading] = useState(false);
+
     const onSubmit = (data) => {
+
+        setIsPlaceUploading(true);
+
         const formData = new FormData();
 
         formData.append("Name", data.Name ?? "");
@@ -95,8 +106,20 @@ const UploadPlace = () => {
 
         placesService
             .uploadPlace(formData)
-            .then(res => navigate(homePath, { state: { successfullPlaceUpload: true } }))
-            .catch(err => fireError(err));
+            .then(res => {
+                setIsPlaceUploading(false);
+                navigate(homePath, {
+                    state: {
+                        successOperation:
+                        {
+                            message: 'Successfull place upload!'
+                        }
+                    }
+                });
+            }).catch(err => {
+                setIsPlaceUploading(false);
+                fireError(err);
+            });
     }
 
     const onSearch = value => setCountryName(value);
@@ -124,7 +147,17 @@ const UploadPlace = () => {
             }
         }}>
             <section className={styles.uploadPlaceSection}>
-                <Card className={styles.uploadPlaceCard} title="Upload a New Place">
+                <Card
+                    className={styles.uploadPlaceCard}
+                    title={<span><UploadOutlined /> Upload Place</span>}
+                    styles={{
+                        header: {
+                            backgroundColor: '#f0fdfa',
+                            borderRadius: '16px 16px 0 0',
+                            borderBottom: 'solid 1px green'
+                        }
+                    }}
+                >
                     <Form
                         onFinish={onSubmit}
                         layout="vertical"
@@ -133,7 +166,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="Name"
                             label="Name"
-                            rules={[{ required: true }]}
+                        // rules={[{ required: true }]}
                         >
                             <Input placeholder="Enter place name..." />
                         </Form.Item>
@@ -141,15 +174,19 @@ const UploadPlace = () => {
                         <Form.Item
                             name="CategoryId"
                             label="Category"
-                            rules={[{ required: true }]}
+                        // rules={[{ required: true }]}
                         >
-                            <Cascader options={categoryOptions} changeOnSelect placeholder="Select category" />
+                            <Cascader
+                                options={categoryOptions}
+                                changeOnSelect
+                                placeholder="Select category"
+                            />
                         </Form.Item>
 
                         <Form.Item
                             name="CountryId"
                             label="Country"
-                            rules={[{ required: true }]}
+                        // rules={[{ required: true }]}
                         >
                             <Select
                                 loading={selectLoading}
@@ -165,7 +202,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="Description"
                             label="Description"
-                            rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
+                        // rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                         >
                             <Input.TextArea showCount placeholder="Write your best description for this place..." rows={6} />
                         </Form.Item>
@@ -174,25 +211,33 @@ const UploadPlace = () => {
 
                         <Card
                             title="Review"
-                            style={{ marginTop: 24, marginBottom: 20 }}
                             type="inner"
+                            style={{
+                                marginTop: 24,
+                                marginBottom: 20,
+                                backgroundColor: '#faf5ff',
+                                border: '1px solid #d3adf7',
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
+                            }}
                         >
+
                             <Form.Item
                                 name="Rating"
                                 label="Rating"
-                                rules={[{ required: true, message: 'Please give a rating!' }]}
+                            // rules={[{ required: true, message: 'Please give a rating!' }]}
                             >
-                                <Rate allowClear />
+                                <Rate id="Rating" allowClear />
                             </Form.Item>
 
                             <Form.Item
                                 name="ReviewContent"
                                 label="Content"
-                                rules={[
-                                    { required: true, message: 'Please write a review!' },
-                                    { min: 100 },
-                                    { max: 1000 }
-                                ]}
+                            // rules={[
+                            //     { required: true, message: 'Please write a review!' },
+                            //     { min: 100 },
+                            //     { max: 1000 }
+                            // ]}
                             >
                                 <Input.TextArea
                                     placeholder="Share your experience..."
@@ -203,12 +248,22 @@ const UploadPlace = () => {
                         </Card>
 
                         <Button
-                            color='cyan'
-                            variant='solid'
-                            size='large'
-                            block="true"
-                            htmlType="submit">
-                            Upload
+                            type="primary"
+                            size="large"
+                            block
+                            htmlType="submit"
+                            className={styles.uploadButton}
+                        >
+                            {isPlaceUploading ? <span>Uploading...  <ConfigProvider theme={{
+                                components: {
+                                    Spin: {
+                                        colorPrimary: 'white'
+                                    }
+                                }
+                            }}>
+                                <Spin style={{ marginLeft: '10px' }} spinning={true} />
+                            </ConfigProvider></span> :
+                                'Upload'}
                         </Button>
 
                     </Form>

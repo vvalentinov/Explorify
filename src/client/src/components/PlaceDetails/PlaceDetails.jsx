@@ -18,7 +18,7 @@ const PlaceDetails = () => {
     const { userId, token } = useContext(AuthContext);
 
     const placeService = placesServiceFactory();
-    const reviewsService = reviewsServiceFactory();
+    const reviewsService = reviewsServiceFactory(token);
 
     const location = useLocation();
 
@@ -36,7 +36,7 @@ const PlaceDetails = () => {
                 .catch(err => fireError(err));
 
             reviewsService
-                .getReviews(location.state?.placeId, 1)
+                .getReviews(location.state?.placeId, 1, "Newest")
                 .then(res => {
                     setReviews(res.reviews);
                     setPagesCount(res.pagesCount);
@@ -85,6 +85,9 @@ const PlaceDetails = () => {
                         isReviewModalOpen={isReviewModalOpen}
                         selectedReview={selectedReview}
                         setIsReviewModalOpen={setIsReviewModalOpen}
+                        reviewsService={reviewsService}
+                        setSelectedReview={setSelectedReview}
+                        setReviews={setReviews}
                     />
 
                 </>

@@ -1,20 +1,21 @@
 import styles from './PlaceDetailsSection.module.css';
 
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import {
     Carousel,
     Card,
     Typography,
     Avatar,
-    Rate
+    Rate,
 } from 'antd';
 
 const PlaceDetailsSection = ({ place }) => {
     return (
         <section className={styles.placeDetailsCardSection}>
             <Card
-                styles={{ header: { backgroundColor: '#e8fffb', border: '1px solid green' } }}
+                style={{ border: '1px solid green' }}
+                styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
                 title={
                     <div className={styles.cardHeader}>
                         <Avatar icon={<UserOutlined />} src={place.userProfileImageUrl} size={40} />
@@ -57,13 +58,18 @@ const PlaceDetailsSection = ({ place }) => {
                 )}
 
                 <Card
+                    className={styles.placeDescriptionCard}
                     styles={{
                         header:
-                            { backgroundColor: '#e8fffb', border: '1px solid green' }
+                            { backgroundColor: '#e8fffb', borderBottom: '1px solid green' }
                     }}
-                    style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)' }}
-                    title="Description"
-                    className={styles.placeDescriptionCard}
+                    style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)', border: '1px solid green' }}
+                    title={
+                        <span>
+                            <InfoCircleOutlined style={{ marginRight: '5px' }} />
+                            Description
+                        </span>
+                    }
                 >
                     <Typography.Paragraph style={{ textAlign: 'justify' }} className={styles.placeDescriptionParagraph}>
                         {place.description}
@@ -73,8 +79,8 @@ const PlaceDetailsSection = ({ place }) => {
             </Card>
 
             <Card
-                style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
-                styles={{ header: { backgroundColor: '#e8fffb', border: '1px solid green' } }}
+                style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green' }}
+                styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
                 className={styles.userReviewCard}
                 title={
                     <div className={styles.reviewCardHeader}>

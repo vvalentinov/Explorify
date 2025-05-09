@@ -46,3 +46,10 @@
     object-fit: cover;
     border-radius: 10px;
 }
+
+.imageWallWrapper {
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0fdfa, #d3cce3);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

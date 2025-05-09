@@ -71,11 +71,21 @@ const ImageUpload = () => {
     const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
     const uploadButton = (
-        <button style={{ border: 0, background: 'none', cursor: 'pointer' }} type="button">
+        <button
+            disabled={fileList.length >= 10}
+            style={{ border: 0, background: 'none', cursor: 'pointer' }}
+            type="button"
+        >
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>Images</div>
         </button>
     );
+
+    const handleRemove = (file) => {
+        const newFileList = fileList.filter(item => item.uid !== file.uid);
+        setFileList(newFileList);
+        // message.info(`${file.name} removed successfully.`);
+    };
 
     return (
         <>
@@ -84,15 +94,20 @@ const ImageUpload = () => {
                 label="Upload Images"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
+                required={true}
             >
                 <Upload
+                    disabled={fileList.length >= 10}
                     beforeUpload={() => false}
                     listType="picture-card"
                     fileList={fileList}
                     onPreview={handlePreview}
                     onChange={handleChange}
+                    // maxCount={10}
+                    onRemove={handleRemove}
+                    showUploadList={{ showRemoveIcon: true }}
                 >
-                    {fileList.length >= 8 ? null : uploadButton}
+                    {uploadButton}
                 </Upload>
             </Form.Item>
 

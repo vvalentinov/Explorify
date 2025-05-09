@@ -8,13 +8,46 @@ import {
     Image,
 } from 'antd';
 
-import { LikeOutlined, PictureOutlined } from '@ant-design/icons';
+import {
+    LikeOutlined,
+    PictureOutlined,
+} from '@ant-design/icons';
 
 const ReviewModal = ({
+    setReviews,
+    reviewsService,
     selectedReview,
     isReviewModalOpen,
-    setIsReviewModalOpen
+    setSelectedReview,
+    setIsReviewModalOpen,
 }) => {
+
+    const onHelpfulBtnClick = () => {
+
+        const updatedReview = { ...selectedReview };
+
+        const updateBothStates = (res, liked) => {
+            updatedReview.likes = res.likes;
+            updatedReview.user.hasLikedReview = liked;
+
+            setSelectedReview(updatedReview);
+            setReviews(prev => prev.map(r => r.id === updatedReview.id ? updatedReview : r));
+        };
+
+        if (selectedReview?.user?.hasLikedReview) {
+            reviewsService
+                .dislikeReview(selectedReview.id)
+                .then(res => updateBothStates(res, false))
+                .catch(err => console.log(err));
+        } else {
+            reviewsService
+                .likeReview(selectedReview.id)
+                .then(res => updateBothStates(res, true))
+                .catch(err => console.log(err));
+        }
+
+    };
+
     return (
         <Modal
             open={isReviewModalOpen}
@@ -35,7 +68,12 @@ const ReviewModal = ({
                     <Rate style={{ marginLeft: '10px' }} disabled value={selectedReview?.rating} />
                 </div>
 
-                <Button variant='outlined' color='cyan'>Helpful <LikeOutlined /></Button>
+                <Button
+                    onClick={onHelpfulBtnClick}
+                    variant={selectedReview?.user?.hasLikedReview ? 'solid' : 'outlined'}
+                    color='cyan'>
+                    Helpful ({selectedReview?.likes}) <LikeOutlined />
+                </Button>
 
             </div>
 

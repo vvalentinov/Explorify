@@ -6,6 +6,8 @@ export const reviewsServiceFactory = (token) => {
 
     return {
         uploadReview: (data) => request.post(`${baseUrl}/Review/Upload`, data),
-        getReviews: (placeId, page) => request.get(`${baseUrl}/Review/GetReviews?placeId=${placeId}&page=${page}`)
+        getReviews: (placeId, page, order) => request.get(`${baseUrl}/Review/GetReviews?placeId=${placeId}&page=${page}&order=${order}`),
+        likeReview: (reviewId) => request.post(`${baseUrl}/Review/Like?reviewId=${reviewId}`),
+        dislikeReview: (reviewId) => request.delete(`${baseUrl}/Review/Dislike?reviewId=${reviewId}`),
     }
 };
