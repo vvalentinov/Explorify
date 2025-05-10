@@ -12,6 +12,8 @@ public class ApplicationUser :
 {
     public string? ProfileImageUrl { get; set; }
 
+    public int Points { get; set; }
+
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }

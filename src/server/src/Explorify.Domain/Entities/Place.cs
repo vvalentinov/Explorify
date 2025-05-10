@@ -20,6 +20,8 @@ public class Place : BaseDeletableEntity<Guid>
 
     public Guid UserId { get; set; }
 
+    public bool IsApproved { get; set; }
+
     public ICollection<PlacePhoto> Photos { get; set; }
         = new List<PlacePhoto>();
 
