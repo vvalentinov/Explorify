@@ -42,12 +42,12 @@ const ChangeEmail = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: "center",
-            minHeight: 'calc(100vh - 221px)',
+            minHeight: 'calc(100vh - 63px)',
         }}>
             <Card
                 title={<><MailOutlined /> Change Your Email</>}
-                style={{ width: '60%', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
-                styles={{ header: { fontSize: '1.4rem' } }}
+                style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
+                styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
             >
                 <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
                     📧 Email change time.

@@ -1,4 +1,4 @@
-.subcategoriesSection {
+.subcategoriesContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -11,4 +11,13 @@
     flex-basis: 30%;
     margin-bottom: 2rem;
     height: 15rem;
+}
+
+.spinnerContainer {
+    min-height: calc(100vh - 65px);
+    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

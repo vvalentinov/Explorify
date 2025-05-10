@@ -4,27 +4,65 @@ import { Link } from 'react-router-dom';
 
 import slugify from 'slugify';
 
+import styles from './PlacesList.module.css';
+
 const PlacesList = ({ places }) => {
     return (
-        <>
+
+        <section
+            style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                gap: '1.5rem',
+                padding: '2rem',
+            }}
+        >
             {places.map(place => (
-                <div key={place.id} style={{ display: 'inline-block', margin: '1rem' }}>
-                    <Link
-                        to={`/place/${slugify(place.name, { lower: true })}`}
-                        state={{ placeId: place.id }}
+                <Link
+                    key={place.id}
+                    to={`/place/${slugify(place.name, { lower: true })}`}
+                    state={{ placeId: place.id }}
+                    style={{
+                        width: 'calc(33.333% - 1rem)',
+                        textDecoration: 'none',
+                        transition: 'transform 0.3s ease',
+                    }}
+                >
+
+                    <Card className={styles.card}
+                        hoverable
+                        cover={
+                            <img
+                                alt={place.name}
+                                src={place.imageUrl}
+                                style={{
+                                    height: '200px',
+                                    objectFit: 'cover',
+                                    borderTopLeftRadius: '8px',
+                                    borderTopRightRadius: '8px',
+                                }}
+                            />
+                        }
+                        style={{
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                            transition: 'transform 0.3s ease',
+                        }}
+                        styles={{
+                            body: {
+                                backgroundColor: '#eafffb',
+                                textAlign: 'center',
+                                padding: '1rem',
+                            }
+                        }}
                     >
-                        <Card
-                            // styles={{ body: { border: 'solid 1px black' } }}
-                            hoverable
-                            style={{ width: 240 }}
-                            cover={<img alt="example" src={place.imageUrl} />}
-                        >
-                            <Card.Meta title={place.name} style={{ textAlign: 'center' }} />
-                        </Card>
-                    </Link>
-                </div>
+                        <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+                    </Card>
+                </Link>
             ))}
-        </>
+        </section>
     );
 };
 

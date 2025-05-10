@@ -45,12 +45,12 @@ const ChangeUsername = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: "center",
-            minHeight: 'calc(100vh - 221px)',
+            minHeight: 'calc(100vh - 63px)',
         }}>
             <Card
-                title={<><UserOutlined /> Change Your Username</>}
-                style={{ width: '60%', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}
-                styles={{ header: { fontSize: '1.4rem' } }}
+                title={<><UserOutlined /> Change Username</>}
+                style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
+                styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
             >
                 <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
                     ✨ Time for a fresh start? Pick a new username below!
@@ -63,7 +63,7 @@ const ChangeUsername = () => {
                         name="UserName"
                         rules={[{ required: true }, { min: 2 }, { max: 50 }]}
                     >
-                        <Input size='large' placeholder="Enter your new username" />
+                        <Input size='large' placeholder="Enter your new cool username here..." />
                     </Form.Item>
 
                     <Form.Item style={{ marginTop: 24 }}>
@@ -71,9 +71,10 @@ const ChangeUsername = () => {
                             size='large'
                             variant='solid'
                             color='cyan'
-                            htmlType="submit" block
+                            htmlType="submit"
+                            block
                         >
-                            Change Username
+                            Change
                         </Button>
                     </Form.Item>
 

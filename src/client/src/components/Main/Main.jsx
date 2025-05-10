@@ -25,34 +25,34 @@ import * as paths from '../../constants/paths';
 const Main = () => {
     return (
         <main>
-            <div className='mainContainer'>
-                <Routes>
+            {/* <div className='mainContainer'> */}
+            <Routes>
 
-                    <Route path={paths.profilePath} element={<ProfileLayout />}>
-                        <Route index element={<Profile />} />
-                        <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
-                        <Route path={paths.changePasswordPath} element={<ChangePassword />} />
-                        <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
-                    </Route>
+                <Route path={paths.profilePath} element={<ProfileLayout />}>
+                    <Route index element={<Profile />} />
+                    <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
+                    <Route path={paths.changePasswordPath} element={<ChangePassword />} />
+                    <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
+                </Route>
 
-                    <Route path={paths.homePath} element={<Home />} />
-                    <Route path={paths.signInPath} element={<SignIn />} />
-                    <Route path={paths.signUpPath} element={<SignUp />} />
-                    <Route path={paths.categoriesPath} element={<Categories />} />
-                    <Route path={paths.subcategoriesPath} element={<Subcategories />} />
-                    <Route path={paths.logoutPath} element={<Logout />} />
-                    <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
-                    <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
-                    <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
+                <Route path={paths.homePath} element={<Home />} />
+                <Route path={paths.signInPath} element={<SignIn />} />
+                <Route path={paths.signUpPath} element={<SignUp />} />
+                <Route path={paths.categoriesPath} element={<Categories />} />
+                <Route path={paths.subcategoriesPath} element={<Subcategories />} />
+                <Route path={paths.logoutPath} element={<Logout />} />
+                <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
+                <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
+                <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
 
-                    <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
-                    <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
+                <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
+                <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
-                    <Route path='*' element={<NoPathFound />} />
-                </Routes>
+                <Route path='*' element={<NoPathFound />} />
+            </Routes>
 
-                <FloatButton.BackTop />
-            </div>
+            <FloatButton.BackTop />
+            {/* </div> */}
         </main>
     )
 };

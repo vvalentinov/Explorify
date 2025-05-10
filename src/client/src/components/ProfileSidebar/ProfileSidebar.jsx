@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { Menu, ConfigProvider } from "antd";
+import { Menu, Card, ConfigProvider } from "antd";
 
 import {
     MailOutlined,
@@ -15,6 +15,21 @@ import {
     profilePath,
     changeEmailPath,
 } from "../../constants/paths";
+
+const IconWrapper = ({ icon }) => (
+    <div style={{
+        backgroundColor: '#43c0c1',
+        borderRadius: '50%',
+        width: 32,
+        height: 32,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff'
+    }}>
+        {icon}
+    </div>
+);
 
 const items = [
     {
@@ -40,34 +55,67 @@ const items = [
 ];
 
 const ProfileSidebar = () => {
-
     return (
-        <ConfigProvider
-            theme={{
-                components: {
-                    Menu: {
-                        itemSelectedBg: '#43c0c1',
-                        itemSelectedColor: '#ffffff',
-                        itemColor: '#000000',
-                        itemHoverBg: '#b2ebe9',
-                    }
-                },
-            }}
-        >
-            <Menu
+        <div style={
+            {
+                minHeight: 'calc(100vh - 63px)',
+                backgroundColor: '#e6fffb',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: '2rem 0',
+                boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
+                // border: 'solid 1px black'
+            }
+        }>
+
+            <div style={{
+                width: 80,
+                height: 80,
+                borderRadius: '50%',
+                backgroundColor: '#43c0c1',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '2rem',
+                marginBottom: '2rem',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)'
+            }}>
+                <UserOutlined />
+            </div>
+
+            <Card
+                variant="borderless"
                 style={{
-                    width: '100%',
-                    overflowY: 'auto',
-                    fontSize: '1.3rem',
-                    minHeight: 'calc(100vh - 221px)',
-                    backgroundColor: '#e6fffb',
+                    borderRadius: 16,
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                 }}
-                items={items}
-                mode="vertical"
-                defaultSelectedKeys={['profile']}
-            />
-        </ConfigProvider>
-    )
+            >
+                <ConfigProvider theme={{
+                    components: {
+                        Menu: {
+                            itemSelectedColor: 'green',
+                            itemSelectedBg: '#b6e4b3'
+                        }
+                    }
+                }}>
+                    <Menu
+                        items={items}
+                        mode="vertical"
+                        defaultSelectedKeys={['profile']}
+                        style={{
+                            fontSize: '1.1rem',
+                            backgroundColor: '#e6fffb',
+                            borderRight: 'none',
+                            boxShadow: '2px 0 5px rgba(0, 0, 0, 0.05)'
+                        }}
+                    />
+                </ConfigProvider>
+            </Card>
+        </div>
+    );
 };
 
 export default ProfileSidebar;

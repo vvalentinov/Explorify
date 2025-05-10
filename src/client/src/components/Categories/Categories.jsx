@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 import { categoriesServiceFactory } from "../../services/categoriesService";
 
+import { Spin, ConfigProvider } from 'antd';
+
 const Categories = () => {
 
     const categoriesService = categoriesServiceFactory();
@@ -16,17 +18,34 @@ const Categories = () => {
     const [showSpinner, setShowSpinner] = useState(true);
 
     useEffect(() => {
+        const startTime = Date.now();
+
         categoriesService
             .getCategories()
             .then((res) => {
                 setCategories(res);
-                setShowSpinner(false);
+                const elapsed = Date.now() - startTime;
+                const remainingTime = Math.max(1000 - elapsed, 0);
+
+                setTimeout(() => {
+                    setShowSpinner(false);
+                }, remainingTime);
             });
     }, []);
 
     return (
         showSpinner ?
-            <Spinner />
+            <ConfigProvider theme={{
+                components: {
+                    Spin: {
+                        colorPrimary: 'green'
+                    }
+                }
+            }}>
+                <div className={styles.spinnerContainer}>
+                    <Spin size='large' spinning={showSpinner} />
+                </div>
+            </ConfigProvider>
             :
             <section className={styles.categoriesSection}>
                 {categories && categories.map(x => (

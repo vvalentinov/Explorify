@@ -7,17 +7,18 @@ body {
     margin: 0;
 }
 
-.mainContainer {
+main {
+    overflow: auto;
     margin-top: 63px;
-    min-height: calc(100vh - 221px);
-    /* background-color: #F9FFFB; */
+    min-height: calc(100vh - 63px);
+    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
 }
 
 #root {
     margin: 0;
     display: flex;
-    min-height: 100%;
     flex-direction: column;
+    min-height: 100%;
 }
 
 .ant-image {
@@ -27,8 +28,6 @@ body {
 
 .ant-layout-content {
     background-color: white;
+    margin-top: 0 !important;
+    min-height: calc(100vh - 63px);
 }
-
-/* .ant-spin-dot-item {
-    background-color: green !important;
-} */

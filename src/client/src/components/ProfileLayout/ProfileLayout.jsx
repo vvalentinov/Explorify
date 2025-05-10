@@ -8,12 +8,13 @@ const ProfileLayout = () => {
         <ConfigProvider theme={{
             components: {
                 Layout: {
-                    siderBg: '#e6fffb'
+                    siderBg: '#e6fffb',
+                    margin: '0 !important'
                 }
             }
         }}>
             <Layout>
-                <Layout.Sider width={"20%"}>
+                <Layout.Sider width={"30%"}>
                     <ProfileSidebar />
                 </Layout.Sider>
                 <Layout.Content>

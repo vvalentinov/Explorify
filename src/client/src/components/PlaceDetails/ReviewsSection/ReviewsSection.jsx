@@ -120,7 +120,9 @@ const ReviewsSection = ({
             ref={reviewSectionRef}
             style={{
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                border: 'solid 1px green'
+                border: 'solid 1px green',
+                margin: '0 2rem',
+                marginBottom: '2rem',
             }}
             title='Reviews Section'
             className={styles.reviewsSection}
@@ -241,7 +243,6 @@ const ReviewsSection = ({
                         }}>
                             <Spin size='large' spinning={spinnerLoading} />
                         </ConfigProvider>
-
                 }
             </div>
 
