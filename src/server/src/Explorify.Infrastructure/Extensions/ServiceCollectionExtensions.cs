@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Explorify.Application;
 using Explorify.Persistence;
 using Explorify.Persistence.Identity;
 using Explorify.Application.Identity;
@@ -30,6 +31,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<ISlugGenerator, SlugGenerator>()
             .AddScoped<IUserService, UserService>()
             .AddScoped<IEmailSender, SendGridEmailSender>()
+            .AddScoped<IImageService, ImageService>()
             .AddJwtAuthentication(configuration);
 
         return services;

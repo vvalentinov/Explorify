@@ -38,7 +38,7 @@ public class TokenService : ITokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(50),
+            Expires = DateTime.UtcNow.AddDays(7),
             SigningCredentials = signingCredentials,
             EncryptingCredentials = encryptingCredentials,
             Issuer = _jwtSettings.Issuer,

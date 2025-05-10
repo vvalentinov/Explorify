@@ -16,15 +16,18 @@ public class UploadPlaceCommandHandler
 {
     private readonly IRepository _repository;
     private readonly IBlobService _blobService;
+    private readonly IImageService _imageService;
     private readonly ISlugGenerator _slugGenerator;
 
     public UploadPlaceCommandHandler(
         IRepository repository,
         ISlugGenerator slugGenerator,
-        IBlobService blobService)
+        IBlobService blobService,
+        IImageService imageService)
     {
         _repository = repository;
         _blobService = blobService;
+       _imageService = imageService;
         _slugGenerator = slugGenerator;
     }
 
@@ -59,13 +62,35 @@ public class UploadPlaceCommandHandler
 
         var placePhotos = new List<PlacePhoto>();
 
-        foreach (var file in model.Files)
-        {
-            var url = await _blobService.UploadBlobAsync(
+        //var urls = await _imageService.ProcessPlaceImagesAsync(model.Name, model.Files);
+
+        //foreach (var url in urls)
+        //{
+        //    placePhotos.Add(new PlacePhoto { Url = url });
+        //}
+
+        //var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
+
+        //foreach (var file in files)
+        //{
+        //    var url = await _blobService.UploadBlobAsync(
+        //        file.Content,
+        //        file.FileName,
+        //        $"PlaceImages/${model.Name}/");
+        //}
+
+        var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
+
+        var uploadTasks = files.Select(file =>
+            _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"{PlacesImagesPath}{model.Name}");
+                $"PlacesImages/{model.Name}/"));
 
+        var urls = await Task.WhenAll(uploadTasks);
+
+        foreach (var url in urls)
+        {
             placePhotos.Add(new PlacePhoto { Url = url });
         }
 

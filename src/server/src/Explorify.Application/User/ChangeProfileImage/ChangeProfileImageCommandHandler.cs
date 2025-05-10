@@ -9,13 +9,16 @@ public class ChangeProfileImageCommandHandler
 {
     private readonly IUserService _userService;
     private readonly IBlobService _blobService;
+    private readonly IImageService _imageService;
 
     public ChangeProfileImageCommandHandler(
         IUserService userService,
+        IImageService imageService,
         IBlobService blobService)
     {
         _userService = userService;
         _blobService = blobService;
+        _imageService = imageService;
     }
 
     public async Task<Result<string>> Handle(
@@ -24,11 +27,13 @@ public class ChangeProfileImageCommandHandler
     {
         var fileName = await _userService.GetUserProfileImageFileNameAsync(request.UserId);
 
-        string url = await _blobService.UploadBlobAsync(
-            request.File.Content,
-            fileName ?? request.File.FileName,
-            pathPrefix: "ProfileImages/",
-            shouldGenerateUniqueName: fileName == null);
+        var processedImg = await _imageService.ProcessProfileImageAsync(request.File);
+
+        var url = await _blobService.UploadBlobAsync(
+            processedImg.Content,
+            fileName ?? processedImg.FileName,
+            $"ProfileImages/",
+            fileName == null);
 
         await _userService.ChangeProfileImageAsync(request.UserId, url);
 

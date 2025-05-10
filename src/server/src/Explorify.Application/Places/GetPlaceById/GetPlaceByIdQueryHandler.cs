@@ -5,6 +5,7 @@ using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Explorify.Application.Places.GetPlaceById;
 
@@ -35,7 +36,7 @@ public class GetPlaceByIdQueryHandler
                 Name = x.Name,
                 UserId = x.UserId,
                 Description = x.Description,
-                ImagesUrls = x.Photos.OrderByDescending(x => x.CreatedOn).Select(c => c.Url)
+                ImagesUrls = x.Photos.OrderByDescending(x => x.CreatedOn).Select(c => c.Url).ToList(),
             }).FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
 
         if (responseModel == null)
@@ -43,6 +44,10 @@ public class GetPlaceByIdQueryHandler
             var error = new Error("No place with id found!", ErrorType.Validation);
             return Result.Failure<PlaceDetailsResponseModel>(error);
         }
+
+        responseModel.ImagesUrls = responseModel
+            .ImagesUrls
+            .Where(x => Path.GetFileName(x).StartsWith("thumb_") == false);
 
         var userReview = await _repository
             .AllAsNoTracking<Review>()

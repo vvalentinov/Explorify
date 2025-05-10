@@ -22,20 +22,25 @@ public class GetPlacesInSubcategoryQueryHandler
         GetPlacesInSubcategoryQuery request,
         CancellationToken cancellationToken)
     {
-        var places = (IEnumerable<PlaceDisplayResponseModel>)await _repository
+        var places = await _repository
             .AllAsNoTracking<Place>()
             .Include(x => x.Photos)
             .Where(x => x.CategoryId == request.SubcategoryId)
-            .Select(x => new PlaceDisplayResponseModel
+            .Select(x => new
             {
-                Id = x.Id,
-                Name = x.Name,
-                ImageUrl = x.Photos
-                    .OrderByDescending(x => x.CreatedOn)
-                    .Select(photo => photo.Url)
-                    .First(),
-            }).ToListAsync(cancellationToken);
+                x.Id,
+                x.Name,
+                Photos = x.Photos.Select(p => p.Url).ToList()
+            })
+            .ToListAsync(cancellationToken);
 
-        return Result.Success(places);
+        var result = places.Select(x => new PlaceDisplayResponseModel
+        {
+            Id = x.Id,
+            Name = x.Name,
+            ImageUrl = x.Photos.FirstOrDefault(url => Path.GetFileName(url).StartsWith("thumb_")) ?? x.Photos.First(),
+        });
+
+        return Result.Success(result);
     }
 }

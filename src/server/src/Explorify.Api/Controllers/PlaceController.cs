@@ -23,6 +23,7 @@ public class PlaceController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
+    [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<IActionResult> Upload([FromUploadForm] UploadPlaceRequestModel model)
         => this.CreatedAtActionOrProblemDetails(
                 await _mediator.Send(
