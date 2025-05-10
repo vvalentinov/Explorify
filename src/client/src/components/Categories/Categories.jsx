@@ -1,6 +1,5 @@
 import styles from './Categories.module.css';
 
-import Spinner from '../Spinner/Spinner';
 import ImageOverlayContainer from '../ImageOverlayContainer/ImageOverlayContainer';
 
 import { Link } from 'react-router-dom';
@@ -9,6 +8,8 @@ import { useEffect, useState } from "react";
 import { categoriesServiceFactory } from "../../services/categoriesService";
 
 import { Spin, ConfigProvider } from 'antd';
+
+import { motion } from 'framer-motion';
 
 const Categories = () => {
 
@@ -32,6 +33,8 @@ const Categories = () => {
                 }, remainingTime);
             });
     }, []);
+
+    const [isReady, setIsReady] = useState(false);
 
     return (
         showSpinner ?

@@ -3,6 +3,8 @@ import ProfileSidebar from "../ProfileSidebar/ProfileSidebar";
 import { Outlet } from "react-router-dom";
 import { Layout, ConfigProvider } from "antd";
 
+import { useState } from "react";
+
 const ProfileLayout = () => {
     return (
         <ConfigProvider theme={{

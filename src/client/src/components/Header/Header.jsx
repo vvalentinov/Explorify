@@ -15,7 +15,8 @@ import {
     UserOutlined,
     LogoutOutlined,
     UploadOutlined,
-    MenuOutlined
+    MenuOutlined,
+    CrownOutlined
 } from '@ant-design/icons';
 
 import { useContext } from 'react';
@@ -40,46 +41,61 @@ const menuItems = [
     },
 ];
 
-const dropDownItems = [
-    {
-        key: '1',
-        label: (
-            <NavLink style={{ fontSize: '1.2rem' }} to={paths.profilePath}>
-                <UserOutlined style={{ marginRight: '0.5rem' }} />
-                Profile
-            </NavLink>
-        ),
-    },
-    {
-        key: '2',
-        label: (
-            <NavLink style={{ fontSize: '1.2rem' }} to={paths.uploadPlacePath}>
-                <UploadOutlined style={{ marginRight: '0.5rem' }} />
-                Upload
-            </NavLink>
-        ),
-    },
-    {
-        type: 'divider',
-    },
-    {
-        key: '4',
-        label: (
-            <NavLink style={{ fontSize: '1.2rem' }} to={paths.logoutPath}>
-                <LogoutOutlined style={{ marginRight: '0.5rem' }} />
-                Logout
-            </NavLink>
-        ),
-    },
-];
+
 
 const Header = () => {
 
-    const { isAuthenticated, profileImageUrl } = useContext(AuthContext);
+    const { isAuthenticated, profileImageUrl, isAdmin } = useContext(AuthContext);
 
     const { token } = useToken();
 
     const screens = useBreakpoint();
+
+    const dropDownItems = [
+        {
+            key: '1',
+            label: (
+                <NavLink style={{ fontSize: '1.2rem' }} to={paths.profilePath}>
+                    <UserOutlined style={{ marginRight: '0.5rem' }} />
+                    Profile
+                </NavLink>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <NavLink style={{ fontSize: '1.2rem' }} to={paths.uploadPlacePath}>
+                    <UploadOutlined style={{ marginRight: '0.5rem' }} />
+                    Upload
+                </NavLink>
+            ),
+        },
+        ...(isAdmin
+            ? [
+                {
+                    key: '3',
+                    label: (
+                        <NavLink style={{ fontSize: '1.2rem' }} to="/admin">
+                            <CrownOutlined style={{ marginRight: '0.5rem' }} />
+                            Admin
+                        </NavLink>
+                    ),
+                },
+            ]
+            : []),
+        {
+            type: 'divider',
+        },
+        {
+            key: '5',
+            label: (
+                <NavLink style={{ fontSize: '1.2rem' }} to={paths.logoutPath}>
+                    <LogoutOutlined style={{ marginRight: '0.5rem' }} />
+                    Logout
+                </NavLink>
+            ),
+        },
+    ];
 
     const dynamicStyles = {
         container: {

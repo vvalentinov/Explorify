@@ -6,14 +6,29 @@ import Footer from './components/Footer/Footer';
 
 import { AuthProvider } from './contexts/AuthContext';
 
+import { Routes, Route, useLocation } from 'react-router-dom';
+
+import AdminLayout from './components/Admin/AdminLayout';
 const App = () => {
+
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
+
     return (
-        <AuthProvider>
-            <Header />
-            <Main />
-            <Footer />
-        </AuthProvider>
-    )
+        <>
+            {isAdminRoute ? (
+                <Routes>
+                    <Route path="/admin/*" element={<AdminLayout />} />
+                </Routes>
+            ) : (
+                <AuthProvider>
+                    <Header />
+                    <Main />
+                    <Footer />
+                </AuthProvider>
+            )}
+        </>
+    );
 }
 
 export default App;
