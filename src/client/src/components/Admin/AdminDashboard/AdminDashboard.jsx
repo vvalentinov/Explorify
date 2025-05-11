@@ -9,13 +9,31 @@ import React from 'react';
 
 const { Title, Paragraph } = Typography;
 
+import { useEffect, useContext, useState } from 'react';
+
+import { AuthContext } from '../../../contexts/AuthContext';
+
+import { adminServiceFactory } from '../../../services/adminService';
+
 const AdminDashboard = () => {
 
-    // Ideally fetched from API
+    const { token } = useContext(AuthContext);
+
+    const adminService = adminServiceFactory(token);
+
+    const [dashboardInfo, setDashboardInfo] = useState({});
+
+    useEffect(() => {
+        adminService
+            .getDashboardInfo()
+            .then(res => setDashboardInfo(res))
+            .catch(err => console.log(err));
+    }, []);
+
     const stats = {
-        pendingReviews: 8,
-        pendingPlaces: 5,
-        totalUsers: 123,
+        pendingReviews: dashboardInfo?.unapprovedReviewsNumber,
+        pendingPlaces: dashboardInfo?.unapprovedPlacesNumber,
+        totalUsers: dashboardInfo?.registeredUsersNumber,
     };
 
     const cards = [

@@ -15,19 +15,19 @@ const App = () => {
     const isAdminRoute = location.pathname.startsWith('/admin');
 
     return (
-        <>
+        <AuthProvider>
             {isAdminRoute ? (
                 <Routes>
                     <Route path="/admin/*" element={<AdminLayout />} />
                 </Routes>
             ) : (
-                <AuthProvider>
+                <>
                     <Header />
                     <Main />
                     <Footer />
-                </AuthProvider>
+                </>
             )}
-        </>
+        </AuthProvider>
     );
 }
 

@@ -136,6 +136,7 @@ const ReviewsSection = ({
 
             {place.userId != userId && <WriteReviewCard handleOpenModal={handleOpenModal} />}
 
+            {/* Order the reviews */}
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <Card
                     style={{

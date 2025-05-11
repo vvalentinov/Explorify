@@ -4,11 +4,14 @@ import {
     DashboardOutlined,
     UserOutlined,
     SettingOutlined,
+    HomeOutlined
 } from '@ant-design/icons';
 
 // import AdminUsers from '../../pages/admin/AdminUsers';
 // import AdminSettings from '../../pages/admin/AdminSettings';
 // import NoPathFound from '../../components/NoPathFound/NoPathFound';
+
+import UnadpprovedPlaces from './UnapprovedPlaces/UnapprovedPlaces';
 
 import AdminUsers from './AdminUsers/AdminUsers';
 
@@ -16,13 +19,19 @@ import AdminDashboard from './AdminDashboard/AdminDashboard';
 
 const { Header, Sider, Content } = Layout;
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const AdminLayout = () => {
 
     const navigate = useNavigate();
 
     const menuItems = [
+        {
+            key: 'explorify',
+            icon: <HomeOutlined />,
+            label: 'Explorify',
+            onClick: () => navigate('/'),
+        },
         {
             key: 'dashboard',
             icon: <DashboardOutlined />,
@@ -36,10 +45,10 @@ const AdminLayout = () => {
             onClick: () => navigate('/admin/users'),
         },
         {
-            key: 'settings',
+            key: 'unapproved-places',
             icon: <SettingOutlined />,
-            label: 'Settings',
-            onClick: () => navigate('/admin/settings'),
+            label: 'Places',
+            onClick: () => navigate('/admin/unapproved-places'),
         },
     ];
 
@@ -69,9 +78,9 @@ const AdminLayout = () => {
                     <Routes>
                         <Route index element={<AdminDashboard />} />
                         <Route path="users" element={<AdminUsers />} />
-                        {/* <Route path="users" element={<AdminUsers />} />
-                        <Route path="settings" element={<AdminSettings />} />
-                        <Route path="*" element={<NoPathFound />} /> */}
+                        <Route path='unapproved-places' element={<UnadpprovedPlaces />} />
+
+                        {/* <Route path="*" element={<NoPathFound />} />  */}
                     </Routes>
                 </Content>
             </Layout>
