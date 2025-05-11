@@ -1,4 +1,5 @@
-﻿using Explorify.Persistence.Extensions;
+﻿using Explorify.Infrastructure;
+using Explorify.Persistence.Extensions;
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
@@ -18,6 +19,10 @@ public static class ServiceCollectionExtensions
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
+        services
+            .AddExceptionHandler<GlobalExceptionHandler>()
+            .AddProblemDetails();
 
         services
             .AddPersistence(configuration)
