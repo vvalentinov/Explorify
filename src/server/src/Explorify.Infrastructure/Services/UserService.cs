@@ -250,16 +250,26 @@ public class UserService : IUserService
 
     public async Task<Result<GetProfileInfoResponseModel>> GetProfileInfo(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager
+            .Users
+            .Include(x => x.Places)
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(x => x.Id.ToString() == userId);
 
-        //if (user == null)
-        //{
-        //    return Result.Failure();
-        //}
+        if (user == null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<GetProfileInfoResponseModel>(error);
+        }
 
         var model = new GetProfileInfoResponseModel
         {
-            ProfileImageUrl = user?.ProfileImageUrl
+            ProfileImageUrl = user.ProfileImageUrl,
+            UserName = user.UserName ?? string.Empty,
+            Email = user.Email ?? string.Empty,
+            Points = user.Points,
+            UploadedPlacesCount = user.Places.Where(x => x.IsApproved).Count(),
+            UploadedReviewsCount = user.Reviews.Count
         };
 
         return Result.Success(model);
@@ -323,4 +333,38 @@ public class UserService : IUserService
             .ToHashSet();
     }
 
+    public async Task<Result> IncreaseUserPointsAsync(
+        string userId,
+        int points)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<UserDto>(error);
+        }
+
+        user.Points += points;
+
+        await _userManager.UpdateAsync(user);
+
+        return Result.Success();
+    }
+
+    public async Task<int> GetUsersCountAsync()
+        => await _userManager.Users.CountAsync();
+
+    public async Task<Dictionary<string, string>> GetUserNamesByIdsAsync(List<string> userIds)
+    {
+        var result = await _userManager
+            .Users
+            .Where(x => userIds.Contains(x.Id.ToString().ToLower()))
+            .Select(x => new { x.Id, x.UserName })
+            .ToDictionaryAsync(
+                x => x.Id.ToString().ToUpperInvariant(),
+                x => x.UserName ?? string.Empty);
+
+        return result;
+    }
 }

@@ -24,6 +24,7 @@ public class GetPlacesInCategoryQueryHandler
     {
         var places = (IEnumerable<PlaceDisplayResponseModel>)await _repository
             .AllAsNoTracking<Place>()
+            .Where(x => x.IsApproved)
             .Include(x => x.Category)
             .Include(x => x.Photos)
             .Where(x => x.Category.ParentId == request.CategoryId)

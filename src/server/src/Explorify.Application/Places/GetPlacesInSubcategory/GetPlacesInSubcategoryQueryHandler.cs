@@ -24,8 +24,8 @@ public class GetPlacesInSubcategoryQueryHandler
     {
         var places = await _repository
             .AllAsNoTracking<Place>()
+            .Where(x => x.CategoryId == request.SubcategoryId && x.IsApproved)
             .Include(x => x.Photos)
-            .Where(x => x.CategoryId == request.SubcategoryId)
             .Select(x => new
             {
                 x.Id,

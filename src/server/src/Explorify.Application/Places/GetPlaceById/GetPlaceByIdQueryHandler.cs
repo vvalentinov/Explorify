@@ -4,8 +4,9 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Explorify.Application.Places.GetPlaceById;
 
@@ -29,6 +30,7 @@ public class GetPlaceByIdQueryHandler
     {
         var responseModel = await _repository
             .AllAsNoTracking<Place>()
+            .Where(x => x.IsApproved)
             .Include(x => x.Photos)
             .Select(x => new PlaceDetailsResponseModel
             {
@@ -36,13 +38,19 @@ public class GetPlaceByIdQueryHandler
                 Name = x.Name,
                 UserId = x.UserId,
                 Description = x.Description,
-                ImagesUrls = x.Photos.OrderByDescending(x => x.CreatedOn).Select(c => c.Url).ToList(),
-            }).FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
+                ImagesUrls = x.Photos
+                    .OrderByDescending(x => x.CreatedOn)
+                    .Select(c => c.Url)
+                    .ToList(),
+            }).FirstOrDefaultAsync(
+                x => x.Id == request.PlaceId,
+                cancellationToken);
 
         if (responseModel == null)
         {
-            var error = new Error("No place with id found!", ErrorType.Validation);
-            return Result.Failure<PlaceDetailsResponseModel>(error);
+            return Result.Failure<PlaceDetailsResponseModel>(new Error(
+                NoPlaceWithIdError,
+                ErrorType.Validation));
         }
 
         responseModel.ImagesUrls = responseModel
