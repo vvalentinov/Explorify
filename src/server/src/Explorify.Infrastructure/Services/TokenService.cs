@@ -2,11 +2,12 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 
+using Explorify.Infrastructure.Settings;
+using Explorify.Application.Abstractions.Interfaces;
+
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Explorify.Infrastructure.Settings;
-using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Services;
 
