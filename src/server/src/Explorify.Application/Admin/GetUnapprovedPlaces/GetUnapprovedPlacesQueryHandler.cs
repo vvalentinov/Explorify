@@ -25,9 +25,16 @@ public class GetUnapprovedPlacesQueryHandler
         GetUnapprovedPlacesQuery request,
         CancellationToken cancellationToken)
     {
-        var unapprovedPlaces = await _repository
+        var query = _repository
             .AllAsNoTracking<Place>()
             .Where(x => x.IsApproved == false)
+            .OrderByDescending(x => x.CreatedOn);
+
+        var recordsCount = await query.CountAsync(cancellationToken);
+
+        var unapprovedPlaces = await query
+            .Skip((request.Page - 1) * 6)
+            .Take(6)
             .Select(x => new UnapprovedPlaceResponseModel
             {
                 Id = x.Id,
@@ -53,7 +60,13 @@ public class GetUnapprovedPlacesQueryHandler
             place.UserName = userNamesDict[place.UserId];
         }
 
-        var response = new UnapprovedPlacesListModel { Places = unapprovedPlaces };
+        var response = new UnapprovedPlacesListModel
+        {
+            Places = unapprovedPlaces,
+            RecordsCount = recordsCount,
+            ItemsPerPage = 6,
+            PageNumber = request.Page,
+        };
 
         return Result.Success(response);
     }

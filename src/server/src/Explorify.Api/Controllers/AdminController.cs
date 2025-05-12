@@ -36,9 +36,9 @@ public class AdminController : BaseController
     }
 
     [HttpGet(nameof(GetUnapprovedPlaces))]
-    public async Task<IActionResult> GetUnapprovedPlaces()
+    public async Task<IActionResult> GetUnapprovedPlaces(int page)
     {
-        var query = new GetUnapprovedPlacesQuery();
+        var query = new GetUnapprovedPlacesQuery(page);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

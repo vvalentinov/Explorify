@@ -116,6 +116,6 @@ public class UploadPlaceCommandHandler
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();
 
-        return Result.Success();
+        return Result.Success("Successfull place upload!");
     }
 }
