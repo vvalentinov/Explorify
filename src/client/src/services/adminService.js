@@ -8,7 +8,7 @@ export const adminServiceFactory = (token) => {
 
     return {
         getDashboardInfo: () => request.get(`${baseUrl}/Admin/GetDashboardInfo`),
-        getUnapprovedPlaces: () => request.get(`${baseUrl}/Admin/GetUnapprovedPlaces`),
+        getUnapprovedPlaces: (page) => request.get(`${baseUrl}/Admin/GetUnapprovedPlaces?page=${page}`),
         approvePlace: (placeId) => request.put(`${baseUrl}/Admin/ApprovePlace?placeId=${placeId}`)
     }
 };

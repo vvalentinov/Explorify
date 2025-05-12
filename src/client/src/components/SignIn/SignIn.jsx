@@ -3,7 +3,7 @@ import styles from './SignIn.module.css';
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Typography, ConfigProvider, Image } from "antd";
 
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { NavLink, useNavigate, Link } from "react-router-dom";
 
 import { AuthContext } from '../../contexts/AuthContext';
@@ -22,21 +22,32 @@ const SignIn = () => {
 
     const { userLogin } = useContext(AuthContext);
 
+    const [isSigningIn, setIsSigningIn] = useState(false);
+
     const onFinish = (values) => {
+        setIsSigningIn(true);
+
         authService
             .login(values)
             .then(res => {
                 userLogin(res);
+                setIsSigningIn(false);
                 navigate(homePath, { state: { username: res.userName } });
-            }).catch(err => console.log(err));
+            }).catch(err => {
+                console.log(err);
+                setIsSigningIn(false);
+            });
     };
 
     return (
-        <ConfigProvider theme={{
-            components: {}
-        }}
+        <ConfigProvider
+            theme={{
+                components: {}
+            }}
         >
+
             <section className={styles.section}>
+
                 <div className={styles.container}>
                     <div className={styles.header}>
 
@@ -58,6 +69,7 @@ const SignIn = () => {
                             Please enter your details below to sign in.
                         </Paragraph>
                     </div>
+
                     <Form
                         name="normal_login"
                         onFinish={onFinish}
@@ -107,18 +119,30 @@ const SignIn = () => {
                                 placeholder="Some strong password here..."
                             />
                         </Form.Item>
+
                         <Form.Item style={{ marginBottom: "0px" }}>
-                            <Button color='cyan' variant='solid' size='large' block="true" htmlType="submit">
-                                Sign In
+
+                            <Button
+                                color='cyan'
+                                variant='solid'
+                                size='large'
+                                block="true"
+                                htmlType="submit"
+                            >
+                                {isSigningIn ? 'Signing you in...' : 'Sign In'}
                             </Button>
+
                             <div className={styles.footer}>
                                 <Text className={styles.text}>Don't have an account?</Text>{" "}
                                 <NavLink style={{ color: '#00aed7', fontStyle: 'italic' }} to={signUpPath}>Sign up now</NavLink>
                             </div>
+
                             <div className={styles.footer}>
                                 <Link style={{ color: '#00aed7', fontStyle: 'italic' }} to={forgotPasswordPath}>Forgot Password?</Link>
                             </div>
+
                         </Form.Item>
+
                     </Form>
                 </div>
                 <div className={styles.imageContainer}>

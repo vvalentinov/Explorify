@@ -18,6 +18,8 @@ import ChangeEmail from '../ChangeEmail/ChangeEmail';
 import ForgotPassword from '../ForgotPassword/ForgotPassword';
 import ResetPassword from '../ResetPassword/ResetPassword';
 
+import Alert from '../Alert';
+
 import { FloatButton } from 'antd';
 
 import * as paths from '../../constants/paths';
@@ -25,6 +27,7 @@ import * as paths from '../../constants/paths';
 const Main = () => {
     return (
         <main>
+            <Alert />
             {/* <div className='mainContainer'> */}
             <Routes>
 

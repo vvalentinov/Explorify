@@ -17,10 +17,7 @@ import {
     Spin
 } from 'antd';
 
-import {
-    UploadOutlined,
-    // EnvironmentOutlined
-} from '@ant-design/icons';
+import { UploadOutlined } from '@ant-design/icons';
 
 import { useDebounce } from 'use-debounce';
 

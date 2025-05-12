@@ -4,7 +4,8 @@ import {
     DashboardOutlined,
     UserOutlined,
     SettingOutlined,
-    HomeOutlined
+    HomeOutlined,
+    EnvironmentOutlined
 } from '@ant-design/icons';
 
 // import AdminUsers from '../../pages/admin/AdminUsers';
@@ -46,7 +47,7 @@ const AdminLayout = () => {
         },
         {
             key: 'unapproved-places',
-            icon: <SettingOutlined />,
+            icon: <EnvironmentOutlined />,
             label: 'Places',
             onClick: () => navigate('/admin/unapproved-places'),
         },
