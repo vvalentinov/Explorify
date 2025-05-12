@@ -1,0 +1,41 @@
+﻿using Explorify.Domain.Entities;
+using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.Abstractions.Interfaces.Messaging;
+
+using Microsoft.EntityFrameworkCore;
+
+namespace Explorify.Application.Notifications.Delete;
+
+public class DeleteNotificationCommandHandler
+    : ICommandHandler<DeleteNotificationCommand>
+{
+    private readonly IRepository _repository;
+
+    public DeleteNotificationCommandHandler(IRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<Result> Handle(
+        DeleteNotificationCommand request,
+        CancellationToken cancellationToken)
+    {
+        var notification = await _repository
+            .All<Notification>()
+            .FirstOrDefaultAsync(x =>
+                x.Id == request.NotificationId && x.ReceiverId == request.UserId,
+                cancellationToken);
+
+        if (notification == null)
+        {
+            var error = new Error("No notification found!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
+        _repository.SoftDelete(notification);
+        await _repository.SaveChangesAsync();
+
+        return Result.Success("Notificaton deleted successfully!");
+    }
+}

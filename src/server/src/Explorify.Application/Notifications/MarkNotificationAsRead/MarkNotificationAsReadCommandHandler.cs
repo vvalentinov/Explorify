@@ -26,7 +26,7 @@ public class MarkNotificationAsReadCommandHandler
         CancellationToken cancellationToken)
     {
         var notification = await _repository
-            .AllAsNoTracking<Notification>()
+            .All<Notification>()
             .FirstOrDefaultAsync(x =>
                 x.Id == request.NotificationId && x.ReceiverId == request.UserId,
                 cancellationToken);
