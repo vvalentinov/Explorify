@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 using Explorify.Application;
 using Explorify.Persistence;
 using Explorify.Persistence.Identity;
@@ -33,6 +34,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IEmailSender, SendGridEmailSender>()
             .AddScoped<IImageService, ImageService>()
             .AddJwtAuthentication(configuration);
+
+        services.AddScoped<INotificationService, NotificationService>();
 
         return services;
     }
@@ -103,6 +106,24 @@ public static class ServiceCollectionExtensions
                     IssuerSigningKey = new SymmetricSecurityKey(signKey),
                     TokenDecryptionKey = new SymmetricSecurityKey(encryptKey),
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/api/hubs"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
             });
 
         return services;

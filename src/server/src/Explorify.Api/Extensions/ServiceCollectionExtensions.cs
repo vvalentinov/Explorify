@@ -24,6 +24,8 @@ public static class ServiceCollectionExtensions
             .AddExceptionHandler<GlobalExceptionHandler>()
             .AddProblemDetails();
 
+        services.AddSignalR();
+
         services
             .AddPersistence(configuration)
             .AddInfrastructure(configuration)

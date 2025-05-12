@@ -25,7 +25,7 @@ public class AdminController : BaseController
     public async Task<IActionResult> ApprovePlace([FromQuery] Guid placeId)
         => this.OkOrProblemDetails(
             await _mediator.Send(
-                new ApprovePlaceCommand(placeId)));
+                new ApprovePlaceCommand(placeId, User.GetId())));
 
     [HttpGet(nameof(GetDashboardInfo))]
     public async Task<IActionResult> GetDashboardInfo()

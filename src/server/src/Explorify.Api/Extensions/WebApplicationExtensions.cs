@@ -1,5 +1,6 @@
 ﻿using Explorify.Persistence;
 using Explorify.Persistence.Seeding;
+using Explorify.Infrastructure.Hubs;
 using Explorify.Application.Abstractions.Interfaces;
 
 using Microsoft.EntityFrameworkCore.Storage;
@@ -9,7 +10,7 @@ namespace Explorify.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void ConfigureMiddlewarePipeline(this WebApplication app)
+    public static WebApplication ConfigureMiddlewarePipeline(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
@@ -26,9 +27,18 @@ public static class WebApplicationExtensions
             .UseAuthorization();
 
         app.MapControllers();
+
+        return app;
     }
 
-    public static async Task SeedDatabaseAsync(this WebApplication app)
+    public static WebApplication MapHubs(this WebApplication app)
+    {
+        app.MapHub<NotificationHub>("/api/hubs/notification");
+
+        return app;
+    }
+
+    public static async Task<WebApplication> SeedDatabaseAsync(this WebApplication app)
     {
         using AsyncServiceScope serviceScope = app.Services.CreateAsyncScope();
 
@@ -50,5 +60,7 @@ public static class WebApplicationExtensions
             var dbContextSeeder = new ExplorifyDbContextSeeder(slugGenerator);
             await dbContextSeeder.SeedAsync(dbContext, app.Services);
         }
+
+        return app;
     }
 }
