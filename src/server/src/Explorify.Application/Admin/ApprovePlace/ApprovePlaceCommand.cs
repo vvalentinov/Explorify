@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Admin.ApprovePlace;
 
-public record ApprovePlaceCommand(Guid PlaceId)
+public record ApprovePlaceCommand(Guid PlaceId, Guid CurrentUserId)
     : ICommand;
