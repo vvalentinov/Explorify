@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Places.GetPlacesInSubcategory;
 
-public record GetPlacesInSubcategoryQuery(int SubcategoryId)
-    : IQuery<IEnumerable<PlaceDisplayResponseModel>>;
+public record GetPlacesInSubcategoryQuery(int SubcategoryId, int Page)
+    : IQuery<PlacesListResponseModel>;

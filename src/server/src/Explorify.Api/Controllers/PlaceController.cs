@@ -38,10 +38,10 @@ public class PlaceController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInSubcategory))]
-    public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId)
+    public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId, int page)
         => this.OkOrProblemDetails(
                 await _mediator.Send(
-                    new GetPlacesInSubcategoryQuery(subcategoryId)));
+                    new GetPlacesInSubcategoryQuery(subcategoryId, page)));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsById))]
