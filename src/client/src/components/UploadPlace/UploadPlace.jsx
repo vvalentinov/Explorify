@@ -90,6 +90,7 @@ const UploadPlace = () => {
         const formData = new FormData();
 
         formData.append("Name", data.Name ?? "");
+        formData.append("Address", data.Address ?? "");
         formData.append("Description", data.Description);
         formData.append("CategoryId", data.CategoryId[0]);
         formData.append("SubcategoryId", data.CategoryId[1]);
@@ -166,6 +167,14 @@ const UploadPlace = () => {
                         // rules={[{ required: true }]}
                         >
                             <Input placeholder="Enter place name..." />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="Address"
+                            label="Address"
+                        // rules={[{ required: true }]}
+                        >
+                            <Input placeholder="Enter address here..." />
                         </Form.Item>
 
                         <Form.Item

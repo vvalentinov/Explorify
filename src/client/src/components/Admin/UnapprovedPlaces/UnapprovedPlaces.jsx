@@ -130,8 +130,9 @@ const UnapprovedPlaces = () => {
                             flexWrap: 'wrap',
                             justifyContent: 'center',
                             gap: '1rem',
-                            // border: 'solid 1px black',
-                            padding: '2rem 0'
+                            padding: '2rem 0',
+                            border: 'solid 1px black',
+                            width: '100%'
                         }}
                     >
                         {places.map(place => (
@@ -157,7 +158,7 @@ const UnapprovedPlaces = () => {
                                     overflow: 'hidden',
                                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                     transition: 'transform 0.3s ease',
-                                    // flexBasis: '30%',
+                                    flexBasis: '30%',
                                     flexWrap: 'wrap'
                                 }}
                                 styles={{
