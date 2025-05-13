@@ -2,6 +2,8 @@ import styles from './PlaceDetailsSection.module.css';
 
 import { UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
+import WeatherCard from '../WeatherCard/WeatherCard';
+
 import {
     Carousel,
     Card,
@@ -10,7 +12,8 @@ import {
     Rate,
 } from 'antd';
 
-const PlaceDetailsSection = ({ place }) => {
+const PlaceDetailsSection = ({ place, mapUrl, weatherData }) => {
+
     return (
         <section className={styles.placeDetailsCardSection}>
             <Card
@@ -76,29 +79,55 @@ const PlaceDetailsSection = ({ place }) => {
                     </Typography.Paragraph>
                 </Card>
 
-            </Card>
-
-            <Card
-                style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green' }}
-                styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
-                className={styles.userReviewCard}
-                title={
-                    <div className={styles.reviewCardHeader}>
-                        <div className={styles.reviewCardHeaderContainer}>
-                            <Avatar src={place.userProfileImageUrl} size={40} />
-                            <span style={{ marginLeft: '10px' }} className={styles.placeTitle}>{place.userName}</span>
-                        </div>
-                        <div>
-                            <Rate style={{ padding: '0', margin: '0' }} disabled value={place.userReviewRating} />
-                        </div>
-                    </div>
+                {
+                    mapUrl != '' &&
+                    <iframe
+                        src={mapUrl}
+                        className={styles.mapIframe}
+                        allowFullScreen=""
+                        aria-hidden="false"
+                        tabIndex="0"
+                    ></iframe>
                 }
-            >
-                <Typography.Paragraph style={{ textAlign: 'justify' }} className={styles.placeDescriptionParagraph}>
-                    {place.userReviewContent}
-                </Typography.Paragraph>
 
             </Card>
+
+            <div style={{
+                // border: 'solid 1px black',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2rem',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+
+                <Card
+                    style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green' }}
+                    styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
+                    className={styles.userReviewCard}
+                    title={
+                        <div className={styles.reviewCardHeader}>
+                            <div className={styles.reviewCardHeaderContainer}>
+                                <Avatar src={place.userProfileImageUrl} size={40} />
+                                <span style={{ marginLeft: '10px' }} className={styles.placeTitle}>{place.userName}</span>
+                            </div>
+                            <div>
+                                <Rate style={{ padding: '0', margin: '0' }} disabled value={place.userReviewRating} />
+                            </div>
+                        </div>
+                    }
+                >
+                    <Typography.Paragraph style={{ textAlign: 'justify' }} className={styles.placeDescriptionParagraph}>
+                        {place.userReviewContent}
+                    </Typography.Paragraph>
+
+                </Card>
+
+                {weatherData && <WeatherCard data={weatherData} />}
+
+            </div>
+
+
 
         </section>
     );

@@ -1,0 +1,16 @@
+.weatherCard {
+    background: linear-gradient(135deg, #e6f9ec, #ffffff);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+}
+
+.weatherContent {
+    text-align: center;
+}
+
+.weatherMeta {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}

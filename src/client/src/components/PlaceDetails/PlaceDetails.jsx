@@ -27,13 +27,33 @@ const PlaceDetails = () => {
 
     const [pagesCount, setPagesCount] = useState(0);
 
+    const [weatherData, setWeatherData] = useState({});
+    const [mapUrl, setMapUrl] = useState('');
+
     useEffect(() => {
 
         if (location.state?.placeId) {
             placeService
                 .getPlaceDetailsById(location.state?.placeId)
-                .then(res => setPlace(res))
-                .catch(err => fireError(err));
+                .then(res => {
+                    setPlace(res);
+
+                    if (res?.coordinates?.latitude && res?.coordinates?.longitude) {
+                        const lat = res.coordinates.latitude;
+                        const lon = res.coordinates.longitude;
+
+                        const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY;
+                        const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+
+                        setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${lat},${lon}`);
+
+                        fetch(`https://api.weatherapi.com/v1/current.json?key=${weatherApiKey}&q=${lat},${lon}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                setWeatherData(data);
+                            }).catch(err => console.error('Weather fetch error:', err));
+                    }
+                }).catch(err => fireError(err));
 
             reviewsService
                 .getReviews(location.state?.placeId, 1, "Newest")
@@ -54,9 +74,12 @@ const PlaceDetails = () => {
         <>
             {place && (
                 <>
-
                     {/* Place Details Section */}
-                    <PlaceDetailsSection place={place} />
+                    <PlaceDetailsSection
+                        place={place}
+                        mapUrl={mapUrl}
+                        weatherData={weatherData}
+                    />
 
                     {/* Reviews Section */}
                     <ReviewsSection
