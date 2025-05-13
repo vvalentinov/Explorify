@@ -8,7 +8,8 @@ import {
     Grid,
     ConfigProvider,
     Avatar,
-    Dropdown
+    Dropdown,
+    Badge
 } from "antd";
 
 import {
@@ -16,14 +17,18 @@ import {
     LogoutOutlined,
     UploadOutlined,
     MenuOutlined,
-    CrownOutlined
+    CrownOutlined,
+    BellOutlined
 } from '@ant-design/icons';
 
 import { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 import * as paths from '../../constants/paths';
+
 import { AuthContext } from '../../contexts/AuthContext';
+
+import { NotificationContext } from '../../contexts/NotificationContext';
 
 import { useState } from 'react';
 
@@ -46,6 +51,7 @@ const menuItems = [
 const Header = () => {
 
     const { isAuthenticated, profileImageUrl, isAdmin } = useContext(AuthContext);
+    const { notificationCount } = useContext(NotificationContext);
 
     const { token } = useToken();
 
@@ -185,22 +191,46 @@ const Header = () => {
                                     </NavLink>
                                 </>
                                 :
-                                <Dropdown
-                                    arrow={true}
-                                    menu={{ items: dropDownItems }}
-                                    placement="bottom"
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: '1.5rem'
+                                    }}
                                 >
-                                    {profileImageUrl ?
-                                        (<Avatar
-                                            style={{ marginRight: '2rem' }}
-                                            size="large"
-                                            src={profileImageUrl}
-                                        />) : (<Avatar
-                                            style={{ marginRight: '2rem' }}
-                                            size="large"
-                                            icon={<UserOutlined />}
-                                        />)}
-                                </Dropdown>
+
+                                    <Badge title="Notifications" color="green" size="small" count={notificationCount}>
+                                        <Link
+                                            to="/notifications"
+                                            style={{
+                                                color: 'inherit',
+                                                textDecoration: 'none',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <BellOutlined style={{ fontSize: '1.5rem' }} />
+                                        </Link>
+                                    </Badge>
+
+                                    <Dropdown
+                                        arrow={true}
+                                        menu={{ items: dropDownItems }}
+                                        placement="bottom"
+                                    >
+                                        {profileImageUrl ?
+                                            (<Avatar
+                                                style={{ marginRight: '2rem' }}
+                                                size="large"
+                                                src={profileImageUrl}
+                                            />) : (<Avatar
+                                                style={{ marginRight: '2rem' }}
+                                                size="large"
+                                                icon={<UserOutlined />}
+                                            />)}
+                                    </Dropdown>
+                                </div>
                         }
                     </Space>
                 </div>

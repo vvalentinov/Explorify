@@ -5,6 +5,7 @@ import Main from './components/Main/Main';
 import Footer from './components/Footer/Footer';
 
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 
@@ -16,17 +17,19 @@ const App = () => {
 
     return (
         <AuthProvider>
-            {isAdminRoute ? (
-                <Routes>
-                    <Route path="/admin/*" element={<AdminLayout />} />
-                </Routes>
-            ) : (
-                <>
-                    <Header />
-                    <Main />
-                    <Footer />
-                </>
-            )}
+            <NotificationProvider>
+                {isAdminRoute ? (
+                    <Routes>
+                        <Route path="/admin/*" element={<AdminLayout />} />
+                    </Routes>
+                ) : (
+                    <>
+                        <Header />
+                        <Main />
+                        <Footer />
+                    </>
+                )}
+            </NotificationProvider>
         </AuthProvider>
     );
 }

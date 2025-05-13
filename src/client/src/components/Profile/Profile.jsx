@@ -1,22 +1,30 @@
-import { useState, useContext, useEffect } from 'react';
+import styles from './Profile.module.css';
 
-import { message, Upload, Card } from 'antd';
+import { useState, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+import { message, Upload, Card, Button, Tag } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 import { usersServiceFactory } from '../../services/usersService';
 
 import { AuthContext } from '../../contexts/AuthContext';
 
+import { fireError } from '../../utils/fireError';
+
 const beforeUpload = file => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+
     if (!isJpgOrPng) {
         message.error('You can only upload JPG/PNG file!');
     }
+
     // const isLt2M = file.size / 1024 / 1024 < 2;
     // if (!isLt2M) {
     //     message.error('Image must smaller than 2MB!');
     // }
     // return isJpgOrPng && isLt2M;
+
     return isJpgOrPng;
 };
 
@@ -54,6 +62,7 @@ const Profile = () => {
     };
 
     const handleCustomUpload = ({ file }) => {
+
         const formData = new FormData();
         formData.append("image", file);
 
@@ -75,28 +84,15 @@ const Profile = () => {
 
             })
             .catch(err => {
-                console.log(err);
                 setLoading(false);
+                fireError(err);
             });
     };
 
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: "center",
-            minHeight: 'calc(100vh - 63px)',
-        }}>
-            <Card
-                title="Profile Card"
-                style={{
-                    width: '50%',
-                    textAlign: 'center',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    borderRadius: 16,
-                    margin: '2rem auto',
-                }}
-            >
+        <section className={styles.profileCardSection}>
+
+            <Card title="Profile Card" className={styles.profileCard}>
                 <Upload
                     name="avatar"
                     listType="picture-circle"
@@ -140,8 +136,34 @@ const Profile = () => {
                         </button>
                     )}
                 </Upload>
+
+                <div className={styles.userInfo}>
+                    <h2>{profileInfo.userName}</h2>
+                    <p>{profileInfo.email}</p>
+
+                    <div className={styles.tagsContainer}>
+                        <Tag >{profileInfo.uploadedPlacesCount} Places</Tag>
+                        <Tag >{profileInfo.uploadedReviewsCount} Reviews</Tag>
+                    </div>
+                </div>
+
+                {/* Buttons */}
+                <div className={styles.profileActions}>
+                    <Link to="/my-places">
+                        <Button className={styles.profileActionsBtn}>
+                            My Places
+                        </Button>
+                    </Link>
+                    <Link to="/my-reviews">
+                        <Button className={styles.profileActionsBtn}>
+                            My Reviews
+                        </Button>
+                    </Link>
+                </div>
+
             </Card>
-        </div>
+
+        </section>
     );
 };
 export default Profile;

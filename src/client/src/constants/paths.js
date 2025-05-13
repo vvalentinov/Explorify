@@ -27,3 +27,5 @@ export const logoutPath = '/account/logout';
 export const uploadPlacePath = '/place/upload';
 
 export const placeDetailsPath = '/place/:placeName';
+
+export const notificationsPath = '/notifications';

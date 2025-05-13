@@ -31,3 +31,13 @@ main {
     margin-top: 0 !important;
     min-height: calc(100vh - 63px);
 }
+
+.ant-layout-sider {
+    position: relative !important;
+}
+
+.ant-layout-sider-trigger {
+    position: absolute !important;
+    bottom: 0 !important;
+    width: 100% !important;
+}

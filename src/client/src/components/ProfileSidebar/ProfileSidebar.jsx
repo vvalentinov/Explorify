@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Menu, Card, ConfigProvider } from "antd";
+import { Menu, ConfigProvider, Layout } from "antd";
 
 import {
     MailOutlined,
@@ -15,21 +16,6 @@ import {
     profilePath,
     changeEmailPath,
 } from "../../constants/paths";
-
-const IconWrapper = ({ icon }) => (
-    <div style={{
-        backgroundColor: '#43c0c1',
-        borderRadius: '50%',
-        width: 32,
-        height: 32,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff'
-    }}>
-        {icon}
-    </div>
-);
 
 const items = [
     {
@@ -55,66 +41,47 @@ const items = [
 ];
 
 const ProfileSidebar = () => {
+    const [collapsed, setCollapsed] = useState(false);
+
     return (
-        <div style={
-            {
-                minHeight: 'calc(100vh - 63px)',
-                backgroundColor: '#e6fffb',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '2rem 0',
-                boxShadow: '2px 0 8px rgba(0, 0, 0, 0.05)',
-                // border: 'solid 1px black'
+
+        <ConfigProvider theme={{
+            components: {
+                Menu: {
+                    itemColor: '#ffffff',
+                    itemHoverColor: '#ffffff',
+                    itemBg: '#041529',
+                    itemHoverBg: '#17395f',
+                    itemSelectedBg: '#264c7d',
+                    itemSelectedColor: '#ffffff'
+                }
             }
-        }>
-
-            <div style={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                backgroundColor: '#43c0c1',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '2rem',
-                marginBottom: '2rem',
-                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)'
-            }}>
-                <UserOutlined />
-            </div>
-
-            <Card
-                variant="borderless"
-                style={{
-                    borderRadius: 16,
-                    backgroundColor: '#ffffff',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                }}
+        }}>
+            <Layout.Sider
+                collapsible
+                collapsed={collapsed}
+                onCollapse={value => setCollapsed(value)}
             >
-                <ConfigProvider theme={{
-                    components: {
-                        Menu: {
-                            itemSelectedColor: 'green',
-                            itemSelectedBg: '#b6e4b3'
-                        }
-                    }
-                }}>
-                    <Menu
-                        items={items}
-                        mode="vertical"
-                        defaultSelectedKeys={['profile']}
-                        style={{
-                            fontSize: '1.1rem',
-                            backgroundColor: '#e6fffb',
-                            borderRight: 'none',
-                            boxShadow: '2px 0 5px rgba(0, 0, 0, 0.05)'
-                        }}
-                    />
-                </ConfigProvider>
-            </Card>
-        </div>
+                <div
+                    className="logo"
+                    style={{
+                        padding: 16,
+                        color: 'white',
+                        textAlign: 'center',
+                    }}>
+                    Account
+                </div>
+                <Menu
+                    style={{
+                        backgroundColor: '#041529',
+                        color: 'white',
+                    }}
+                    mode="vertical"
+                    defaultSelectedKeys={['profile']}
+                    items={items}
+                />
+            </Layout.Sider>
+        </ConfigProvider>
     );
 };
 

@@ -1,0 +1,81 @@
+.profileCardSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 63px);
+}
+
+.profileCard {
+    width: 60%;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    box-shadow: 0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
+    border: solid 1px green
+}
+
+.profileCard :global(.ant-card-head) {
+    text-align: start;
+
+    background-color: #ecfffb;
+}
+
+.userInfo {
+    margin-top: 1rem;
+}
+
+.userInfo h2 {
+    margin-bottom: 4px;
+    font-size: 20px;
+    color: #333;
+}
+
+.userInfo p {
+    margin: 0;
+    font-size: 14px;
+    color: #888;
+}
+
+.profileActions {
+    margin-top: 1.5rem;
+    /* border: solid 1px black; */
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profileActionsBtn {
+    background-color: #9a4eca;
+    border: none;
+    color: white;
+    padding: 1.5rem 1.5rem;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.profileActionsBtn:hover {
+    background-color: #bb7fe0 !important;
+    color: #fff !important;
+}
+
+.tagsContainer {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.tagsContainer :global(.ant-tag) {
+    font-size: 14px;
+
+    padding: 0.5rem 1rem;
+}

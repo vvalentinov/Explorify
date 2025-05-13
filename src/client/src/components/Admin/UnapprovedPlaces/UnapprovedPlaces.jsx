@@ -308,7 +308,7 @@ const UnapprovedPlaces = () => {
                             }
                         }}
                     >
-                        <Typography.Paragraph style={{ textAlign: 'justify', }}>
+                        <Typography.Paragraph style={{ textAlign: 'justify' }}>
                             {selectedPlace?.reviewContent}
                         </Typography.Paragraph>
 

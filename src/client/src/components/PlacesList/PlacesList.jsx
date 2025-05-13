@@ -16,6 +16,7 @@ const PlacesList = ({ places }) => {
                 justifyContent: 'center',
                 gap: '1.5rem',
                 padding: '2rem',
+                // border: 'solid 1px black'
             }}
         >
             {places.map(place => (
@@ -24,7 +25,7 @@ const PlacesList = ({ places }) => {
                     to={`/place/${slugify(place.name, { lower: true })}`}
                     state={{ placeId: place.id }}
                     style={{
-                        width: 'calc(33.333% - 1rem)',
+                        width: 'calc(33.33% - 1rem)',
                         textDecoration: 'none',
                         transition: 'transform 0.3s ease',
                     }}

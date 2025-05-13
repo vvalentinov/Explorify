@@ -40,61 +40,64 @@ const ChangePassword = () => {
     };
 
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: "center",
-            minHeight: 'calc(100vh - 63px)',
-        }}>
-            <Card
-                title={<><SettingOutlined /> Change Your Password</>}
-                style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
-                styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
-            >
-                <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
-                    🔐 Password reset time! Let’s boost your security.
-                </Typography.Paragraph>
+        <>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: "center",
+                minHeight: 'calc(100vh - 63px)',
+            }}>
+                <Card
+                    title={<><SettingOutlined /> Change Your Password</>}
+                    style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
+                    styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
+                >
+                    <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
+                        🔐 Password reset time! Let’s boost your security.
+                    </Typography.Paragraph>
 
-                <Form layout="vertical" onFinish={handleFinish}>
+                    <Form layout="vertical" onFinish={handleFinish}>
 
-                    <Form.Item
-                        label="Old Password"
-                        name="OldPassword"
-                        rules={[{ required: true }]}
-                    >
-                        <Input.Password
-                            style={{ fontSize: '18px' }}
-                            size='large'
-                            placeholder="Enter your old password here"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="New Password"
-                        name="NewPassword"
-                        rules={[{ required: true }]}
-                    >
-                        <Input.Password
-                            style={{ fontSize: '18px' }}
-                            size='large'
-                            placeholder="Enter your new password here"
-                        />
-                    </Form.Item>
-
-                    <Form.Item style={{ marginTop: 24 }}>
-                        <Button
-                            size='large'
-                            variant='solid'
-                            color='cyan'
-                            htmlType="submit" block
+                        <Form.Item
+                            label="Old Password"
+                            name="OldPassword"
+                            rules={[{ required: true }]}
                         >
-                            Change Password
-                        </Button>
-                    </Form.Item>
+                            <Input.Password
+                                style={{ fontSize: '18px' }}
+                                size='large'
+                                placeholder="Enter your old password here"
+                            />
+                        </Form.Item>
 
-                </Form>
-            </Card>
-        </div>
+                        <Form.Item
+                            label="New Password"
+                            name="NewPassword"
+                            rules={[{ required: true }]}
+                        >
+                            <Input.Password
+                                style={{ fontSize: '18px' }}
+                                size='large'
+                                placeholder="Enter your new password here"
+                            />
+                        </Form.Item>
+
+                        <Form.Item style={{ marginTop: 24 }}>
+                            <Button
+                                size='large'
+                                variant='solid'
+                                color='cyan'
+                                htmlType="submit" block
+                            >
+                                Change Password
+                            </Button>
+                        </Form.Item>
+
+                    </Form>
+                </Card>
+            </div>
+
+        </>
     )
 };
 

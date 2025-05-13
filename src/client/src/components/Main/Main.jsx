@@ -18,6 +18,8 @@ import ChangeEmail from '../ChangeEmail/ChangeEmail';
 import ForgotPassword from '../ForgotPassword/ForgotPassword';
 import ResetPassword from '../ResetPassword/ResetPassword';
 
+import Notifications from '../Notifications/Notifications';
+
 import Alert from '../Alert';
 
 import { FloatButton } from 'antd';
@@ -47,6 +49,7 @@ const Main = () => {
                 <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                 <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
                 <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
+                <Route path={paths.notificationsPath} element={<Notifications />} />
 
                 <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
                 <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
