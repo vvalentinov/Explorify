@@ -5,6 +5,7 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace Explorify.Persistence.Configurations;
 
@@ -38,6 +39,16 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
             .Property(x => x.Address)
             .IsRequired(false)
             .HasMaxLength(300);
+
+        builder
+            .Property(p => p.Latitude)
+            .IsRequired(false)
+            .HasColumnType("decimal(9, 7)");
+
+        builder
+            .Property(p => p.Longitude)
+            .IsRequired(false)
+            .HasColumnType("decimal(10, 7)");
 
         builder
             .HasOne<ApplicationUser>()
