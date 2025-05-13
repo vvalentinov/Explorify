@@ -25,19 +25,20 @@ public class GetPlacesInSubcategoryQueryHandler
     {
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.CategoryId == request.SubcategoryId && x.IsApproved);
+            .Where(x => x.CategoryId == request.SubcategoryId && x.IsApproved)
+            .Select(x => new PlaceDisplayResponseModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                ImageUrl = x.ThumbUrl,
+            });
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
         var places = await query
             .Skip((request.Page * PlacesPerPageCount) - PlacesPerPageCount)
             .Take(PlacesPerPageCount)
-            .Select(x => new PlaceDisplayResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                ImageUrl = x.ThumbUrl,
-            }).ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
         var responseModel = new PlacesListResponseModel
         {

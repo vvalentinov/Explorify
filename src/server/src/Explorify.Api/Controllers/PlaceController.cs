@@ -8,6 +8,7 @@ using Explorify.Application.Places.GetPlacesInSubcategory;
 using static Explorify.Api.Extensions.ControllerBaseExtensions;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -31,10 +32,10 @@ public class PlaceController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInCategory))]
-    public async Task<IActionResult> GetPlacesInCategory(int categoryId)
+    public async Task<IActionResult> GetPlacesInCategory(int categoryId, int page)
         => this.OkOrProblemDetails(
                 await _mediator.Send(
-                    new GetPlacesInCategoryQuery(categoryId)));
+                    new GetPlacesInCategoryQuery(categoryId, page)));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInSubcategory))]

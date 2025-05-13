@@ -48,14 +48,9 @@ public class GetPlaceByIdQueryHandler
 
         if (responseModel == null)
         {
-            return Result.Failure<PlaceDetailsResponseModel>(new Error(
-                NoPlaceWithIdError,
-                ErrorType.Validation));
+            var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
+            return Result.Failure<PlaceDetailsResponseModel>(error);
         }
-
-        responseModel.ImagesUrls = responseModel
-            .ImagesUrls
-            .Where(x => Path.GetFileName(x).StartsWith("thumb_") == false);
 
         var userReview = await _repository
             .AllAsNoTracking<Review>()

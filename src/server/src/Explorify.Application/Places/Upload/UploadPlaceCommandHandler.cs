@@ -48,7 +48,9 @@ public class UploadPlaceCommandHandler
             return Result.Failure(error);
         }
 
-        if (category.Children.Any(x => x.Id == model.SubcategoryId) == false)
+        var subcategory = category.Children.FirstOrDefault(x => x.Id == model.SubcategoryId);
+
+        if (subcategory == null)
         {
             var error = new Error(NoSubcategoryInGivenCategoryError, ErrorType.Validation);
             return Result.Failure(error);
@@ -69,7 +71,7 @@ public class UploadPlaceCommandHandler
             _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"PlacesImages/{category.Name}/{model.Name}/"));
+                $"PlacesImages/{category.Name}/{subcategory.Name}/{model.Name}/"));
 
         var urls = await Task.WhenAll(uploadTasks);
 

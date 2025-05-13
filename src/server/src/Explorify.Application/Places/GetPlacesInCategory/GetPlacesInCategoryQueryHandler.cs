@@ -3,13 +3,14 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Places.GetPlacesInCategory;
 
 public class GetPlacesInCategoryQueryHandler
-    : IQueryHandler<GetPlacesInCategoryQuery,
-        IEnumerable<PlaceDisplayResponseModel>>
+    : IQueryHandler<GetPlacesInCategoryQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
@@ -18,25 +19,38 @@ public class GetPlacesInCategoryQueryHandler
         _repository = repository;
     }
 
-    public async Task<Result<IEnumerable<PlaceDisplayResponseModel>>> Handle(
+    public async Task<Result<PlacesListResponseModel>> Handle(
         GetPlacesInCategoryQuery request,
         CancellationToken cancellationToken)
     {
-        var places = (IEnumerable<PlaceDisplayResponseModel>)await _repository
-            .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved)
-            .Include(x => x.Category)
-            .Include(x => x.Photos)
-            .Where(x => x.Category.ParentId == request.CategoryId)
-            .Select(x => new PlaceDisplayResponseModel
-            {
-                Name = x.Name,
-                ImageUrl = x.Photos
-                    .OrderBy(x => x.CreatedOn)
-                    .Select(photo => photo.Url)
-                    .First(),
-            }).ToListAsync(cancellationToken);
+        var query = _repository
+           .AllAsNoTracking<Place>()
+           .Where(x => x.CategoryId == request.CategoryId && x.IsApproved)
+           .Select(x => new PlaceDisplayResponseModel
+           {
+               Id = x.Id,
+               Name = x.Name,
+               ImageUrl = x.ThumbUrl,
+           });
 
-        return Result.Success(places);
+        var recordsCount = await query.CountAsync(cancellationToken);
+
+        var places = await query
+            .Skip((request.Page * PlacesPerPageCount) - PlacesPerPageCount)
+            .Take(PlacesPerPageCount)
+            .ToListAsync(cancellationToken);
+
+        var responseModel = new PlacesListResponseModel
+        {
+            Places = places,
+            Pagination = new PaginationResponseModel
+            {
+                PageNumber = request.Page,
+                RecordsCount = recordsCount,
+                ItemsPerPage = PlacesPerPageCount,
+            },
+        };
+
+        return Result.Success(responseModel);
     }
 }

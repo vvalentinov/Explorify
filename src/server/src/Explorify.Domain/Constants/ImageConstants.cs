@@ -2,7 +2,16 @@
 
 public static class ImageConstants
 {
-    public static readonly string[] AllowedImageMIMETypes = ["image/jpeg", "image/png"];
+    public static readonly string[] AllowedImageMIMETypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        //"image/gif",
+        //"image/bmp",
+        //"image/svg+xml",
+        //"image/tiff",
+    ];
+
 
     public static class ErrorMessages
     {

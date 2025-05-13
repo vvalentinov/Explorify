@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Places.GetPlacesInCategory;
 
-public record GetPlacesInCategoryQuery(int CategoryId)
-    : IQuery<IEnumerable<PlaceDisplayResponseModel>>;
+public record GetPlacesInCategoryQuery(int CategoryId, int Page)
+    : IQuery<PlacesListResponseModel>;
