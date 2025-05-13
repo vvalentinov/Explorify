@@ -26,6 +26,8 @@ public static class ServiceCollectionExtensions
 
         services.AddSignalR();
 
+        services.AddHttpClient();
+
         services
             .AddPersistence(configuration)
             .AddInfrastructure(configuration)

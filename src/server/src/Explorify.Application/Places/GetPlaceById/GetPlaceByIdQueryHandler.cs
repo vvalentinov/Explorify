@@ -42,6 +42,11 @@ public class GetPlaceByIdQueryHandler
                     .OrderByDescending(x => x.CreatedOn)
                     .Select(c => c.Url)
                     .ToList(),
+                Coordinates = new PlaceCoordinates
+                {
+                    Latitude = (double)x.Latitude,
+                    Longitude = (double)x.Longitude
+                }
             }).FirstOrDefaultAsync(
                 x => x.Id == request.PlaceId,
                 cancellationToken);

@@ -20,6 +20,7 @@ public class UploadPlaceRequestModelBinder : IModelBinder
         var model = new UploadPlaceRequestModel
         {
             Name = form["Name"]!,
+            Address = form["Address"]!,
             Files = new List<UploadFile>(),
             Description = form["Description"]!,
             ReviewContent = form["ReviewContent"]!,

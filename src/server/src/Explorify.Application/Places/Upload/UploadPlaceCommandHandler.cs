@@ -16,17 +16,20 @@ public class UploadPlaceCommandHandler
     private readonly IRepository _repository;
     private readonly IBlobService _blobService;
     private readonly IImageService _imageService;
+    private readonly IGeocodingService _geocodingService;
     private readonly ISlugGenerator _slugGenerator;
 
     public UploadPlaceCommandHandler(
         IRepository repository,
         ISlugGenerator slugGenerator,
         IBlobService blobService,
-        IImageService imageService)
+        IImageService imageService,
+        IGeocodingService geocodingService)
     {
         _repository = repository;
         _blobService = blobService;
-       _imageService = imageService;
+        _imageService = imageService;
+        _geocodingService = geocodingService;
         _slugGenerator = slugGenerator;
     }
 
@@ -102,6 +105,26 @@ public class UploadPlaceCommandHandler
             Reviews = new List<Review> { review },
             ThumbUrl = thumbUrl,
         };
+
+        string fullAddress;
+
+        if (request.Model.Address != null &&
+            string.IsNullOrWhiteSpace(request.Model.Address) == false)
+        {
+            fullAddress = $"{model.Name}, {request.Model.Address}, {country.Name}";
+        }
+        else
+        {
+            fullAddress = $"{model.Name}, {country.Name}";
+        }
+
+        var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
+        if (coordinates != null)
+        {
+            place.Latitude = (decimal)coordinates.Latitude;
+            place.Longitude = (decimal)coordinates.Longitude;
+        }
 
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();

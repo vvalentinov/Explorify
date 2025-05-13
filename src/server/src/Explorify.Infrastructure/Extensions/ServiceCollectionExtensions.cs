@@ -37,6 +37,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<INotificationService, NotificationService>();
 
+        services.AddScoped<IGeocodingService, GeocodingService>();
+
         return services;
     }
 
@@ -66,7 +68,8 @@ public static class ServiceCollectionExtensions
     {
         services
             .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)))
-            .Configure<AzureStorageSettings>(configuration.GetSection(nameof(AzureStorageSettings)));
+            .Configure<AzureStorageSettings>(configuration.GetSection(nameof(AzureStorageSettings)))
+            .Configure<GeocodingSettings>(configuration.GetSection(nameof(GeocodingSettings)));
 
         return services;
     }
