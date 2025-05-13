@@ -30,6 +30,11 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
         builder.HasQueryFilter(x => x.IsDeleted == false);
 
         builder
+            .Property(x => x.ThumbUrl)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        builder
             .HasOne<ApplicationUser>()
             .WithMany(u => u.Places)
             .HasForeignKey(p => p.UserId);

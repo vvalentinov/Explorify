@@ -5,11 +5,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Explorify.Persistence.Configurations;
 
-public class PlacePhotoConfiguration : IEntityTypeConfiguration<PlacePhoto>
+public class PlacePhotoConfiguration
+    : IEntityTypeConfiguration<PlacePhoto>
 {
     public void Configure(EntityTypeBuilder<PlacePhoto> builder)
     {
         builder.HasQueryFilter(x => x.IsDeleted == false);
         builder.HasQueryFilter(x => x.Place.IsDeleted == false);
+
+        builder
+            .Property(x => x.Url)
+            .IsRequired()
+            .HasMaxLength(500);
     }
 }

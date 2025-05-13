@@ -22,6 +22,8 @@ public class Place : BaseDeletableEntity<Guid>
 
     public bool IsApproved { get; set; }
 
+    public string ThumbUrl { get; set; } = string.Empty;
+
     public ICollection<PlacePhoto> Photos { get; set; }
         = new List<PlacePhoto>();
 

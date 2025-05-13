@@ -1,52 +1,50 @@
 ﻿using Explorify.Domain.Entities;
+using Explorify.Application.Places;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using static Explorify.Domain.Constants.PlaceConstants;
-
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Places.GetPlacesInSubcategory;
+namespace Explorify.Application.User.GetPlaces.GetAllUserPlaces;
 
-public class GetPlacesInSubcategoryQueryHandler
-    : IQueryHandler<GetPlacesInSubcategoryQuery, PlacesListResponseModel>
+public class GetAllUserPlacesQueryHandler :
+    IQueryHandler<GetAllUserPlacesQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
-    public GetPlacesInSubcategoryQueryHandler(IRepository repository)
+    public GetAllUserPlacesQueryHandler(IRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Result<PlacesListResponseModel>> Handle(
-        GetPlacesInSubcategoryQuery request,
+        GetAllUserPlacesQuery request,
         CancellationToken cancellationToken)
     {
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.CategoryId == request.SubcategoryId && x.IsApproved);
+            .Where(x => x.UserId == request.UserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
-        var places = await query
-            .Skip((request.Page * PlacesPerPageCount) - PlacesPerPageCount)
-            .Take(PlacesPerPageCount)
+        var places = query
+            .Skip((request.Page * 6) - 6)
+            .Take(6)
+            .Include(x => x.Photos)
             .Select(x => new PlaceDisplayResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
-                ImageUrl = x.ThumbUrl,
             }).ToListAsync(cancellationToken);
 
         var responseModel = new PlacesListResponseModel
         {
-            Places = places,
             Pagination = new PaginationResponseModel
             {
+                ItemsPerPage = 6,
                 PageNumber = request.Page,
-                RecordsCount = recordsCount,
-                ItemsPerPage = PlacesPerPageCount,
+                RecordsCount = recordsCount
             },
         };
 

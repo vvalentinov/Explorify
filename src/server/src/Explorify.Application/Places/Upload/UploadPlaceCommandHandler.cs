@@ -3,7 +3,6 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using static Explorify.Domain.Constants.AzureConstants;
 using static Explorify.Domain.Constants.CountryConstants.ErrorMessages;
 using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
@@ -45,12 +44,14 @@ public class UploadPlaceCommandHandler
 
         if (category == null)
         {
-            return Result.Failure(new Error(NoCategoryWithIdError, ErrorType.Validation));
+            var error = new Error(NoCategoryWithIdError, ErrorType.Validation);
+            return Result.Failure(error);
         }
 
         if (category.Children.Any(x => x.Id == model.SubcategoryId) == false)
         {
-            return Result.Failure(new Error(NoSubcategoryInGivenCategoryError, ErrorType.Validation));
+            var error = new Error(NoSubcategoryInGivenCategoryError, ErrorType.Validation);
+            return Result.Failure(error);
         }
 
         var country = await _repository.GetByIdAsync<Country>(model.CountryId);
@@ -62,34 +63,20 @@ public class UploadPlaceCommandHandler
 
         var placePhotos = new List<PlacePhoto>();
 
-        //var urls = await _imageService.ProcessPlaceImagesAsync(model.Name, model.Files);
-
-        //foreach (var url in urls)
-        //{
-        //    placePhotos.Add(new PlacePhoto { Url = url });
-        //}
-
-        //var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
-
-        //foreach (var file in files)
-        //{
-        //    var url = await _blobService.UploadBlobAsync(
-        //        file.Content,
-        //        file.FileName,
-        //        $"PlaceImages/${model.Name}/");
-        //}
-
         var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
 
         var uploadTasks = files.Select(file =>
             _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"PlacesImages/{model.Name}/"));
+                $"PlacesImages/{category.Name}/{model.Name}/"));
 
         var urls = await Task.WhenAll(uploadTasks);
 
-        foreach (var url in urls)
+        var thumbUrl = urls.First(url => Path.GetFileName(url).StartsWith("thumb_"));
+        var otherUrls = urls.Where(url => Path.GetFileName(url).StartsWith("thumb_") == false);
+
+        foreach (var url in otherUrls)
         {
             placePhotos.Add(new PlacePhoto { Url = url });
         }
@@ -111,6 +98,7 @@ public class UploadPlaceCommandHandler
             UserId = model.UserId,
             Photos = placePhotos,
             Reviews = new List<Review> { review },
+            ThumbUrl = thumbUrl,
         };
 
         await _repository.AddAsync(place);

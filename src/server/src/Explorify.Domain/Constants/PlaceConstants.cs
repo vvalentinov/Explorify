@@ -8,6 +8,8 @@ public static class PlaceConstants
     public const int PlaceDescriptionMinLength = 100;
     public const int PlaceDescriptionMaxLength = 2000;
 
+    public const int PlacesPerPageCount = 6;
+
     public static class ErrorMessages
     {
         public const string PlaceNameRequiredError = "Place name is required!";
