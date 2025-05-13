@@ -35,6 +35,11 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
             .HasMaxLength(500);
 
         builder
+            .Property(x => x.Address)
+            .IsRequired(false)
+            .HasMaxLength(300);
+
+        builder
             .HasOne<ApplicationUser>()
             .WithMany(u => u.Places)
             .HasForeignKey(p => p.UserId);

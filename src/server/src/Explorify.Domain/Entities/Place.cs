@@ -24,6 +24,8 @@ public class Place : BaseDeletableEntity<Guid>
 
     public string ThumbUrl { get; set; } = string.Empty;
 
+    public string? Address { get; set; }
+
     public ICollection<PlacePhoto> Photos { get; set; }
         = new List<PlacePhoto>();
 
