@@ -29,3 +29,5 @@ export const uploadPlacePath = '/place/upload';
 export const placeDetailsPath = '/place/:placeName';
 
 export const notificationsPath = '/notifications';
+
+export const myPlacesPath = '/my-places';

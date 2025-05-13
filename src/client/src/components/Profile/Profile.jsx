@@ -12,6 +12,8 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 import { fireError } from '../../utils/fireError';
 
+import { myPlacesPath } from '../../constants/paths';
+
 const beforeUpload = file => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 
@@ -149,7 +151,7 @@ const Profile = () => {
 
                 {/* Buttons */}
                 <div className={styles.profileActions}>
-                    <Link to="/my-places">
+                    <Link to={myPlacesPath}>
                         <Button className={styles.profileActionsBtn}>
                             My Places
                         </Button>

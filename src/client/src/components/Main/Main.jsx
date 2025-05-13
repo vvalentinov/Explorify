@@ -17,10 +17,9 @@ import ChangePassword from '../ChangePassword/ChangePassword';
 import ChangeEmail from '../ChangeEmail/ChangeEmail';
 import ForgotPassword from '../ForgotPassword/ForgotPassword';
 import ResetPassword from '../ResetPassword/ResetPassword';
-
-import Notifications from '../Notifications/Notifications';
-
 import Alert from '../Alert';
+import MyPlaces from '../MyPlaces/MyPlaces';
+import Notifications from '../Notifications/Notifications';
 
 import { FloatButton } from 'antd';
 
@@ -29,15 +28,19 @@ import * as paths from '../../constants/paths';
 const Main = () => {
     return (
         <main>
+
             <Alert />
-            {/* <div className='mainContainer'> */}
+
             <Routes>
 
+                {/* Profile Layout */}
                 <Route path={paths.profilePath} element={<ProfileLayout />}>
+
                     <Route index element={<Profile />} />
                     <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
                     <Route path={paths.changePasswordPath} element={<ChangePassword />} />
                     <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
+
                 </Route>
 
                 <Route path={paths.homePath} element={<Home />} />
@@ -54,11 +57,13 @@ const Main = () => {
                 <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
                 <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
+                <Route path={paths.myPlacesPath} element={<MyPlaces />} />
+
                 <Route path='*' element={<NoPathFound />} />
             </Routes>
 
             <FloatButton.BackTop />
-            {/* </div> */}
+
         </main>
     )
 };
