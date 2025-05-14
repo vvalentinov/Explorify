@@ -1,4 +1,6 @@
-﻿namespace Explorify.Application.Places;
+﻿using System.Text.Json;
+
+namespace Explorify.Application.Places;
 
 public class PlaceDetailsResponseModel
 {
@@ -21,4 +23,6 @@ public class PlaceDetailsResponseModel
     public string UserReviewContent { get; set; } = string.Empty;
 
     public IEnumerable<string> ImagesUrls { get; set; } = [];
+
+    public JsonElement WeatherData { get; set; }
 }

@@ -15,13 +15,16 @@ public class GetPlaceByIdQueryHandler
 {
     private readonly IRepository _repository;
     private readonly IUserService _userService;
+    private readonly IWeatherInfoService _weatherInfoService;
 
     public GetPlaceByIdQueryHandler(
         IRepository repository,
-        IUserService userService)
+        IUserService userService,
+        IWeatherInfoService weatherInfoService)
     {
         _repository = repository;
         _userService = userService;
+        _weatherInfoService = weatherInfoService;
     }
 
     public async Task<Result<PlaceDetailsResponseModel>> Handle(
@@ -76,6 +79,8 @@ public class GetPlaceByIdQueryHandler
 
         responseModel.UserName = userDto.UserName;
         responseModel.UserProfileImageUrl = userDto.ProfileImageUrl ?? string.Empty;
+
+        responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(responseModel.Coordinates.Latitude, responseModel.Coordinates.Longitude);
 
         return Result.Success(responseModel);
     }

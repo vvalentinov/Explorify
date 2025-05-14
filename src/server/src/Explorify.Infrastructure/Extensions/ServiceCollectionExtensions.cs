@@ -39,6 +39,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IGeocodingService, GeocodingService>();
 
+        services.AddScoped<IWeatherInfoService, WeatherInfoService>();
+
         return services;
     }
 
@@ -69,7 +71,8 @@ public static class ServiceCollectionExtensions
         services
             .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)))
             .Configure<AzureStorageSettings>(configuration.GetSection(nameof(AzureStorageSettings)))
-            .Configure<GeocodingSettings>(configuration.GetSection(nameof(GeocodingSettings)));
+            .Configure<GeocodingSettings>(configuration.GetSection(nameof(GeocodingSettings)))
+            .Configure<WeatherApiSettings>(configuration.GetSection(nameof(WeatherApiSettings)));
 
         return services;
     }

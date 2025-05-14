@@ -11,7 +11,7 @@ namespace Explorify.Infrastructure;
 
 public class ImageService : IImageService
 {
-    private const int PlaceImageBoxWidth = 700;
+    private const int PlaceImageBoxWidth = 450;
     private const int PlaceThumbnailWidth = 300;
 
     private const int ProfileThumbnailWidth = 100;
