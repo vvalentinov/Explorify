@@ -1,9 +1,10 @@
 ﻿using System.Text.Json;
-using Explorify.Application;
-using Microsoft.Extensions.Options;
+using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Infrastructure.Settings;
 
-namespace Explorify.Infrastructure;
+using Microsoft.Extensions.Options;
+
+namespace Explorify.Infrastructure.Services;
 
 public class WeatherInfoService : IWeatherInfoService
 {
@@ -14,8 +15,8 @@ public class WeatherInfoService : IWeatherInfoService
         IHttpClientFactory httpClientFactory,
         IOptions<WeatherApiSettings> options)
     {
-        _httpClientFactory = httpClientFactory;
         _weatherApiSettings = options.Value;
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task<JsonElement> GetWeatherInfo(double lat, double lon)

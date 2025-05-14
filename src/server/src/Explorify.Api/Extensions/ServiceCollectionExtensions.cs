@@ -1,5 +1,4 @@
-﻿using Explorify.Infrastructure;
-using Explorify.Persistence.Extensions;
+﻿using Explorify.Persistence.Extensions;
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 

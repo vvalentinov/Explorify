@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace Explorify.Infrastructure;
+namespace Explorify.Api;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {

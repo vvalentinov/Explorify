@@ -1,4 +1,6 @@
-﻿namespace Explorify.Application;
+﻿using Explorify.Application.Places;
+
+namespace Explorify.Application.Abstractions.Interfaces;
 
 public interface IGeocodingService
 {

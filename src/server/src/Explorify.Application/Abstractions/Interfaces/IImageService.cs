@@ -1,6 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Models;
 
-namespace Explorify.Application;
+namespace Explorify.Application.Abstractions.Interfaces;
 
 public interface IImageService
 {

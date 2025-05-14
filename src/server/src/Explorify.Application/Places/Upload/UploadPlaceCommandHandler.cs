@@ -14,10 +14,11 @@ public class UploadPlaceCommandHandler
     : ICommandHandler<UploadPlaceCommand>
 {
     private readonly IRepository _repository;
+    private readonly ISlugGenerator _slugGenerator;
+
     private readonly IBlobService _blobService;
     private readonly IImageService _imageService;
     private readonly IGeocodingService _geocodingService;
-    private readonly ISlugGenerator _slugGenerator;
 
     public UploadPlaceCommandHandler(
         IRepository repository,
@@ -77,6 +78,17 @@ public class UploadPlaceCommandHandler
             return Result.Failure(error);
         }
 
+        var existingTags = await _repository
+            .AllAsNoTracking<PlaceVibe>()
+            .Where(t => model.VibesIds.Contains(t.Id))
+            .ToListAsync(cancellationToken);
+
+        if (existingTags.Count != model.VibesIds.Count)
+        {
+            var error = new Error("One or more provided tags do not exist.", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
         var placePhotos = new List<PlacePhoto>();
 
         var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
@@ -104,31 +116,15 @@ public class UploadPlaceCommandHandler
             Content = model.ReviewContent,
         };
 
-        var tagIds = model.VibesIds
-            .Distinct()
-            //.Take(10)
-            .ToList();
-
-        var existingTags = await _repository
-            .AllAsNoTracking<PlaceVibe>()
-            .Where(t => tagIds.Contains(t.Id))
-            .ToListAsync(cancellationToken);
-
-        if (existingTags.Count != tagIds.Count)
-        {
-            var error = new Error("One or more provided tags do not exist.", ErrorType.Validation);
-            return Result.Failure(error);
-        }
-
         var place = new Place
         {
-            Name = model.Name,
-            CountryId = model.CountryId,
-            CategoryId = model.SubcategoryId,
-            UserId = model.UserId,
-            Photos = placePhotos,
             ThumbUrl = thumbUrl,
+            Name = model.Name,
+            Photos = placePhotos,
+            UserId = model.UserId,
+            CountryId = model.CountryId,
             Description = model.Description,
+            CategoryId = model.SubcategoryId,
             Reviews = new List<Review> { review },
             SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
         };

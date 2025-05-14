@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application;
+﻿namespace Explorify.Application.Abstractions.Interfaces;
 
 public interface INotificationService
 {

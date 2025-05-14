@@ -1,17 +1,16 @@
 ﻿using System.Collections.Concurrent;
-
-using Explorify.Application;
 using Explorify.Application.Abstractions.Models;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using Explorify.Application.Abstractions.Interfaces;
 
-namespace Explorify.Infrastructure;
+namespace Explorify.Infrastructure.Services;
 
 public class ImageService : IImageService
 {
-    private const int PlaceImageBoxWidth = 450;
+    private const int PlaceImageBoxWidth = 700;
     private const int PlaceThumbnailWidth = 300;
 
     private const int ProfileThumbnailWidth = 100;

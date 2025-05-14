@@ -1,9 +1,9 @@
-﻿using Explorify.Application;
+﻿using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Infrastructure.Hubs;
 
 using Microsoft.AspNetCore.SignalR;
 
-namespace Explorify.Infrastructure;
+namespace Explorify.Infrastructure.Services;
 
 public class NotificationService
     : INotificationService

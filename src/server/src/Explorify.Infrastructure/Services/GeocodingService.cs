@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
-
-using Explorify.Application;
+using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.Places;
 using Explorify.Infrastructure.Settings;
 
 using Microsoft.Extensions.Options;
 
-namespace Explorify.Infrastructure;
+namespace Explorify.Infrastructure.Services;
 
 public class GeocodingService : IGeocodingService
 {

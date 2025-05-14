@@ -11,10 +11,14 @@ public class DeleteNotificationCommandHandler
     : ICommandHandler<DeleteNotificationCommand>
 {
     private readonly IRepository _repository;
+    private readonly INotificationService _notificationService;
 
-    public DeleteNotificationCommandHandler(IRepository repository)
+    public DeleteNotificationCommandHandler(
+        IRepository repository,
+        INotificationService notificationService)
     {
         _repository = repository;
+        _notificationService = notificationService;
     }
 
     public async Task<Result> Handle(
@@ -35,6 +39,8 @@ public class DeleteNotificationCommandHandler
 
         _repository.SoftDelete(notification);
         await _repository.SaveChangesAsync();
+
+        await _notificationService.ReduceNotificationsCountAsync(request.UserId);
 
         return Result.Success("Notificaton deleted successfully!");
     }

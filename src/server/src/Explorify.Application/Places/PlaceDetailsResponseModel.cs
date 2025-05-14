@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-
 using Explorify.Application.Vibes;
 
 namespace Explorify.Application.Places;
