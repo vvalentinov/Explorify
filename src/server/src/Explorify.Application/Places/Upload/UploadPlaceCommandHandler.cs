@@ -39,6 +39,16 @@ public class UploadPlaceCommandHandler
     {
         UploadPlaceRequestModel model = request.Model;
 
+        bool placeWithNameExists = await _repository
+            .AllAsNoTracking<Place>()
+            .AnyAsync(x => EF.Functions.Like(x.Name, model.Name), cancellationToken);
+
+        if (placeWithNameExists)
+        {
+            var error = new Error("Place with given name already exists!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
         var category = await _repository
             .AllAsNoTracking<Category>()
             .Include(x => x.Children)
@@ -63,7 +73,8 @@ public class UploadPlaceCommandHandler
 
         if (country == null)
         {
-            return Result.Failure(new Error(NoCountryWithIdError, ErrorType.Validation));
+            var error = new Error(NoCountryWithIdError, ErrorType.Validation);
+            return Result.Failure(error);
         }
 
         var placePhotos = new List<PlacePhoto>();
@@ -93,18 +104,47 @@ public class UploadPlaceCommandHandler
             Content = model.ReviewContent,
         };
 
+        var tagIds = model.VibesIds
+            .Distinct()
+            //.Take(10)
+            .ToList();
+
+        var existingTags = await _repository
+            .AllAsNoTracking<PlaceVibe>()
+            .Where(t => tagIds.Contains(t.Id))
+            .ToListAsync(cancellationToken);
+
+        if (existingTags.Count != tagIds.Count)
+        {
+            var error = new Error("One or more provided tags do not exist.", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
         var place = new Place
         {
             Name = model.Name,
-            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
-            Description = model.Description,
             CountryId = model.CountryId,
             CategoryId = model.SubcategoryId,
             UserId = model.UserId,
             Photos = placePhotos,
-            Reviews = new List<Review> { review },
             ThumbUrl = thumbUrl,
+            Description = model.Description,
+            Reviews = new List<Review> { review },
+            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
         };
+
+        var placeVibeAssignments = new List<PlaceVibeAssignment>();
+
+        foreach (var item in existingTags)
+        {
+            placeVibeAssignments.Add(new PlaceVibeAssignment
+            {
+                PlaceId = place.Id,
+                PlaceVibeId = item.Id,
+            });
+        }
+
+        place.PlaceVibeAssignments = placeVibeAssignments;
 
         string fullAddress;
 

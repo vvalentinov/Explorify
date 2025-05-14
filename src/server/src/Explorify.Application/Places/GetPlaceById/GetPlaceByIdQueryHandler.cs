@@ -1,4 +1,5 @@
 ﻿using Explorify.Domain.Entities;
+using Explorify.Application.Vibes;
 using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
@@ -34,7 +35,6 @@ public class GetPlaceByIdQueryHandler
         var responseModel = await _repository
             .AllAsNoTracking<Place>()
             .Where(x => x.IsApproved)
-            .Include(x => x.Photos)
             .Select(x => new PlaceDetailsResponseModel
             {
                 Id = x.Id,
@@ -47,9 +47,15 @@ public class GetPlaceByIdQueryHandler
                     .ToList(),
                 Coordinates = new PlaceCoordinates
                 {
-                    Latitude = (double)x.Latitude,
-                    Longitude = (double)x.Longitude
-                }
+                    Latitude = (double)(x.Latitude ?? 0),
+                    Longitude = (double)(x.Longitude ?? 0)
+                },
+                Tags = x.PlaceVibeAssignments
+                    .Select(x => new VibeResponseModel
+                    {
+                        Id = x.PlaceVibeId,
+                        Name = x.PlaceVibe.Name,
+                    }).ToList(),
             }).FirstOrDefaultAsync(
                 x => x.Id == request.PlaceId,
                 cancellationToken);
@@ -80,7 +86,9 @@ public class GetPlaceByIdQueryHandler
         responseModel.UserName = userDto.UserName;
         responseModel.UserProfileImageUrl = userDto.ProfileImageUrl ?? string.Empty;
 
-        responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(responseModel.Coordinates.Latitude, responseModel.Coordinates.Longitude);
+        responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(
+            responseModel.Coordinates.Latitude,
+            responseModel.Coordinates.Longitude);
 
         return Result.Success(responseModel);
     }

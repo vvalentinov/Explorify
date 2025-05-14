@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 
+using Explorify.Application.Vibes;
+
 namespace Explorify.Application.Places;
 
 public class PlaceDetailsResponseModel
@@ -25,4 +27,6 @@ public class PlaceDetailsResponseModel
     public IEnumerable<string> ImagesUrls { get; set; } = [];
 
     public JsonElement WeatherData { get; set; }
+
+    public List<VibeResponseModel> Tags { get; set; } = [];
 }

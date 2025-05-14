@@ -25,7 +25,7 @@ public class GetPlacesInSubcategoryQueryHandler
     {
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.CategoryId == request.SubcategoryId && x.IsApproved)
+            .Where(x => x.IsApproved &&  x.CategoryId == request.SubcategoryId)
             .Select(x => new PlaceDisplayResponseModel
             {
                 Id = x.Id,

@@ -23,4 +23,6 @@ public class UploadPlaceRequestModel
     public Guid UserId { get; set; }
 
     public List<UploadFile> Files { get; set; } = [];
+
+    public List<int> VibesIds { get; set; } = [];
 }

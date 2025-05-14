@@ -6,6 +6,7 @@ using Explorify.Application.Abstractions.Models;
 using static System.Security.Claims.ClaimTypes;
 
 using FluentValidation;
+
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,17 +20,31 @@ public class UploadPlaceRequestModelBinder : IModelBinder
 
         var model = new UploadPlaceRequestModel
         {
-            Name = form["Name"]!,
-            Address = form["Address"]!,
             Files = new List<UploadFile>(),
-            Description = form["Description"]!,
-            ReviewContent = form["ReviewContent"]!,
+            Name = form["Name"].FirstOrDefault() ?? string.Empty,
+            Address = form["Address"].FirstOrDefault() ?? string.Empty,
+            Description = form["Description"].FirstOrDefault() ?? string.Empty,
+            ReviewContent = form["ReviewContent"].FirstOrDefault() ?? string.Empty,
             CountryId = int.TryParse(form["CountryId"], out int countryId) ? countryId : 0,
             CategoryId = int.TryParse(form["CategoryId"], out int categoryId) ? categoryId : 0,
             SubcategoryId = int.TryParse(form["SubcategoryId"], out int subcategoryId) ? subcategoryId : 0,
             ReviewRating = int.TryParse(form["ReviewRating"], out int reviewRating) ? reviewRating : 0,
             UserId = Guid.Parse(bindingContext.HttpContext.User.FindFirstValue(NameIdentifier) ?? string.Empty),
         };
+
+        var tagsIds = new List<int>();
+
+        foreach (var tag in form["VibesIds"])
+        {
+            bool isValidInt = int.TryParse(tag, out int tagId);
+
+            if (isValidInt)
+            {
+                tagsIds.Add(tagId);
+            }
+        }
+
+        model.VibesIds = tagsIds;
 
         foreach (var file in form.Files)
         {
