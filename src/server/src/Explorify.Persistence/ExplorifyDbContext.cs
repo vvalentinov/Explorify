@@ -17,7 +17,7 @@ public class ExplorifyDbContext :
 
     public DbSet<Category> Categories { get; set; }
 
-    public DbSet<Country> Countries { get; set; }
+    public DbSet<Country>Countries { get; set; }
 
     public DbSet<FavoritePlace> FavoritePlaces { get; set; }
 
@@ -34,6 +34,10 @@ public class ExplorifyDbContext :
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     public DbSet<Notification> Notifications { get; set; }
+
+    public DbSet<PlaceVibe> PlaceVibes { get; set; }
+
+    public DbSet<PlaceVibeAssignment> PlaceVibeAssignments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

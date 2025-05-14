@@ -35,4 +35,7 @@ public class Place : BaseDeletableEntity<Guid>
 
     public ICollection<Review> Reviews { get; set; }
         = new List<Review>();
+
+    public ICollection<PlaceVibeAssignment> PlaceVibeAssignments { get; set; }
+        = new List<PlaceVibeAssignment>();
 }
