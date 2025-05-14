@@ -184,9 +184,9 @@ const UploadPlace = () => {
                         >
                             <Cascader
                                 options={categoryOptions}
-                                changeOnSelect
                                 placeholder="Select category"
                             />
+
                         </Form.Item>
 
                         <Form.Item
@@ -203,6 +203,7 @@ const UploadPlace = () => {
                                 onBlur={() => setCountryOptions([])}
                                 options={countryOptions}
                             />
+
                         </Form.Item>
 
                         <Form.Item
@@ -247,7 +248,7 @@ const UploadPlace = () => {
                             >
                                 <Input.TextArea
                                     placeholder="Share your experience..."
-                                    rows={4}
+                                    rows={10}
                                     showCount
                                 />
                             </Form.Item>

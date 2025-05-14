@@ -1,10 +1,10 @@
 import styles from './ImageUpload.module.css';
 
-import { Form, Image, Upload } from "antd";
+import { Form, Image, Upload, Button, App, ConfigProvider } from "antd";
 
 import { useState } from "react";
 
-import { PlusOutlined } from '@ant-design/icons';
+import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 
 var __awaiter =
     (this && this.__awaiter) ||
@@ -46,18 +46,59 @@ const getBase64 = file =>
         reader.onerror = error => reject(error);
     });
 
+const validTypes = ['image/jpeg', 'image/png'];
+
 const normFile = e => {
     if (Array.isArray(e)) {
         return e;
     }
-    return e === null || e === void 0 ? void 0 : e.fileList;
+    return e?.fileList;
 };
 
 const ImageUpload = () => {
 
+    const { message } = App.useApp();
+
+    // state
     const [fileList, setFileList] = useState([]);
-    const [previewImage, setPreviewImage] = useState('');
     const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+
+    const beforeUpload = (file) => {
+
+        const isValid = validTypes.includes(file.type);
+
+        if (!isValid) {
+            message.error(`File "${file.name}" is not a valid image.`);
+        }
+
+        const isDuplicate = fileList.some(f => f.name === file.name);
+        if (isDuplicate) {
+            message.error(`File "${file.name}" has already been selected.`);
+            return Upload.LIST_IGNORE;
+        }
+
+        const isTooLarge = file.size > 5 * 1024 * 1024; // 5 MB in bytes
+        if (isTooLarge) {
+            message.error(`File "${file.name}" is too large. Maximum size is 5MB.`);
+            return Upload.LIST_IGNORE;
+        }
+
+        return isValid ? false : Upload.LIST_IGNORE;
+
+    };
+
+    const handleFileChange = ({ fileList: newFileList }) => {
+        const updatedList = newFileList
+            .slice(-10)
+            .map(file => ({
+                ...file,
+                status: 'done',
+                thumbUrl: file.thumbUrl || (file.originFileObj && URL.createObjectURL(file.originFileObj)),
+            }));
+
+        setFileList(updatedList);
+    };
 
     const handlePreview = file =>
         __awaiter(void 0, void 0, void 0, function* () {
@@ -68,25 +109,6 @@ const ImageUpload = () => {
             setPreviewOpen(true);
         });
 
-    const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-
-    const uploadButton = (
-        <button
-            disabled={fileList.length >= 10}
-            style={{ border: 0, background: 'none', cursor: 'pointer' }}
-            type="button"
-        >
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Images</div>
-        </button>
-    );
-
-    const handleRemove = (file) => {
-        const newFileList = fileList.filter(item => item.uid !== file.uid);
-        setFileList(newFileList);
-        // message.info(`${file.name} removed successfully.`);
-    };
-
     return (
         <>
             <Form.Item
@@ -96,30 +118,33 @@ const ImageUpload = () => {
                 getValueFromEvent={normFile}
                 required={true}
             >
+
                 <Upload
-                    disabled={fileList.length >= 10}
-                    beforeUpload={() => false}
                     listType="picture-card"
                     fileList={fileList}
+                    onChange={handleFileChange}
+                    beforeUpload={beforeUpload}
+                    multiple
+                    maxCount={10}
                     onPreview={handlePreview}
-                    onChange={handleChange}
-                    // maxCount={10}
-                    onRemove={handleRemove}
-                    showUploadList={{ showRemoveIcon: true }}
                 >
-                    {uploadButton}
+
+                    <PlusOutlined />
+                    <span style={{ marginLeft: '5px', fontSize: '1.1rem' }}>Upload</span>
+
                 </Upload>
+
             </Form.Item>
 
             {previewImage && (
                 <Image
-                    src={previewImage}
                     wrapperStyle={{ display: 'none' }}
                     preview={{
                         visible: previewOpen,
                         onVisibleChange: visible => setPreviewOpen(visible),
                         afterOpenChange: visible => !visible && setPreviewImage(''),
                     }}
+                    src={previewImage}
                 />
             )}
 

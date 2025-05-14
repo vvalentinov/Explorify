@@ -27,7 +27,6 @@ const PlaceDetails = () => {
 
     const [pagesCount, setPagesCount] = useState(0);
 
-    const [weatherData, setWeatherData] = useState({});
     const [mapUrl, setMapUrl] = useState('');
 
     useEffect(() => {
@@ -42,16 +41,9 @@ const PlaceDetails = () => {
                         const lat = res.coordinates.latitude;
                         const lon = res.coordinates.longitude;
 
-                        const weatherApiKey = import.meta.env.VITE_WEATHER_API_KEY;
                         const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
                         setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${lat},${lon}`);
-
-                        fetch(`https://api.weatherapi.com/v1/current.json?key=${weatherApiKey}&q=${lat},${lon}`)
-                            .then(res => res.json())
-                            .then(data => {
-                                setWeatherData(data);
-                            }).catch(err => console.error('Weather fetch error:', err));
                     }
                 }).catch(err => fireError(err));
 
@@ -78,7 +70,6 @@ const PlaceDetails = () => {
                     <PlaceDetailsSection
                         place={place}
                         mapUrl={mapUrl}
-                        weatherData={weatherData}
                     />
 
                     {/* Reviews Section */}

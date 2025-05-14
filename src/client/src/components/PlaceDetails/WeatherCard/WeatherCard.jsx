@@ -7,7 +7,7 @@ const WeatherCard = ({ data }) => {
         return null;
     }
 
-    const iconUrl = `https:${data.current.condition.icon}`;
+    const iconUrl = `https:${data.current?.condition?.icon}`;
 
     return (
         <Card
@@ -22,14 +22,14 @@ const WeatherCard = ({ data }) => {
             }}
         >
             <div className={styles.weatherContent}>
-                <img src={iconUrl} alt={data.current.condition.text} />
-                <Typography.Title level={3}>{data.current.temp_c}°C</Typography.Title>
-                <Typography.Text>{data.current.condition.text}</Typography.Text>
+                <img src={iconUrl} alt={data.current?.condition?.text} />
+                <Typography.Title level={3}>{data.current?.temp_c}°C</Typography.Title>
+                <Typography.Text>{data.current?.condition?.text}</Typography.Text>
 
                 <div className={styles.weatherMeta}>
-                    <Typography.Text>Humidity: {data.current.humidity}%</Typography.Text>
-                    <Typography.Text>Pressure: {data.current.pressure_mb} hPa</Typography.Text>
-                    <Typography.Text>Wind: {data.current.wind_kph} kph</Typography.Text>
+                    <Typography.Text>Humidity: {data.current?.humidity}%</Typography.Text>
+                    <Typography.Text>Pressure: {data.current?.pressure_mb} hPa</Typography.Text>
+                    <Typography.Text>Wind: {data.current?.wind_kph} kph</Typography.Text>
                 </div>
             </div>
         </Card>

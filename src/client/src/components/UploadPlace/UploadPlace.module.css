@@ -32,6 +32,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     background-color: #ffffff;
     border: solid 1px green;
+    /* padding: 0 !important; */
 }
 
 .uploadButton {

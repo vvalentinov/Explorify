@@ -1,0 +1,13 @@
+.uploadBtn {
+    border: 0;
+    background: none;
+    outline: none !important;
+}
+
+.uploadBtn:active,
+.uploadBtn:focus {
+    border: 0 !important;
+    background: none !important;
+    outline: none !important;
+    /* Remove focus outline */
+}

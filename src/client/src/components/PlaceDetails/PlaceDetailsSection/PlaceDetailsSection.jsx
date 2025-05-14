@@ -10,9 +10,12 @@ import {
     Typography,
     Avatar,
     Rate,
+    Image
 } from 'antd';
 
-const PlaceDetailsSection = ({ place, mapUrl, weatherData }) => {
+const PlaceDetailsSection = ({ place, mapUrl }) => {
+
+    console.log(place.weatherData?.current);
 
     return (
         <section className={styles.placeDetailsCardSection}>
@@ -123,7 +126,11 @@ const PlaceDetailsSection = ({ place, mapUrl, weatherData }) => {
 
                 </Card>
 
-                {weatherData && <WeatherCard data={weatherData} />}
+                {/* {place.weatherData?.current && <WeatherCard data={place.weatherData} />} */}
+                {place.weatherData?.current && Object.keys(place.weatherData.current).length > 0 && (
+                    <WeatherCard data={place.weatherData} />
+                )}
+
 
             </div>
 
