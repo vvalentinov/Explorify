@@ -20,8 +20,9 @@ public class ExplorifyDbContextSeeder : ISeeder
 
         IEnumerable<ISeeder> seeders = [
             new RolesSeeder(),
-            new CategoriesSeeder(_slugGenerator),
             new CountriesSeeder(),
+            new PlaceVibesSeeder(),
+            new CategoriesSeeder(_slugGenerator),
         ];
 
         foreach (var seeder in seeders)
