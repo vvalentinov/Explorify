@@ -46,7 +46,7 @@ const getBase64 = file =>
         reader.onerror = error => reject(error);
     });
 
-const validTypes = ['image/jpeg', 'image/png'];
+const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
 const normFile = e => {
     if (Array.isArray(e)) {

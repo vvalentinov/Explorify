@@ -14,7 +14,8 @@ import {
     Card,
     ConfigProvider,
     Rate,
-    Spin
+    Spin,
+    Checkbox
 } from 'antd';
 
 import { UploadOutlined } from '@ant-design/icons';
@@ -29,6 +30,8 @@ import { categoriesServiceFactory } from '../../services/categoriesService';
 
 import ImageUpload from '../ImageUpload/ImageUpload';
 
+import { vibesServiceFactory } from '../../services/vibesService';
+
 const UploadPlace = () => {
 
     const navigate = useNavigate();
@@ -38,13 +41,24 @@ const UploadPlace = () => {
     const placesService = placesServiceFactory(token);
     const countriesService = countriesServiceFactory();
     const categoriesService = categoriesServiceFactory();
+    const vibesService = vibesServiceFactory(token);
 
     const [countryName, setCountryName] = useState('');
     const [countryOptions, setCountryOptions] = useState([]);
     const [selectLoading, setSelectLoading] = useState(false);
     const [categoryOptions, setCategoryOptions] = useState([]);
 
+    const [tags, setTags] = useState([]);
+
     const [debounced] = useDebounce(countryName, 1000);
+
+    useEffect(() => {
+        vibesService
+            .getVibes()
+            .then(res => {
+                setTags(res);
+            }).catch(err => console.log(err));
+    }, []);
 
     useEffect(() => {
         if (categoryOptions.length == 0) {
@@ -101,6 +115,12 @@ const UploadPlace = () => {
         data.Images?.forEach(file => {
             if (file.originFileObj) { formData.append("Files", file.originFileObj); }
         });
+
+        if (data.Tags?.length > 0) {
+            data.Tags.forEach(tagId => {
+                formData.append("VibesIds", tagId);
+            });
+        }
 
         placesService
             .uploadPlace(formData)
@@ -205,6 +225,34 @@ const UploadPlace = () => {
                             />
 
                         </Form.Item>
+
+                        <Form.Item
+                            name="Tags"
+                            label="Tags"
+                        >
+                            <Checkbox.Group style={{ width: '100%' }}>
+                                <div className={styles.tagCheckboxGroup}>
+                                    {tags.map(tag => (
+                                        <Checkbox
+                                            key={tag.id}
+                                            value={tag.id}
+                                            style={{
+                                                margin: '8px',
+                                                border: '1px solid #91d5ff',
+                                                borderRadius: '16px',
+                                                padding: '6px 12px',
+                                                backgroundColor: '#e6f7ff',
+                                                transition: 'all 0.3s',
+                                            }}
+                                        >
+                                            {tag.name}
+                                        </Checkbox>
+                                    ))}
+                                </div>
+                            </Checkbox.Group>
+                        </Form.Item>
+
+
 
                         <Form.Item
                             name="Description"

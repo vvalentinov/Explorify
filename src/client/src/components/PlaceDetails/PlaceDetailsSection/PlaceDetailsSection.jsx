@@ -10,12 +10,12 @@ import {
     Typography,
     Avatar,
     Rate,
-    Image
+    Image,
+    Tag,
+    Flex
 } from 'antd';
 
 const PlaceDetailsSection = ({ place, mapUrl }) => {
-
-    console.log(place.weatherData?.current);
 
     return (
         <section className={styles.placeDetailsCardSection}>
@@ -81,6 +81,16 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
                         {place.description}
                     </Typography.Paragraph>
                 </Card>
+
+                <Card title='Tags' style={{ marginTop: '1.5rem' }}>
+                    <Flex gap="1rem" wrap>
+
+                        {place.tags?.map(x => <Tag style={{ fontSize: '1.1rem', padding: '0.5rem 1rem' }} key={x.id} color="green">{x.name}</Tag>)}
+
+                    </Flex>
+                </Card>
+
+
 
                 {
                     mapUrl != '' &&

@@ -53,3 +53,9 @@
     color: #13c2c2;
     border-bottom: 1px solid #e6f7ff;
 }
+
+.tagCheckboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
