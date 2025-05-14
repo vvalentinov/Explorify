@@ -16,6 +16,8 @@ public class Review : BaseDeletableEntity<Guid>
 
     public Guid UserId { get; set; }
 
+    public bool IsApproved { get; set; }
+
     public ICollection<ReviewPhoto> Photos { get; set; }
          = new List<ReviewPhoto>();
 
