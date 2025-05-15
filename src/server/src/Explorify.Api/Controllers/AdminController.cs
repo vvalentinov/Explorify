@@ -1,11 +1,14 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Admin.ApprovePlace;
+using Explorify.Application.Admin.ApproveReview;
 using Explorify.Application.Admin.GetDashboardInfo;
 using Explorify.Application.Admin.GetUnapprovedPlaces;
+using Explorify.Application.Admin.GetUnapprovedReviews;
 
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -27,6 +30,12 @@ public class AdminController : BaseController
             await _mediator.Send(
                 new ApprovePlaceCommand(placeId, User.GetId())));
 
+    [HttpPut(nameof(ApproveReview))]
+    public async Task<IActionResult> ApproveReview([FromQuery] Guid reviewId)
+        => this.OkOrProblemDetails(
+            await _mediator.Send(
+                new ApproveReviewCommand(reviewId, CurrentUserId: User.GetId())));
+
     [HttpGet(nameof(GetDashboardInfo))]
     public async Task<IActionResult> GetDashboardInfo()
     {
@@ -39,6 +48,14 @@ public class AdminController : BaseController
     public async Task<IActionResult> GetUnapprovedPlaces(int page)
     {
         var query = new GetUnapprovedPlacesQuery(page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetUnapprovedReviews))]
+    public async Task<IActionResult> GetUnapprovedReviews(int page)
+    {
+        var query = new GetUnapprovedReviewsQuery(page);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

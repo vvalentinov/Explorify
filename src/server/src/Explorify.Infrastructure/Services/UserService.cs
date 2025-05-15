@@ -367,4 +367,20 @@ public class UserService : IUserService
 
         return result;
     }
+
+    public async Task<List<UserDto>> GetUserDtosByIdsAsync(List<string> usersIds)
+    {
+        var result = await _userManager
+            .Users
+            .Where(x => usersIds.Contains(x.Id.ToString().ToUpper()))
+            .Select(x => new UserDto
+            {
+                Id = x.Id,
+                Email = x.Email,
+                ProfileImageUrl = x.ProfileImageUrl,
+                UserName = x.UserName ?? string.Empty,
+            }).ToListAsync();
+
+        return result;
+    }
 }

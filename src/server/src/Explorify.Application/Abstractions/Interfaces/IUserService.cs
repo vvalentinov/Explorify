@@ -50,6 +50,8 @@ public interface IUserService
 
     Task<Result<UserDto>> GetUserDtoByIdAsync(string userId);
 
+    Task<List<UserDto>> GetUserDtosByIdsAsync(List<string> usersIds);
+
     Task<Dictionary<Guid, UserReviewDto>> GetUsersReviewDtosByIdsAsync(IEnumerable<Guid> userIds);
 
     Task<HashSet<Guid>> GetLikedReviewIdsByUserAsync(string userId, IEnumerable<Guid> reviewIds);
@@ -59,6 +61,4 @@ public interface IUserService
         int points);
 
     Task<int> GetUsersCountAsync();
-
-    Task<Dictionary<string, string>> GetUserNamesByIdsAsync(List<string> userIds);
 }
