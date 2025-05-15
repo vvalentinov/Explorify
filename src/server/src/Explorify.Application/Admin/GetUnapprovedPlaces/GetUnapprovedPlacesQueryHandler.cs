@@ -53,11 +53,16 @@ public class GetUnapprovedPlacesQueryHandler
             .Distinct()
             .ToList();
 
-        var userNamesDict = await _userService.GetUserNamesByIdsAsync(userIds);
+        var usersDtos = await _userService.GetUserDtosByIdsAsync(userIds);
 
         foreach (var place in unapprovedPlaces)
         {
-            place.UserName = userNamesDict[place.UserId];
+            var userDto = usersDtos
+                .First(x => x.Id.ToString().Equals(
+                    place.UserId,
+                    StringComparison.InvariantCultureIgnoreCase));
+
+            place.UserName = userDto.UserName;
         }
 
         var response = new UnapprovedPlacesListModel

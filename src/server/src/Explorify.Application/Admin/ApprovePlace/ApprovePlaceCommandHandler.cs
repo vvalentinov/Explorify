@@ -4,6 +4,7 @@ using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Admin.ApprovePlace;
 
@@ -28,7 +29,12 @@ public class ApprovePlaceCommandHandler
         ApprovePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        var place = await _repository.GetByIdAsync<Place>(request.PlaceId);
+        //var place = await _repository.GetByIdAsync<Place>(request.PlaceId);
+
+        var place = await _repository
+            .All<Place>()
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
 
         if (place == null)
         {
@@ -38,8 +44,13 @@ public class ApprovePlaceCommandHandler
 
         place.IsApproved = true;
 
+        var review = place.Reviews.First(x => x.UserId == place.UserId);
+
+        review.IsApproved = true;
+
         await _userService.IncreaseUserPointsAsync(
-            place.UserId.ToString(), 10);
+            place.UserId.ToString(),
+            10);
 
         var notification = new Notification
         {

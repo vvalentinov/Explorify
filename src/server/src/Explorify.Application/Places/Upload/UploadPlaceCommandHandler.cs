@@ -30,8 +30,8 @@ public class UploadPlaceCommandHandler
         _repository = repository;
         _blobService = blobService;
         _imageService = imageService;
-        _geocodingService = geocodingService;
         _slugGenerator = slugGenerator;
+        _geocodingService = geocodingService;
     }
 
     public async Task<Result> Handle(
@@ -165,6 +165,6 @@ public class UploadPlaceCommandHandler
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();
 
-        return Result.Success("Successfull place upload!");
+        return Result.Success("Successfull place upload! When an admin approves your place, you will receive a notification!");
     }
 }

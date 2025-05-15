@@ -38,7 +38,7 @@ public class GetReviewsQueryHandler
         var query = _repository
             .AllAsNoTracking<Review>()
             .Include(x => x.Photos)
-            .Where(x => x.PlaceId == request.Model.PlaceId && x.UserId != place.UserId);
+            .Where(x => x.IsApproved && x.PlaceId == request.Model.PlaceId && x.UserId != place.UserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 

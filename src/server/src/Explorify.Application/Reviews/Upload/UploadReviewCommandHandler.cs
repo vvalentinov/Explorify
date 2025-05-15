@@ -30,7 +30,12 @@ public class UploadReviewCommandHandler
         UploadReviewCommand request,
         CancellationToken cancellationToken)
     {
-        var place = await _repository.GetByIdAsync<Place>(request.Model.PlaceId);
+        //var place = await _repository.GetByIdAsync<Place>(request.Model.PlaceId);
+
+        var place = await _repository
+            .AllAsNoTracking<Place>()
+            .Include(x => x.Category)
+            .FirstOrDefaultAsync(x => x.Id == request.Model.PlaceId, cancellationToken);
 
         if (place == null)
         {
@@ -63,7 +68,7 @@ public class UploadReviewCommandHandler
             var url = await _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"ReviewsImages/{place.Name}/");
+                $"ReviewsImages/${place.Category.Name}/{place.Name}/");
 
             photos.Add(new ReviewPhoto { Url = url });
         }
