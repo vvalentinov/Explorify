@@ -131,7 +131,7 @@ const UnapprovedPlaces = () => {
                             justifyContent: 'center',
                             gap: '1rem',
                             padding: '2rem 0',
-                            border: 'solid 1px black',
+                            // border: 'solid 1px black',
                             width: '100%'
                         }}
                     >
@@ -181,14 +181,16 @@ const UnapprovedPlaces = () => {
 
             </section>
 
-            <Pagination
+            {pagesCount > 1 && <Pagination
                 align='center'
                 onChange={handlePageChange}
                 current={currentPage}
                 total={pagesCount * 6}
                 pageSize={6}
                 style={{ textAlign: 'center', marginBottom: '2rem' }}
-            />
+            />}
+
+
 
             {/* Modal to show place details */}
             {selectedPlace && (

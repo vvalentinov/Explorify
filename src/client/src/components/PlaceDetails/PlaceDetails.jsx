@@ -67,10 +67,7 @@ const PlaceDetails = () => {
             {place && (
                 <>
                     {/* Place Details Section */}
-                    <PlaceDetailsSection
-                        place={place}
-                        mapUrl={mapUrl}
-                    />
+                    <PlaceDetailsSection place={place} mapUrl={mapUrl} />
 
                     {/* Reviews Section */}
                     <ReviewsSection

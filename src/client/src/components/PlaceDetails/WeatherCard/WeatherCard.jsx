@@ -18,7 +18,7 @@ const WeatherCard = ({ data }) => {
                 </Space>
             }
             style={{
-                width: '70%'
+                width: '100%'
             }}
         >
             <div className={styles.weatherContent}>

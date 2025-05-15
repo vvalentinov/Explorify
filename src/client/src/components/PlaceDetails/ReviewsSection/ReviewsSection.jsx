@@ -23,6 +23,9 @@ import { fireError } from "../../../utils/fireError";
 
 import WriteReviewCard from '../WriteReviewCard';
 
+
+import { UserOutlined } from '@ant-design/icons';
+
 const ReviewsSection = ({
     reviewsService,
     setSelectedReview,
@@ -121,8 +124,7 @@ const ReviewsSection = ({
             style={{
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
                 border: 'solid 1px green',
-                margin: '0 2rem',
-                marginBottom: '2rem',
+                margin: '2rem 3rem',
             }}
             title='Reviews Section'
             className={styles.reviewsSection}
@@ -136,60 +138,64 @@ const ReviewsSection = ({
 
             {place.userId != userId && <WriteReviewCard handleOpenModal={handleOpenModal} />}
 
-            {/* Order the reviews */}
-            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                <Card
-                    style={{
-                        width: '60%',
-                        padding: '1rem 2rem',
-                        backgroundColor: '#f3e9fe',
-                        border: '1px solid #9c4dcc',
-                        borderRadius: '16px',
-                        boxShadow: '0 6px 18px rgba(0, 0, 0, 0.1)',
-                        textAlign: 'center',
-                        marginTop: '2rem'
-                    }}
-                >
-                    <ConfigProvider
-                        theme={{
-                            components: {
-                                Radio: {
-                                    colorPrimary: '#9c4dcc',
-                                    buttonBg: '#e6d4f5',
-                                    buttonColor: '#6a2c91',
-                                    buttonSolidCheckedBg: '#9c4dcc',
-                                    buttonSolidCheckedColor: 'white',
-                                    buttonSolidCheckedHoverBg: '#8a3dac',
-                                    buttonSolidCheckedActiveBg: '#9c4dcc',
-                                    borderRadius: 12,
-                                },
-                            },
+            {pagesCount > 1 && <>
+                {/* Order the reviews */}
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                    <Card
+                        style={{
+                            width: '60%',
+                            padding: '1rem 2rem',
+                            backgroundColor: '#f3e9fe',
+                            border: '1px solid #9c4dcc',
+                            borderRadius: '16px',
+                            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.1)',
+                            textAlign: 'center',
+                            marginTop: '2rem'
                         }}
                     >
-                        <Typography.Paragraph italic={true}>
-                            Order Reviews
-                        </Typography.Paragraph>
-
-                        <Radio.Group
-                            options={options}
-                            defaultValue={sortOption}
-                            optionType="button"
-                            value={sortOption}
-                            buttonStyle="solid"
-                            size="large"
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: '1rem',
-                                flexWrap: 'wrap',
+                        <ConfigProvider
+                            theme={{
+                                components: {
+                                    Radio: {
+                                        colorPrimary: '#9c4dcc',
+                                        buttonBg: '#e6d4f5',
+                                        buttonColor: '#6a2c91',
+                                        buttonSolidCheckedBg: '#9c4dcc',
+                                        buttonSolidCheckedColor: 'white',
+                                        buttonSolidCheckedHoverBg: '#8a3dac',
+                                        buttonSolidCheckedActiveBg: '#9c4dcc',
+                                        borderRadius: 12,
+                                    },
+                                },
                             }}
-                            onChange={handleSortChange}
-                            name='Sort'
-                        />
-                    </ConfigProvider>
-                </Card>
-            </div>
+                        >
+                            <Typography.Paragraph italic={true}>
+                                Order Reviews
+                            </Typography.Paragraph>
+
+                            <Radio.Group
+                                options={options}
+                                defaultValue={sortOption}
+                                optionType="button"
+                                value={sortOption}
+                                buttonStyle="solid"
+                                size="large"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    gap: '1rem',
+                                    flexWrap: 'wrap',
+                                }}
+                                onChange={handleSortChange}
+                                name='Sort'
+                            />
+                        </ConfigProvider>
+                    </Card>
+                </div>
+            </>}
+
+
 
             <div className={styles.reviewsContainer}>
                 {
@@ -215,7 +221,11 @@ const ReviewsSection = ({
                                     title={
                                         <div className={styles.reviewCardHeader}>
                                             <div className={styles.reviewCardHeaderContainer}>
-                                                <Avatar src={x.user.profileImageUrl} size={40} />
+                                                <Avatar
+                                                    src={x.user.profileImageUrl || undefined}
+                                                    size={40}
+                                                    icon={!x.user.profileImageUrl && <UserOutlined />}
+                                                />
                                                 <span style={{ marginLeft: '5px' }} className={styles.placeTitle}>{x.user.userName}</span>
                                             </div>
                                             <div>
@@ -247,14 +257,14 @@ const ReviewsSection = ({
                 }
             </div>
 
-            <Pagination
+            {pagesCount > 1 && <Pagination
                 align='center'
                 onChange={handlePageChange}
                 current={currentPage}
                 total={pagesCount * 6}
                 pageSize={6}
                 style={{ textAlign: 'center', marginTop: '2rem' }}
-            />
+            />}
 
         </Card>
     )

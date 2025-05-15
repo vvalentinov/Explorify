@@ -41,3 +41,12 @@ main {
     bottom: 0 !important;
     width: 100% !important;
 }
+
+/* .ant-upload-select {
+    transition: all 0.3s ease-in-out;
+}
+
+.ant-upload-select:hover {
+    border: 1px solid #0ea5a5 !important;
+    background-color: #0ea5a5 !important;
+} */

@@ -1,9 +1,5 @@
 .placeDetailsCardSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    padding: 0 2rem;
+    margin: 0 3rem;
 }
 
 .reviewCardHeader {

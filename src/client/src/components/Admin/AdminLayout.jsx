@@ -14,6 +14,8 @@ import {
 
 import UnadpprovedPlaces from './UnapprovedPlaces/UnapprovedPlaces';
 
+import UnapprovedReviews from './UnapprovedReviews/UnapprovedReviews';
+
 import AdminUsers from './AdminUsers/AdminUsers';
 
 import AdminDashboard from './AdminDashboard/AdminDashboard';
@@ -51,6 +53,12 @@ const AdminLayout = () => {
             label: 'Places',
             onClick: () => navigate('/admin/unapproved-places'),
         },
+        {
+            key: 'unapproved-reviews',
+            icon: <EnvironmentOutlined />,
+            label: 'Reviews',
+            onClick: () => navigate('/admin/unapproved-reviews'),
+        },
     ];
 
     const [collapsed, setCollapsed] = useState(false);
@@ -80,6 +88,7 @@ const AdminLayout = () => {
                         <Route index element={<AdminDashboard />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path='unapproved-places' element={<UnadpprovedPlaces />} />
+                        <Route path='unapproved-reviews' element={<UnapprovedReviews />} />
 
                         {/* <Route path="*" element={<NoPathFound />} />  */}
                     </Routes>

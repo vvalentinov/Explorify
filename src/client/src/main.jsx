@@ -21,12 +21,24 @@ createRoot(document.getElementById('root')).render(
                         colorPrimary: '#13c2c2',
                         hoverBorderColor: '#13c2c2'
                     },
-                    Pagination: {
-                        itemActiveBg: '#e8fffb',
-                        itemActiveColor: '#52c41a',
-                        colorPrimary: '#52c41a',
-                        colorPrimaryHover: '#389e0d',
-                    }
+                    // Pagination: {
+                    //     itemActiveBg: '#e8fffb',
+                    //     itemActiveColor: '#52c41a',
+                    //     colorPrimary: '#52c41a',
+                    //     colorPrimaryHover: '#389e0d',
+                    // },
+                    Select: {
+                        activeBorderColor: '#13c2c2',
+                        hoverBorderColor: '#13c2c2',
+                    },
+                    Cascader: {
+                        controlItemBgHover: '#e6fffb',
+                        controlHeight: 40,
+                        controlOutlineWidth: 2,
+                        controlOutline: '#13c2c2',
+                        colorPrimary: '#13c2c2',
+                        controlItemBgActive: '#e6fffb',
+                    },
                 }
             }}
         >

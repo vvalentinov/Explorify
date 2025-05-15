@@ -16,10 +16,10 @@ const PlacesInSubcategory = () => {
 
     const [places, setPlaces] = useState([]);
 
+    const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const [shouldScroll, setShouldScroll] = useState(false);
-    const [pagesCount, setPagesCount] = useState(0);
 
     useLayoutEffect(() => {
         if (shouldScroll) {
@@ -110,14 +110,15 @@ const PlacesInSubcategory = () => {
                 <>
                     <PlacesList places={places} />
 
-                    <Pagination
+                    {pagesCount > 1 && <Pagination
                         align='center'
                         onChange={handlePageChange}
                         current={currentPage}
                         total={pagesCount * 6}
                         pageSize={6}
                         style={{ textAlign: 'center', marginBottom: '1rem' }}
-                    />
+                    />}
+
                 </>
             }
         </>
