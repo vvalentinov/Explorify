@@ -46,11 +46,12 @@ const PlacesInSubcategory = () => {
 
                     setTimeout(() => {
                         setPagesCount(res.pagination.pagesCount);
+                        setPlaces(res.places);
                         setSpinnerLoading(false);
                         setShouldScroll(true);
                     }, remaining > 0 ? remaining : 0);
 
-                    setPlaces(res.places);
+
                 }).catch(err => {
                     fireError(err);
                     setSpinnerLoading(false);

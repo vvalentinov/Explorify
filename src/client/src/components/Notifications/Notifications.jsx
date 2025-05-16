@@ -192,7 +192,7 @@ const Notifications = () => {
                                                 }}
                                             >
                                                 {!notif.isRead ? (
-                                                    <Popover placement="right" content='Mark as read'>
+                                                    <Popover placement="top" content='Mark as read'>
                                                         <Button
                                                             shape="circle"
                                                             icon={<CheckOutlined />}

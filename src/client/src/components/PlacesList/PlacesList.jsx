@@ -13,7 +13,7 @@ const containerVariants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.15,  // delay between each child's animation
+            staggerChildren: 0.15,
         },
     },
 };

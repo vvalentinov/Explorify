@@ -11,10 +11,12 @@ import {
     Avatar,
     Rate,
     Tag,
-    Flex
+    Flex,
+    Spin,
+    ConfigProvider
 } from 'antd';
 
-const PlaceDetailsSection = ({ place, mapUrl }) => {
+const PlaceDetailsSection = ({ place, mapUrl, loading }) => {
 
     return (
         <section className={styles.placeDetailsCardSection}>
@@ -49,25 +51,56 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
                 <Flex justify='center' align='start' gap={'2rem'} >
 
                     <div style={{ width: '60%' }}>
-                        {place.imagesUrls?.length > 0 && (
-                            <div className={styles.carouselWrapperStyle}>
-                                <Carousel
-                                    arrows
-                                    dots
-                                    infinite
-                                    style={{ borderRadius: '10px' }}
-                                >
-                                    {place.imagesUrls.map((x, i) => (
-                                        <div key={i}>
-                                            <img className={styles.imageStyle} src={x} alt={`Slide ${i}`} />
-                                        </div>
-                                    ))}
-                                </Carousel>
-                            </div>
-                        )}
+
+                        {/* {place.imagesUrls?.length > 0 && ( */}
+                        {
+                            loading ?
+                                <div style={{
+                                    width: '100%',
+                                    maxWidth: '700px',
+                                    margin: '0 auto 1.5rem auto',
+                                    borderRadius: '10px',
+                                    border: 'solid 1px green',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    minHeight: '300px'
+                                }}>
+                                    <ConfigProvider theme={{
+                                        components: {
+                                            Spin: {
+                                                colorPrimary: 'green'
+                                            }
+                                        }
+                                    }}>
+                                        <Spin size='large' />
+                                    </ConfigProvider>
+                                </div> :
+                                <div className={styles.carouselWrapperStyle}>
+                                    <Carousel
+                                        arrows
+                                        dots
+                                        infinite
+                                        style={{ borderRadius: '10px' }}
+                                    >
+                                        {place.imagesUrls?.map((x, i) => (
+                                            <div key={i}>
+                                                <img
+                                                    className={styles.imageStyle}
+                                                    src={x}
+                                                    alt={`Slide ${i}`}
+                                                />
+                                            </div>
+                                        ))}
+                                    </Carousel>
+                                </div>
+                        }
+
+                        {/* )} */}
 
                         <Card
-                            className={styles.placeDescriptionCard}
+                            // className={styles.placeDescriptionCard}
+                            loading={loading}
                             styles={{
                                 header:
                                     { backgroundColor: '#e8fffb', borderBottom: '1px solid green' }
@@ -85,12 +118,6 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
                             </Typography.Paragraph>
                         </Card>
 
-
-
-
-
-
-
                         {
                             mapUrl != '' &&
                             <iframe
@@ -101,6 +128,7 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
                                 tabIndex="0"
                             ></iframe>
                         }
+
                     </div>
 
 
@@ -113,10 +141,9 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
                         width: '40%'
                     }}>
 
-                        <Card
-                            style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green' }}
+                        <Card loading={loading}
+                            style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green', width: '100%' }}
                             styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
-                            className={styles.userReviewCard}
                             title={
                                 <div className={styles.reviewCardHeader}>
                                     <div className={styles.reviewCardHeaderContainer}>
@@ -135,45 +162,44 @@ const PlaceDetailsSection = ({ place, mapUrl }) => {
 
                         </Card>
 
-                        <Card title={'Tags'} styles={{
-                            header:
-                            {
-                                backgroundColor: '#e8fffb',
-                                borderBottom: '1px solid green'
-                            }
-                        }}
-                            style={{
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                                border: '1px solid green',
-                            }}>
-                            <Flex gap="1rem" wrap>
-                                {place.tags?.map(x => <Tag
-                                    style={{ padding: '5px 1rem', fontSize: '15px' }}
-                                    key={x.id}
-                                    color="green">
-                                    {x.name}
-                                </Tag>)}
-                            </Flex>
-                        </Card>
+                        {
+                            place.tags?.length > 0 &&
+                            <Card
+                                loading={loading}
+                                title={'Tags'}
+                                styles={{
+                                    header:
+                                    {
+                                        backgroundColor: '#e8fffb',
+                                        borderBottom: '1px solid green'
+                                    }
+                                }}
+                                style={{
+                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
+                                    border: '1px solid green',
+                                    width: '100%'
+                                }}>
+                                <Flex gap="1rem" wrap>
+                                    {place.tags?.map(x => <Tag
+                                        style={{ padding: '5px 1rem', fontSize: '15px' }}
+                                        key={x.id}
+                                        color="green">
+                                        {x.name}
+                                    </Tag>)}
+                                </Flex>
+                            </Card>
+                        }
 
                         {/* {place.weatherData?.current && <WeatherCard data={place.weatherData} />} */}
                         {place.weatherData?.current && Object.keys(place.weatherData.current).length > 0 && (
                             <WeatherCard data={place.weatherData} />
                         )}
 
-
                     </div>
-
-
 
                 </Flex>
 
-
             </Card>
-
-
-
-
 
         </section>
     );
