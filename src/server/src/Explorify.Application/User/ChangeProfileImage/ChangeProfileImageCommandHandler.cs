@@ -10,15 +10,18 @@ public class ChangeProfileImageCommandHandler
     private readonly IUserService _userService;
     private readonly IBlobService _blobService;
     private readonly IImageService _imageService;
+    private readonly IProfileService _profileService;
 
     public ChangeProfileImageCommandHandler(
         IUserService userService,
+        IBlobService blobService,
         IImageService imageService,
-        IBlobService blobService)
+        IProfileService profileService)
     {
         _userService = userService;
         _blobService = blobService;
         _imageService = imageService;
+        _profileService = profileService;
     }
 
     public async Task<Result<string>> Handle(
@@ -35,7 +38,7 @@ public class ChangeProfileImageCommandHandler
             $"ProfileImages/",
             fileName == null);
 
-        await _userService.ChangeProfileImageAsync(request.UserId, url);
+        await _profileService.ChangeProfileImageAsync(request.UserId, url);
 
         return Result.Success<string>(url);
     }

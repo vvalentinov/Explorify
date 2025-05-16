@@ -7,17 +7,17 @@ namespace Explorify.Application.User;
 public class ResetPasswordCommandHandler
     : ICommandHandler<ResetPasswordCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public ResetPasswordCommandHandler(IUserService userService)
+    public ResetPasswordCommandHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result> Handle(
         ResetPasswordCommand request,
         CancellationToken cancellationToken)
-            => await _userService.ResetPasswordAsync(
+            => await _profileService.ResetPasswordAsync(
                     request.Email,
                     request.Token,
                     request.Password);

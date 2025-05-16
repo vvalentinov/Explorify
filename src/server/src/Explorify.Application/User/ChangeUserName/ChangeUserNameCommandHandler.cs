@@ -7,17 +7,17 @@ namespace Explorify.Application.User.ChangeUserName;
 public class ChangeUserNameCommandHandler
     : ICommandHandler<ChangeUserNameCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public ChangeUserNameCommandHandler(IUserService userService)
+    public ChangeUserNameCommandHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result> Handle(
         ChangeUserNameCommand request,
         CancellationToken cancellationToken)
-        => await _userService.ChangeUserNameAsync(
+        => await _profileService.ChangeUserNameAsync(
                 request.UserId,
                 request.NewUserName);
 }

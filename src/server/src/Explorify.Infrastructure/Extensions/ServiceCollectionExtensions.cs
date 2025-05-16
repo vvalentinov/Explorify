@@ -1,4 +1,5 @@
 ﻿using System.Text;
+
 using Explorify.Persistence;
 using Explorify.Persistence.Identity;
 using Explorify.Application.Identity;
@@ -31,6 +32,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IUserService, UserService>()
             .AddScoped<IEmailSender, SendGridEmailSender>()
             .AddScoped<IImageService, ImageService>()
+            .AddScoped<IProfileService, ProfileService>()
             .AddJwtAuthentication(configuration);
 
         services.AddScoped<INotificationService, NotificationService>();
@@ -119,7 +121,8 @@ public static class ServiceCollectionExtensions
 
                         var path = context.HttpContext.Request.Path;
 
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/api/hubs"))
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/api/hubs"))
                         {
                             context.Token = accessToken;
                         }

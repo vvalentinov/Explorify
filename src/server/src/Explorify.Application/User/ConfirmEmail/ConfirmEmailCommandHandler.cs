@@ -7,15 +7,17 @@ namespace Explorify.Application.User.ConfirmEmail;
 public class ConfirmEmailCommandHandler
     : ICommandHandler<ConfirmEmailCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public ConfirmEmailCommandHandler(IUserService userService)
+    public ConfirmEmailCommandHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result> Handle(
         ConfirmEmailCommand request,
         CancellationToken cancellationToken)
-            => await _userService.ConfirmEmailAsync(request.UserId, request.Token);
+            => await _profileService.ConfirmEmailAsync(
+                    request.UserId,
+                    request.Token);
 }

@@ -21,14 +21,15 @@ namespace Explorify.Api.Controllers;
 public class UserController : BaseController
 {
     private readonly IMediator _mediator;
-    private readonly IUserService _userService;
+
+    private readonly IProfileService _profileService;
 
     public UserController(
         IMediator mediator,
-        IUserService userService)
+        IProfileService profileService)
     {
         _mediator = mediator;
-        _userService = userService;
+        _profileService = profileService;
     }
 
     [HttpPost(nameof(ChangeProfilePicture))]
@@ -112,7 +113,7 @@ public class UserController : BaseController
     [HttpPost(nameof(RequestEmailChange))]
     public async Task<IActionResult> RequestEmailChange(EmailChangeRequestModel model)
     {
-        var result = await _userService.SendEmailChangeAsync(
+        var result = await _profileService.SendEmailChangeAsync(
             model.NewEmail,
             User.GetId().ToString());
 
@@ -134,7 +135,7 @@ public class UserController : BaseController
     [HttpPost(nameof(ForgotPassword))]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestModel model)
     {
-        var result = await _userService.SendForgotPasswordEmailAsync(model.Email);
+        var result = await _profileService.SendForgotPasswordEmailAsync(model.Email);
 
         return this.OkOrProblemDetails(result);
     }

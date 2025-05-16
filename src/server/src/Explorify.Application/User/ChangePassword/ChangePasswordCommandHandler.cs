@@ -7,17 +7,17 @@ namespace Explorify.Application.User.ChangePassword;
 public class ChangePasswordCommandHandler
     : ICommandHandler<ChangePasswordCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public ChangePasswordCommandHandler(IUserService userService)
+    public ChangePasswordCommandHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result> Handle(
         ChangePasswordCommand request,
         CancellationToken cancellationToken)
-        => await _userService.ChangePasswordAsync(
+        => await _profileService.ChangePasswordAsync(
                 request.UserId,
                 request.OldPassword,
                 request.NewPassword);

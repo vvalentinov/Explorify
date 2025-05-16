@@ -1,21 +1,21 @@
 ﻿using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces.Messaging;
 using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 namespace Explorify.Application.User.GetProfileInfo;
 
 public class GetProfileInfoQueryHandler
     : IQueryHandler<GetProfileInfoQuery, GetProfileInfoResponseModel>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public GetProfileInfoQueryHandler(IUserService userService)
+    public GetProfileInfoQueryHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result<GetProfileInfoResponseModel>> Handle(
         GetProfileInfoQuery request,
         CancellationToken cancellationToken)
-            => await _userService.GetProfileInfo(request.UserId);
+            => await _profileService.GetProfileInfoAsync(request.UserId);
 }

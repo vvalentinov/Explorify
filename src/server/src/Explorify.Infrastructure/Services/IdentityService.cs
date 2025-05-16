@@ -21,22 +21,22 @@ namespace Explorify.Infrastructure.Services;
 public class IdentityService : IIdentityService
 {
     private readonly IRepository _repository;
-    private readonly IUserService _userService;
     private readonly ITokenService _tokenService;
+    private readonly IProfileService _profileService;
 
     private readonly UserManager<ApplicationUser> _userManager;
 
     public IdentityService(
         IRepository repository,
         ITokenService tokenService,
-        IUserService userService,
+        IProfileService profileService,
         UserManager<ApplicationUser> userManager)
     {
         _repository = repository;
-        _userService = userService;
         _tokenService = tokenService;
 
         _userManager = userManager;
+        _profileService = profileService;
     }
 
     public async Task<Result<AuthResponseModel>> LoginUserAsync(LoginRequestModel model)
@@ -175,7 +175,7 @@ public class IdentityService : IIdentityService
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var encodedToken = HttpUtility.UrlEncode(token);
 
-        await _userService.SendEmailConfirmationAsync(
+        await _profileService.SendEmailConfirmationAsync(
             user.Id.ToString(),
             user.UserName ?? string.Empty,
             encodedToken,

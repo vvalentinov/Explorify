@@ -4,21 +4,21 @@ using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 namespace Explorify.Application.User.ChangeEmail;
 
-public class ChangeEmailCommandHandler : ICommandHandler<ChangeEmailCommand>
+public class ChangeEmailCommandHandler
+    : ICommandHandler<ChangeEmailCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IProfileService _profileService;
 
-    public ChangeEmailCommandHandler(IUserService userService)
+    public ChangeEmailCommandHandler(IProfileService profileService)
     {
-        _userService = userService;
+        _profileService = profileService;
     }
 
     public async Task<Result> Handle(
         ChangeEmailCommand request,
         CancellationToken cancellationToken)
-    {
-        var result = await _userService.ChangeEmailAsync(request.UserId, request.NewEmail, request.Token);
-
-        return result;
-    }
+            => await _profileService.ChangeEmailAsync(
+                    request.UserId,
+                    request.NewEmail,
+                    request.Token);
 }
