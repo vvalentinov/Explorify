@@ -36,6 +36,7 @@ public class GetUserPlacesQueryHandler :
                 Id = x.Id,
                 Name = x.Name,
                 ImageUrl = x.ThumbUrl,
+                SlugifiedName = x.SlugifiedName,
             }).ToListAsync(cancellationToken);
 
         var responseModel = new PlacesListResponseModel

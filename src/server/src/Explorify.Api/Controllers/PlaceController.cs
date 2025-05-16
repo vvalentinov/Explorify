@@ -5,6 +5,7 @@ using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Places.GetPlacesInCategory;
 using Explorify.Application.Places.GetPlacesInSubcategory;
+using Explorify.Application.Places.GetPlaceBySlugifiedName;
 
 using static Explorify.Api.Extensions.ControllerBaseExtensions;
 
@@ -51,6 +52,13 @@ public class PlaceController : BaseController
         => this.OkOrProblemDetails(
                 await _mediator.Send(
                     new GetPlaceByIdQuery(placeId)));
+
+    [AllowAnonymous]
+    [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]
+    public async Task<IActionResult> GetPlaceDetailsBySlugifiedName(string slugifiedName)
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetPlaceBySlugifiedNameQuery(slugifiedName)));
 
     [HttpDelete(nameof(Delete))]
     public async Task<IActionResult> Delete([FromQuery] Guid placeId)

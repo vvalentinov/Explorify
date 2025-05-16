@@ -87,10 +87,14 @@ public class GetReviewsQueryHandler
 
         var responseModel = new ReviewsListResponseModel
         {
-            ItemsPerPage = 6,
+            
             Reviews = reviews,
-            RecordsCount = recordsCount,
-            PageNumber = request.Model.Page,
+            Pagination = new PaginationResponseModel
+            {
+                ItemsPerPage = 6,
+                RecordsCount = recordsCount,
+                PageNumber = request.Model.Page,
+            }
         };
 
         return Result.Success(responseModel);
