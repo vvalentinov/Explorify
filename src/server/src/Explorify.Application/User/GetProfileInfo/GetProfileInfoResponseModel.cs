@@ -2,6 +2,8 @@
 
 public class GetProfileInfoResponseModel
 {
+    public string UserId { get; set; } = string.Empty;
+
     public string? ProfileImageUrl { get; set; }
 
     public string UserName { get; set; } = string.Empty;

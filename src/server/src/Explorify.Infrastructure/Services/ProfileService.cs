@@ -256,27 +256,24 @@ public class ProfileService : IProfileService
 
     public async Task<Result<GetProfileInfoResponseModel>> GetProfileInfoAsync(string userId)
     {
-        var user = await _userManager
+        var model = await _userManager
             .Users
-            .Include(x => x.Places)
-            .Include(x => x.Reviews)
-            .FirstOrDefaultAsync(x => x.Id.ToString() == userId);
+            .Select(user => new GetProfileInfoResponseModel
+            {
+                Points = user.Points,
+                UserId = user.Id.ToString(),
+                Email = user.Email ?? string.Empty,
+                ProfileImageUrl = user.ProfileImageUrl,
+                UserName = user.UserName ?? string.Empty,
+                UploadedPlacesCount = user.Places.Where(x => x.IsApproved).Count(),
+                UploadedReviewsCount = user.Reviews.Count(r => !user.Places.Select(p => p.Id).Contains(r.PlaceId)),
+            }).FirstOrDefaultAsync(x => x.UserId == userId);
 
-        if (user == null)
+        if (model == null)
         {
-            var error = new Error("No user with id found!", ErrorType.Validation);
+            var error = new Error(NoUserWithIdFoundError, ErrorType.Validation);
             return Result.Failure<GetProfileInfoResponseModel>(error);
         }
-
-        var model = new GetProfileInfoResponseModel
-        {
-            ProfileImageUrl = user.ProfileImageUrl,
-            UserName = user.UserName ?? string.Empty,
-            Email = user.Email ?? string.Empty,
-            Points = user.Points,
-            UploadedPlacesCount = user.Places.Where(x => x.IsApproved).Count(),
-            UploadedReviewsCount = user.Reviews.Count
-        };
 
         return Result.Success(model);
     }

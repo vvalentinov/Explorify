@@ -1,7 +1,7 @@
 ﻿using Explorify.Application.Places;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.GetPlaces.GetAllUserPlaces;
+namespace Explorify.Application.User.GetPlaces;
 
-public record GetAllUserPlacesQuery(Guid UserId, int Page)
+public record GetUserPlacesQuery(Guid UserId, int Page)
     : IQuery<PlacesListResponseModel>;

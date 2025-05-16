@@ -1,6 +1,7 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.User;
 using Explorify.Infrastructure.Attributes;
+using Explorify.Application.User.GetPlaces;
 using Explorify.Application.Identity.Login;
 using Explorify.Application.User.ChangeEmail;
 using Explorify.Application.Identity.Register;
@@ -13,6 +14,7 @@ using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.User.ChangeProfileImage;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -29,6 +31,7 @@ public class UserController : BaseController
         IProfileService profileService)
     {
         _mediator = mediator;
+
         _profileService = profileService;
     }
 
@@ -149,6 +152,14 @@ public class UserController : BaseController
             model.Token,
             model.Password));
 
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetPlaces))]
+    public async Task<IActionResult> GetPlaces(int page)
+    {
+        var query = new GetUserPlacesQuery(User.GetId(), page);
+        var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
 }
