@@ -53,6 +53,8 @@ const UploadPlace = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [isPlaceUploading, setIsPlaceUploading] = useState(false);
 
+    const [description, setDescription] = useState("");
+
     const [debounced] = useDebounce(countryName, 1000);
 
     useEffect(() => {
@@ -103,6 +105,9 @@ const UploadPlace = () => {
                 setIsPlaceUploading(false);
                 fireError(err);
             });
+
+        console.log(data.Description);
+        console.log(data.Description.length);
     }
 
     const onSearch = value => setCountryName(value);
@@ -197,7 +202,20 @@ const UploadPlace = () => {
                         label="Description"
                         rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
-                        <Input.TextArea showCount placeholder="Write your best description for this place..." rows={6} />
+                        {/* <Input.TextArea
+                            showCount
+                            placeholder="Write your best description for this place..."
+                            rows={6}
+                        /> */}
+
+                        <Input.TextArea
+                            // value={description}
+                            // onChange={(e) => setDescription(e.target.value)}
+                            maxLength={2000}
+                            placeholder="Write your best description for this place..."
+                            rows={6}
+                        />
+
                     </Form.Item>
 
                     <ImageUpload />
@@ -220,7 +238,7 @@ const UploadPlace = () => {
                             <Input.TextArea
                                 placeholder="Share your experience..."
                                 rows={10}
-                                showCount
+                                maxLength={1000}
                                 style={{ fontSize: '1.1rem' }}
                             />
                         </Form.Item>

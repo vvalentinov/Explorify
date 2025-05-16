@@ -50,7 +50,7 @@ const AdminLayout = () => {
         {
             key: 'unapproved-places',
             icon: <EnvironmentOutlined />,
-            label: 'Places',
+            label: 'Unapproved Places',
             onClick: () => navigate('/admin/unapproved-places'),
         },
         {
@@ -73,7 +73,7 @@ const AdminLayout = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['dashboard']}
+                    // defaultSelectedKeys={['dashboard']}
                     items={menuItems}
                 />
             </Sider>

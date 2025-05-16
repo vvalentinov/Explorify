@@ -1,6 +1,15 @@
-.approveButton:hover {
-    color: #fff !important;
-    border: 1px solid #5f71f6;
+.unapprovedPlacesSection {
+    min-height: 100vh;
+}
+
+.unapprovedPlacesContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+    min-height: calc(100vh - 2rem);
 }
 
 .unapprovedPlaceCard {
@@ -9,9 +18,14 @@
 }
 
 .unapprovedPlaceCard:hover {
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     z-index: 1;
-    transform: scale(1.05);
     cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.approveButton:hover {
+    color: #fff !important;
+    border: 1px solid #5f71f6;
 }

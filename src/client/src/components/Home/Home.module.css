@@ -1,0 +1,28 @@
+.heroSection {
+    position: relative;
+    height: calc(100vh - 63px);
+    isolation: isolate;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 2rem 3rem 0 0;
+    overflow: hidden;
+}
+
+.heroBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url("../../assets/backgroundImg.jpg");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: brightness(70%);
+}
+
+.heroContent {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 700px;
+}

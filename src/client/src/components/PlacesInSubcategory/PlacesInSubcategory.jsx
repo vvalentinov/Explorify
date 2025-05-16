@@ -110,14 +110,26 @@ const PlacesInSubcategory = () => {
                 <>
                     <PlacesList places={places} />
 
-                    {pagesCount > 1 && <Pagination
-                        align='center'
-                        onChange={handlePageChange}
-                        current={currentPage}
-                        total={pagesCount * 6}
-                        pageSize={6}
-                        style={{ textAlign: 'center', marginBottom: '1rem' }}
-                    />}
+                    {pagesCount > 1 &&
+                        <ConfigProvider theme={{
+                            components: {
+                                Pagination: {
+                                    itemActiveBg: '#e8fffb',
+                                    itemActiveColor: '#52c41a',
+                                    colorPrimary: '#52c41a',
+                                    colorPrimaryHover: '#389e0d',
+                                },
+                            }
+                        }}><Pagination
+                                align='center'
+                                onChange={handlePageChange}
+                                current={currentPage}
+                                total={pagesCount * 6}
+                                pageSize={6}
+                                style={{ textAlign: 'center', marginBottom: '1rem' }}
+                            />
+                        </ConfigProvider>
+                    }
 
                 </>
             }

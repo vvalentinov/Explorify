@@ -11,6 +11,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 
 import AdminLayout from './components/Admin/AdminLayout';
 
+import Alert from './components/Alert';
+
 const App = () => {
 
     const location = useLocation();
@@ -19,6 +21,7 @@ const App = () => {
     return (
         <AuthProvider>
             <NotificationProvider>
+                <Alert />
                 {isAdminRoute ? (
                     <Routes>
                         <Route path="/admin/*" element={<AdminLayout />} />

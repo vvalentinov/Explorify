@@ -231,14 +231,29 @@ const Notifications = () => {
                                 )}
                     </div>}
 
-            {!spinnerLoading && pagesCount > 1 && <Pagination
-                align='center'
-                onChange={handlePageChange}
-                current={currentPage}
-                total={pagesCount * 6}
-                pageSize={6}
-                style={{ textAlign: 'center', marginTop: '2rem' }}
-            />}
+            {
+                !spinnerLoading &&
+                pagesCount > 1 &&
+                <ConfigProvider theme={{
+                    components: {
+                        Pagination: {
+                            itemActiveBg: '#e8fffb',
+                            itemActiveColor: '#52c41a',
+                            colorPrimary: '#52c41a',
+                            colorPrimaryHover: '#389e0d',
+                        },
+                    }
+                }}>
+                    <Pagination
+                        align='center'
+                        onChange={handlePageChange}
+                        current={currentPage}
+                        total={pagesCount * 6}
+                        pageSize={6}
+                        style={{ textAlign: 'center', marginTop: '2rem' }}
+                    />
+                </ConfigProvider>
+            }
 
         </section>
     );

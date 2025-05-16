@@ -22,7 +22,7 @@ import {
 } from '@ant-design/icons';
 
 import { useContext } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 
 import * as paths from '../../constants/paths';
 
@@ -46,9 +46,22 @@ const menuItems = [
     },
 ];
 
-
-
 const Header = () => {
+
+    const location = useLocation();
+
+    const getSelectedKey = () => {
+
+        if (location.pathname.startsWith('/categories')) {
+            return 'categories';
+        }
+
+        if (location.pathname === '/' || location.pathname === '') {
+            return 'home';
+        }
+
+        return '';
+    };
 
     const { isAuthenticated, profileImageUrl, isAdmin } = useContext(AuthContext);
     const { notificationCount } = useContext(NotificationContext);
@@ -146,9 +159,6 @@ const Header = () => {
         }
     };
 
-    const [current, setCurrent] = useState("home");
-    const onClick = (e) => setCurrent(e.key);
-
     return (
         <ConfigProvider
             theme={{
@@ -170,8 +180,9 @@ const Header = () => {
                             style={dynamicStyles.menu}
                             mode="horizontal"
                             items={menuItems}
-                            onClick={onClick}
-                            selectedKeys={screens.md ? [current] : ""}
+                            // onClick={onClick}
+                            // selectedKeys={screens.md ? [current] : ""}
+                            selectedKeys={[getSelectedKey()]}  // use this here
                             overflowedIndicator={
                                 <Button type="text" icon={<MenuOutlined />}></Button>
                             }
