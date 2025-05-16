@@ -1,5 +1,6 @@
 ﻿using Explorify.Api.Extensions;
 using Explorify.Application.Places.Upload;
+using Explorify.Application.Places.Delete;
 using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Places.GetPlacesInCategory;
@@ -50,4 +51,12 @@ public class PlaceController : BaseController
         => this.OkOrProblemDetails(
                 await _mediator.Send(
                     new GetPlaceByIdQuery(placeId)));
+
+    [HttpDelete(nameof(Delete))]
+    public async Task<IActionResult> Delete([FromQuery] Guid placeId)
+    {
+        var command = new DeletePlaceCommand(placeId, User.GetId(), User.IsAdmin());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
 }

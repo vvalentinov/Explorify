@@ -1,6 +1,8 @@
-﻿namespace Explorify.Domain.Entities;
+﻿using Explorify.Domain.Abstractions.Models;
 
-public class PlaceVibeAssignment
+namespace Explorify.Domain.Entities;
+
+public class PlaceVibeAssignment : BaseModel
 {
     public int PlaceVibeId { get; set; }
 

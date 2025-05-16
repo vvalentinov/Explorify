@@ -2,6 +2,9 @@
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 
+using static Explorify.Domain.Constants.ApplicationRoleConstants;
+using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -87,6 +90,30 @@ public class UserService : IUserService
         }
 
         user.Points += points;
+
+        await _userManager.UpdateAsync(user);
+
+        return Result.Success();
+    }
+
+    public async Task<Result> DecreaseUserPointsAsync(string userId, int points)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<UserDto>(error);
+        }
+
+        if (user.Points - points < 0)
+        {
+            user.Points = 0;
+        }
+        else
+        {
+            user.Points -= points;
+        }
 
         await _userManager.UpdateAsync(user);
 

@@ -38,4 +38,7 @@ public class Place : BaseDeletableEntity<Guid>
 
     public ICollection<PlaceVibeAssignment> PlaceVibeAssignments { get; set; }
         = new List<PlaceVibeAssignment>();
+
+    public ICollection<FavoritePlace> FavoritePlaces { get; set; }
+       = new List<FavoritePlace>();
 }

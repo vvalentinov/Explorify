@@ -18,5 +18,9 @@ public interface IUserService
         string userId,
         int points);
 
+    Task<Result> DecreaseUserPointsAsync(
+        string userId,
+        int points);
+
     Task<int> GetUsersCountAsync();
 }
