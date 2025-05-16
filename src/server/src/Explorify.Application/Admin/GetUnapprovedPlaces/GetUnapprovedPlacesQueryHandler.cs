@@ -46,6 +46,7 @@ public class GetUnapprovedPlacesQueryHandler
                 ReviewContent = x.Reviews.First().Content,
                 ReviewStars = x.Reviews.First().Rating,
                 UserId = x.UserId.ToString(),
+                ThumbUrl = x.ThumbUrl,
             }).ToListAsync(cancellationToken);
 
         var userIds = unapprovedPlaces
@@ -63,6 +64,7 @@ public class GetUnapprovedPlacesQueryHandler
                     StringComparison.InvariantCultureIgnoreCase));
 
             place.UserName = userDto.UserName;
+            place.UserProfilePicUrl = userDto.ProfileImageUrl ?? string.Empty;
         }
 
         var response = new UnapprovedPlacesListModel
