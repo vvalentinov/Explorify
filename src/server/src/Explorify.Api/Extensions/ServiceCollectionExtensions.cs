@@ -27,6 +27,8 @@ public static class ServiceCollectionExtensions
 
         services.AddHttpClient();
 
+        services.AddMemoryCache();
+
         services
             .AddPersistence(configuration)
             .AddInfrastructure(configuration)
