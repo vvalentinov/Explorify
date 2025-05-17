@@ -3,6 +3,8 @@ import styles from './UploadPlace.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 
+import LocationPicker from '../LocationPicker/LocationPicker';
+
 import { fireError } from '../../utils/fireError';
 
 import {
@@ -56,6 +58,12 @@ const UploadPlace = () => {
     const [description, setDescription] = useState("");
 
     const [debounced] = useDebounce(countryName, 1000);
+
+    const [location, setLocation] = useState(null);
+
+    const handleLocationSelect = (latlng) => {
+        setLocation(latlng); // { lat, lng }
+    };
 
     useEffect(() => {
 
@@ -135,6 +143,15 @@ const UploadPlace = () => {
                     >
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
+
+                    {location && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <p>Latitude: {location.lat.toFixed(5)}</p>
+                            <p>Longitude: {location.lng.toFixed(5)}</p>
+                        </div>
+                    )}
+
+                    <LocationPicker onLocationSelect={handleLocationSelect} />
 
                     <Form.Item
                         name="Address"

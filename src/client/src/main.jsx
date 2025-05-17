@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
+import 'leaflet/dist/leaflet.css';
 import App from './App.jsx';
 
 import enUS from 'antd/es/locale/en_US';

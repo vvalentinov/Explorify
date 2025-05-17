@@ -7,6 +7,6 @@
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
     z-index: 1;
     transform: scale(1.05);
-    cursor: pointer;
+    /* cursor: pointer; */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

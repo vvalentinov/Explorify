@@ -168,7 +168,7 @@ const MyPlaces = () => {
                             >
 
                                 <Card
-                                    hoverable
+                                    // hoverable
                                     className={styles.card}
                                     cover={
                                         <img
