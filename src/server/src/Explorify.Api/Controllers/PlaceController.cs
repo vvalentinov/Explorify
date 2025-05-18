@@ -1,8 +1,11 @@
 ﻿using Explorify.Api.Extensions;
+using Explorify.Application.Places;
 using Explorify.Application.Places.Upload;
 using Explorify.Application.Places.Delete;
 using Explorify.Infrastructure.Attributes;
+using Explorify.Application.Places.Update;
 using Explorify.Application.Places.GetPlace;
+using Explorify.Application.Places.GetEditData;
 using Explorify.Application.Places.GetPlacesInCategory;
 using Explorify.Application.Places.GetPlacesInSubcategory;
 using Explorify.Application.Places.GetPlaceBySlugifiedName;
@@ -64,6 +67,22 @@ public class PlaceController : BaseController
     public async Task<IActionResult> Delete([FromQuery] Guid placeId)
     {
         var command = new DeletePlaceCommand(placeId, User.GetId(), User.IsAdmin());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetEditData))]
+    public async Task<IActionResult> GetEditData(Guid placeId)
+    {
+        var query = new GetEditDataQuery(placeId, User.GetId());
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpPut(nameof(Edit))]
+    public async Task<IActionResult> Edit([FromEditForm] EditPlaceRequestModel model)
+    {
+        var command = new UpdatePlaceCommand(model);
         var result = await _mediator.Send(command);
         return this.OkOrProblemDetails(result);
     }
