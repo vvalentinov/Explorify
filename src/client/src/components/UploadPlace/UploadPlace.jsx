@@ -7,6 +7,8 @@ import LocationPicker from '../LocationPicker/LocationPicker';
 
 import { fireError } from '../../utils/fireError';
 
+import { motion } from 'framer-motion';
+
 import {
     Button,
     Cascader,
@@ -17,7 +19,7 @@ import {
     ConfigProvider,
     Rate,
     Spin,
-    Checkbox
+    Checkbox,
 } from 'antd';
 
 import { UploadOutlined } from '@ant-design/icons';
@@ -36,6 +38,8 @@ import ImageUpload from './ImageUpload/ImageUpload';
 import { mapCountryOptions, mapCategoriesOptions, generateFormData } from './uploadPlaceUtil';
 
 const UploadPlace = () => {
+
+    const [form] = Form.useForm();
 
     const navigate = useNavigate();
 
@@ -59,8 +63,51 @@ const UploadPlace = () => {
 
     const [location, setLocation] = useState(null);
 
+    const [isMapUpdate, setIsMapUpdate] = useState(false);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [openDropdown, setOpenDropdown] = useState(false);
+
+    useEffect(() => {
+        if (!location) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const currentLocation = { lat: latitude, lng: longitude };
+
+                    setLocation(currentLocation);
+                    form.setFieldsValue({
+                        Latitude: latitude.toFixed(5),
+                        Longitude: longitude.toFixed(5)
+                    });
+                },
+                (error) => {
+                    console.warn('Geolocation error:', error);
+                    // Optional: Show a warning to the user with AntD message
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0,
+                }
+            );
+        }
+    }, []);
+
+    useEffect(() => {
+        if (location && isMapUpdate) {
+
+            form.setFieldsValue({
+                Latitude: location.lat.toFixed(5),
+                Longitude: location.lng.toFixed(5),
+            });
+
+            setIsMapUpdate(false);
+        }
+    }, [location]);
+
     const handleLocationSelect = (latlng) => {
-        setLocation(latlng); // { lat, lng }
+        setIsMapUpdate(true);
+        setLocation(latlng);
     };
 
     useEffect(() => {
@@ -80,20 +127,15 @@ const UploadPlace = () => {
     }, []);
 
     useEffect(() => {
-
         if (debounced) {
-
-            setSelectLoading(true);
-
             countriesService
-                .getCountries(countryName)
+                .getCountries(debounced)
                 .then(res => {
-                    const options = mapCountryOptions(res);
-                    setCountryOptions(options);
-                    setSelectLoading(false);
-                }).catch(err => fireError(err));
+                    setCountryOptions(mapCountryOptions(res));
+                })
+                .catch(err => fireError('Failed to fetch countries'))
+                .finally(() => setSelectLoading(false));
         }
-
     }, [debounced]);
 
     const onSubmit = (data) => {
@@ -132,7 +174,7 @@ const UploadPlace = () => {
                     }
                 }}
             >
-                <Form onFinish={onSubmit} layout="vertical" size="large">
+                <Form form={form} onFinish={onSubmit} layout="vertical" size="large">
 
                     <Form.Item
                         name="Name"
@@ -142,14 +184,31 @@ const UploadPlace = () => {
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
 
-                    {location && (
-                        <div style={{ marginTop: '1rem' }}>
-                            <p>Latitude: {location.lat.toFixed(5)}</p>
-                            <p>Longitude: {location.lng.toFixed(5)}</p>
-                        </div>
-                    )}
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
+                        <Form.Item style={{ width: '50%' }} name="Latitude" label="Latitude">
+                            <Input
+                                onChange={(e) => {
+                                    const newLat = parseFloat(e.target.value);
+                                    if (!isNaN(newLat)) {
+                                        setLocation(prev => prev ? { ...prev, lat: newLat } : { lat: newLat, lng: 0 });
+                                    }
+                                }}
+                            />
+                        </Form.Item>
 
-                    <LocationPicker onLocationSelect={handleLocationSelect} />
+                        <Form.Item style={{ width: '50%' }} name="Longitude" label="Longitude">
+                            <Input
+                                onChange={(e) => {
+                                    const newLng = parseFloat(e.target.value);
+                                    if (!isNaN(newLng)) {
+                                        setLocation(prev => prev ? { ...prev, lng: newLng } : { lat: 0, lng: newLng });
+                                    }
+                                }}
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <LocationPicker onLocationSelect={handleLocationSelect} location={location} />
 
                     <Form.Item
                         name="Address"
@@ -176,40 +235,67 @@ const UploadPlace = () => {
                         rules={[{ required: true }]}
                     >
                         <Select
-                            loading={selectLoading}
                             showSearch
+                            allowClear={true}
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
-                            onSearch={onSearch}
-                            onBlur={() => setCountryOptions([])}
+                            onSearch={(value) => {
+                                setCountryName(value);
+                                setOpenDropdown(true);
+                                setSelectLoading(true);
+                            }}
+                            onBlur={() => {
+                                setCountryOptions([]);
+                                setOpenDropdown(false);
+                            }}
                             options={countryOptions}
+                            notFoundContent={selectLoading ? (
+                                <div style={{ padding: '2rem 0', textAlign: 'center' }}>
+                                    <ConfigProvider theme={{
+                                        components: {
+                                            Spin: {
+                                                colorPrimary: 'green'
+                                            }
+                                        }
+                                    }}>
+                                        <Spin size="large" />
+                                    </ConfigProvider>
+                                </div>
+                            ) : null}
+                            open={openDropdown}
+                            onOpenChange={(open) => {
+                                // Don't allow dropdown to close if we're still loading
+                                if (!selectLoading) setOpenDropdown(open);
+                            }}
                         />
-
                     </Form.Item>
 
                     <Form.Item name="Tags" label="Tags">
+                        <Checkbox.Group
+                            style={{ width: '100%' }}
+                            value={selectedTags}
 
-                        <Checkbox.Group style={{ width: '100%' }}>
+                            onChange={(checkedValues) => {
+                                if (checkedValues.length > 20) {
+                                    return;
+                                }
+                                setSelectedTags(checkedValues);
+                                form.setFieldsValue({ Tags: checkedValues });
+                            }}
+                        >
                             <div className={styles.tagCheckboxGroup}>
                                 {tags.map(tag => (
                                     <Checkbox
                                         key={tag.id}
                                         value={tag.id}
-                                        style={{
-                                            margin: '8px',
-                                            border: '1px solid green',
-                                            borderRadius: '16px',
-                                            padding: '6px 12px',
-                                            backgroundColor: '#f1fdfa',
-                                            transition: 'all 0.3s',
-                                        }}
+                                        className={styles.customTagCheckbox}
+                                        disabled={selectedTags.length >= 20 && !selectedTags.includes(tag.id)}
                                     >
                                         {tag.name}
                                     </Checkbox>
                                 ))}
                             </div>
                         </Checkbox.Group>
-
                     </Form.Item>
 
                     <Form.Item

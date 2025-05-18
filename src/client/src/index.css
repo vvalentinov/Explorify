@@ -50,3 +50,9 @@ main {
     border: 1px solid #0ea5a5 !important;
     background-color: #0ea5a5 !important;
 } */
+
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control-container {
+    z-index: 900 !important;
+}

@@ -1,11 +1,16 @@
 import Swal from 'sweetalert2';
 
 export const fireError = (errors) => {
+
     console.log(errors);
 
     let html = '';
 
-    if (errors?.length > 0) { html = errors.join('<br>') }
+    if (errors?.length > 1) {
+        html = errors.join('<br>')
+    } else {
+        html = errors;
+    }
 
     Swal.fire({
         timer: 8000,
