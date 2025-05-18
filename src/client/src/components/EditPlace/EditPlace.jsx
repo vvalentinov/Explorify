@@ -1,11 +1,18 @@
-import styles from './UploadPlace.module.css';
+import styles from './EditPlace.module.css';
 
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useState, useEffect, useContext } from "react";
 
-import LocationPicker from '../LocationPicker/LocationPicker';
+import { AuthContext } from "../../contexts/AuthContext";
+
+import { vibesServiceFactory } from '../../services/vibesService';
+import { placesServiceFactory } from '../../services/placesService';
+import { countriesServiceFactory } from '../../services/countriesService';
+import { categoriesServiceFactory } from '../../services/categoriesService';
 
 import { fireError } from '../../utils/fireError';
+
+import ImageUpload from '../UploadPlace/ImageUpload/ImageUpload';
 
 import {
     Button,
@@ -20,55 +27,113 @@ import {
     Checkbox
 } from 'antd';
 
-import { UploadOutlined } from '@ant-design/icons';
-
 import { useDebounce } from 'use-debounce';
 
-import { homePath } from '../../constants/paths';
-import { AuthContext } from '../../contexts/AuthContext';
-import { vibesServiceFactory } from '../../services/vibesService';
-import { placesServiceFactory } from '../../services/placesService';
-import { countriesServiceFactory } from '../../services/countriesService';
-import { categoriesServiceFactory } from '../../services/categoriesService';
+import { UploadOutlined, EditOutlined } from '@ant-design/icons';
 
-import ImageUpload from './ImageUpload/ImageUpload';
+const mapCategoriesOptions = (categories) => {
 
-import { mapCountryOptions, mapCategoriesOptions, generateFormData } from './uploadPlaceUtil';
+    const options = categories.map(category => ({
+        value: category.id,
+        label: category.name,
+        children: category.subcategories.map(child => ({
+            value: child.id,
+            label: child.name,
+        })),
+    }));
 
-const UploadPlace = () => {
+    return options;
+
+};
+
+const mapCountryOptions = (countries) => {
+
+    const options = countries.map(country => ({
+        value: country.id,
+        label: country.name,
+    }));
+
+    return options;
+};
+
+function findCategoryPath(options, targetValue) {
+    for (const option of options) {
+        if (option.value === targetValue) return [option.value];
+        if (option.children) {
+            const childPath = findCategoryPath(option.children, targetValue);
+            if (childPath) return [option.value, ...childPath];
+        }
+    }
+    return null;
+}
+
+
+
+const EditPlace = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const [form] = Form.useForm();
 
     const { token } = useContext(AuthContext);
 
-    // Services
-    const vibesService = vibesServiceFactory(token);
     const placesService = placesServiceFactory(token);
     const countriesService = countriesServiceFactory();
     const categoriesService = categoriesServiceFactory();
 
-    // State Management
-    const [tags, setTags] = useState([]);
-    const [countryName, setCountryName] = useState('');
-    const [countryOptions, setCountryOptions] = useState([]);
-    const [selectLoading, setSelectLoading] = useState(false);
+    const [editData, setEditData] = useState({});
+
+    const [toBeRemovedImagesIds, setToBeRemovedImagesIds] = useState([]);
+
     const [categoryOptions, setCategoryOptions] = useState([]);
-    const [isPlaceUploading, setIsPlaceUploading] = useState(false);
+    const [countryOptions, setCountryOptions] = useState([]);
+    const [countryName, setCountryName] = useState('');
 
     const [debounced] = useDebounce(countryName, 1000);
 
-    const [location, setLocation] = useState(null);
+    const generateFormData = (data) => {
 
-    const handleLocationSelect = (latlng) => {
-        setLocation(latlng); // { lat, lng }
+        const formData = new FormData();
+
+        formData.append("Name", data.Name ?? "");
+        formData.append("Address", data.Address ?? "");
+        formData.append("Description", data.Description);
+        formData.append("CategoryId", data.CategoryId[0]);
+        formData.append("SubcategoryId", data.CategoryId[1]);
+        formData.append("CountryId", data.CountryId);
+        formData.append("ReviewRating", data.Rating);
+        formData.append("ReviewContent", data.ReviewContent);
+        toBeRemovedImagesIds.forEach(id => {
+            formData.append('ToBeRemovedImagesIds', id);
+        });
+
+        data.Images?.forEach(file => {
+            if (file.originFileObj) {
+                formData.append("NewImages", file.originFileObj);
+            }
+        });
+
+        // if (data.Tags?.length > 0) {
+        //     data.Tags.forEach(tagId => {
+        //         formData.append("VibesIds", tagId);
+        //     });
+        // }
+
+        return formData;
     };
 
     useEffect(() => {
-
-        vibesService
-            .getVibes()
-            .then(res => setTags(res))
-            .catch(err => fireError(err));
+        if (location.state?.placeId) {
+            placesService
+                .getEditData(location.state?.placeId)
+                .then(res => {
+                    setEditData(res);
+                })
+                .catch(err => {
+                    fireError(err);
+                })
+        }
 
         categoriesService
             .getCategoriesOptions()
@@ -76,54 +141,70 @@ const UploadPlace = () => {
                 const options = mapCategoriesOptions(res);
                 setCategoryOptions(options);
             }).catch(err => fireError(err));
-
     }, []);
 
     useEffect(() => {
 
-        if (debounced) {
+        if (editData) {
+            const categoryPath = findCategoryPath(categoryOptions, editData.categoryId);
 
-            setSelectLoading(true);
+            const selectedOption = {
+                value: editData.countryId,
+                label: editData.countryName,
+            };
+            setCountryOptions([selectedOption]);
+
+            const existingImages = editData.images?.map((image, index) => ({
+                uid: `existing-${image.id}`,
+                name: `Image ${index + 1}`,
+                status: 'done',
+                url: image.url,
+            }));
+
+            form.setFieldsValue({
+                Name: editData.name,
+                Description: editData.description,
+                Rating: editData.rating,
+                ReviewContent: editData.reviewContent,
+                CategoryId: categoryPath,
+                Address: editData.address,
+                CountryId: editData.countryId,
+                Images: existingImages,
+            });
+        }
+
+    }, [editData, form]);
+
+    useEffect(() => {
+
+        if (debounced) {
 
             countriesService
                 .getCountries(countryName)
                 .then(res => {
                     const options = mapCountryOptions(res);
                     setCountryOptions(options);
-                    setSelectLoading(false);
                 }).catch(err => fireError(err));
         }
 
     }, [debounced]);
 
     const onSubmit = (data) => {
-
-        setIsPlaceUploading(true);
-
         const formData = generateFormData(data);
 
-        placesService
-            .uploadPlace(formData)
-            .then(res => {
-                setIsPlaceUploading(false);
-                navigate(homePath, { state: { successOperation: { message: res.successMessage } } });
-            }).catch(err => {
-                setIsPlaceUploading(false);
-                fireError(err);
-            });
+        console.log(Object.fromEntries(formData.entries()));
 
-        console.log(data.Description);
-        console.log(data.Description.length);
-    }
+        placesService.editPlace(formData).then(res => console.log(res)).catch(err => console.log(err));
+    };
 
     const onSearch = value => setCountryName(value);
 
     return (
-        <section className={styles.uploadPlaceSection}>
+        <section className={styles.editPlaceSection}>
 
             <Card
-                className={styles.uploadPlaceCard}
-                title={<span><UploadOutlined /> Upload Place</span>}
+                className={styles.editPlaceCard}
+                title={<span><EditOutlined /> Edit Place</span>}
                 styles={{
                     header: {
                         backgroundColor: '#f0fdfa',
@@ -132,7 +213,7 @@ const UploadPlace = () => {
                     }
                 }}
             >
-                <Form onFinish={onSubmit} layout="vertical" size="large">
+                <Form form={form} onFinish={onSubmit} layout="vertical" size="large">
 
                     <Form.Item
                         name="Name"
@@ -142,14 +223,14 @@ const UploadPlace = () => {
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
 
-                    {location && (
+                    {/* {location && (
                         <div style={{ marginTop: '1rem' }}>
                             <p>Latitude: {location.lat.toFixed(5)}</p>
                             <p>Longitude: {location.lng.toFixed(5)}</p>
                         </div>
-                    )}
+                    )} */}
 
-                    <LocationPicker onLocationSelect={handleLocationSelect} />
+                    {/* <LocationPicker onLocationSelect={handleLocationSelect} /> */}
 
                     <Form.Item
                         name="Address"
@@ -176,7 +257,8 @@ const UploadPlace = () => {
                         rules={[{ required: true }]}
                     >
                         <Select
-                            loading={selectLoading}
+                            // loading={selectLoading}
+                            allowClear={true}
                             showSearch
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
@@ -187,7 +269,7 @@ const UploadPlace = () => {
 
                     </Form.Item>
 
-                    <Form.Item name="Tags" label="Tags">
+                    {/* <Form.Item name="Tags" label="Tags">
 
                         <Checkbox.Group style={{ width: '100%' }}>
                             <div className={styles.tagCheckboxGroup}>
@@ -210,30 +292,23 @@ const UploadPlace = () => {
                             </div>
                         </Checkbox.Group>
 
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                         name="Description"
                         label="Description"
                         rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
-                        {/* <Input.TextArea
-                            showCount
-                            placeholder="Write your best description for this place..."
-                            rows={6}
-                        /> */}
 
                         <Input.TextArea
-                            // value={description}
-                            // onChange={(e) => setDescription(e.target.value)}
+                            rows={6}
                             maxLength={2000}
                             placeholder="Write your best description for this place..."
-                            rows={6}
                         />
 
                     </Form.Item>
 
-                    <ImageUpload />
+                    <ImageUpload setToBeRemovedImagesIds={setToBeRemovedImagesIds} />
 
                     <Card title="Review" type="inner" className={styles.reviewCard}>
 
@@ -260,7 +335,9 @@ const UploadPlace = () => {
 
                     </Card>
 
-                    <Button
+                    <Button htmlType='submit' block>Edit</Button>
+
+                    {/* <Button
                         block
                         size="large"
                         type="primary"
@@ -283,13 +360,14 @@ const UploadPlace = () => {
                                 </span> :
                                 'Upload'
                         }
-                    </Button>
+                    </Button> */}
 
                 </Form>
             </Card>
 
         </section>
     );
+
 };
 
-export default UploadPlace;
+export default EditPlace;

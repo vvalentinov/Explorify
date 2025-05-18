@@ -1,4 +1,4 @@
-.uploadPlaceSection {
+.editPlaceSection {
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -6,7 +6,7 @@
     padding: 60px 20px;
 }
 
-.uploadPlaceCard {
+.editPlaceCard {
     width: 100%;
     max-width: 900px;
     border-radius: 16px;
@@ -15,28 +15,10 @@
     border: solid 1px green;
 }
 
-.tagCheckboxGroup {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
 .reviewCard {
     border-radius: 12px;
     margin-bottom: 2rem;
     background-color: #faf5ff;
     border: 1px solid #d3adf7;
     box-shadow: 0 4px 12px rgba(0 0 0 0.06);
-}
-
-.uploadButton {
-    color: white;
-    transition: all 0.3s ease;
-    background-color: #13c2c2 !important;
-    border-color: #13c2c2 !important;
-}
-
-.uploadButton:hover {
-    border-color: #0ea5a5 !important;
-    background-color: #0ea5a5 !important;
 }

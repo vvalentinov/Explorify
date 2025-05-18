@@ -9,6 +9,8 @@ export const placesServiceFactory = (token) => {
         getPlacesInSubcategory: (subcategoryId, page) => request.get(`${baseUrl}/Place/GetPlacesInSubcategory?subcategoryId=${subcategoryId}&page=${page}`),
         getPlaceDetailsById: (placeId) => request.get(`${baseUrl}/Place/GetPlaceDetailsById?placeId=${placeId}`),
         getPlaceDetailsBySlugifiedName: (name) => request.get(`${baseUrl}/Place/GetPlaceDetailsBySlugifiedName?slugifiedName=${name}`),
-        deletePlace: (placeId) => request.delete(`${baseUrl}/Place/Delete?placeId=${placeId}`)
+        deletePlace: (placeId) => request.delete(`${baseUrl}/Place/Delete?placeId=${placeId}`),
+        getEditData: (placeId) => request.get(`${baseUrl}/Place/GetEditData?placeId=${placeId}`),
+        editPlace: (data) => request.put(`${baseUrl}/Place/Edit`, data)
     }
 };

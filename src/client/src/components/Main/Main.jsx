@@ -17,9 +17,9 @@ import ChangePassword from '../ChangePassword/ChangePassword';
 import ChangeEmail from '../ChangeEmail/ChangeEmail';
 import ForgotPassword from '../ForgotPassword/ForgotPassword';
 import ResetPassword from '../ResetPassword/ResetPassword';
-import Alert from '../Alert';
 import MyPlaces from '../MyPlaces/MyPlaces';
 import Notifications from '../Notifications/Notifications';
+import EditPlace from '../EditPlace/EditPlace';
 
 import { FloatButton } from 'antd';
 
@@ -53,6 +53,7 @@ const Main = () => {
                 <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
                 <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
                 <Route path={paths.notificationsPath} element={<Notifications />} />
+                <Route path={paths.placeEditPath} element={<EditPlace />} />
 
                 <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
                 <Route path={paths.resetPasswordPath} element={<ResetPassword />} />

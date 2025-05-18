@@ -10,7 +10,7 @@ import { getBase64, normFile } from './imageUploadUtil';
 
 const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-const ImageUpload = () => {
+const ImageUpload = ({ setToBeRemovedImagesIds }) => {
 
     const { message } = App.useApp();
 
@@ -68,6 +68,14 @@ const ImageUpload = () => {
         setPreviewOpen(true);
     };
 
+    const handleRemove = (file) => {
+        if (file?.uid?.startsWith('existing')) {
+            let index = file.uid.indexOf('-');
+            let id = parseInt(file.uid.substring(index + 1));
+            setToBeRemovedImagesIds(prev => [...prev, id]);
+        }
+    }
+
     return (
         <Card style={{ margin: '2rem 0' }}>
             <Form.Item
@@ -86,6 +94,7 @@ const ImageUpload = () => {
                     onPreview={handlePreview}
                     onChange={handleFileChange}
                     beforeUpload={beforeUpload}
+                    onRemove={handleRemove}
                 >
 
                     <motion.div

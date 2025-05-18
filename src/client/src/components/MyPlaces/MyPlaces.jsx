@@ -210,7 +210,7 @@ const MyPlaces = () => {
                                             style={{ width: '50%' }}
                                             variant='solid'
                                             color='cyan'
-                                            onClick={() => console.log(`Edit place ${place.id}`)}
+                                            onClick={() => navigate(`/place/${place.slugifiedName}/edit`, { state: { placeId: place.id } })}
                                         >
                                             <EditOutlined style={{ fontSize: '1.2rem' }} />
                                         </Button>
