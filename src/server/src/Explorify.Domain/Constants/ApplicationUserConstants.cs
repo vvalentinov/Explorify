@@ -7,6 +7,9 @@ public static class ApplicationUserConstants
 
     public const int PasswordMinLength = 6;
 
+    public const int UserPlaceUploadPoints = 10;
+    public const int UserReviewUploadPoints = 5;
+
     public static class ErrorMessages
     {
         // Username

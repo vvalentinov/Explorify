@@ -7,16 +7,16 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Admin.GetUnapprovedPlaces;
+namespace Explorify.Application.Admin.GetDeletedPlaces;
 
-public class GetUnapprovedPlacesQueryHandler
-    : IQueryHandler<GetUnapprovedPlacesQuery, PlacesListModel>
+public class GetDeletedPlacesQueryHandler
+    : IQueryHandler<GetDeletedPlacesQuery, PlacesListModel>
 {
     private readonly IRepository _repository;
 
     private readonly IUserService _userService;
 
-    public GetUnapprovedPlacesQueryHandler(
+    public GetDeletedPlacesQueryHandler(
         IRepository repository,
         IUserService userService)
     {
@@ -26,41 +26,44 @@ public class GetUnapprovedPlacesQueryHandler
     }
 
     public async Task<Result<PlacesListModel>> Handle(
-        GetUnapprovedPlacesQuery request,
+        GetDeletedPlacesQuery request,
         CancellationToken cancellationToken)
     {
+        //var thresholdDate = DateTime.UtcNow.AddDays(-30);
+        var thresholdDate = DateTime.UtcNow.AddMinutes(-2);
+
         var query = _repository
-            .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved == false)
+            .AllAsNoTracking<Place>(withDeleted: true)
+            .Where(x => x.IsDeleted && x.DeletedOn >= thresholdDate)
             .OrderByDescending(x => x.CreatedOn);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
-        var unapprovedPlaces = await query
+        var deletedPlaces = await query
             .Skip((request.Page - 1) * PlacesPerPageCount)
             .Take(PlacesPerPageCount)
             .Select(x => new PlaceResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
-                CategoryName = x.Category.Name,
-                CountryName = x.Country.Name,
-                Description = x.Description,
-                ImagesUrls = x.Photos.Where(x => !x.IsDeleted).Select(p => p.Url).ToList(),
-                ReviewContent = x.Reviews.First().Content,
-                ReviewStars = x.Reviews.First().Rating,
-                UserId = x.UserId.ToString(),
                 ThumbUrl = x.ThumbUrl,
+                Description = x.Description,
+                CountryName = x.Country.Name,
+                CategoryName = x.Category.Name,
+                UserId = x.UserId.ToString(),
+                ReviewStars = x.Reviews.First().Rating,
+                ReviewContent = x.Reviews.First().Content,
+                ImagesUrls = x.Photos.Where(x => !x.IsDeleted).Select(p => p.Url).ToList(),
             }).ToListAsync(cancellationToken);
 
-        var userIds = unapprovedPlaces
+        var userIds = deletedPlaces
             .Select(p => p.UserId.ToUpperInvariant())
             .Distinct()
             .ToList();
 
         var usersDtos = await _userService.GetUserDtosByIdsAsync(userIds);
 
-        foreach (var place in unapprovedPlaces)
+        foreach (var place in deletedPlaces)
         {
             var userDto = usersDtos
                 .First(x => x.Id.ToString().Equals(
@@ -73,7 +76,7 @@ public class GetUnapprovedPlacesQueryHandler
 
         var response = new PlacesListModel
         {
-            Places = unapprovedPlaces,
+            Places = deletedPlaces,
             Pagination = new PaginationResponseModel
             {
                 PageNumber = request.Page,

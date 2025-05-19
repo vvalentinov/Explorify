@@ -4,7 +4,9 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.ApplicationUserConstants;
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+using static Explorify.Domain.Constants.PlaceConstants.SuccessMessages;
 using static Explorify.Domain.Constants.CountryConstants.ErrorMessages;
 using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
@@ -92,8 +94,6 @@ public class UpdatePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        var placePhotos = new List<PlacePhoto>();
-
         foreach (var imageIdToBeRemoved in request.Model.ToBeRemovedImagesIds)
         {
             var photo = place.Photos.FirstOrDefault(x => x.Id == imageIdToBeRemoved);
@@ -113,24 +113,20 @@ public class UpdatePlaceCommandHandler
                 _blobService.UploadBlobAsync(
                     file.Content,
                     file.FileName,
-                    $"PlacesImages/{category.Name}/{subcategory.Name}/{request.Model.Name}/"));
+                    $"PlacesImages/{category.Name}/{subcategory.Name}/{place.Name}/"));
 
             var urls = await Task.WhenAll(uploadTasks);
 
             var thumbUrl = urls.First(url => Path.GetFileName(url).StartsWith("thumb_"));
             var otherUrls = urls.Where(url => Path.GetFileName(url).StartsWith("thumb_") == false);
 
-            foreach (var url in otherUrls)
-            {
-                placePhotos.Add(new PlacePhoto { Url = url });
-            }
-
             place.ThumbUrl = thumbUrl;
 
-            if (placePhotos.Count > 0)
+            foreach (var url in otherUrls)
             {
-                place.Photos = placePhotos;
+                place.Photos.Add(new PlacePhoto { Url = url });
             }
+
         }
 
         place.PlaceVibeAssignments.Clear();
@@ -197,13 +193,13 @@ public class UpdatePlaceCommandHandler
 
         await _userService.DecreaseUserPointsAsync(
             place.UserId.ToString(),
-            10);
+            UserPlaceUploadPoints);
 
         _repository.Update(userReview);
         _repository.Update(place);
 
         await _repository.SaveChangesAsync();
 
-        return Result.Success();
+        return Result.Success(PlaceEditSuccess);
     }
 }

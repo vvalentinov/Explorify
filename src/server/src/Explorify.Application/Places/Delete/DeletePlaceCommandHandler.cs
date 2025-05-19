@@ -3,7 +3,9 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.ApplicationUserConstants;
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+using static Explorify.Domain.Constants.PlaceConstants.SuccessMessages;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,7 @@ public class DeletePlaceCommandHandler
     : ICommandHandler<DeletePlaceCommand>
 {
     private readonly IRepository _repository;
+
     private readonly IUserService _userService;
 
     public DeletePlaceCommandHandler(
@@ -20,6 +23,7 @@ public class DeletePlaceCommandHandler
         IUserService userService)
     {
         _repository = repository;
+
         _userService = userService;
     }
 
@@ -46,36 +50,36 @@ public class DeletePlaceCommandHandler
 
         if (!request.IsCurrUserAdmin && place.UserId != request.CurrentUserId)
         {
-            return Result.Failure(new Error(
-                "Only the place owner or an admin can delete the place!",
-                ErrorType.Validation));
+            var error = new Error(DeleteError, ErrorType.Validation);
+            return Result.Failure(error);
         }
 
         // Delete ReviewLikes
-        var reviewIds = place.Reviews.Select(r => r.Id).ToList();
+        //var reviewIds = place.Reviews.Select(r => r.Id).ToList();
 
-        var reviewLikes = await _repository
-            .All<Domain.Entities.ReviewsLikes>()
-            .Where(rl => reviewIds.Contains(rl.ReviewId))
-            .ToListAsync(cancellationToken);
+        //var reviewLikes = await _repository
+        //    .All<Domain.Entities.ReviewsLikes>()
+        //    .Where(rl => reviewIds.Contains(rl.ReviewId))
+        //    .ToListAsync(cancellationToken);
 
-        foreach (var like in reviewLikes)
-        {
-            _repository.HardDelete(like);
-        }
+        //foreach (var like in reviewLikes)
+        //{
+        //    _repository.HardDelete(like);
+        //}
 
         // Soft delete ReviewPhotos
-        var reviewPhotos = place.Reviews.SelectMany(r => r.Photos).ToList();
-        foreach (var photo in reviewPhotos)
-        {
-            _repository.SoftDelete(photo);
-        }
+        //var reviewPhotos = place.Reviews.SelectMany(r => r.Photos).ToList();
+
+        //foreach (var photo in reviewPhotos)
+        //{
+        //    _repository.SoftDelete(photo);
+        //}
 
         // Soft delete Reviews
-        foreach (var review in place.Reviews)
-        {
-            _repository.SoftDelete(review);
-        }
+        //foreach (var review in place.Reviews)
+        //{
+        //    _repository.SoftDelete(review);
+        //}
 
         // Soft delete PlacePhotos
         foreach (var photo in place.Photos)
@@ -102,11 +106,11 @@ public class DeletePlaceCommandHandler
 
             await _userService.DecreaseUserPointsAsync(
                 request.CurrentUserId.ToString(),
-                10);
+                UserPlaceUploadPoints);
         }
 
         await _repository.SaveChangesAsync();
 
-        return Result.Success();
+        return Result.Success(PlaceDeleteSuccess);
     }
 }

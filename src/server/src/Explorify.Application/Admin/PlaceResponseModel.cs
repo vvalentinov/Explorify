@@ -1,6 +1,6 @@
 ﻿namespace Explorify.Application.Admin;
 
-public class UnapprovedPlaceResponseModel
+public class PlaceResponseModel
 {
     public Guid Id { get; set; }
 

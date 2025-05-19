@@ -3,4 +3,4 @@
 namespace Explorify.Application.Admin.GetUnapprovedPlaces;
 
 public record GetUnapprovedPlacesQuery(int Page)
-    : IQuery<UnapprovedPlacesListModel>;
+    : IQuery<PlacesListModel>;

@@ -25,4 +25,6 @@ public class GetEditDataResponseModel
     public decimal Latitude { get; set; }
 
     public decimal Longitude { get; set; }
+
+    public List<int> TagsIds { get; set; } = new();
 }

@@ -2,6 +2,8 @@
 using Explorify.Application.Admin.ApprovePlace;
 using Explorify.Application.Admin.ApproveReview;
 using Explorify.Application.Admin.GetDashboardInfo;
+using Explorify.Application.Admin.GetDeletedPlaces;
+using Explorify.Application.Admin.GetApprovedPlaces;
 using Explorify.Application.Admin.GetUnapprovedPlaces;
 using Explorify.Application.Admin.GetUnapprovedReviews;
 
@@ -44,10 +46,26 @@ public class AdminController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [HttpGet(nameof(GetApprovedPlaces))]
+    public async Task<IActionResult> GetApprovedPlaces(int page)
+    {
+        var query = new GetApprovedPlacesQuery(page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
     [HttpGet(nameof(GetUnapprovedPlaces))]
     public async Task<IActionResult> GetUnapprovedPlaces(int page)
     {
         var query = new GetUnapprovedPlacesQuery(page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetDeletedPlaces))]
+    public async Task<IActionResult> GetDeletedPlaces(int page)
+    {
+        var query = new GetDeletedPlacesQuery(page);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

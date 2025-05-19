@@ -25,5 +25,14 @@ public static class PlaceConstants
         public const string NoPlaceWithIdError = "No place with give id was found!";
 
         public const string EditError = "Only place owner can edit the place!";
+
+        public const string DeleteError = "Only the place owner or an admin can delete the place!";
+    }
+
+    public static class SuccessMessages
+    {
+        public const string PlaceEditSuccess = "Successfull place edit! When an admin approves your request you will receive a notification.";
+
+        public const string PlaceDeleteSuccess = "Successfull place delete!";
     }
 }

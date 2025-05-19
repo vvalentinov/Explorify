@@ -57,7 +57,21 @@ public class BlobService : IBlobService
     {
         var uri = new Uri(fileUrl);
         var absolutePath = uri.AbsolutePath;
-        return absolutePath[$"/{containerName}/".Length..];
+
+        var prefix = $"/{containerName}/";
+
+        if (!absolutePath.StartsWith(prefix))
+        {
+            throw new InvalidOperationException("Blob URL does not match expected container.");
+        }
+
+        // Strip the container path
+        var encodedBlobName = absolutePath[prefix.Length..];
+
+        // Decode special characters like %20, %C6%A1, etc.
+        var decodedBlobName = Uri.UnescapeDataString(encodedBlobName);
+
+        return decodedBlobName;
     }
 
     private static string GenerateUniqueName(string fileName, string path)

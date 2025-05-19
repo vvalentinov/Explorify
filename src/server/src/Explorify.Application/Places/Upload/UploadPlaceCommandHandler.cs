@@ -40,15 +40,15 @@ public class UploadPlaceCommandHandler
     {
         UploadPlaceRequestModel model = request.Model;
 
-        bool placeWithNameExists = await _repository
-            .AllAsNoTracking<Place>()
-            .AnyAsync(x => EF.Functions.Like(x.Name, model.Name), cancellationToken);
+        //bool placeWithNameExists = await _repository
+        //    .AllAsNoTracking<Place>()
+        //    .AnyAsync(x => EF.Functions.Like(x.Name, model.Name), cancellationToken);
 
-        if (placeWithNameExists)
-        {
-            var error = new Error("Place with given name already exists!", ErrorType.Validation);
-            return Result.Failure(error);
-        }
+        //if (placeWithNameExists)
+        //{
+        //    var error = new Error("Place with given name already exists!", ErrorType.Validation);
+        //    return Result.Failure(error);
+        //}
 
         var category = await _repository
             .AllAsNoTracking<Category>()

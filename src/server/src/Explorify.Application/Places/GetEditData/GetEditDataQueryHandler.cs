@@ -27,6 +27,8 @@ public class GetEditDataQueryHandler
             .All<Place>()
             .Include(x => x.Country)
             .Include(x => x.Photos)
+            .Include(x => x.PlaceVibeAssignments)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x =>
                 x.Id == request.PlaceId,
                 cancellationToken);
@@ -63,8 +65,9 @@ public class GetEditDataQueryHandler
             Address = place.Address ?? string.Empty,
             Latitude = place.Latitude ?? 0,
             Longitude = place.Longitude ?? 0,
-            Images = [.. place.Photos.Select(photo =>
+            Images = [.. place.Photos.Where(x => !x.IsDeleted).Select(photo =>
                 new ImageResponseModel { Id = photo.Id, Url = photo.Url })],
+            TagsIds = place.PlaceVibeAssignments.Select(x => x.PlaceVibeId).ToList(),
         };
 
         return Result.Success(responseModel);
