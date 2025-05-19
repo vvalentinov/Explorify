@@ -1,7 +1,7 @@
 import styles from './EditPlace.module.css';
 
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect, useContext } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -26,52 +26,23 @@ import {
     Spin,
     Checkbox
 } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 
 import { useDebounce } from 'use-debounce';
 
-import { UploadOutlined, EditOutlined } from '@ant-design/icons';
+import {
+    findCategoryPath,
+    mapCategoriesOptions,
+    mapCountryOptions,
+    generateFormData,
+} from './editPlaceUtil';
 
-const mapCategoriesOptions = (categories) => {
-
-    const options = categories.map(category => ({
-        value: category.id,
-        label: category.name,
-        children: category.subcategories.map(child => ({
-            value: child.id,
-            label: child.name,
-        })),
-    }));
-
-    return options;
-
-};
-
-const mapCountryOptions = (countries) => {
-
-    const options = countries.map(country => ({
-        value: country.id,
-        label: country.name,
-    }));
-
-    return options;
-};
-
-function findCategoryPath(options, targetValue) {
-    for (const option of options) {
-        if (option.value === targetValue) return [option.value];
-        if (option.children) {
-            const childPath = findCategoryPath(option.children, targetValue);
-            if (childPath) return [option.value, ...childPath];
-        }
-    }
-    return null;
-}
-
-
+import LocationPicker from '../LocationPicker/LocationPicker';
 
 const EditPlace = () => {
 
     const navigate = useNavigate();
+
     const location = useLocation();
 
     const [form] = Form.useForm();
@@ -81,77 +52,88 @@ const EditPlace = () => {
     const placesService = placesServiceFactory(token);
     const countriesService = countriesServiceFactory();
     const categoriesService = categoriesServiceFactory();
+    const vibesService = vibesServiceFactory();
 
     const [editData, setEditData] = useState({});
-
     const [toBeRemovedImagesIds, setToBeRemovedImagesIds] = useState([]);
-
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [countryOptions, setCountryOptions] = useState([]);
     const [countryName, setCountryName] = useState('');
+    const [isPlaceEditing, setIsPlaceEditing] = useState(false);
+
+    const [tags, setTags] = useState([]);
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [openDropdown, setOpenDropdown] = useState(false);
+    const [selectLoading, setSelectLoading] = useState(false);
+
+    const [locationMap, setLocationMap] = useState(null);
+    const [isMapUpdate, setIsMapUpdate] = useState(false);
 
     const [debounced] = useDebounce(countryName, 1000);
 
-    const generateFormData = (data) => {
+    useEffect(() => {
+        if (locationMap && isMapUpdate) {
 
-        const formData = new FormData();
+            form.setFieldsValue({
+                Latitude: locationMap.lat.toFixed(5),
+                Longitude: locationMap.lng.toFixed(5),
+            });
 
-        formData.append("Name", data.Name ?? "");
-        formData.append("Address", data.Address ?? "");
-        formData.append("Description", data.Description);
-        formData.append("CategoryId", data.CategoryId[0]);
-        formData.append("SubcategoryId", data.CategoryId[1]);
-        formData.append("CountryId", data.CountryId);
-        formData.append("ReviewRating", data.Rating);
-        formData.append("ReviewContent", data.ReviewContent);
-        toBeRemovedImagesIds.forEach(id => {
-            formData.append('ToBeRemovedImagesIds', id);
-        });
-
-        data.Images?.forEach(file => {
-            if (file.originFileObj) {
-                formData.append("NewImages", file.originFileObj);
-            }
-        });
-
-        // if (data.Tags?.length > 0) {
-        //     data.Tags.forEach(tagId => {
-        //         formData.append("VibesIds", tagId);
-        //     });
-        // }
-
-        return formData;
-    };
+            setIsMapUpdate(false);
+        }
+    }, [locationMap]);
 
     useEffect(() => {
+
         if (location.state?.placeId) {
             placesService
                 .getEditData(location.state?.placeId)
                 .then(res => {
+
                     setEditData(res);
-                })
-                .catch(err => {
-                    fireError(err);
-                })
+
+                    if (res.latitude != 0 && res.longitude != 0) {
+                        form.setFieldsValue({
+                            Latitude: res.latitude,
+                            Longitude: res.longitude,
+                        });
+
+                        setLocationMap({ lat: res.latitude, lng: res.longitude });
+                    }
+
+                }).catch(err => fireError(err))
         }
 
         categoriesService
             .getCategoriesOptions()
-            .then(res => {
-                const options = mapCategoriesOptions(res);
-                setCategoryOptions(options);
-            }).catch(err => fireError(err));
+            .then(res => setCategoryOptions(mapCategoriesOptions(res)))
+            .catch(err => fireError(err));
+
+        vibesService
+            .getVibes()
+            .then(res => setTags(res))
+            .catch(err => fireError(err));
+
     }, []);
 
     useEffect(() => {
 
         if (editData) {
-            const categoryPath = findCategoryPath(categoryOptions, editData.categoryId);
+
+            const categoryPath = findCategoryPath(
+                categoryOptions,
+                editData.categoryId);
 
             const selectedOption = {
                 value: editData.countryId,
                 label: editData.countryName,
             };
+
+            if (editData?.tagsIds && tags.length > 0) {
+                setSelectedTags(editData.tagsIds);
+                form.setFieldsValue({ Tags: editData.tagsIds });
+            }
+
             setCountryOptions([selectedOption]);
 
             const existingImages = editData.images?.map((image, index) => ({
@@ -181,23 +163,34 @@ const EditPlace = () => {
 
             countriesService
                 .getCountries(countryName)
-                .then(res => {
-                    const options = mapCountryOptions(res);
-                    setCountryOptions(options);
-                }).catch(err => fireError(err));
+                .then(res => setCountryOptions(mapCountryOptions(res)))
+                .catch(err => fireError(err));
         }
 
     }, [debounced]);
 
-    const onSubmit = (data) => {
-        const formData = generateFormData(data);
-
-        console.log(Object.fromEntries(formData.entries()));
-
-        placesService.editPlace(formData).then(res => console.log(res)).catch(err => console.log(err));
+    const handleLocationSelect = (latlng) => {
+        setIsMapUpdate(true);
+        setLocationMap(latlng);
     };
 
-    const onSearch = value => setCountryName(value);
+    const onSubmit = (data) => {
+
+        setIsPlaceEditing(true);
+
+        data.PlaceId = editData?.placeId;
+        const formData = generateFormData(data, toBeRemovedImagesIds);
+
+        placesService
+            .editPlace(formData)
+            .then(res => {
+                setIsPlaceEditing(false);
+                navigate('/', { state: { successOperation: { message: res.successMessage } } })
+            }).catch(err => {
+                fireError(err);
+                setIsPlaceEditing(false);
+            });
+    };
 
     return (
         <section className={styles.editPlaceSection}>
@@ -223,21 +216,39 @@ const EditPlace = () => {
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
 
-                    {/* {location && (
-                        <div style={{ marginTop: '1rem' }}>
-                            <p>Latitude: {location.lat.toFixed(5)}</p>
-                            <p>Longitude: {location.lng.toFixed(5)}</p>
-                        </div>
-                    )} */}
-
-                    {/* <LocationPicker onLocationSelect={handleLocationSelect} /> */}
-
                     <Form.Item
                         name="Address"
                         label="Address"
                     >
                         <Input placeholder="Enter address here..." />
                     </Form.Item>
+
+
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
+                        <Form.Item style={{ width: '50%' }} name="Latitude" label="Latitude">
+                            <Input
+                                onChange={(e) => {
+                                    const newLat = parseFloat(e.target.value);
+                                    if (!isNaN(newLat)) {
+                                        setLocationMap(prev => prev ? { ...prev, lat: newLat } : { lat: newLat, lng: 0 });
+                                    }
+                                }}
+                            />
+                        </Form.Item>
+
+                        <Form.Item style={{ width: '50%' }} name="Longitude" label="Longitude">
+                            <Input
+                                onChange={(e) => {
+                                    const newLng = parseFloat(e.target.value);
+                                    if (!isNaN(newLng)) {
+                                        setLocationMap(prev => prev ? { ...prev, lng: newLng } : { lat: 0, lng: newLng });
+                                    }
+                                }}
+                            />
+                        </Form.Item>
+                    </div>
+
+                    <LocationPicker onLocationSelect={handleLocationSelect} location={locationMap} />
 
                     <Form.Item
                         name="CategoryId"
@@ -257,34 +268,61 @@ const EditPlace = () => {
                         rules={[{ required: true }]}
                     >
                         <Select
-                            // loading={selectLoading}
-                            allowClear={true}
                             showSearch
+                            allowClear={true}
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
-                            onSearch={onSearch}
-                            onBlur={() => setCountryOptions([])}
+                            onSearch={(value) => {
+                                setCountryName(value);
+                                setOpenDropdown(true);
+                                setSelectLoading(true);
+                            }}
+                            onBlur={() => {
+                                setCountryOptions([]);
+                                setOpenDropdown(false);
+                            }}
                             options={countryOptions}
+                            notFoundContent={selectLoading ? (
+                                <div style={{ padding: '2rem 0', textAlign: 'center' }}>
+                                    <ConfigProvider theme={{
+                                        components: {
+                                            Spin: {
+                                                colorPrimary: 'green'
+                                            }
+                                        }
+                                    }}>
+                                        <Spin size="large" />
+                                    </ConfigProvider>
+                                </div>
+                            ) : null}
+                            open={openDropdown}
+                            onOpenChange={(open) => {
+                                // Don't allow dropdown to close if we're still loading
+                                if (!selectLoading) setOpenDropdown(open);
+                            }}
                         />
-
                     </Form.Item>
 
-                    {/* <Form.Item name="Tags" label="Tags">
+                    <Form.Item name="Tags" label="Tags">
 
-                        <Checkbox.Group style={{ width: '100%' }}>
+                        <Checkbox.Group
+                            style={{ width: '100%' }}
+                            value={selectedTags}
+                            onChange={(checkedValues) => {
+                                if (checkedValues.length > 20) {
+                                    return;
+                                }
+                                setSelectedTags(checkedValues);
+                                form.setFieldsValue({ Tags: checkedValues });
+                            }}
+                        >
                             <div className={styles.tagCheckboxGroup}>
                                 {tags.map(tag => (
                                     <Checkbox
                                         key={tag.id}
                                         value={tag.id}
-                                        style={{
-                                            margin: '8px',
-                                            border: '1px solid green',
-                                            borderRadius: '16px',
-                                            padding: '6px 12px',
-                                            backgroundColor: '#f1fdfa',
-                                            transition: 'all 0.3s',
-                                        }}
+                                        className={styles.customTagCheckbox}
+                                        disabled={selectedTags.length >= 20 && !selectedTags.includes(tag.id)}
                                     >
                                         {tag.name}
                                     </Checkbox>
@@ -292,7 +330,7 @@ const EditPlace = () => {
                             </div>
                         </Checkbox.Group>
 
-                    </Form.Item> */}
+                    </Form.Item>
 
                     <Form.Item
                         name="Description"
@@ -335,19 +373,17 @@ const EditPlace = () => {
 
                     </Card>
 
-                    <Button htmlType='submit' block>Edit</Button>
-
-                    {/* <Button
+                    <Button
                         block
                         size="large"
-                        type="primary"
+                        variant='solid'
+                        color='cyan'
                         htmlType="submit"
-                        className={styles.uploadButton}
                     >
                         {
-                            isPlaceUploading ?
+                            isPlaceEditing ?
                                 <span>
-                                    Uploading...
+                                    Editing...
                                     <ConfigProvider theme={{
                                         components: {
                                             Spin: {
@@ -358,9 +394,9 @@ const EditPlace = () => {
                                         <Spin style={{ marginLeft: '10px' }} spinning={true} />
                                     </ConfigProvider>
                                 </span> :
-                                'Upload'
+                                'Edit'
                         }
-                    </Button> */}
+                    </Button>
 
                 </Form>
             </Card>

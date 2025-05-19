@@ -33,15 +33,10 @@ const Main = () => {
 
             <Routes>
 
-                {/* Profile Layout */}
-                <Route path={paths.profilePath} element={<ProfileLayout />}>
-
-                    <Route index element={<Profile />} />
-                    <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
-                    <Route path={paths.changePasswordPath} element={<ChangePassword />} />
-                    <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
-
-                </Route>
+                <Route path={paths.profilePath} element={<Profile />} />
+                <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
+                <Route path={paths.changePasswordPath} element={<ChangePassword />} />
+                <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
 
                 <Route path={paths.homePath} element={<Home />} />
                 <Route path={paths.signInPath} element={<SignIn />} />

@@ -7,8 +7,6 @@ import LocationPicker from '../LocationPicker/LocationPicker';
 
 import { fireError } from '../../utils/fireError';
 
-import { motion } from 'framer-motion';
-
 import {
     Button,
     Cascader,
@@ -35,7 +33,11 @@ import { categoriesServiceFactory } from '../../services/categoriesService';
 
 import ImageUpload from './ImageUpload/ImageUpload';
 
-import { mapCountryOptions, mapCategoriesOptions, generateFormData } from './uploadPlaceUtil';
+import {
+    mapCountryOptions,
+    mapCategoriesOptions,
+    generateFormData,
+} from './uploadPlaceUtil';
 
 const UploadPlace = () => {
 
@@ -58,40 +60,12 @@ const UploadPlace = () => {
     const [selectLoading, setSelectLoading] = useState(false);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [isPlaceUploading, setIsPlaceUploading] = useState(false);
-
-    const [debounced] = useDebounce(countryName, 1000);
-
-    const [location, setLocation] = useState(null);
-
     const [isMapUpdate, setIsMapUpdate] = useState(false);
     const [selectedTags, setSelectedTags] = useState([]);
     const [openDropdown, setOpenDropdown] = useState(false);
+    const [location, setLocation] = useState(null);
 
-    useEffect(() => {
-        if (!location) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const currentLocation = { lat: latitude, lng: longitude };
-
-                    setLocation(currentLocation);
-                    form.setFieldsValue({
-                        Latitude: latitude.toFixed(5),
-                        Longitude: longitude.toFixed(5)
-                    });
-                },
-                (error) => {
-                    console.warn('Geolocation error:', error);
-                    // Optional: Show a warning to the user with AntD message
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0,
-                }
-            );
-        }
-    }, []);
+    const [debounced] = useDebounce(countryName, 1000);
 
     useEffect(() => {
         if (location && isMapUpdate) {
@@ -111,6 +85,28 @@ const UploadPlace = () => {
     };
 
     useEffect(() => {
+
+        if (!location) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+
+                    const { latitude, longitude } = position.coords;
+                    const currentLocation = { lat: latitude, lng: longitude };
+
+                    setLocation(currentLocation);
+                    // form.setFieldsValue({
+                    //     Latitude: latitude.toFixed(5),
+                    //     Longitude: longitude.toFixed(5)
+                    // });
+                },
+                (error) => { console.warn('Geolocation error:', error); },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0,
+                }
+            );
+        }
 
         vibesService
             .getVibes()
@@ -153,12 +149,7 @@ const UploadPlace = () => {
                 setIsPlaceUploading(false);
                 fireError(err);
             });
-
-        console.log(data.Description);
-        console.log(data.Description.length);
     }
-
-    const onSearch = value => setCountryName(value);
 
     return (
         <section className={styles.uploadPlaceSection}>
@@ -303,12 +294,6 @@ const UploadPlace = () => {
                         label="Description"
                         rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
-                        {/* <Input.TextArea
-                            showCount
-                            placeholder="Write your best description for this place..."
-                            rows={6}
-                        /> */}
-
                         <Input.TextArea
                             // value={description}
                             // onChange={(e) => setDescription(e.target.value)}
@@ -316,7 +301,6 @@ const UploadPlace = () => {
                             placeholder="Write your best description for this place..."
                             rows={6}
                         />
-
                     </Form.Item>
 
                     <ImageUpload />

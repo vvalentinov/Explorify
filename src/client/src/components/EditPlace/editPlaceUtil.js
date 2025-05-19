@@ -10,8 +10,8 @@ export const mapCategoriesOptions = (categories) => {
     }));
 
     return options;
-
 };
+
 
 export const mapCountryOptions = (countries) => {
 
@@ -23,11 +23,26 @@ export const mapCountryOptions = (countries) => {
     return options;
 };
 
-export const generateFormData = (data) => {
+export const findCategoryPath = (options, targetValue) => {
+
+    for (const option of options) {
+        if (option.value === targetValue) return [option.value];
+        if (option.children) {
+            const childPath = findCategoryPath(option.children, targetValue);
+            if (childPath) return [option.value, ...childPath];
+        }
+    }
+    return null;
+}
+
+export const generateFormData = (data, toBeRemovedImagesIds) => {
 
     const formData = new FormData();
 
+    formData.append("PlaceId", data.PlaceId ?? "");
     formData.append("Name", data.Name ?? "");
+    formData.append("Latitude", data.Latitude ?? "");
+    formData.append("Longitude", data.Longitude ?? "");
     formData.append("Address", data.Address ?? "");
     formData.append("Description", data.Description);
     formData.append("CategoryId", data.CategoryId[0]);
@@ -35,20 +50,19 @@ export const generateFormData = (data) => {
     formData.append("CountryId", data.CountryId);
     formData.append("ReviewRating", data.Rating);
     formData.append("ReviewContent", data.ReviewContent);
-    formData.append("Latitude", data.Latitude);
-    formData.append("Longitude", data.Longitude);
+    toBeRemovedImagesIds.forEach(id => formData.append('ToBeRemovedImagesIds', id));
 
     data.Images?.forEach(file => {
         if (file.originFileObj) {
-            formData.append("Files", file.originFileObj);
+            formData.append("NewImages", file.originFileObj);
         }
     });
 
-    if (data.Tags?.length > 0) {
-        data.Tags.forEach(tagId => {
-            formData.append("VibesIds", tagId);
-        });
-    }
+    // if (data.Tags?.length > 0) {
+    //     data.Tags.forEach(tagId => {
+    //         formData.append("VibesIds", tagId);
+    //     });
+    // }
 
     return formData;
 };

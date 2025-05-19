@@ -22,3 +22,36 @@
     border: 1px solid #d3adf7;
     box-shadow: 0 4px 12px rgba(0 0 0 0.06);
 }
+
+.tagCheckboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.customTagCheckbox {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid #0ea5a5;
+    border-radius: 16px;
+    background-color: #f1fdfa;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    font-size: 0.95rem;
+}
+
+.customTagCheckbox :global(.ant-checkbox) {
+    display: none !important;
+}
+
+:global(.ant-checkbox-wrapper-checked).customTagCheckbox {
+    background-color: #0ea5a5 !important;
+    color: white !important;
+    border-color: #0ea5a5 !important;
+}
+
+.customTagCheckbox:hover {
+    border-color: #0ea5a5;
+    background-color: #e0f7f7;
+}
