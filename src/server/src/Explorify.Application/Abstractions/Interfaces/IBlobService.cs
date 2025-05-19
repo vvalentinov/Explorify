@@ -7,4 +7,6 @@ public interface IBlobService
             string fileName,
             string? pathPrefix = null,
             bool shouldGenerateUniqueName = true);
+
+    Task DeleteBlobAsync(string blobUrl);
 }

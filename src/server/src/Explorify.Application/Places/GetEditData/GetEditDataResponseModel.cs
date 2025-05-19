@@ -2,6 +2,8 @@
 
 public class GetEditDataResponseModel
 {
+    public Guid PlaceId { get; set; }
+
     public string Name { get; set; } = string.Empty;
 
     public string Description { get; set; } = string.Empty;
@@ -19,4 +21,8 @@ public class GetEditDataResponseModel
     public string ReviewContent { get; set; } = string.Empty;
 
     public List<ImageResponseModel> Images { get; set; } = new();
+
+    public decimal Latitude { get; set; }
+
+    public decimal Longitude { get; set; }
 }

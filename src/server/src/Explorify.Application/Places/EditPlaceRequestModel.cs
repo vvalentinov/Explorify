@@ -27,4 +27,10 @@ public class EditPlaceRequestModel
     public List<UploadFile> NewImages { get; set; } = new();
 
     public Guid UserId { get; set; }
+
+    public decimal? Latitude { get; set; }
+
+    public decimal? Longitude { get; set; }
+
+    public List<int> TagsIds { get; set; } = new();
 }

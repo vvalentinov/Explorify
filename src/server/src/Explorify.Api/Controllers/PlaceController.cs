@@ -1,8 +1,7 @@
-﻿using Explorify.Api.Extensions;
-using Explorify.Application.Places;
+﻿using Explorify.Api.DTOs;
+using Explorify.Api.Extensions;
 using Explorify.Application.Places.Upload;
 using Explorify.Application.Places.Delete;
-using Explorify.Infrastructure.Attributes;
 using Explorify.Application.Places.Update;
 using Explorify.Application.Places.GetPlace;
 using Explorify.Application.Places.GetEditData;
@@ -30,10 +29,10 @@ public class PlaceController : BaseController
 
     [HttpPost(nameof(Upload))]
     [RequestSizeLimit(10 * 1024 * 1024)]
-    public async Task<IActionResult> Upload([FromUploadForm] UploadPlaceRequestModel model)
+    public async Task<IActionResult> Upload(UploadPlaceRequestDto model)
         => this.CreatedAtActionOrProblemDetails(
-                await _mediator.Send(
-                    new UploadPlaceCommand(model)), nameof(Upload));
+                await _mediator.Send(new UploadPlaceCommand(model.ToApplicationModel(User.GetId()))),
+                nameof(Upload));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInCategory))]
@@ -65,25 +64,22 @@ public class PlaceController : BaseController
 
     [HttpDelete(nameof(Delete))]
     public async Task<IActionResult> Delete([FromQuery] Guid placeId)
-    {
-        var command = new DeletePlaceCommand(placeId, User.GetId(), User.IsAdmin());
-        var result = await _mediator.Send(command);
-        return this.OkOrProblemDetails(result);
-    }
+        => this.OkOrProblemDetails(
+            await _mediator.Send(
+                new DeletePlaceCommand(
+                    placeId,
+                    User.GetId(),
+                    User.IsAdmin())));
 
     [HttpGet(nameof(GetEditData))]
     public async Task<IActionResult> GetEditData(Guid placeId)
-    {
-        var query = new GetEditDataQuery(placeId, User.GetId());
-        var result = await _mediator.Send(query);
-        return this.OkOrProblemDetails(result);
-    }
+        => this.OkOrProblemDetails(
+                await _mediator.Send(
+                    new GetEditDataQuery(placeId, User.GetId())));
 
     [HttpPut(nameof(Edit))]
-    public async Task<IActionResult> Edit([FromEditForm] EditPlaceRequestModel model)
-    {
-        var command = new UpdatePlaceCommand(model);
-        var result = await _mediator.Send(command);
-        return this.OkOrProblemDetails(result);
-    }
+    public async Task<IActionResult> Edit(EditPlaceRequestDto model)
+        => this.OkOrProblemDetails(
+            await _mediator.Send(
+                new UpdatePlaceCommand(model.ToApplicationModel(User.GetId()))));
 }

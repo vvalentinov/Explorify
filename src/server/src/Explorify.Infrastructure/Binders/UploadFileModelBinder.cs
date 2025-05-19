@@ -1,4 +1,5 @@
 ﻿using Explorify.Application.Abstractions.Models;
+
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Explorify.Infrastructure.Binders;

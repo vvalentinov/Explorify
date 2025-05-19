@@ -1,11 +1,12 @@
-﻿using Explorify.Api.Extensions;
-using Explorify.Infrastructure.Attributes;
+﻿using Explorify.Api.DTOs;
+using Explorify.Api.Extensions;
 using Explorify.Application.Reviews.Upload;
 using Explorify.Application.ReviewsLikes.Like;
 using Explorify.Application.Reviews.GetReviews;
 using Explorify.Application.ReviewsLikes.Dislike;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -21,9 +22,9 @@ public class ReviewController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
-    public async Task<IActionResult> Upload([FromUploadReviewForm] UploadReviewRequestModel model)
+    public async Task<IActionResult> Upload(UploadReviewRequestDto model)
         => this.CreatedAtActionOrProblemDetails(
-                await _mediator.Send(new UploadReviewCommand(model)),
+                await _mediator.Send(new UploadReviewCommand(model.ToApplicationModel(User.GetId()))),
                 nameof(Upload));
 
     [AllowAnonymous]

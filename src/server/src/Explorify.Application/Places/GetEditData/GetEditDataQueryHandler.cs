@@ -3,6 +3,8 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Places.GetEditData;
@@ -31,13 +33,13 @@ public class GetEditDataQueryHandler
 
         if (place == null)
         {
-            var error = new Error("No place with id found!", ErrorType.Validation);
+            var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure<GetEditDataResponseModel>(error);
         }
 
         if (place.UserId != request.CurrentUserId)
         {
-            var error = new Error("Only place owner can edit the place!", ErrorType.Validation);
+            var error = new Error(EditError, ErrorType.Validation);
             return Result.Failure<GetEditDataResponseModel>(error);
         }
 
@@ -50,6 +52,7 @@ public class GetEditDataQueryHandler
 
         var responseModel = new GetEditDataResponseModel
         {
+            PlaceId = place.Id,
             Name = place.Name,
             Description = place.Description,
             Rating = placeUserReview.Rating,
@@ -58,7 +61,10 @@ public class GetEditDataQueryHandler
             CountryId = place.CountryId,
             CountryName = place.Country.Name,
             Address = place.Address ?? string.Empty,
-            Images = [.. place.Photos.Select(photo => new ImageResponseModel { Id = photo.Id, Url = photo.Url })],
+            Latitude = place.Latitude ?? 0,
+            Longitude = place.Longitude ?? 0,
+            Images = [.. place.Photos.Select(photo =>
+                new ImageResponseModel { Id = photo.Id, Url = photo.Url })],
         };
 
         return Result.Success(responseModel);

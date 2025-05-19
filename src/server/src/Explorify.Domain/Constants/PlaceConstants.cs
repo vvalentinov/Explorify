@@ -23,5 +23,7 @@ public static class PlaceConstants
         public const string PlaceImagesCountError = "Place images count must be between 1 and 10!";
 
         public const string NoPlaceWithIdError = "No place with give id was found!";
+
+        public const string EditError = "Only place owner can edit the place!";
     }
 }

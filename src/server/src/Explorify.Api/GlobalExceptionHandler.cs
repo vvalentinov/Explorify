@@ -25,7 +25,7 @@ public class GlobalExceptionHandler : IExceptionHandler
             type: "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1",
             extensions: new Dictionary<string, object?>
             {
-                {"errors", Array.Empty<object>() }
+                {"errors", new List<string>() { "An unexpected error ocurred!" } }
             }
         );
 

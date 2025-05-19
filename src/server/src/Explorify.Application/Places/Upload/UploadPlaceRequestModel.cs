@@ -10,6 +10,10 @@ public class UploadPlaceRequestModel
 
     public string Description { get; set; } = string.Empty;
 
+    public decimal Latitude { get; set; }
+
+    public decimal Longitude { get; set; }
+
     public int CountryId { get; set; }
 
     public int CategoryId { get; set; }

@@ -142,24 +142,27 @@ public class UploadPlaceCommandHandler
 
         place.PlaceVibeAssignments = placeVibeAssignments;
 
-        string fullAddress;
-
-        if (request.Model.Address != null &&
-            string.IsNullOrWhiteSpace(request.Model.Address) == false)
+        if (model.Latitude == 0 && model.Longitude == 0)
         {
-            fullAddress = $"{model.Name}, {request.Model.Address}, {country.Name}";
-        }
-        else
-        {
-            fullAddress = $"{model.Name}, {country.Name}";
-        }
+            string fullAddress;
 
-        var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
+            if (request.Model.Address != null &&
+                string.IsNullOrWhiteSpace(request.Model.Address) == false)
+            {
+                fullAddress = $"{model.Name}, {request.Model.Address}, {country.Name}";
+            }
+            else
+            {
+                fullAddress = $"{model.Name}, {country.Name}";
+            }
 
-        if (coordinates != null)
-        {
-            place.Latitude = (decimal)coordinates.Latitude;
-            place.Longitude = (decimal)coordinates.Longitude;
+            var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
+            if (coordinates != null)
+            {
+                place.Latitude = (decimal)coordinates.Latitude;
+                place.Longitude = (decimal)coordinates.Longitude;
+            }
         }
 
         await _repository.AddAsync(place);
