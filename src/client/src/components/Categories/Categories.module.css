@@ -1,25 +1,22 @@
 .categoriesSection {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     flex-wrap: wrap;
-    padding: 1rem 0;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
-
-    /* min-height: calc(100vh - 65px); */
+    padding: 1rem 1.5rem;
+    gap: 2rem;
 }
 
 .cardLink {
     flex-basis: 30%;
-    margin-bottom: 1.5rem;
 }
 
 .spinnerContainer {
-    min-height: calc(100vh - 65px);
-    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
-
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: calc(100vh - 65px);
+}
+
+.cardMotionWrapper {
+    flex-basis: 30%;
 }

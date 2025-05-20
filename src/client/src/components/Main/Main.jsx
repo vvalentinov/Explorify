@@ -21,6 +21,8 @@ import MyPlaces from '../MyPlaces/MyPlaces';
 import Notifications from '../Notifications/Notifications';
 import EditPlace from '../EditPlace/EditPlace';
 
+import ScrollToTop from '../ScrollToTop/ScrollToTop';
+
 import { FloatButton } from 'antd';
 
 import * as paths from '../../constants/paths';
@@ -29,7 +31,7 @@ const Main = () => {
     return (
         <main>
 
-            {/* <Alert /> */}
+            <ScrollToTop />
 
             <Routes>
 
@@ -56,6 +58,7 @@ const Main = () => {
                 <Route path={paths.myPlacesPath} element={<MyPlaces />} />
 
                 <Route path='*' element={<NoPathFound />} />
+
             </Routes>
 
             <FloatButton.BackTop />
