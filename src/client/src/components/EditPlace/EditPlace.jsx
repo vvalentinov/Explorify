@@ -181,6 +181,10 @@ const EditPlace = () => {
         data.PlaceId = editData?.placeId;
         const formData = generateFormData(data, toBeRemovedImagesIds);
 
+        // for (const [key, value] of formData.entries()) {
+        //     console.log(`${key}:`, value);
+        // }
+
         placesService
             .editPlace(formData)
             .then(res => {
@@ -211,7 +215,7 @@ const EditPlace = () => {
                     <Form.Item
                         name="Name"
                         label="Name"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
@@ -253,7 +257,7 @@ const EditPlace = () => {
                     <Form.Item
                         name="CategoryId"
                         label="Category"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Cascader
                             options={categoryOptions}
@@ -265,7 +269,7 @@ const EditPlace = () => {
                     <Form.Item
                         name="CountryId"
                         label="Country"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Select
                             showSearch
@@ -335,7 +339,7 @@ const EditPlace = () => {
                     <Form.Item
                         name="Description"
                         label="Description"
-                        rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
+                    // rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
 
                         <Input.TextArea
@@ -353,7 +357,7 @@ const EditPlace = () => {
                         <Form.Item
                             name="Rating"
                             label="Rating"
-                            rules={[{ required: true }]}
+                        // rules={[{ required: true }]}
                         >
                             <Rate id="Rating" allowClear />
                         </Form.Item>
@@ -361,7 +365,7 @@ const EditPlace = () => {
                         <Form.Item
                             name="ReviewContent"
                             label="Content"
-                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
+                        // rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
                         >
                             <Input.TextArea
                                 placeholder="Share your experience..."

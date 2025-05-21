@@ -6,7 +6,8 @@ import {
     Pagination,
     Spin,
     Radio,
-    ConfigProvider
+    ConfigProvider,
+    Empty
 } from 'antd';
 
 const options = [
@@ -195,13 +196,10 @@ const ReviewsSection = ({
                 </div>
             </>}
 
-
-
             <div className={styles.reviewsContainer}>
-                {
+                {/* {
                     reviews.length > 0 ?
                         (
-
                             reviews.map(x => (
                                 <Card
                                     onClick={() => handleCardClick(x)}
@@ -254,8 +252,66 @@ const ReviewsSection = ({
                         }}>
                             <Spin size='large' spinning={spinnerLoading} />
                         </ConfigProvider>
+                } */}
+
+                {
+                    spinnerLoading ? (
+                        <ConfigProvider theme={{
+                            components: {
+                                Spin: { colorPrimary: 'green' }
+                            }
+                        }}>
+                            <Spin size='large' spinning={spinnerLoading} />
+                        </ConfigProvider>
+                    ) : reviews.length === 0 ? (
+                        <Empty description="No reviews yet." />
+                    ) : (
+                        reviews.map(x => (
+                            <Card
+                                onClick={() => handleCardClick(x)}
+                                style={{
+                                    width: '300px',
+                                    height: '350px',
+                                    overflow: 'hidden',
+                                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06)'
+                                }}
+                                key={x.user.userName}
+                                styles={{
+                                    header: {
+                                        backgroundColor: '#e8fffb',
+                                    }
+                                }}
+                                className={styles.reviewCard}
+                                title={
+                                    <div className={styles.reviewCardHeader}>
+                                        <div className={styles.reviewCardHeaderContainer}>
+                                            <Avatar
+                                                src={x.user.profileImageUrl || undefined}
+                                                size={40}
+                                                icon={!x.user.profileImageUrl && <UserOutlined />}
+                                            />
+                                            <span style={{ marginLeft: '5px' }} className={styles.placeTitle}>{x.user.userName}</span>
+                                        </div>
+                                        <div>
+                                            <Rate style={{ padding: '0', margin: '0' }} disabled value={x.rating} />
+                                        </div>
+                                    </div>
+                                }
+                            >
+                                <Typography.Paragraph
+                                    style={{ textAlign: 'justify' }}
+                                    ellipsis={{ rows: 11 }}
+                                >
+                                    {x.content}
+                                </Typography.Paragraph>
+
+                            </Card>
+                        )
+                        )
+                    )
                 }
-            </div>
+
+            </div >
 
             {pagesCount > 1 && <Pagination
                 align='center'
@@ -266,7 +322,7 @@ const ReviewsSection = ({
                 style={{ textAlign: 'center', marginTop: '2rem' }}
             />}
 
-        </Card>
+        </Card >
     )
 };
 

@@ -1,7 +1,26 @@
 import styles from './Home.module.css';
 
 import { motion } from 'framer-motion';
-import { Card } from 'antd';
+
+const AnimatedEmoji = () => (
+    <motion.span
+        style={{ display: 'inline-block', cursor: 'pointer' }}
+        whileHover={{
+            scale: 1.2,
+            rotate: 10,
+            transition: { type: 'spring', stiffness: 200, damping: 12 }
+        }}
+        whileTap={{
+            scale: [1, 0.8, 1],  // pulse effect: normal -> smaller -> normal
+            rotate: 0,
+            transition: { duration: 0.3, ease: 'easeInOut' }
+        }}
+        aria-label="Globe emoji"
+        role="img"
+    >
+        🌍
+    </motion.span>
+);
 
 const Home = () => {
 
@@ -12,48 +31,18 @@ const Home = () => {
 
             <motion.div
                 className={styles.heroContent}
-                initial={{ opacity: 0, y: 100 }}
+                initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: 'spring', stiffness: 100, damping: 15 }}
             >
-                <Card
-                    style={{
-                        borderRadius: 16,
-                        backgroundColor: '#fff',
-                        boxShadow: '0 12px 28px rgba(0,0,0,0.25)',
-                    }}
-                >
-                    <Card.Meta
-                        title={
-                            <h1
-                                style={{
-                                    fontWeight: 700,
-                                    fontSize: '2.8rem',
-                                    marginBottom: '1rem',
-                                    fontFamily: 'Poppins, sans-serif',
-                                }}
-                            >
-                                Discover Hidden Gems 🌍
-                            </h1>
-                        }
-                        description={
-                            <p
-                                style={{
-                                    fontSize: '1.15rem',
-                                    lineHeight: 1.6,
-                                    color: '#555',
-                                    textAlign: 'justify'
-                                }}
-                            >
-                                Ready to embark on unforgettable adventures? Explorify helps you
-                                discover breathtaking places, share your own experiences, and
-                                connect with fellow travelers around the world. From secret
-                                trails to vibrant cities, your next journey starts here!
-                            </p>
-                        }
-                    />
-                </Card>
+                <h1 className={styles.heroTitle}>
+                    Discover Hidden Gems <AnimatedEmoji />
+                </h1>
+                <p className={styles.heroDescription}>
+                    Ready to embark on unforgettable adventures? Explorify helps you discover breathtaking places, share your own experiences, and connect with fellow travelers around the world. Whether you're chasing hidden waterfalls, wandering through ancient cities, or savoring local flavors off the beaten path, Explorify is your trusted companion.
+                </p>
             </motion.div>
+
         </section >
 
     );

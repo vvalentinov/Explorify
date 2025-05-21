@@ -26,3 +26,49 @@
     width: 100%;
     max-width: 700px;
 }
+
+/* --- */
+
+.heroTitle {
+    font-weight: 800;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
+.heroTitle span {
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.heroDescription {
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+.heroTitle,
+.heroTitle * {
+    outline: none !important;
+    /* remove outlines */
+    background: transparent !important;
+    /* remove any background */
+    box-shadow: none !important;
+    /* remove shadows */
+    -webkit-tap-highlight-color: transparent !important;
+    /* remove tap highlight on mobile */
+    user-select: text !important;
+    /* keep text selectable */
+}
+
+/* Remove any selection highlight (blue/grey) on text selection */
+.heroTitle::selection,
+.heroTitle *::selection {
+    background: transparent !important;
+    color: inherit !important;
+}

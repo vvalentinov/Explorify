@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 
 import { placesServiceFactory } from "../../services/placesService";
@@ -17,9 +17,11 @@ const PlaceDetails = () => {
 
     const { placeName } = useParams();
 
+    const navigate = useNavigate();
+
     const { userId, token } = useContext(AuthContext);
 
-    const placeService = placesServiceFactory();
+    const placeService = placesServiceFactory(token);
     const reviewsService = reviewsServiceFactory(token);
 
     const location = useLocation();
@@ -53,7 +55,10 @@ const PlaceDetails = () => {
 
                         setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${lat},${lon}`);
                     }
-                }).catch(err => fireError(err));
+                }).catch(err => {
+                    fireError(err);
+                    navigate('/');
+                });
 
             reviewsService
                 .getReviews(location.state?.placeId, 1, "Newest")
@@ -79,7 +84,10 @@ const PlaceDetails = () => {
 
                         setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${lat},${lon}`);
                     }
-                }).catch(err => fireError(err));
+                }).catch(err => {
+                    fireError(err);
+                    navigate('/');
+                });
         }
 
     }, []);
@@ -97,18 +105,20 @@ const PlaceDetails = () => {
                     <PlaceDetailsSection loading={loading} place={place} mapUrl={mapUrl} />
 
                     {/* Reviews Section */}
-                    <ReviewsSection
-                        pagesCount={pagesCount}
-                        reviews={reviews}
-                        reviewsService={reviewsService}
-                        setIsModalOpen={setIsModalOpen}
-                        setIsReviewModalOpen={setIsReviewModalOpen}
-                        setPagesCount={setPagesCount}
-                        setReviews={setReviews}
-                        setSelectedReview={setSelectedReview}
-                        place={place}
-                        userId={userId}
-                    />
+                    {place.isApproved && (
+                        <ReviewsSection
+                            pagesCount={pagesCount}
+                            reviews={reviews}
+                            reviewsService={reviewsService}
+                            setIsModalOpen={setIsModalOpen}
+                            setIsReviewModalOpen={setIsReviewModalOpen}
+                            setPagesCount={setPagesCount}
+                            setReviews={setReviews}
+                            setSelectedReview={setSelectedReview}
+                            place={place}
+                            userId={userId}
+                        />
+                    )}
 
                     {/* Upload review form and modal */}
                     <UploadReviewModal

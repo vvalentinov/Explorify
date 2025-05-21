@@ -21,11 +21,11 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
 
     const beforeUpload = (file) => {
 
-        const isValid = validTypes.includes(file.type);
+        // const isValid = validTypes.includes(file.type);
 
-        if (!isValid) {
-            message.error(`File "${file.name}" is not a valid image.`);
-        }
+        // if (!isValid) {
+        //     message.error(`File "${file.name}" is not a valid image.`);
+        // }
 
         const isDuplicate = fileList.some(f => f.name === file.name);
 
@@ -83,12 +83,12 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
                 label="Upload Images"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
-                required={true}
+            // required={true}
             >
 
                 <Upload
                     multiple
-                    maxCount={10}
+                    // maxCount={10}
                     fileList={fileList}
                     listType="picture-card"
                     onPreview={handlePreview}

@@ -23,6 +23,8 @@ import { fireError } from '../../utils/fireError';
 
 import { myPlacesPath } from '../../constants/paths';
 
+import { motion } from 'framer-motion';
+
 const beforeUpload = file => {
 
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -45,6 +47,7 @@ import {
     changeUsernamePath,
     changeEmailPath,
 } from "../../constants/paths";
+import { header } from 'framer-motion/client';
 
 const settingsSections = [
     {
@@ -72,6 +75,15 @@ const settingsSections = [
             "Your email is used for login and receiving important updates. If you’ve changed your primary email or want to ensure you're reachable, update your address here. We'll always keep it private.",
     }
 ];
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" }
+    }
+};
 
 
 const Profile = () => {
@@ -218,7 +230,7 @@ const Profile = () => {
                     </div>
                 </div>
 
-                <div className={styles.settingsGrid}>
+                {/* <div className={styles.settingsGrid}>
                     {settingsSections.map((section) => (
                         <Card
                             key={section.title}
@@ -272,6 +284,70 @@ const Profile = () => {
                                 </Button>
                             </Link>
                         </Card>
+                    ))}
+                </div> */}
+
+                <div className={styles.settingsGrid}>
+                    {settingsSections.map((section) => (
+                        <motion.div
+                            key={section.title}
+                            variants={cardVariants}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.3 }} // animate once when 30% visible
+                            style={{ width: '100%', marginTop: '1.5rem' }}
+                        >
+                            <Card
+                                style={{
+                                    backgroundColor: section.color,
+                                    borderRadius: '16px',
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+                                    padding: '1.5rem 2rem',
+                                }}
+                                styles={
+                                    {
+                                        header: {
+                                            fontSize: '1.25rem',
+                                            fontWeight: 600,
+                                            paddingLeft: 0,
+                                            borderBottom: 'none',
+                                        },
+                                        body: {
+                                            textAlign: 'center',
+                                            padding: '0'
+                                        }
+                                    }
+                                }
+                                title={section.title}
+                            >
+                                <p style={{
+                                    fontSize: '1.05rem',
+                                    lineHeight: 1.65,
+                                    color: '#444',
+                                    marginBottom: '1.5rem'
+                                }}>
+                                    {section.description}
+                                </p>
+
+                                <Link to={section.link}>
+                                    <Button
+                                        style={{
+                                            backgroundColor: '#9c4dcc',
+                                            color: '#fff',
+                                            fontWeight: 600,
+                                            border: 'none',
+                                            height: '42px',
+                                            fontSize: '1rem',
+                                            transition: 'background-color 0.3s ease',
+                                        }}
+                                        onMouseEnter={e => e.currentTarget.style.backgroundColor = '#8a3dac'}
+                                        onMouseLeave={e => e.currentTarget.style.backgroundColor = '#9c4dcc'}
+                                    >
+                                        {section.buttonText}
+                                    </Button>
+                                </Link>
+                            </Card>
+                        </motion.div>
                     ))}
                 </div>
 

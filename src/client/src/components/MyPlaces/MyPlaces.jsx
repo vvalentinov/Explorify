@@ -11,9 +11,9 @@ import { fireError } from "../../utils/fireError";
 
 import { motion } from 'framer-motion';
 
-import { Pagination, Spin, ConfigProvider, Card, Button } from "antd";
+import { Pagination, Spin, ConfigProvider, Card, Button, Modal, App, Typography } from "antd";
 
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -32,9 +32,34 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
+
+
 const MyPlaces = () => {
 
     const { token } = useContext(AuthContext);
+
+    // const [modal, contextHolder] = Modal.useModal();
+
+    const { modal, notification } = App.useApp();
+
+    const confirm = (placeId) => {
+        modal.confirm({
+            title: 'Delete Place',
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <p>
+                    Are you sure you want to delete this place? <br />
+                    <Typography.Text type="danger" strong>
+                        This action is irreversible.
+                    </Typography.Text>
+                </p>
+            ),
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk: () => handlePlaceDelete(placeId)
+        });
+    };
 
     const navigate = useNavigate();
 
@@ -46,6 +71,13 @@ const MyPlaces = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const [shouldScroll, setShouldScroll] = useState(false);
+
+    // Delete Modal
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const showDeleteModal = () => setOpenDeleteModal(true);
+    const handleOkDeleteModal = () => setOpenDeleteModal(false);
+    const handleCancelDeleteModal = () => setOpenDeleteModal(false);
 
     useLayoutEffect(() => {
         if (shouldScroll) {
@@ -120,152 +152,172 @@ const MyPlaces = () => {
             .deletePlace(placeId)
             .then(res => {
                 handlePageChange(1);
+                notification.success({ message: 'Success', description: res.successMessage });
             }).catch(err => {
                 fireError(err);
+                setSpinnerLoading(false);
             })
     }
 
     return (
         <>
-            {spinnerLoading ?
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: 'calc(100vh - 63px)'
-                }}>
-                    <ConfigProvider theme={{
-                        components: {
-                            Spin: {
-                                colorPrimary: 'green'
-                            }
-                        }
+            {
+                spinnerLoading ?
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        minHeight: 'calc(100vh - 63px)'
                     }}>
-                        <Spin size='large' spinning={spinnerLoading} />
-                    </ConfigProvider>
-                </div> :
-                <>
-                    <motion.section
-                        style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center',
-                            gap: '1.5rem',
-                            padding: '2rem',
-                        }}
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        {places.map((place) => (
-                            <motion.div
-                                key={place.id}
-                                variants={itemVariants}
-                                style={{
-                                    width: 'calc(33.33% - 1rem)',
-                                    textDecoration: 'none',
-                                }}
-                            >
-
-                                <Card
-                                    // hoverable
-                                    className={styles.card}
-                                    cover={
-                                        <img
-                                            alt={place.name}
-                                            src={place.imageUrl}
-                                            style={{
-                                                height: '200px',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                    }
+                        <ConfigProvider theme={{
+                            components: {
+                                Spin: {
+                                    colorPrimary: 'green'
+                                }
+                            }
+                        }}>
+                            <Spin size='large' spinning={spinnerLoading} />
+                        </ConfigProvider>
+                    </div> :
+                    <>
+                        <motion.section
+                            style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center',
+                                gap: '1.5rem',
+                                padding: '2rem',
+                            }}
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {places.map((place) => (
+                                <motion.div
+                                    key={place.id}
+                                    variants={itemVariants}
                                     style={{
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                                        transition: 'transform 0.3s ease',
-                                    }}
-                                    styles={{
-                                        body: {
-                                            backgroundColor: '#eafffb',
-                                            textAlign: 'center',
-                                            padding: '1rem',
-                                        }
+                                        width: 'calc(33.33% - 1rem)',
+                                        textDecoration: 'none',
                                     }}
                                 >
 
-                                    <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
-
-                                    <div
+                                    <Card
+                                        // hoverable
+                                        className={styles.card}
+                                        cover={
+                                            <img
+                                                alt={place.name}
+                                                src={place.imageUrl}
+                                                style={{
+                                                    height: '200px',
+                                                    objectFit: 'cover'
+                                                }}
+                                            />
+                                        }
                                         style={{
-                                            marginTop: '1rem',
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            gap: '0.75rem'
+                                            borderRadius: '8px',
+                                            overflow: 'hidden',
+                                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                                            transition: 'transform 0.3s ease',
+                                        }}
+                                        styles={{
+                                            body: {
+                                                backgroundColor: '#eafffb',
+                                                textAlign: 'center',
+                                                padding: '1rem',
+                                            }
                                         }}
                                     >
 
-                                        <Button
-                                            style={{ width: '50%' }}
-                                            variant='solid'
-                                            color='cyan'
-                                            onClick={() => navigate(`/place/${place.slugifiedName}/edit`, { state: { placeId: place.id } })}
+                                        <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+
+                                        <div
+                                            style={{
+                                                marginTop: '1rem',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                gap: '0.75rem'
+                                            }}
                                         >
-                                            <EditOutlined style={{ fontSize: '1.2rem' }} />
-                                        </Button>
 
-                                        <Button
-                                            style={{ width: '50%', }}
-                                            variant='solid'
-                                            color='danger'
-                                            onClick={() => handlePlaceDelete(place.id)}
-                                        >
-                                            <DeleteOutlined style={{ fontSize: '1.2rem' }} />
+                                            <Button
+                                                style={{ width: '50%' }}
+                                                variant='solid'
+                                                color='cyan'
+                                                onClick={() => navigate(`/place/${place.slugifiedName}/edit`, { state: { placeId: place.id } })}
+                                            >
+                                                <EditOutlined style={{ fontSize: '1.2rem' }} />
+                                            </Button>
 
-                                        </Button>
+                                            <Button
+                                                style={{ width: '50%', }}
+                                                variant='solid'
+                                                color='danger'
+                                                // onClick={() => handlePlaceDelete(place.id)}
+                                                // onClick={showDeleteModal}
+                                                onClick={() => confirm(place.id)}
+                                            >
+                                                <DeleteOutlined style={{ fontSize: '1.2rem' }} />
+                                            </Button>
 
-                                    </div>
+                                        </div>
 
-                                    <Button
-                                        onClick={() => navigate(`/place/${place.slugifiedName}`, { state: { placeId: place.id } })}
-                                        variant='solid'
-                                        color='primary'
-                                        block
-                                        style={{ marginTop: '1rem' }}
+                                        {/* Delete Modal */}
+                                        {/* <Modal
+                                        open={openDeleteModal}
+                                        title="Delete Place"
+                                        onOk={handleOkDeleteModal}
+                                        onCancel={handleCancelDeleteModal}
+                                        footer={(_, { OkBtn, CancelBtn }) => (
+                                            <>
+                                                <CancelBtn />
+                                                <OkBtn />
+                                            </>
+                                        )}
                                     >
-                                        Go To Place
-                                    </Button>
+                                        <p>Are you sure you want to delete this place?</p>
+                                    </Modal> */}
 
-                                </Card>
+                                        <Button
+                                            onClick={() => navigate(`/place/${place.slugifiedName}`, { state: { placeId: place.id } })}
+                                            variant='solid'
+                                            color='primary'
+                                            block
+                                            style={{ marginTop: '1rem' }}
+                                        >
+                                            Go To Place
+                                        </Button>
 
-                            </motion.div>
-                        ))}
-                    </motion.section>
+                                    </Card>
 
-                    {pagesCount > 1 &&
-                        <ConfigProvider theme={{
-                            components: {
-                                Pagination: {
-                                    itemActiveBg: '#e8fffb',
-                                    itemActiveColor: '#52c41a',
-                                    colorPrimary: '#52c41a',
-                                    colorPrimaryHover: '#389e0d',
-                                },
-                            }
-                        }}>
-                            <Pagination
-                                align='center'
-                                onChange={handlePageChange}
-                                current={currentPage}
-                                total={pagesCount * 6}
-                                pageSize={6}
-                                style={{ textAlign: 'center', marginBottom: '1rem' }}
-                            />
-                        </ConfigProvider>
-                    }
+                                </motion.div>
+                            ))}
+                        </motion.section>
 
-                </>
+                        {pagesCount > 1 &&
+                            <ConfigProvider theme={{
+                                components: {
+                                    Pagination: {
+                                        itemActiveBg: '#e8fffb',
+                                        itemActiveColor: '#52c41a',
+                                        colorPrimary: '#52c41a',
+                                        colorPrimaryHover: '#389e0d',
+                                    },
+                                }
+                            }}>
+                                <Pagination
+                                    align='center'
+                                    onChange={handlePageChange}
+                                    current={currentPage}
+                                    total={pagesCount * 6}
+                                    pageSize={6}
+                                    style={{ textAlign: 'center', marginBottom: '1rem' }}
+                                />
+                            </ConfigProvider>
+                        }
+
+                    </>
             }
         </>
     );

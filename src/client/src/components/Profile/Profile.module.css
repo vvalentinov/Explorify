@@ -14,11 +14,6 @@
     border: solid 1px green
 }
 
-/* .profileCard :global(.ant-card-head) {
-    text-align: start;
-    background-color: #ecfffb;
-} */
-
 .userInfo {
     margin-top: 1rem;
 }

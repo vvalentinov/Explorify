@@ -16,6 +16,21 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 import { fireError } from '../../utils/fireError';
 
+import { motion } from 'framer-motion';
+
+const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+        opacity: 1,
+        scale: 1,
+        transition: {
+            type: 'spring',
+            stiffness: 260,
+            damping: 20,
+        }
+    }
+};
+
 const ChangeUsername = () => {
 
     const { token } = useContext(AuthContext);
@@ -41,45 +56,95 @@ const ChangeUsername = () => {
     };
 
     return (
+        // <div style={{
+        //     display: 'flex',
+        //     justifyContent: 'center',
+        //     alignItems: "center",
+        //     minHeight: 'calc(100vh - 63px)',
+        // }}>
+        //     <Card
+        //         title={<><UserOutlined /> Change Username</>}
+        //         style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
+        //         styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
+        //     >
+        //         <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
+        //             ✨ Time for a fresh start? Pick a new username below!
+        //         </Typography.Paragraph>
+
+        //         <Form layout="vertical" onFinish={handleFinish}>
+
+        //             <Form.Item
+        //                 label="New Username"
+        //                 name="UserName"
+        //                 rules={[{ required: true }, { min: 2 }, { max: 50 }]}
+        //             >
+        //                 <Input size='large' placeholder="Enter your new cool username here..." />
+        //             </Form.Item>
+
+        //             <Form.Item style={{ marginTop: 24 }}>
+        //                 <Button
+        //                     size='large'
+        //                     variant='solid'
+        //                     color='cyan'
+        //                     htmlType="submit"
+        //                     block
+        //                 >
+        //                     Change
+        //                 </Button>
+        //             </Form.Item>
+
+        //         </Form>
+        //     </Card>
+        // </div>
+
         <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: "center",
             minHeight: 'calc(100vh - 63px)',
         }}>
-            <Card
-                title={<><UserOutlined /> Change Username</>}
-                style={{ width: '70%', boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
-                styles={{ header: { fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb' } }}
+            <motion.div
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                style={{ width: '70%' }}
             >
-                <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
-                    ✨ Time for a fresh start? Pick a new username below!
-                </Typography.Paragraph>
+                <Card
+                    title={<><UserOutlined /> Change Username</>}
+                    style={{ boxShadow: '0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15)', border: 'solid 1px green' }}
+                    styles={{
+                        header: {
+                            fontSize: '1.4rem', borderBottom: 'solid 1px green', backgroundColor: '#eafffb'
+                        }
+                    }}
+                >
+                    <Typography.Paragraph style={{ fontSize: '1.1rem', textAlign: 'center', marginBottom: 24 }}>
+                        ✨ Time for a fresh start? Pick a new username below!
+                    </Typography.Paragraph>
 
-                <Form layout="vertical" onFinish={handleFinish}>
-
-                    <Form.Item
-                        label="New Username"
-                        name="UserName"
-                        rules={[{ required: true }, { min: 2 }, { max: 50 }]}
-                    >
-                        <Input size='large' placeholder="Enter your new cool username here..." />
-                    </Form.Item>
-
-                    <Form.Item style={{ marginTop: 24 }}>
-                        <Button
-                            size='large'
-                            variant='solid'
-                            color='cyan'
-                            htmlType="submit"
-                            block
+                    <Form layout="vertical" onFinish={handleFinish}>
+                        <Form.Item
+                            label="New Username"
+                            name="UserName"
+                            rules={[{ required: true }, { min: 2 }, { max: 50 }]}
                         >
-                            Change
-                        </Button>
-                    </Form.Item>
+                            <Input size='large' placeholder="Enter your new cool username here..." />
+                        </Form.Item>
 
-                </Form>
-            </Card>
+                        <Form.Item style={{ marginTop: 24 }}>
+                            <Button
+                                size='large'
+                                variant='solid'
+                                color='cyan'
+                                htmlType="submit"
+                                block
+                            >
+                                Change
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Card>
+            </motion.div>
         </div>
     )
 };

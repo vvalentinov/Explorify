@@ -170,7 +170,7 @@ const UploadPlace = () => {
                     <Form.Item
                         name="Name"
                         label="Name"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Input placeholder="Enter place name..." />
                     </Form.Item>
@@ -211,7 +211,7 @@ const UploadPlace = () => {
                     <Form.Item
                         name="CategoryId"
                         label="Category"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Cascader
                             options={categoryOptions}
@@ -223,7 +223,7 @@ const UploadPlace = () => {
                     <Form.Item
                         name="CountryId"
                         label="Country"
-                        rules={[{ required: true }]}
+                    // rules={[{ required: true }]}
                     >
                         <Select
                             showSearch
@@ -292,7 +292,7 @@ const UploadPlace = () => {
                     <Form.Item
                         name="Description"
                         label="Description"
-                        rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
+                    // rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
                         <Input.TextArea
                             // value={description}
@@ -310,7 +310,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="Rating"
                             label="Rating"
-                            rules={[{ required: true }]}
+                        // rules={[{ required: true }]}
                         >
                             <Rate id="Rating" allowClear />
                         </Form.Item>
@@ -318,7 +318,7 @@ const UploadPlace = () => {
                         <Form.Item
                             name="ReviewContent"
                             label="Content"
-                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
+                        // rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
                         >
                             <Input.TextArea
                                 placeholder="Share your experience..."

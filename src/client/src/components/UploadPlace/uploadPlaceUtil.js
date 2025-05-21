@@ -25,18 +25,37 @@ export const mapCountryOptions = (countries) => {
 
 export const generateFormData = (data) => {
 
+    console.log(data.CategoryId);
+
     const formData = new FormData();
 
     formData.append("Name", data.Name ?? "");
     formData.append("Address", data.Address ?? "");
-    formData.append("Description", data.Description);
-    formData.append("CategoryId", data.CategoryId[0]);
-    formData.append("SubcategoryId", data.CategoryId[1]);
-    formData.append("CountryId", data.CountryId);
-    formData.append("ReviewRating", data.Rating);
-    formData.append("ReviewContent", data.ReviewContent);
-    formData.append("Latitude", data.Latitude);
-    formData.append("Longitude", data.Longitude);
+    formData.append("Description", data.Description ?? "");
+
+    if (data.CategoryId) {
+        formData.append("CategoryId", data.CategoryId[0]);
+        formData.append("SubcategoryId", data.CategoryId[1]);
+    } else {
+        formData.append("CategoryId", 0);
+        formData.append("SubcategoryId", 0);
+    }
+
+    if (data.CountryId) {
+        formData.append("CountryId", data.CountryId);
+    } else {
+        formData.append("CountryId", 0);
+    }
+
+    formData.append("ReviewRating", data.Rating ?? 0);
+    formData.append("ReviewContent", data.ReviewContent ?? "");
+
+    if (data.Latitude) {
+        formData.append("Latitude", data.Latitude);
+    }
+    if (data.Longitude) {
+        formData.append("Longitude", data.Longitude);
+    }
 
     data.Images?.forEach(file => {
         if (file.originFileObj) {

@@ -45,9 +45,9 @@ export const generateFormData = (data, toBeRemovedImagesIds) => {
     formData.append("Longitude", data.Longitude ?? "");
     formData.append("Address", data.Address ?? "");
     formData.append("Description", data.Description);
-    formData.append("CategoryId", data.CategoryId[0]);
-    formData.append("SubcategoryId", data.CategoryId[1]);
-    formData.append("CountryId", data.CountryId);
+    formData.append("CategoryId", data.CategoryId ? data.CategoryId[0] : 0);
+    formData.append("SubcategoryId", data.CategoryId ? data.CategoryId[1] : 0);
+    formData.append("CountryId", data.CountryId ?? 0);
     formData.append("ReviewRating", data.Rating);
     formData.append("ReviewContent", data.ReviewContent);
     toBeRemovedImagesIds.forEach(id => formData.append('ToBeRemovedImagesIds', id));
@@ -58,11 +58,11 @@ export const generateFormData = (data, toBeRemovedImagesIds) => {
         }
     });
 
-    // if (data.Tags?.length > 0) {
-    //     data.Tags.forEach(tagId => {
-    //         formData.append("VibesIds", tagId);
-    //     });
-    // }
+    if (data.Tags?.length > 0) {
+        data.Tags.forEach(tagId => {
+            formData.append("TagsIds", tagId);
+        });
+    }
 
     return formData;
 };
