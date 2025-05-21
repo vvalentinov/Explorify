@@ -7,6 +7,8 @@ public class PlaceDetailsResponseModel
 {
     public Guid Id { get; set; }
 
+    public double AvgRating { get; set; }
+
     public PlaceCoordinates Coordinates { get; set; } = default!;
 
     public string Name { get; set; } = string.Empty;

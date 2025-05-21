@@ -70,6 +70,7 @@ public class GetPlaceByIdQueryHandler
                         Id = x.PlaceVibeId,
                         Name = x.PlaceVibe.Name,
                     }).ToList(),
+                AvgRating = x.Reviews.Where(x => !x.IsDeleted && x.IsApproved).Average(x => x.Rating)
             }).FirstOrDefaultAsync(
                 x => x.Id == request.PlaceId,
                 cancellationToken);
