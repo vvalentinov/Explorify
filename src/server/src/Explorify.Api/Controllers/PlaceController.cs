@@ -28,11 +28,17 @@ public class PlaceController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
-    [RequestSizeLimit(10 * 1024 * 1024)]
-    public async Task<IActionResult> Upload(UploadPlaceRequestDto model)
-        => this.CreatedAtActionOrProblemDetails(
-                await _mediator.Send(new UploadPlaceCommand(model.ToApplicationModel(User.GetId()))),
-                nameof(Upload));
+    [RequestSizeLimit(5 * 1024 * 1024)]
+    public async Task<IActionResult> Upload([FromForm] UploadPlaceRequestDto model)
+    {
+        var applicationModel = await model.ToApplicationModelAsync(User.GetId());
+
+        var command = new UploadPlaceCommand(applicationModel);
+
+        var result = await _mediator.Send(command);
+
+        return this.CreatedAtActionOrProblemDetails(result, nameof(Upload));
+    }
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInCategory))]
@@ -53,7 +59,7 @@ public class PlaceController : BaseController
     public async Task<IActionResult> GetPlaceDetailsById(Guid placeId)
         => this.OkOrProblemDetails(
                 await _mediator.Send(
-                    new GetPlaceByIdQuery(placeId)));
+                    new GetPlaceByIdQuery(placeId, User.GetId())));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]
@@ -78,8 +84,14 @@ public class PlaceController : BaseController
                     new GetEditDataQuery(placeId, User.GetId())));
 
     [HttpPut(nameof(Edit))]
-    public async Task<IActionResult> Edit(EditPlaceRequestDto model)
-        => this.OkOrProblemDetails(
-            await _mediator.Send(
-                new UpdatePlaceCommand(model.ToApplicationModel(User.GetId()))));
+    public async Task<IActionResult> Edit([FromForm] EditPlaceRequestDto model)
+    {
+        var applicationModel = await model.ToApplicationModelAsync(User.GetId());
+
+        var command = new UpdatePlaceCommand(applicationModel);
+
+        var result = await _mediator.Send(command);
+
+        return this.OkOrProblemDetails(result);
+    }
 }

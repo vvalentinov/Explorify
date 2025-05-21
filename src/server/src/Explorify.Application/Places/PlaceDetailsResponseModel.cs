@@ -30,4 +30,6 @@ public class PlaceDetailsResponseModel
     public JsonElement WeatherData { get; set; }
 
     public List<VibeResponseModel> Tags { get; set; } = [];
+
+    public bool IsApproved { get; set; }
 }

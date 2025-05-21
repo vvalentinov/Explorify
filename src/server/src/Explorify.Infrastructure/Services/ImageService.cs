@@ -1,10 +1,11 @@
 ﻿using System.Collections.Concurrent;
+
 using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Abstractions.Interfaces;
 
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Infrastructure.Services;
 

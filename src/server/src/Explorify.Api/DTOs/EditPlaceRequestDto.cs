@@ -1,13 +1,9 @@
-﻿using Explorify.Application.Places;
-using Explorify.Infrastructure.Binders;
-using Explorify.Application.Abstractions.Models;
-
-using Microsoft.AspNetCore.Mvc;
-
-namespace Explorify.Api.DTOs;
+﻿namespace Explorify.Api.DTOs;
 
 public class EditPlaceRequestDto
 {
+    public Guid UserId { get; set; }
+
     public Guid PlaceId { get; set; }
 
     public string Name { get; set; } = string.Empty;
@@ -26,35 +22,13 @@ public class EditPlaceRequestDto
 
     public string ReviewContent { get; set; } = string.Empty;
 
-    public Guid UserId { get; set; }
-
     public decimal? Latitude { get; set; }
+
     public decimal? Longitude { get; set; }
 
     public List<int> ToBeRemovedImagesIds { get; set; } = new();
 
     public List<int> TagsIds { get; set; } = new();
 
-
-    [ModelBinder(BinderType = typeof(UploadFileListModelBinder))]
-    public List<UploadFile> NewImages { get; set; } = new();
-
-    public EditPlaceRequestModel ToApplicationModel(Guid userId) => new EditPlaceRequestModel
-    {
-        PlaceId = PlaceId,
-        Name = Name,
-        Description = Description,
-        Address = Address ?? string.Empty,
-        CategoryId = CategoryId,
-        SubcategoryId = SubcategoryId,
-        CountryId = CountryId,
-        ReviewRating = ReviewRating,
-        ReviewContent = ReviewContent,
-        ToBeRemovedImagesIds = ToBeRemovedImagesIds,
-        NewImages = NewImages,
-        Latitude = Latitude,
-        Longitude = Longitude,
-        UserId = userId,
-        TagsIds = TagsIds,
-    };
+    public List<IFormFile> NewImages { get; set; } = new();
 }

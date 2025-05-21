@@ -2,7 +2,10 @@
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
+using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Explorify.Api.DTOs.Validators;
 
 namespace Explorify.Api.Extensions;
 
@@ -39,8 +42,12 @@ public static class ServiceCollectionExtensions
             .AddCORS()
             .AddFluentValidationAutoValidation(config =>
             {
+                config.DisableBuiltInModelValidation = true;
+                config.EnableFormBindingSourceAutomaticValidation = true;
                 config.OverrideDefaultResultFactoryWith<CustomResultFactory>();
             });
+
+        services.AddValidatorsFromAssemblyContaining<UploadPlaceRequestDtoValidator>();
 
         return services;
     }

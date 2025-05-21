@@ -34,5 +34,7 @@ public static class PlaceConstants
         public const string PlaceEditSuccess = "Successfull place edit! When an admin approves your request you will receive a notification.";
 
         public const string PlaceDeleteSuccess = "Successfull place delete!";
+
+        public const string PlaceUploadSuccess = "Successfull place upload! When an admin approves your request you will receive a notification.";
     }
 }

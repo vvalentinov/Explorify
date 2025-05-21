@@ -5,6 +5,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 
 using Microsoft.Extensions.Options;
+using Azure.Storage;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -34,7 +35,24 @@ public class BlobService : IBlobService
 
         var blobClient = containerClient.GetBlobClient(name);
 
-        await blobClient.UploadAsync(fileStream, overwrite: true);
+        if (await blobClient.ExistsAsync())
+        {
+            await blobClient.DeleteAsync();
+        }
+
+        var options = new BlobUploadOptions
+        {
+            TransferOptions = new StorageTransferOptions
+            {
+                // Optimal values depend onenvironment and blob size:
+                InitialTransferSize = 4 * 1024 * 1024, // First block size (4 MB)
+                MaximumTransferSize = 8 * 1024 * 1024, // Max per block (8 MB)
+                MaximumConcurrency = 4 // Number of concurrent I/O operations
+            },
+        };
+
+        await blobClient.UploadAsync(fileStream, options);
+        //await blobClient.UploadAsync(fileStream, options, overwrite: true);
 
         return Uri.UnescapeDataString(blobClient.Uri.AbsoluteUri);
     }

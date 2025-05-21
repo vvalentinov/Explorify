@@ -8,6 +8,7 @@ using Explorify.Application.Abstractions.Interfaces.Messaging;
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
 
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Explorify.Application.Places.GetPlaceById;
 
@@ -32,16 +33,29 @@ public class GetPlaceByIdQueryHandler
         GetPlaceByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var responseModel = await _repository
-            .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved)
+        var query = _repository.AllAsNoTracking<Place>();
+
+        if (request.CurrentUserId.HasValue == false)
+        {
+            query = query.Where(x => x.IsApproved);
+        }
+        else
+        {
+            // If authenticated, allow the user to fetch their own unapproved places too
+            query = query.Where(x => x.IsApproved || x.UserId == request.CurrentUserId.Value);
+        }
+
+        var responseModel = await query
+            //.Where(x => x.Id == request.PlaceId)
             .Select(x => new PlaceDetailsResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
                 UserId = x.UserId,
+                IsApproved = x.IsApproved,
                 Description = x.Description,
                 ImagesUrls = x.Photos
+                    .Where(x => !x.IsDeleted)
                     .OrderByDescending(x => x.CreatedOn)
                     .Select(c => c.Url)
                     .ToList(),

@@ -17,14 +17,17 @@ public class DeletePlaceCommandHandler
     private readonly IRepository _repository;
 
     private readonly IUserService _userService;
+    private readonly IBlobService _blobService;
 
     public DeletePlaceCommandHandler(
         IRepository repository,
-        IUserService userService)
+        IUserService userService,
+        IBlobService blobService)
     {
         _repository = repository;
 
         _userService = userService;
+        _blobService = blobService;
     }
 
     public async Task<Result> Handle(
@@ -48,44 +51,48 @@ public class DeletePlaceCommandHandler
             return Result.Failure();
         }
 
-        if (!request.IsCurrUserAdmin && place.UserId != request.CurrentUserId)
+        if (!request.IsCurrUserAdmin &&
+            place.UserId != request.CurrentUserId)
         {
             var error = new Error(DeleteError, ErrorType.Validation);
             return Result.Failure(error);
         }
 
         // Delete ReviewLikes
-        //var reviewIds = place.Reviews.Select(r => r.Id).ToList();
+        var reviewIds = place.Reviews.Select(r => r.Id).ToList();
 
-        //var reviewLikes = await _repository
-        //    .All<Domain.Entities.ReviewsLikes>()
-        //    .Where(rl => reviewIds.Contains(rl.ReviewId))
-        //    .ToListAsync(cancellationToken);
+        var reviewLikes = await _repository
+            .All<Domain.Entities.ReviewsLikes>()
+            .Where(rl => reviewIds.Contains(rl.ReviewId))
+            .ToListAsync(cancellationToken);
 
-        //foreach (var like in reviewLikes)
-        //{
-        //    _repository.HardDelete(like);
-        //}
+        foreach (var like in reviewLikes)
+        {
+            _repository.HardDelete(like);
+        }
 
         // Soft delete ReviewPhotos
-        //var reviewPhotos = place.Reviews.SelectMany(r => r.Photos).ToList();
+        var reviewPhotos = place.Reviews.SelectMany(r => r.Photos).ToList();
 
-        //foreach (var photo in reviewPhotos)
-        //{
-        //    _repository.SoftDelete(photo);
-        //}
-
-        // Soft delete Reviews
-        //foreach (var review in place.Reviews)
-        //{
-        //    _repository.SoftDelete(review);
-        //}
-
-        // Soft delete PlacePhotos
-        foreach (var photo in place.Photos)
+        foreach (var photo in reviewPhotos)
         {
             _repository.SoftDelete(photo);
         }
+
+        // Soft delete Reviews
+        foreach (var review in place.Reviews)
+        {
+            _repository.SoftDelete(review);
+        }
+
+        // Soft delete PlacePhotos and remove them from storage
+        foreach (var photo in place.Photos)
+        {
+            _repository.SoftDelete(photo);
+            await _blobService.DeleteBlobAsync(photo.Url);
+        }
+
+        await _blobService.DeleteBlobAsync(place.ThumbUrl);
 
         // Hard delete VibeAssignments
         foreach (var assignment in place.PlaceVibeAssignments)
@@ -93,6 +100,7 @@ public class DeletePlaceCommandHandler
             _repository.HardDelete(assignment);
         }
 
+        // Hard delete favorite places
         foreach (var favPlace in place.FavoritePlaces)
         {
             _repository.HardDelete(favPlace);

@@ -1,5 +1,4 @@
 ﻿using Explorify.Domain.Entities;
-using Explorify.Application.Places.GetEditData;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
@@ -43,12 +42,14 @@ public class UpdatePlaceCommandHandler
         UpdatePlaceCommand request,
         CancellationToken cancellationToken)
     {
+        var model = request.Model;
+
         var place = await _repository
             .All<Place>()
             .Include(x => x.Photos)
             .Include(x => x.PlaceVibeAssignments)
             .FirstOrDefaultAsync(x =>
-                x.Id == request.Model.PlaceId,
+                x.Id == model.PlaceId,
                 cancellationToken);
 
         if (place == null)
@@ -57,17 +58,17 @@ public class UpdatePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        if (place.UserId != request.Model.UserId)
+        if (place.UserId != model.UserId)
         {
             var error = new Error(EditError, ErrorType.Validation);
-            return Result.Failure<GetEditDataResponseModel>(error);
+            return Result.Failure(error);
         }
 
         var category = await _repository
             .AllAsNoTracking<Category>()
             .Include(x => x.Children)
             .FirstOrDefaultAsync(x =>
-                x.Id == request.Model.CategoryId,
+                x.Id == model.CategoryId,
                 cancellationToken);
 
         if (category == null)
@@ -76,9 +77,7 @@ public class UpdatePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        var subcategory = category
-            .Children
-            .FirstOrDefault(x => x.Id == request.Model.SubcategoryId);
+        var subcategory = category.Children.FirstOrDefault(x => x.Id == model.SubcategoryId);
 
         if (subcategory == null)
         {
@@ -86,7 +85,7 @@ public class UpdatePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        var country = await _repository.GetByIdAsync<Country>(request.Model.CountryId);
+        var country = await _repository.GetByIdAsync<Country>(model.CountryId);
 
         if (country == null)
         {
@@ -94,20 +93,47 @@ public class UpdatePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        foreach (var imageIdToBeRemoved in request.Model.ToBeRemovedImagesIds)
-        {
-            var photo = place.Photos.FirstOrDefault(x => x.Id == imageIdToBeRemoved);
+        var validImageIds = place
+            .Photos
+            .Where(x => !x.IsDeleted)
+            .Select(x => x.Id)
+            .ToHashSet();
 
-            if (photo != null)
-            {
-                await _blobService.DeleteBlobAsync(photo.Url);
-                _repository.SoftDelete(photo);
-            }
+        var invalidImageIds = model.ToBeRemovedImagesIds
+            .Where(imageId => !validImageIds.Contains(imageId))
+            .ToList();
+
+        if (invalidImageIds.Count != 0)
+        {
+            var error = new Error("One or more image IDs to be deleted are invalid.", ErrorType.Validation);
+            return Result.Failure(error);
         }
 
-        if (request.Model.NewImages.Count > 0)
+        int totalAfterEdit = validImageIds.Count - model.ToBeRemovedImagesIds.Count + model.NewImages.Count;
+
+        if (totalAfterEdit < 1)
         {
-            var files = await _imageService.ProcessPlaceImagesAsync(request.Model.NewImages);
+            var error = new Error("A place must have at least one image.", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
+        if (totalAfterEdit > 10)
+        {
+            var error = new Error("A place cannot have more than 10 images.", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
+        foreach (var imageIdToBeRemoved in model.ToBeRemovedImagesIds)
+        {
+            var photo = place.Photos.First(x => x.Id == imageIdToBeRemoved);
+
+            _repository.SoftDelete(photo);
+            await _blobService.DeleteBlobAsync(photo.Url);
+        }
+
+        if (model.NewImages.Count > 0)
+        {
+            var files = await _imageService.ProcessPlaceImagesAsync(model.NewImages);
 
             var uploadTasks = files.Select(file =>
                 _blobService.UploadBlobAsync(
@@ -120,13 +146,14 @@ public class UpdatePlaceCommandHandler
             var thumbUrl = urls.First(url => Path.GetFileName(url).StartsWith("thumb_"));
             var otherUrls = urls.Where(url => Path.GetFileName(url).StartsWith("thumb_") == false);
 
+            await _blobService.DeleteBlobAsync(place.ThumbUrl);
+
             place.ThumbUrl = thumbUrl;
 
             foreach (var url in otherUrls)
             {
                 place.Photos.Add(new PlacePhoto { Url = url });
             }
-
         }
 
         place.PlaceVibeAssignments.Clear();
@@ -136,22 +163,24 @@ public class UpdatePlaceCommandHandler
             .Select(x => x.Id)
             .ToHashSet();
 
-        foreach (var tagId in request.Model.TagsIds)
+        bool anyTagsIdInvalid = model.TagsIds.Any(tagId => !validTagsIds.Contains(tagId));
+
+        if (anyTagsIdInvalid)
         {
-            if (validTagsIds.Contains(tagId))
+            var error = new Error("One or more provided tag's ID's are not valid", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
+        foreach (var tagId in model.TagsIds)
+        {
+            place.PlaceVibeAssignments.Add(new PlaceVibeAssignment()
             {
-                place.PlaceVibeAssignments.Add(new PlaceVibeAssignment() { PlaceVibeId = tagId });
-            }
+                PlaceVibeId = tagId
+            });
         }
 
         var latProvided = request.Model.Latitude.HasValue;
         var lngProvided = request.Model.Longitude.HasValue;
-
-        if (latProvided ^ lngProvided)
-        {
-            var error = new Error("Both Latitude and Longitude must be provided together.", ErrorType.Validation);
-            return Result.Failure(error);
-        }
 
         if (!latProvided && !lngProvided)
         {
@@ -191,9 +220,12 @@ public class UpdatePlaceCommandHandler
         place.Description = request.Model.Description;
         place.CategoryId = request.Model.SubcategoryId;
 
-        await _userService.DecreaseUserPointsAsync(
-            place.UserId.ToString(),
-            UserPlaceUploadPoints);
+        if (place.IsApproved)
+        {
+            await _userService.DecreaseUserPointsAsync(
+                place.UserId.ToString(),
+                UserPlaceUploadPoints);
+        }
 
         _repository.Update(userReview);
         _repository.Update(place);

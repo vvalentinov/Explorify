@@ -3,6 +3,7 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants.SuccessMessages;
 using static Explorify.Domain.Constants.CountryConstants.ErrorMessages;
 using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
@@ -28,9 +29,10 @@ public class UploadPlaceCommandHandler
         IGeocodingService geocodingService)
     {
         _repository = repository;
+        _slugGenerator = slugGenerator;
+
         _blobService = blobService;
         _imageService = imageService;
-        _slugGenerator = slugGenerator;
         _geocodingService = geocodingService;
     }
 
@@ -40,21 +42,12 @@ public class UploadPlaceCommandHandler
     {
         UploadPlaceRequestModel model = request.Model;
 
-        //bool placeWithNameExists = await _repository
-        //    .AllAsNoTracking<Place>()
-        //    .AnyAsync(x => EF.Functions.Like(x.Name, model.Name), cancellationToken);
-
-        //if (placeWithNameExists)
-        //{
-        //    var error = new Error("Place with given name already exists!", ErrorType.Validation);
-        //    return Result.Failure(error);
-        //}
-
         var category = await _repository
             .AllAsNoTracking<Category>()
             .Include(x => x.Children)
             .FirstOrDefaultAsync(x =>
-                x.Id == model.CategoryId, cancellationToken);
+                x.Id == model.CategoryId,
+                cancellationToken);
 
         if (category == null)
         {
@@ -78,16 +71,77 @@ public class UploadPlaceCommandHandler
             return Result.Failure(error);
         }
 
-        var existingTags = await _repository
+        var validTagsIds = await _repository
             .AllAsNoTracking<PlaceVibe>()
-            .Where(t => model.VibesIds.Contains(t.Id))
+            .Select(x => x.Id)
             .ToListAsync(cancellationToken);
 
-        if (existingTags.Count != model.VibesIds.Count)
+        var tagsAreValid = model.VibesIds.All(validTagsIds.Contains);
+
+        if (tagsAreValid == false)
         {
             var error = new Error("One or more provided tags do not exist.", ErrorType.Validation);
             return Result.Failure(error);
         }
+
+        var review = new Review
+        {
+            UserId = model.UserId,
+            Rating = (short)model.ReviewRating,
+            Content = model.ReviewContent,
+        };
+
+        var place = new Place
+        {
+            Name = model.Name,
+            UserId = model.UserId,
+            CountryId = model.CountryId,
+            Description = model.Description,
+            CategoryId = model.SubcategoryId,
+            Reviews = new List<Review> { review },
+            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
+        };
+
+        bool latProvided = model.Latitude != null && model.Latitude != 0;
+        bool longProvided = model.Longitude != null && model.Longitude != 0;
+
+        if (!latProvided && !longProvided)
+        {
+            string fullAddress = !string.IsNullOrWhiteSpace(request.Model.Address)
+                ? $"{request.Model.Name}, {request.Model.Address}, {country.Name}"
+                : $"{request.Model.Name}, {country.Name}";
+
+            var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
+            if (coordinates != null)
+            {
+                place.Latitude = (decimal)coordinates.Latitude;
+                place.Longitude = (decimal)coordinates.Longitude;
+            }
+        }
+        else if (latProvided && longProvided)
+        {
+            place.Latitude = model.Latitude;
+            place.Longitude = model.Longitude;
+        }
+        //else
+        //{
+        //    var error = new Error("Both latitude and longitude must be provided together or omitted.", ErrorType.Validation);
+        //    return Result.Failure(error);
+        //}
+
+        var placeVibeAssignments = new List<PlaceVibeAssignment>();
+
+        foreach (var tagId in model.VibesIds)
+        {
+            placeVibeAssignments.Add(new PlaceVibeAssignment
+            {
+                PlaceId = place.Id,
+                PlaceVibeId = tagId,
+            });
+        }
+
+        place.PlaceVibeAssignments = placeVibeAssignments;
 
         var placePhotos = new List<PlacePhoto>();
 
@@ -109,65 +163,12 @@ public class UploadPlaceCommandHandler
             placePhotos.Add(new PlacePhoto { Url = url });
         }
 
-        var review = new Review
-        {
-            UserId = model.UserId,
-            Rating = (short)model.ReviewRating,
-            Content = model.ReviewContent,
-        };
-
-        var place = new Place
-        {
-            ThumbUrl = thumbUrl,
-            Name = model.Name,
-            Photos = placePhotos,
-            UserId = model.UserId,
-            CountryId = model.CountryId,
-            Description = model.Description,
-            CategoryId = model.SubcategoryId,
-            Reviews = new List<Review> { review },
-            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
-        };
-
-        var placeVibeAssignments = new List<PlaceVibeAssignment>();
-
-        foreach (var item in existingTags)
-        {
-            placeVibeAssignments.Add(new PlaceVibeAssignment
-            {
-                PlaceId = place.Id,
-                PlaceVibeId = item.Id,
-            });
-        }
-
-        place.PlaceVibeAssignments = placeVibeAssignments;
-
-        if (model.Latitude == 0 && model.Longitude == 0)
-        {
-            string fullAddress;
-
-            if (request.Model.Address != null &&
-                string.IsNullOrWhiteSpace(request.Model.Address) == false)
-            {
-                fullAddress = $"{model.Name}, {request.Model.Address}, {country.Name}";
-            }
-            else
-            {
-                fullAddress = $"{model.Name}, {country.Name}";
-            }
-
-            var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
-
-            if (coordinates != null)
-            {
-                place.Latitude = (decimal)coordinates.Latitude;
-                place.Longitude = (decimal)coordinates.Longitude;
-            }
-        }
+        place.ThumbUrl = thumbUrl;
+        place.Photos = placePhotos;
 
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();
 
-        return Result.Success("Successfull place upload! When an admin approves your place, you will receive a notification!");
+        return Result.Success(PlaceUploadSuccess);
     }
 }
