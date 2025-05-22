@@ -9,7 +9,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 
 import { Routes, Route, useLocation } from 'react-router-dom';
 
-import AdminLayout from './components/Admin/AdminLayout';
+import AdminLayout from './components/Admin/AdminLayout/AdminLayout';
 
 import Alert from './components/Alert';
 

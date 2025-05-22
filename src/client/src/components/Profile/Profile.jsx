@@ -230,63 +230,6 @@ const Profile = () => {
                     </div>
                 </div>
 
-                {/* <div className={styles.settingsGrid}>
-                    {settingsSections.map((section) => (
-                        <Card
-                            key={section.title}
-                            style={{
-                                width: '100%',
-                                marginTop: '1.5rem',
-                                backgroundColor: section.color,
-                                borderRadius: '16px',
-                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                                padding: '1.5rem 2rem',
-                            }}
-                            styles={{
-                                header: {
-                                    fontSize: '1.25rem',
-                                    fontWeight: 600,
-                                    paddingLeft: 0,
-                                    borderBottom: 'none',
-                                },
-                                body: {
-                                    textAlign: 'center',
-                                    padding: '0'
-                                }
-                            }}
-                            title={section.title}
-                        >
-                            <p style={{
-                                fontSize: '1.05rem',
-                                lineHeight: 1.65,
-                                color: '#444',
-                                marginBottom: '1.5rem'
-                            }}>
-                                {section.description}
-                            </p>
-
-                            <Link to={section.link}>
-                                <Button
-                                    // block
-                                    style={{
-                                        backgroundColor: '#9c4dcc',
-                                        color: '#fff',
-                                        fontWeight: 600,
-                                        border: 'none',
-                                        height: '42px',
-                                        fontSize: '1rem',
-                                        transition: 'background-color 0.3s ease',
-                                    }}
-                                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#8a3dac'}
-                                    onMouseLeave={e => e.currentTarget.style.backgroundColor = '#9c4dcc'}
-                                >
-                                    {section.buttonText}
-                                </Button>
-                            </Link>
-                        </Card>
-                    ))}
-                </div> */}
-
                 <div className={styles.settingsGrid}>
                     {settingsSections.map((section) => (
                         <motion.div

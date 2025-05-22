@@ -22,12 +22,6 @@ createRoot(document.getElementById('root')).render(
                         colorPrimary: '#13c2c2',
                         hoverBorderColor: '#13c2c2'
                     },
-                    // Pagination: {
-                    //     itemActiveBg: '#e8fffb',
-                    //     itemActiveColor: '#52c41a',
-                    //     colorPrimary: '#52c41a',
-                    //     colorPrimaryHover: '#389e0d',
-                    // },
                     Select: {
                         activeBorderColor: '#13c2c2',
                         hoverBorderColor: '#13c2c2',

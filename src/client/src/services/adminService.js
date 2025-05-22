@@ -11,5 +11,7 @@ export const adminServiceFactory = (token) => {
         approvePlace: (placeId) => request.put(`${baseUrl}/Admin/ApprovePlace?placeId=${placeId}`),
         approveReview: (reviewId) => request.put(`${baseUrl}/Admin/ApproveReview?reviewId=${reviewId}`),
         getUnapprovedReviews: (page) => request.get(`${baseUrl}/Admin/GetUnapprovedReviews?page=${page}`),
+        getUnapprovedPlace: (placeId) => request.get(`${baseUrl}/Admin/GetUnapprovedPlace?placeId=${placeId}`),
+        getApprovedPlaces: (page) => request.get(`${baseUrl}/Admin/GetApprovedPlaces?page=${page}`),
     }
 };

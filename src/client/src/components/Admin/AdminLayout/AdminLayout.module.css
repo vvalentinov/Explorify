@@ -1,0 +1,31 @@
+.adminContent {
+    padding: 32px;
+    background-color: #1e1e2f;
+    color: white;
+    min-height: calc(100vh - 64px);
+}
+
+.adminHeader {
+    padding: 0 !important;
+}
+
+.adminNavContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* border: solid 1px red; */
+
+    /* padding: 0 2rem; */
+}
+
+.adminMenuLeft {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.adminMenuRight {
+    display: flex;
+    justify-content: flex-end;
+}

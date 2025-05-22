@@ -68,8 +68,11 @@ const AdminDashboard = () => {
 
     return (
         <div style={{ padding: '2rem' }}>
-            <Title level={2}>Welcome to the Admin Dashboard 👋</Title>
-            <Paragraph type="secondary">
+
+            <Title level={2} style={{ color: '#fff' }}>
+                Welcome to the Admin Dashboard 👋
+            </Title>
+            <Paragraph style={{ color: '#fff' }} type="secondary">
                 Keep an eye on what’s happening in the app. Here’s a quick overview of items.
             </Paragraph>
 

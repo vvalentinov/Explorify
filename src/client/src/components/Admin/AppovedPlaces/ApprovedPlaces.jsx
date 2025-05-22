@@ -1,27 +1,16 @@
-import styles from './UnapprovedPlaces.module.css';
+import styles from './ApprovedPlaces.module.css';
 
-import {
-    useState,
-    useEffect,
-    useContext,
-} from "react";
+import { useState, useEffect } from 'react';
 
-import {
-    Card,
-    Spin,
-    App,
-    Pagination,
-    ConfigProvider,
-} from 'antd';
+import { useNavigate, Link } from 'react-router-dom';
 
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
 
-import { AuthContext } from "../../../contexts/AuthContext";
-import { adminServiceFactory } from "../../../services/adminService";
+import { AuthContext } from '../../../contexts/AuthContext';
 
-import { fireError } from '../../../utils/fireError';
+import { adminServiceFactory } from '../../../services/adminService';
 
-import { useNavigate } from 'react-router-dom';
+import { Pagination, ConfigProvider, Spin, Card } from 'antd';
 
 import { motion } from 'framer-motion';
 
@@ -40,9 +29,7 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
-const UnapprovedPlaces = () => {
-
-    const { notification } = App.useApp();
+const ApprovedPlaces = () => {
 
     const navigate = useNavigate();
 
@@ -50,130 +37,63 @@ const UnapprovedPlaces = () => {
 
     const adminService = adminServiceFactory(token);
 
-    // State Management
     const [places, setPlaces] = useState([]);
-    const [loading, setLoading] = useState(true);
+
     const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [spinnerLoading, setSpinnerLoading] = useState(false);
 
     useEffect(() => {
 
-        const startTime = Date.now();
-
-        adminService
-            .getUnapprovedPlaces(currentPage)
-            .then(res => {
-
-                setPlaces(res.places);
-                setPagesCount(res.pagination.pagesCount);
-
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(1000 - elapsed, 0);
-
-                setTimeout(() => setLoading(false), remainingTime);
-
-            })
-            .catch(err => {
-                fireError(err);
-                setLoading(false);
-            });
-    }, []);
-
-    const handlePageChange = (page) => {
-
-        setLoading(true);
-        setCurrentPage(page);
+        setSpinnerLoading(true);
 
         const MIN_SPINNER_TIME = 1000;
         const startTime = Date.now();
 
         adminService
-            .getUnapprovedPlaces(page)
+            .getApprovedPlaces(currentPage)
             .then(res => {
 
                 const elapsed = Date.now() - startTime;
                 const remaining = MIN_SPINNER_TIME - elapsed;
 
                 setTimeout(() => {
-                    setPlaces(res.places);
                     setPagesCount(res.pagination.pagesCount);
-                    setLoading(false);
+                    setPlaces(res.places);
+                    setSpinnerLoading(false);
+                    // setShouldScroll(true);
                 }, remaining > 0 ? remaining : 0);
-            })
-            .catch(err => {
-                setLoading(false);
-                fireError(err);
-            });
+            }).catch(err => console.log(err));
+
+    }, []);
+
+    const handlePageChange = (page) => {
+
+        setCurrentPage(page);
+        setSpinnerLoading(true);
+
+        const MIN_SPINNER_TIME = 1000;
+        const startTime = Date.now();
+
+        adminService
+            .getApprovedPlaces(page)
+            .then(res => {
+
+                const elapsed = Date.now() - startTime;
+                const remaining = MIN_SPINNER_TIME - elapsed;
+
+                setTimeout(() => {
+                    setPagesCount(res.pagination.pagesCount);
+                    setPlaces(res.places);
+                    setSpinnerLoading(false);
+                    // setShouldScroll(true);
+                }, remaining > 0 ? remaining : 0);
+            }).catch(err => console.log(err));
     };
 
     return (
         <>
-            {/* <section className={styles.unapprovedPlacesSection} >
-
-                <div className={styles.unapprovedPlacesContainer}>
-                    {
-                        loading ?
-                            (
-                                <div style={{ textAlign: 'center' }}>
-                                    <ConfigProvider theme={{
-                                        components: {
-                                            Spin: {
-                                                colorPrimary: 'white'
-                                            }
-                                        }
-                                    }}>
-                                        <Spin size='large' />
-                                    </ConfigProvider>
-                                </div>
-                            ) :
-                            places.map(place =>
-                                <Card
-                                    hoverable
-                                    key={place.id}
-                                    className={styles.unapprovedPlaceCard}
-                                    cover={
-                                        <img
-                                            alt={place.name}
-                                            src={place.imageUrl}
-                                            style={{
-                                                objectFit: 'cover',
-                                                height: '250px',
-                                                width: '100%',
-                                            }}
-                                        />
-                                    }
-                                    style={{
-                                        overflow: 'hidden',
-                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                    styles={{
-                                        body: {
-                                            padding: 0
-                                        }
-                                    }}
-                                    onClick={() =>
-                                        navigate(`/admin/unapproved-place/${place.slugifiedName}`, {
-                                            state: { placeId: place.id },
-                                        })
-                                    }
-                                />
-
-                            )
-                    }
-                </div>
-
-                {pagesCount > 1 && !loading && <Pagination
-                    pageSize={6}
-                    align='center'
-                    current={currentPage}
-                    total={pagesCount * 6}
-                    onChange={handlePageChange}
-                    style={{ textAlign: 'center', marginBottom: '2rem' }}
-                />}
-
-            </section> */}
-
-            {loading ?
+            {spinnerLoading ?
                 <div style={{
                     display: 'flex',
                     justifyContent: 'center',
@@ -187,7 +107,7 @@ const UnapprovedPlaces = () => {
                             }
                         }
                     }}>
-                        <Spin size='large' spinning={loading} />
+                        <Spin size='large' spinning={spinnerLoading} />
                     </ConfigProvider>
                 </div> :
                 <>
@@ -210,17 +130,19 @@ const UnapprovedPlaces = () => {
                                 variants={itemVariants}
                                 style={{
                                     width: 'calc(33.33% - 1rem)',
-                                    cursor: 'pointer',
+                                    // cursor: 'pointer',
                                     textDecoration: 'none',
                                 }}
-                            // whileHover={{ scale: 1.03 }}
                             >
+
                                 <Link
-                                    to={`/admin/unapproved-place/${place.slugifiedName}`}
+                                    to={`/admin/approved-place/${place.slugifiedName}`}
                                     state={{ placeId: place.id }}
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <Card className={styles.card}
+
+                                    <Card
+                                        className={styles.card}
                                         hoverable
                                         cover={
                                             <img
@@ -249,8 +171,42 @@ const UnapprovedPlaces = () => {
                                         }}
                                     >
                                         <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+
+                                        {/* <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                                        <button
+                                            onClick={() =>
+                                                navigate(`/place/${place.slugifiedName}`, { state: { placeId: place.id } })
+                                            }
+                                            style={{
+                                                backgroundColor: '#52c41a',
+                                                color: 'white',
+                                                padding: '6px 16px',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            Go To Place
+                                        </button>
+                                        <button
+                                            onClick={() => console.log('Unapprove logic here')}
+                                            style={{
+                                                backgroundColor: '#ff4d4f',
+                                                color: 'white',
+                                                padding: '6px 16px',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            Unapprove
+                                        </button>
+                                    </div> */}
                                     </Card>
                                 </Link>
+
                             </motion.div>
                         ))}
                     </motion.section>
@@ -259,8 +215,6 @@ const UnapprovedPlaces = () => {
                         <ConfigProvider theme={{
                             components: {
                                 Pagination: {
-                                    // itemHoverBg: '#f0f0f0', // subtle light gray background on hover
-                                    // itemHoverColor: '#000',
                                 },
                             }
                         }}>
@@ -279,6 +233,7 @@ const UnapprovedPlaces = () => {
             }
         </>
     );
+
 };
 
-export default UnapprovedPlaces;
+export default ApprovedPlaces;

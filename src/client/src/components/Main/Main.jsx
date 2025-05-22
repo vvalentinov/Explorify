@@ -31,37 +31,41 @@ const Main = () => {
     return (
         <main>
 
-            <ScrollToTop />
+            <div className='mainContainer'>
 
-            <Routes>
+                <ScrollToTop />
 
-                <Route path={paths.profilePath} element={<Profile />} />
-                <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
-                <Route path={paths.changePasswordPath} element={<ChangePassword />} />
-                <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
+                <Routes>
 
-                <Route path={paths.homePath} element={<Home />} />
-                <Route path={paths.signInPath} element={<SignIn />} />
-                <Route path={paths.signUpPath} element={<SignUp />} />
-                <Route path={paths.categoriesPath} element={<Categories />} />
-                <Route path={paths.subcategoriesPath} element={<Subcategories />} />
-                <Route path={paths.logoutPath} element={<Logout />} />
-                <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
-                <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
-                <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
-                <Route path={paths.notificationsPath} element={<Notifications />} />
-                <Route path={paths.placeEditPath} element={<EditPlace />} />
+                    <Route path={paths.profilePath} element={<Profile />} />
+                    <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
+                    <Route path={paths.changePasswordPath} element={<ChangePassword />} />
+                    <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
 
-                <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
-                <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
+                    <Route path={paths.homePath} element={<Home />} />
+                    <Route path={paths.signInPath} element={<SignIn />} />
+                    <Route path={paths.signUpPath} element={<SignUp />} />
+                    <Route path={paths.categoriesPath} element={<Categories />} />
+                    <Route path={paths.subcategoriesPath} element={<Subcategories />} />
+                    <Route path={paths.logoutPath} element={<Logout />} />
+                    <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
+                    <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
+                    <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
+                    <Route path={paths.notificationsPath} element={<Notifications />} />
+                    <Route path={paths.placeEditPath} element={<EditPlace />} />
 
-                <Route path={paths.myPlacesPath} element={<MyPlaces />} />
+                    <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
+                    <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
-                <Route path='*' element={<NoPathFound />} />
+                    <Route path={paths.myPlacesPath} element={<MyPlaces />} />
 
-            </Routes>
+                    <Route path='*' element={<NoPathFound />} />
 
-            <FloatButton.BackTop />
+                </Routes>
+
+                <FloatButton.BackTop />
+
+            </div>
 
         </main>
     )

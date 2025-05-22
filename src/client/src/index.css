@@ -7,7 +7,14 @@ body {
     margin: 0;
 }
 
-main {
+/* main {
+    overflow: auto;
+    margin-top: 63px;
+    min-height: calc(100vh - 63px);
+    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
+} */
+
+.mainContainer {
     overflow: auto;
     margin-top: 63px;
     min-height: calc(100vh - 63px);
@@ -50,6 +57,10 @@ main {
     border: 1px solid #0ea5a5 !important;
     background-color: #0ea5a5 !important;
 } */
+
+.ant-layout-content {
+    padding: 0 !important;
+}
 
 .leaflet-top,
 .leaflet-bottom,

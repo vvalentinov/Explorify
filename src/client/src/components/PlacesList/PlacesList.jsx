@@ -2,8 +2,6 @@ import { Card } from 'antd';
 
 import { Link } from 'react-router-dom';
 
-import slugify from 'slugify';
-
 import styles from './PlacesList.module.css';
 
 import { motion } from 'framer-motion';
@@ -49,7 +47,7 @@ const PlacesList = ({ places }) => {
                 // whileHover={{ scale: 1.03 }}
                 >
                     <Link
-                        to={`/place/${slugify(place.name, { lower: true })}`}
+                        to={`/place/${place.slugifiedName}`}
                         state={{ placeId: place.id }}
                         style={{ textDecoration: 'none' }}
                     >

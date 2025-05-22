@@ -16,43 +16,41 @@ import {
     ConfigProvider
 } from 'antd';
 
-const PlaceDetailsSection = ({ place, mapUrl, loading }) => {
+const PlaceDetailsSection = ({
+    place,
+    mapUrl,
+    loading,
+    isForAdmin
+}) => {
+
+    const adminBgCardColor = '#d4cadf';
 
     return (
         <section className={styles.placeDetailsCardSection}>
             <Card
-                style={{ border: '1px solid green', width: '100%' }}
-                styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
+                className={styles.placeDetailsCard}
+                style={{
+                    border: isForAdmin ? 'solid 1px black' : 'solid 1px green'
+                }}
+                styles={{
+                    header:
+                    {
+                        backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb',
+                        // borderBottom: isForAdmin ? '1px solid violet' : '1px solid green'
+                    }
+                }}
                 title={
                     <div className={styles.cardHeader}>
                         <Avatar icon={<UserOutlined />} src={place.userProfileImageUrl} size={40} />
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            marginLeft: '1rem'
-                        }}
-                        >
-                            <span className={styles.placeTitle}>{place.name}</span>
-                            {/* <span style={{
-                                fontSize: '0.8rem',
-                                fontStyle: 'italic',
-                            }}
-                            >
-                                uploaded by: {place.userName}
-                                </span> */}
-                        </div>
-
+                        <span className={styles.placeTitle}>{place.name}</span>
                     </div>
                 }
-                className={styles.placeDetailsCard}
             >
 
                 <Flex justify='center' align='start' gap={'2rem'} >
 
                     <div style={{ width: '60%' }}>
 
-                        {/* {place.imagesUrls?.length > 0 && ( */}
                         {
                             loading ?
                                 <div style={{
@@ -103,12 +101,18 @@ const PlaceDetailsSection = ({ place, mapUrl, loading }) => {
                             loading={loading}
                             styles={{
                                 header:
-                                    { backgroundColor: '#e8fffb', borderBottom: '1px solid green' }
+                                {
+                                    backgroundColor: '#e8fffb',
+                                    borderBottom: '1px solid green'
+                                }
                             }}
-                            style={{ boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)', border: '1px solid green' }}
+                            style={{
+                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
+                                border: '1px solid green'
+                            }}
                             title={
                                 <span>
-                                    <InfoCircleOutlined style={{ marginRight: '5px' }} />
+                                    <InfoCircleOutlined style={{ marginRight: '10px' }} />
                                     Description
                                 </span>
                             }
@@ -190,10 +194,13 @@ const PlaceDetailsSection = ({ place, mapUrl, loading }) => {
                             </Card>
                         }
 
-                        {/* {place.weatherData?.current && <WeatherCard data={place.weatherData} />} */}
-                        {place.weatherData?.current && Object.keys(place.weatherData.current).length > 0 && (
-                            <WeatherCard data={place.weatherData} />
-                        )}
+                        {
+                            place.weatherData?.current &&
+                            Object.keys(place.weatherData.current).length > 0 &&
+                            (
+                                <WeatherCard data={place.weatherData} />
+                            )
+                        }
 
                     </div>
 
