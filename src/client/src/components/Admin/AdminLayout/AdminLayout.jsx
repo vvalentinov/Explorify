@@ -20,6 +20,8 @@ import UnapprovedReviews from '../UnapprovedReviews/UnapprovedReviews';
 import ApprovedPlaces from '../AppovedPlaces/ApprovedPlaces';
 import ApprovedPlace from '../ApprovedPlace/ApprovedPlace';
 
+import ScrollToTop from '../../ScrollToTop/ScrollToTop';
+
 import UnapprovedPlace from '../UnapprovedPlace/UnapprovedPlace';
 
 const { Header, Content, Footer } = Layout;
@@ -160,7 +162,10 @@ const AdminLayout = () => {
     return (
         <Layout style={{ minHeight: '100vh' }}>
 
+            <ScrollToTop />
+
             <Header className={styles.adminHeader}>
+
                 <div className={styles.adminNavContainer}>
 
                     {/* Left side: admin links */}
@@ -184,6 +189,8 @@ const AdminLayout = () => {
             </Header>
 
             <Content className={styles.adminContent}>
+
+
                 <Routes>
                     <Route index element={<AdminDashboard />} />
                     <Route path="users" element={<AdminUsers />} />

@@ -10,7 +10,9 @@ import { AuthContext } from '../../../contexts/AuthContext';
 
 import { adminServiceFactory } from '../../../services/adminService';
 
-import { Pagination, ConfigProvider, Spin, Card } from 'antd';
+import { Pagination, ConfigProvider, Spin, Card, Typography } from 'antd';
+
+import { UserOutlined, InfoCircleOutlined, CheckOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { motion } from 'framer-motion';
 
@@ -41,6 +43,7 @@ const ApprovedPlaces = () => {
 
     const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [recordsCount, setRecordsCount] = useState(0);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
 
     useEffect(() => {
@@ -59,6 +62,7 @@ const ApprovedPlaces = () => {
 
                 setTimeout(() => {
                     setPagesCount(res.pagination.pagesCount);
+                    setRecordsCount(res.pagination.recordsCount);
                     setPlaces(res.places);
                     setSpinnerLoading(false);
                     // setShouldScroll(true);
@@ -83,9 +87,9 @@ const ApprovedPlaces = () => {
                 const remaining = MIN_SPINNER_TIME - elapsed;
 
                 setTimeout(() => {
-                    setPagesCount(res.pagination.pagesCount);
                     setPlaces(res.places);
                     setSpinnerLoading(false);
+                    setPagesCount(res.pagination.pagesCount);
                     // setShouldScroll(true);
                 }, remaining > 0 ? remaining : 0);
             }).catch(err => console.log(err));
@@ -112,6 +116,35 @@ const ApprovedPlaces = () => {
                 </div> :
                 <>
 
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '2rem'
+                    }}>
+                        <div
+                            style={{
+                                backgroundColor: '#89ADFF',
+                                borderRadius: '999px',
+                                padding: '0.5rem 1.5rem',
+                                display: 'inline-block',
+                                margin: '0 auto',
+                                textAlign: 'center',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            }}
+                        >
+                            <Typography.Title
+                                level={3}
+                                style={{
+                                    margin: 0,
+                                    color: '#1f1e2f',
+                                }}
+                            >
+                                <CheckOutlined style={{ color: 'green', marginRight: '5px' }} />
+                                Approved Places: {recordsCount}
+                            </Typography.Title>
+                        </div>
+                    </div>
+
                     <motion.section
                         style={{
                             display: 'flex',
@@ -130,7 +163,6 @@ const ApprovedPlaces = () => {
                                 variants={itemVariants}
                                 style={{
                                     width: 'calc(33.33% - 1rem)',
-                                    // cursor: 'pointer',
                                     textDecoration: 'none',
                                 }}
                             >
@@ -161,49 +193,17 @@ const ApprovedPlaces = () => {
                                             overflow: 'hidden',
                                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                             transition: 'transform 0.3s ease',
+                                            border: 'none'
                                         }}
                                         styles={{
                                             body: {
-                                                backgroundColor: '#eafffb',
+                                                backgroundColor: '#89ADFF',
                                                 textAlign: 'center',
                                                 padding: '1rem',
                                             }
                                         }}
                                     >
                                         <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
-
-                                        {/* <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-                                        <button
-                                            onClick={() =>
-                                                navigate(`/place/${place.slugifiedName}`, { state: { placeId: place.id } })
-                                            }
-                                            style={{
-                                                backgroundColor: '#52c41a',
-                                                color: 'white',
-                                                padding: '6px 16px',
-                                                border: 'none',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontWeight: 500,
-                                            }}
-                                        >
-                                            Go To Place
-                                        </button>
-                                        <button
-                                            onClick={() => console.log('Unapprove logic here')}
-                                            style={{
-                                                backgroundColor: '#ff4d4f',
-                                                color: 'white',
-                                                padding: '6px 16px',
-                                                border: 'none',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                fontWeight: 500,
-                                            }}
-                                        >
-                                            Unapprove
-                                        </button>
-                                    </div> */}
                                     </Card>
                                 </Link>
 
@@ -225,6 +225,7 @@ const ApprovedPlaces = () => {
                                 total={pagesCount * 6}
                                 pageSize={6}
                                 style={{ textAlign: 'center', marginBottom: '1rem' }}
+                                className={styles.customPagination}
                             />
                         </ConfigProvider>
                     }

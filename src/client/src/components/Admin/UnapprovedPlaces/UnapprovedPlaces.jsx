@@ -12,6 +12,7 @@ import {
     App,
     Pagination,
     ConfigProvider,
+    Typography
 } from 'antd';
 
 import { Link } from 'react-router-dom';
@@ -53,24 +54,30 @@ const UnapprovedPlaces = () => {
     // State Management
     const [places, setPlaces] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [pagesCount, setPagesCount] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
+    // const [pagesCount, setPagesCount] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+
+    const [pagination, setPagination] = useState({});
 
     useEffect(() => {
 
         const startTime = Date.now();
 
         adminService
-            .getUnapprovedPlaces(currentPage)
+            .getUnapprovedPlaces(1)
             .then(res => {
 
-                setPlaces(res.places);
-                setPagesCount(res.pagination.pagesCount);
+                // setPlaces(res.places);
+                // setPagesCount(res.pagination.pagesCount);
 
                 const elapsed = Date.now() - startTime;
                 const remainingTime = Math.max(1000 - elapsed, 0);
 
-                setTimeout(() => setLoading(false), remainingTime);
+                setTimeout(() => {
+                    setPlaces(res.places);
+                    setPagination(res.pagination);
+                    setLoading(false);
+                }, remainingTime);
 
             })
             .catch(err => {
@@ -108,71 +115,6 @@ const UnapprovedPlaces = () => {
 
     return (
         <>
-            {/* <section className={styles.unapprovedPlacesSection} >
-
-                <div className={styles.unapprovedPlacesContainer}>
-                    {
-                        loading ?
-                            (
-                                <div style={{ textAlign: 'center' }}>
-                                    <ConfigProvider theme={{
-                                        components: {
-                                            Spin: {
-                                                colorPrimary: 'white'
-                                            }
-                                        }
-                                    }}>
-                                        <Spin size='large' />
-                                    </ConfigProvider>
-                                </div>
-                            ) :
-                            places.map(place =>
-                                <Card
-                                    hoverable
-                                    key={place.id}
-                                    className={styles.unapprovedPlaceCard}
-                                    cover={
-                                        <img
-                                            alt={place.name}
-                                            src={place.imageUrl}
-                                            style={{
-                                                objectFit: 'cover',
-                                                height: '250px',
-                                                width: '100%',
-                                            }}
-                                        />
-                                    }
-                                    style={{
-                                        overflow: 'hidden',
-                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                    styles={{
-                                        body: {
-                                            padding: 0
-                                        }
-                                    }}
-                                    onClick={() =>
-                                        navigate(`/admin/unapproved-place/${place.slugifiedName}`, {
-                                            state: { placeId: place.id },
-                                        })
-                                    }
-                                />
-
-                            )
-                    }
-                </div>
-
-                {pagesCount > 1 && !loading && <Pagination
-                    pageSize={6}
-                    align='center'
-                    current={currentPage}
-                    total={pagesCount * 6}
-                    onChange={handlePageChange}
-                    style={{ textAlign: 'center', marginBottom: '2rem' }}
-                />}
-
-            </section> */}
-
             {loading ?
                 <div style={{
                     display: 'flex',
@@ -239,12 +181,15 @@ const UnapprovedPlaces = () => {
                                             overflow: 'hidden',
                                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                             transition: 'transform 0.3s ease',
+                                            color: '#ffffff', // ✅ Text color here
+                                            border: 'none'
                                         }}
                                         styles={{
                                             body: {
-                                                backgroundColor: '#eafffb',
+                                                backgroundColor: '#89ADFF',
                                                 textAlign: 'center',
                                                 padding: '1rem',
+                                                color: '#ffffff',
                                             }
                                         }}
                                     >
@@ -256,23 +201,17 @@ const UnapprovedPlaces = () => {
                     </motion.section>
 
                     {pagesCount > 1 &&
-                        <ConfigProvider theme={{
-                            components: {
-                                Pagination: {
-                                    // itemHoverBg: '#f0f0f0', // subtle light gray background on hover
-                                    // itemHoverColor: '#000',
-                                },
-                            }
-                        }}>
-                            <Pagination
-                                align='center'
-                                onChange={handlePageChange}
-                                current={currentPage}
-                                total={pagesCount * 6}
-                                pageSize={6}
-                                style={{ textAlign: 'center', marginBottom: '1rem' }}
-                            />
-                        </ConfigProvider>
+
+                        <Pagination
+                            align='center'
+                            onChange={handlePageChange}
+                            current={currentPage}
+                            total={pagesCount * 6}
+                            pageSize={6}
+                            style={{ textAlign: 'center', marginBottom: '1rem' }}
+                            className={styles.customPagination}
+                        />
+
                     }
 
                 </>

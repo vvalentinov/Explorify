@@ -5,7 +5,6 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
 
 namespace Explorify.Persistence.Configurations;
 

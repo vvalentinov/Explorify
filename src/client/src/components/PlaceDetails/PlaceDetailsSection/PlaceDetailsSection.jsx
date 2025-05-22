@@ -97,18 +97,15 @@ const PlaceDetailsSection = ({
                         {/* )} */}
 
                         <Card
-                            // className={styles.placeDescriptionCard}
                             loading={loading}
                             styles={{
                                 header:
                                 {
-                                    backgroundColor: '#e8fffb',
-                                    borderBottom: '1px solid green'
+                                    backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb',
                                 }
                             }}
                             style={{
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                                border: '1px solid green'
+                                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
                             }}
                             title={
                                 <span>
@@ -146,8 +143,8 @@ const PlaceDetailsSection = ({
                     }}>
 
                         <Card loading={loading}
-                            style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '1px solid green', width: '100%' }}
-                            styles={{ header: { backgroundColor: '#e8fffb', borderBottom: '1px solid green' } }}
+                            style={{ boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)', width: '100%' }}
+                            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb' } }}
                             title={
                                 <div className={styles.reviewCardHeader}>
                                     <div className={styles.reviewCardHeaderContainer}>
@@ -198,7 +195,7 @@ const PlaceDetailsSection = ({
                             place.weatherData?.current &&
                             Object.keys(place.weatherData.current).length > 0 &&
                             (
-                                <WeatherCard data={place.weatherData} />
+                                <WeatherCard isForAdmin={true} data={place.weatherData} />
                             )
                         }
 

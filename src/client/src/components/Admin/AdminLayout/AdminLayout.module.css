@@ -11,12 +11,9 @@
 
 .adminNavContainer {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-
-    /* border: solid 1px red; */
-
-    /* padding: 0 2rem; */
+    justify-content: space-between;
+    padding: 0 2rem;
 }
 
 .adminMenuLeft {

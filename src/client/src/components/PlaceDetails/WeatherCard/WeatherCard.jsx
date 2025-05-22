@@ -2,7 +2,8 @@ import { Card, Typography, Space } from 'antd';
 
 import styles from './WeatherCard.module.css';
 
-const WeatherCard = ({ data }) => {
+const WeatherCard = ({ data, isForAdmin }) => {
+
     if (!data || !data.current || !data.location) {
         return null;
     }
@@ -20,6 +21,7 @@ const WeatherCard = ({ data }) => {
             style={{
                 width: '100%'
             }}
+            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb' } }}
         >
             <div className={styles.weatherContent}>
                 <img src={iconUrl} alt={data.current?.condition?.text} />

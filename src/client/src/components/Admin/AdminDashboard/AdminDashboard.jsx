@@ -15,6 +15,8 @@ import { AuthContext } from '../../../contexts/AuthContext';
 
 import { adminServiceFactory } from '../../../services/adminService';
 
+import { motion } from 'framer-motion';
+
 const AdminDashboard = () => {
 
     const { token } = useContext(AuthContext);
@@ -69,10 +71,22 @@ const AdminDashboard = () => {
     return (
         <div style={{ padding: '2rem' }}>
 
-            <Title level={2} style={{ color: '#fff' }}>
-                Welcome to the Admin Dashboard 👋
+            <Title level={2} style={{ color: '#fff', textAlign: 'center' }}>
+                Welcome to the Admin Dashboard
+                <motion.span
+                    animate={{ rotate: [0, 20, -10, 20, -5, 10, 0] }}
+                    transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 4,
+                        ease: 'easeInOut',
+                    }}
+                    style={{ display: 'inline-block', originX: 0.7, originY: 0.7 }}
+                >
+                    👋
+                </motion.span>
             </Title>
-            <Paragraph style={{ color: '#fff' }} type="secondary">
+            <Paragraph style={{ color: '#fff', textAlign: 'center' }} type="secondary">
                 Keep an eye on what’s happening in the app. Here’s a quick overview of items.
             </Paragraph>
 
@@ -82,54 +96,70 @@ const AdminDashboard = () => {
                     gap: '2rem',
                     flexWrap: 'wrap',
                     marginTop: '2rem',
+                    justifyContent: 'center'
                 }}
             >
                 {cards.map((card, index) => (
-                    <Card
+                    <motion.div
                         key={index}
-                        title={card.title}
-                        variant='borderless'
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                            duration: 0.6,
+                            delay: index * 0.2,
+                            ease: 'easeOut'
+                        }}
                         style={{
                             flex: '1 1 300px',
                             minWidth: '280px',
                             maxWidth: '360px',
-                            borderRadius: '16px',
-                            background: card.background,
-                            border: `1px solid ${card.borderColor}`,
-                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                            padding: '1rem',
-                        }}
-                        styles={{
-                            header: {
-                                fontSize: '1.1rem',
-                                background: 'transparent',
-                                borderBottom: 'none',
-                            }
                         }}
                     >
-                        <div
+                        <Card
+                            key={index}
+                            title={card.title}
+                            variant='borderless'
                             style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: '50%',
-                                background: card.iconColor + '20',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: '1rem',
+                                borderRadius: '16px',
+                                background: card.background,
+                                border: `1px solid ${card.borderColor}`,
+                                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                                padding: '1rem',
+                            }}
+                            styles={{
+                                header: {
+                                    fontSize: '1.1rem',
+                                    background: 'transparent',
+                                    borderBottom: 'none',
+                                }
                             }}
                         >
-                            {React.cloneElement(card.icon, {
-                                style: { fontSize: '24px', color: card.iconColor },
-                            })}
-                        </div>
-                        <Title level={3} style={{ margin: '0 0 0.5rem 0' }}>
-                            {card.value}
-                        </Title>
-                        <Paragraph type="secondary" style={{ margin: 0 }}>
-                            {card.description}
-                        </Paragraph>
-                    </Card>
+                            <div
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '50%',
+                                    background: card.iconColor + '20',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: '1rem',
+                                }}
+                            >
+                                {React.cloneElement(card.icon, { style: { fontSize: '24px', color: card.iconColor } })}
+                            </div>
+
+
+                            <Title level={3} style={{ margin: '0 0 0.5rem 0' }}>
+                                {card.value}
+                            </Title>
+
+
+                            <Paragraph type="secondary" style={{ margin: 0 }}>
+                                {card.description}
+                            </Paragraph>
+                        </Card>
+                    </motion.div>
                 ))}
             </div>
         </div>

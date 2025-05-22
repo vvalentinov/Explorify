@@ -1,20 +1,15 @@
 import styles from './ApprovedPlace.module.css';
 
 import {
-    Carousel,
     Card,
     Typography,
-    Avatar,
-    Rate,
-    Tag,
-    Flex,
     Spin,
     ConfigProvider,
     Button,
     Divider
 } from 'antd';
 
-import { UserOutlined, InfoCircleOutlined, CheckOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { useState, useEffect, useContext } from 'react';
 
@@ -135,10 +130,12 @@ const ApprovedPlace = () => {
                                     If you've changed your mind or found an issue with this place, you can unapprove it. This will remove it from public listings.
                                 </Typography.Paragraph>
 
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center'
-                                }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center'
+                                    }}
+                                >
                                     <Button
                                         type="primary"
                                         danger
