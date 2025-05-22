@@ -1,6 +1,7 @@
-﻿using Explorify.Application.Abstractions.Interfaces.Messaging;
+﻿using Explorify.Application.Places;
+using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 namespace Explorify.Application.Admin.GetDeletedPlaces;
 
 public record GetDeletedPlacesQuery(int Page)
-    : IQuery<PlacesListModel>;
+    : IQuery<PlacesListResponseModel>;

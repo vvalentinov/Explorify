@@ -31,6 +31,7 @@ public class GetPlacesInSubcategoryQueryHandler
                 Id = x.Id,
                 Name = x.Name,
                 ImageUrl = x.ThumbUrl,
+                SlugifiedName = x.SlugifiedName,
             });
 
         var recordsCount = await query.CountAsync(cancellationToken);

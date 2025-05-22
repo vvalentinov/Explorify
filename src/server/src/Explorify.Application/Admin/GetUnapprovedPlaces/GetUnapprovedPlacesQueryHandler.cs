@@ -1,4 +1,5 @@
 ﻿using Explorify.Domain.Entities;
+using Explorify.Application.Places;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
@@ -10,22 +11,16 @@ using Microsoft.EntityFrameworkCore;
 namespace Explorify.Application.Admin.GetUnapprovedPlaces;
 
 public class GetUnapprovedPlacesQueryHandler
-    : IQueryHandler<GetUnapprovedPlacesQuery, PlacesListModel>
+    : IQueryHandler<GetUnapprovedPlacesQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
-    private readonly IUserService _userService;
-
-    public GetUnapprovedPlacesQueryHandler(
-        IRepository repository,
-        IUserService userService)
+    public GetUnapprovedPlacesQueryHandler(IRepository repository)
     {
         _repository = repository;
-
-        _userService = userService;
     }
 
-    public async Task<Result<PlacesListModel>> Handle(
+    public async Task<Result<PlacesListResponseModel>> Handle(
         GetUnapprovedPlacesQuery request,
         CancellationToken cancellationToken)
     {
@@ -39,39 +34,15 @@ public class GetUnapprovedPlacesQueryHandler
         var unapprovedPlaces = await query
             .Skip((request.Page - 1) * PlacesPerPageCount)
             .Take(PlacesPerPageCount)
-            .Select(x => new PlaceResponseModel
+            .Select(x => new PlaceDisplayResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
-                CategoryName = x.Category.Name,
-                CountryName = x.Country.Name,
-                Description = x.Description,
-                ImagesUrls = x.Photos.Where(x => !x.IsDeleted).Select(p => p.Url).ToList(),
-                ReviewContent = x.Reviews.First().Content,
-                ReviewStars = x.Reviews.First().Rating,
-                UserId = x.UserId.ToString(),
-                ThumbUrl = x.ThumbUrl,
+                ImageUrl = x.ThumbUrl,
+                SlugifiedName = x.SlugifiedName,
             }).ToListAsync(cancellationToken);
 
-        var userIds = unapprovedPlaces
-            .Select(p => p.UserId.ToUpperInvariant())
-            .Distinct()
-            .ToList();
-
-        var usersDtos = await _userService.GetUserDtosByIdsAsync(userIds);
-
-        foreach (var place in unapprovedPlaces)
-        {
-            var userDto = usersDtos
-                .First(x => x.Id.ToString().Equals(
-                    place.UserId,
-                    StringComparison.InvariantCultureIgnoreCase));
-
-            place.UserName = userDto.UserName;
-            place.UserProfilePicUrl = userDto.ProfileImageUrl ?? string.Empty;
-        }
-
-        var response = new PlacesListModel
+        var response = new PlacesListResponseModel
         {
             Places = unapprovedPlaces,
             Pagination = new PaginationResponseModel

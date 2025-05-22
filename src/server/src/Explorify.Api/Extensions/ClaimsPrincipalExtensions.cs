@@ -21,18 +21,20 @@ public static class ClaimsPrincipalExtensions
 
     public static bool IsAdmin(this ClaimsPrincipal user)
     {
-        var roleClaim = user.Claims.FirstOrDefault(x => x.ValueType == Role);
+        //var roleClaim = user.Claims.FirstOrDefault(x => x.ValueType == Role);
 
-        if (roleClaim != null)
-        {
-            if (roleClaim.Value == AdminRoleName)
-            {
-                return true;
-            }
+        //if (roleClaim != null)
+        //{
+        //    if (roleClaim.Value == AdminRoleName)
+        //    {
+        //        return true;
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
-        return false;
+        //return false;
+
+        return user.IsInRole(AdminRoleName);
     }
 }

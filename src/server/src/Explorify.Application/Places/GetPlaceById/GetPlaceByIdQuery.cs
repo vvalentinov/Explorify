@@ -2,5 +2,8 @@
 
 namespace Explorify.Application.Places.GetPlace;
 
-public record GetPlaceByIdQuery(Guid PlaceId, Guid? CurrentUserId = null)
+public record GetPlaceByIdQuery(
+    Guid PlaceId,
+    Guid? CurrentUserId = null,
+    bool IsCurrentUserAdmin = false)
     : IQuery<PlaceDetailsResponseModel>;

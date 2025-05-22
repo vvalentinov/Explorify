@@ -1,55 +1,41 @@
-﻿using Explorify.Domain.Entities;
-using Explorify.Application.Vibes;
-using Explorify.Application.Places.GetPlace;
-using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
+﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
+using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.Places;
+using Explorify.Application.Vibes;
+using Explorify.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
 
-using Microsoft.EntityFrameworkCore;
+namespace Explorify.Application.Admin.GetUnapprovedPlace;
 
-namespace Explorify.Application.Places.GetPlaceById;
-
-public class GetPlaceByIdQueryHandler
-    : IQueryHandler<GetPlaceByIdQuery, PlaceDetailsResponseModel>
+public class GetUnapprovedPlaceQueryHandler
+    : IQueryHandler<GetUnapprovedPlaceQuery, UnapprovedPlaceResponseModel>
 {
     private readonly IRepository _repository;
     private readonly IUserService _userService;
-    private readonly IWeatherInfoService _weatherInfoService;
 
-    public GetPlaceByIdQueryHandler(
+    public GetUnapprovedPlaceQueryHandler(
         IRepository repository,
-        IUserService userService,
-        IWeatherInfoService weatherInfoService)
+        IUserService userService)
     {
         _repository = repository;
         _userService = userService;
-        _weatherInfoService = weatherInfoService;
     }
 
-    public async Task<Result<PlaceDetailsResponseModel>> Handle(
-        GetPlaceByIdQuery request,
+    public async Task<Result<UnapprovedPlaceResponseModel>> Handle(
+        GetUnapprovedPlaceQuery request,
         CancellationToken cancellationToken)
     {
-        var query = _repository.AllAsNoTracking<Place>();
-
-        if (request.CurrentUserId is null)
-        {
-            query = query.Where(x => x.IsApproved);
-        }
-        else if (!request.IsCurrentUserAdmin)
-        {
-            query = query.Where(x => x.IsApproved || x.UserId == request.CurrentUserId.Value);
-        }
-
-        var responseModel = await query
-            .Select(x => new PlaceDetailsResponseModel
+        var responseModel = await _repository
+            .AllAsNoTracking<Place>()
+            .Where(x => !x.IsApproved)
+            .Select(x => new UnapprovedPlaceResponseModel
             {
                 Id = x.Id,
                 Name = x.Name,
                 UserId = x.UserId,
-                IsApproved = x.IsApproved,
                 Description = x.Description,
                 ImagesUrls = x.Photos
                     .Where(x => !x.IsDeleted)
@@ -67,9 +53,6 @@ public class GetPlaceByIdQueryHandler
                         Id = x.PlaceVibeId,
                         Name = x.PlaceVibe.Name,
                     }).ToList(),
-                //AvgRating = x.Reviews.Where(r => !r.IsDeleted && r.IsApproved)
-                //    .Select(r => (double?)r.Rating)
-                //    .Average() ?? 0
             }).FirstOrDefaultAsync(
                 x => x.Id == request.PlaceId,
                 cancellationToken);
@@ -77,20 +60,7 @@ public class GetPlaceByIdQueryHandler
         if (responseModel == null)
         {
             var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
-            return Result.Failure<PlaceDetailsResponseModel>(error);
-        }
-
-        if (responseModel.IsApproved)
-        {
-            responseModel.AvgRating = await _repository
-                .AllAsNoTracking<Review>()
-                .Where(r => r.PlaceId == request.PlaceId && r.IsApproved)
-                .Select(r => (double?)r.Rating)
-                .AverageAsync(cancellationToken) ?? 0;
-        }
-        else
-        {
-            responseModel.AvgRating = 0;
+            return Result.Failure<UnapprovedPlaceResponseModel>(error);
         }
 
         var userReview = await _repository
@@ -102,7 +72,7 @@ public class GetPlaceByIdQueryHandler
         if (userReview == null)
         {
             var error = new Error("No user review for place was found!", ErrorType.Validation);
-            return Result.Failure<PlaceDetailsResponseModel>(error);
+            return Result.Failure<UnapprovedPlaceResponseModel>(error);
         }
 
         responseModel.UserReviewRating = userReview.Rating;
@@ -112,10 +82,6 @@ public class GetPlaceByIdQueryHandler
 
         responseModel.UserName = userDto.UserName;
         responseModel.UserProfileImageUrl = userDto.ProfileImageUrl ?? string.Empty;
-
-        responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(
-            responseModel.Coordinates.Latitude,
-            responseModel.Coordinates.Longitude);
 
         return Result.Success(responseModel);
     }

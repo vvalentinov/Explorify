@@ -59,7 +59,10 @@ public class PlaceController : BaseController
     public async Task<IActionResult> GetPlaceDetailsById(Guid placeId)
         => this.OkOrProblemDetails(
                 await _mediator.Send(
-                    new GetPlaceByIdQuery(placeId, User.GetId())));
+                    new GetPlaceByIdQuery(
+                        placeId,
+                        User.GetId(),
+                        User.IsAdmin())));
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]

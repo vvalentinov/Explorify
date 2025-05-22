@@ -265,8 +265,8 @@ public class ProfileService : IProfileService
                 Email = user.Email ?? string.Empty,
                 ProfileImageUrl = user.ProfileImageUrl,
                 UserName = user.UserName ?? string.Empty,
-                UploadedPlacesCount = user.Places.Where(x => x.IsApproved).Count(),
-                UploadedReviewsCount = user.Reviews.Count(r => !user.Places.Select(p => p.Id).Contains(r.PlaceId)),
+                UploadedPlacesCount = user.Places.Where(x => !x.IsDeleted).Count(),
+                UploadedReviewsCount = user.Reviews.Count(r => !user.Places.Where(x => !x.IsDeleted).Select(p => p.Id).Contains(r.PlaceId)),
             }).FirstOrDefaultAsync(x => x.UserId == userId);
 
         if (model == null)
