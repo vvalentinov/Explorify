@@ -12,7 +12,9 @@ public class ReviewResponseModel
 
     public int Likes { get; set; }
 
-    public UserReviewDto User { get; set; } = default!;
+    public string PlaceName { get; set; } = string.Empty;
+
+    public UserReviewDto User { get; set; } = new();
 
     public IEnumerable<string> ImagesUrls { get; set; } = [];
 }

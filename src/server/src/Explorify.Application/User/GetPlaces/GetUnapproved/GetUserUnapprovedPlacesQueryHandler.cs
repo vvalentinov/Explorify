@@ -4,33 +4,38 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.PlaceConstants;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.User.GetPlaces;
+namespace Explorify.Application.User.GetPlaces.GetUnapproved;
 
-public class GetUserPlacesQueryHandler :
-    IQueryHandler<GetUserPlacesQuery, PlacesListResponseModel>
+public class GetUserUnapprovedPlacesQueryHandler
+    : IQueryHandler<GetUserUnapprovedPlacesQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
-    public GetUserPlacesQueryHandler(IRepository repository)
+    public GetUserUnapprovedPlacesQueryHandler(IRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Result<PlacesListResponseModel>> Handle(
-        GetUserPlacesQuery request,
+        GetUserUnapprovedPlacesQuery request,
         CancellationToken cancellationToken)
     {
+        var currPage = request.Page;
+        var currUserId = request.CurrentUserId;
+
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.UserId == request.UserId);
+            .Where(x => !x.IsApproved && x.UserId == currUserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
         var places = await query
-            .Skip(request.Page * 6 - 6)
-            .Take(6)
+            .Skip((request.Page - 1) * PlacesPerPageCount)
+            .Take(PlacesPerPageCount)
             .Select(x => new PlaceDisplayResponseModel
             {
                 Id = x.Id,
@@ -44,9 +49,9 @@ public class GetUserPlacesQueryHandler :
             Places = places,
             Pagination = new PaginationResponseModel
             {
-                ItemsPerPage = 6,
-                PageNumber = request.Page,
+                PageNumber = currPage,
                 RecordsCount = recordsCount,
+                ItemsPerPage = PlacesPerPageCount,
             },
         };
 

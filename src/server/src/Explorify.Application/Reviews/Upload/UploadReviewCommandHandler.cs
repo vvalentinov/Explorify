@@ -68,7 +68,7 @@ public class UploadReviewCommandHandler
             var url = await _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"ReviewsImages/${place.Category.Name}/{place.Name}/");
+                $"ReviewsImages/{place.Category.Name}/{place.Name}-{Guid.NewGuid()}/");
 
             photos.Add(new ReviewPhoto { Url = url });
         }

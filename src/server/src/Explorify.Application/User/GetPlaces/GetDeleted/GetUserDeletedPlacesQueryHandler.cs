@@ -8,30 +8,38 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Admin.GetUnapprovedPlaces;
+namespace Explorify.Application.User.GetPlaces.GetDeleted;
 
-public class GetUnapprovedPlacesQueryHandler
-    : IQueryHandler<GetUnapprovedPlacesQuery, PlacesListResponseModel>
+public class GetUserDeletedPlacesQueryHandler
+    : IQueryHandler<GetUserDeletedPlacesQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
-    public GetUnapprovedPlacesQueryHandler(IRepository repository)
+    public GetUserDeletedPlacesQueryHandler(IRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Result<PlacesListResponseModel>> Handle(
-        GetUnapprovedPlacesQuery request,
+        GetUserDeletedPlacesQuery request,
         CancellationToken cancellationToken)
     {
+        var currPage = request.Page;
+        var currUserId = request.CurrentUserId;
+
+        // in the last 5 minutes
+        var cutoff = DateTime.UtcNow.AddMinutes(-5);
+
         var query = _repository
-            .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved == false)
-            .OrderByDescending(x => x.CreatedOn);
+            .AllAsNoTracking<Place>(withDeleted: true)
+            .Where(x =>
+                x.IsDeleted &&
+                x.DeletedOn >= cutoff &&
+                x.UserId == currUserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
-        var unapprovedPlaces = await query
+        var places = await query
             .Skip((request.Page - 1) * PlacesPerPageCount)
             .Take(PlacesPerPageCount)
             .Select(x => new PlaceDisplayResponseModel
@@ -42,17 +50,17 @@ public class GetUnapprovedPlacesQueryHandler
                 SlugifiedName = x.SlugifiedName,
             }).ToListAsync(cancellationToken);
 
-        var response = new PlacesListResponseModel
+        var responseModel = new PlacesListResponseModel
         {
-            Places = unapprovedPlaces,
+            Places = places,
             Pagination = new PaginationResponseModel
             {
-                PageNumber = request.Page,
+                PageNumber = currPage,
                 RecordsCount = recordsCount,
                 ItemsPerPage = PlacesPerPageCount,
-            }
+            },
         };
 
-        return Result.Success(response);
+        return Result.Success(responseModel);
     }
 }
