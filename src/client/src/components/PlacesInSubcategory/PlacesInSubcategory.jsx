@@ -34,23 +34,14 @@ const PlacesInSubcategory = () => {
 
             setSpinnerLoading(true);
 
-            const MIN_SPINNER_TIME = 1000;
-            const startTime = Date.now();
-
             placeService
                 .getPlacesInSubcategory(location.state.subcategoryId, currentPage)
                 .then(res => {
 
-                    const elapsed = Date.now() - startTime;
-                    const remaining = MIN_SPINNER_TIME - elapsed;
-
-                    setTimeout(() => {
-                        setPagesCount(res.pagination.pagesCount);
-                        setPlaces(res.places);
-                        setSpinnerLoading(false);
-                        setShouldScroll(true);
-                    }, remaining > 0 ? remaining : 0);
-
+                    setPagesCount(res.pagination.pagesCount);
+                    setPlaces(res.places);
+                    setSpinnerLoading(false);
+                    setShouldScroll(true);
 
                 }).catch(err => {
                     fireError(err);
@@ -61,28 +52,18 @@ const PlacesInSubcategory = () => {
     }, []);
 
     const handlePageChange = (page) => {
+
         setShouldScroll(true);
 
         setCurrentPage(page);
         setSpinnerLoading(true);
 
-        const MIN_SPINNER_TIME = 1000;
-        const startTime = Date.now();
-
         placeService
             .getPlacesInSubcategory(location.state.subcategoryId, page)
             .then(res => {
-
-                const elapsed = Date.now() - startTime;
-                const remaining = MIN_SPINNER_TIME - elapsed;
-
-                setTimeout(() => {
-                    setPlaces(res.places);
-                    setPagesCount(res.pagination.pagesCount);
-                    setSpinnerLoading(false);
-
-                }, remaining > 0 ? remaining : 0);
-
+                setPlaces(res.places);
+                setPagesCount(res.pagination.pagesCount);
+                setSpinnerLoading(false);
             }).catch(err => {
                 fireError(err);
                 setSpinnerLoading(false);

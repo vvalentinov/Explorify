@@ -1,6 +1,6 @@
 import styles from './AdminLayout.module.css';
 
-import { Layout, Menu, Dropdown, Space, Button, FloatButton, ConfigProvider } from 'antd';
+import { Layout, Menu, Dropdown, Space, FloatButton } from 'antd';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
     DashboardOutlined,
@@ -11,65 +11,20 @@ import {
     CloseCircleOutlined
 } from '@ant-design/icons';
 
-import { useLocation } from 'react-router-dom';
-
 import AdminUsers from '../AdminUsers/AdminUsers';
 import AdminDashboard from '../AdminDashboard/AdminDashboard';
-import UnadpprovedPlaces from '../UnapprovedPlaces/UnapprovedPlaces';
 import UnapprovedReviews from '../UnapprovedReviews/UnapprovedReviews';
-import ApprovedPlaces from '../AppovedPlaces/ApprovedPlaces';
-import ApprovedPlace from '../ApprovedPlace/ApprovedPlace';
+
+import Places from '../Places/Places';
+import Place from '../Place/Place';
 
 import ScrollToTop from '../../ScrollToTop/ScrollToTop';
 
-import UnapprovedPlace from '../UnapprovedPlace/UnapprovedPlace';
-
 const { Header, Content, Footer } = Layout;
-
-import { useState, useEffect } from 'react';
 
 const AdminLayout = () => {
 
     const navigate = useNavigate();
-
-    const location = useLocation();
-    const pathname = location.pathname;
-
-    const getSelectedKey = () => {
-        if (pathname === '/admin') return 'dashboard';
-        if (pathname.startsWith('/admin/users')) return 'users';
-        if (pathname.startsWith('/admin/approved-places') || pathname.startsWith('/admin/unapproved-places')) {
-            return 'places-dropdown';
-        }
-        if (pathname.startsWith('/admin/approved-reviews') || pathname.startsWith('/admin/unapproved-reviews')) {
-            return 'reviews-dropdown';
-        }
-        return '';
-    };
-
-    const selectedKey = getSelectedKey();
-
-    const placesMenu = {
-        items: [
-            {
-                key: 'approved',
-                icon: <EnvironmentOutlined />,
-                label: 'Approved Places',
-                onClick: () => navigate('/admin/approved-places'),
-            },
-            {
-                key: 'unapproved',
-                label: 'Unapproved Places',
-                icon: <CloseCircleOutlined />,
-                onClick: () => navigate('/admin/unapproved-places'),
-            },
-            {
-                key: 'deleted',
-                label: 'Deleted Places',
-                disabled: true,
-            },
-        ],
-    };
 
     const reviewsMenu = {
         items: [
@@ -101,24 +56,10 @@ const AdminLayout = () => {
             onClick: () => navigate('/admin'),
         },
         {
-            key: 'places-dropdown',
-            onClick: () => { },
-            label: (
-                <Dropdown placement="bottom" menu={placesMenu} trigger={['click']}>
-                    <span
-                        style={{
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                        }}
-                        onClick={(e) => e.preventDefault()}
-                    >
-                        <Space>
-                            <EnvironmentOutlined /> Places
-                        </Space>
-                    </span>
-                </Dropdown>
-            ),
+            key: 'places',
+            icon: <EnvironmentOutlined />,
+            label: 'Places',
+            onClick: () => navigate('/admin/places'),
         },
         {
             key: 'reviews-dropdown',
@@ -172,7 +113,6 @@ const AdminLayout = () => {
                     <Menu
                         theme="dark"
                         mode="horizontal"
-                        selectedKeys={[selectedKey]}
                         items={leftMenuItems}
                         className={styles.adminMenuLeft}
                     />
@@ -190,17 +130,15 @@ const AdminLayout = () => {
 
             <Content className={styles.adminContent}>
 
-
                 <Routes>
                     <Route index element={<AdminDashboard />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="unapproved-places" element={<UnadpprovedPlaces />} />
-                    <Route path="approved-places" element={<ApprovedPlaces />} />
-                    <Route path="unapproved-reviews" element={<UnapprovedReviews />} />
-                    <Route path="unapproved-place/:placeName" element={<UnapprovedPlace />} />
-                    <Route path="approved-place/:placeName" element={<ApprovedPlace />} />
-                </Routes>
 
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="unapproved-reviews" element={<UnapprovedReviews />} />
+
+                    <Route path='places' element={<Places />} />
+                    <Route path='place/:placeName' element={<Place />} />
+                </Routes>
 
                 <FloatButton.BackTop />
 

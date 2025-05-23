@@ -36,7 +36,7 @@ const Home = () => {
                 transition={{ type: 'spring', stiffness: 100, damping: 15 }}
             >
                 <h1 className={styles.heroTitle}>
-                    Discover Hidden Gems <AnimatedEmoji />
+                    Discover Cool Places <AnimatedEmoji />
                 </h1>
                 <p className={styles.heroDescription}>
                     Ready to embark on unforgettable adventures? Explorify helps you discover breathtaking places, share your own experiences, and connect with fellow travelers around the world. Whether you're chasing hidden waterfalls, wandering through ancient cities, or savoring local flavors off the beaten path, Explorify is your trusted companion.

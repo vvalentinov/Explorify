@@ -13,6 +13,8 @@ export const usersServiceFactory = (token) => {
         resetPassword: (data) => request.post(`${baseUrl}/User/ResetPassword`, data),
         changeProfileImage: (data) => request.post(`${baseUrl}/User/ChangeProfilePicture`, data),
         getProfileInfo: () => request.get(`${baseUrl}/User/GetProfileInfo`),
-        getUserPlaces: (page) => request.get(`${baseUrl}/User/GetPlaces?page=${page}`)
+        getUserApprovedPlaces: (page) => request.get(`${baseUrl}/User/GetApprovedPlaces?page=${page}`),
+        getUserUnapprovedPlaces: (page) => request.get(`${baseUrl}/User/GetUnapprovedPlaces?page=${page}`),
+        getUserRecentlyDeletedPlaces: (page) => request.get(`${baseUrl}/User/GetRecentlyDeletedPlaces?page=${page}`)
     }
 };

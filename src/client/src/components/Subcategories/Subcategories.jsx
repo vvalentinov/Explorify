@@ -10,6 +10,8 @@ import { categoriesServiceFactory } from '../../services/categoriesService';
 
 import ImageOverlayContainer from '../ImageOverlayContainer/ImageOverlayContainer';
 
+import { fireError } from '../../utils/fireError';
+
 const Subcategories = () => {
 
     const location = useLocation();
@@ -31,38 +33,26 @@ const Subcategories = () => {
             navigate(`/categories/${slugCategoryName}`, { replace: true });
         }
 
-        const startTime = Date.now();
-
         if (categoryId) {
+
             categoriesService
                 .getSubcategories(categoryId)
                 .then(res => {
                     setCategoryData(res);
-
-                    const elapsed = Date.now() - startTime;
-                    const remainingTime = Math.max(1000 - elapsed, 0);
-
-                    setTimeout(() => {
-                        setShowSpinner(false);
-                    }, remainingTime);
+                    setShowSpinner(false);
                 }).catch(err => {
-                    console.log(err);
+                    fireError(err);
                     setShowSpinner(false);
                 });
+
         } else {
             categoriesService
                 .getSubcategoriesBySlugName(slugCategoryName)
                 .then(res => {
                     setCategoryData(res);
-
-                    const elapsed = Date.now() - startTime;
-                    const remainingTime = Math.max(1000 - elapsed, 0);
-
-                    setTimeout(() => {
-                        setShowSpinner(false);
-                    }, remainingTime);
+                    setShowSpinner(false);
                 }).catch(err => {
-                    console.log(err);
+                    fireError(err);
                     setShowSpinner(false);
                 });
         }

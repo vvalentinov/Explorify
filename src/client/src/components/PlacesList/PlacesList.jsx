@@ -21,7 +21,8 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
-const PlacesList = ({ places }) => {
+const PlacesList = ({ places, isForAdmin }) => {
+
     return (
         <motion.section
             style={{
@@ -47,7 +48,7 @@ const PlacesList = ({ places }) => {
                 // whileHover={{ scale: 1.03 }}
                 >
                     <Link
-                        to={`/place/${place.slugifiedName}`}
+                        to={isForAdmin ? `/admin/place/${place.slugifiedName}` : `/place/${place.slugifiedName}`}
                         state={{ placeId: place.id }}
                         style={{ textDecoration: 'none' }}
                     >
@@ -70,10 +71,11 @@ const PlacesList = ({ places }) => {
                                 overflow: 'hidden',
                                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                 transition: 'transform 0.3s ease',
+                                border: 'none'
                             }}
                             styles={{
                                 body: {
-                                    backgroundColor: '#eafffb',
+                                    backgroundColor: isForAdmin ? '#89ADFF' : '#eafffb',
                                     textAlign: 'center',
                                     padding: '1rem',
                                 }

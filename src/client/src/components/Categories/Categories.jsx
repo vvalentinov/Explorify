@@ -37,19 +37,24 @@ const Categories = () => {
 
     useEffect(() => {
 
-        const startTime = Date.now();
+        setShowSpinner(true);
+
+        // const startTime = Date.now();
 
         categoriesService
             .getCategories()
             .then((res) => {
 
-                const elapsed = Date.now() - startTime;
-                const remainingTime = Math.max(1000 - elapsed, 0);
+                setCategories(res);
+                setShowSpinner(false);
 
-                setTimeout(() => {
-                    setCategories(res);
-                    setShowSpinner(false);
-                }, remainingTime);
+                // const elapsed = Date.now() - startTime;
+                // const remainingTime = Math.max(1000 - elapsed, 0);
+
+                // setTimeout(() => {
+                //     setCategories(res);
+                //     setShowSpinner(false);
+                // }, remainingTime);
 
             }).catch(err => {
                 fireError(err);

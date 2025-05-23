@@ -1,23 +1,23 @@
-import styles from './MyPlaces.module.css';
+import styles from './Places.module.css';
 
-import { usersServiceFactory } from "../../services/usersService";
-import { placesServiceFactory } from '../../services/placesService';
+import PlacesList from '../../PlacesList/PlacesList';
 
-import { useState, useEffect, useContext, useLayoutEffect } from "react";
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
-import { AuthContext } from '../../contexts/AuthContext';
+import { useContext } from 'react';
 
-import { fireError } from "../../utils/fireError";
+import { AuthContext } from '../../../contexts/AuthContext';
+
+import { adminServiceFactory } from '../../../services/adminService';
+
+import { Pagination, ConfigProvider, Spin, Card, Typography, Radio, Empty } from 'antd';
+
+import { EnvironmentOutlined } from '@ant-design/icons';
 
 import { motion } from 'framer-motion';
 
-import { Pagination, Spin, ConfigProvider, Card, Button, Modal, App, Typography, Radio, Empty } from "antd";
-
-import { DeleteOutlined, EditOutlined, ExclamationCircleOutlined, SmileOutlined, EnvironmentOutlined } from '@ant-design/icons';
-
-import { useNavigate, Link } from 'react-router-dom';
-
-import PlacesList from '../PlacesList/PlacesList';
+import { fireError } from '../../../utils/fireError';
 
 const options = [
     { label: 'Approved', value: 'approved' },
@@ -25,18 +25,18 @@ const options = [
     { label: 'Recently Deleted', value: 'recentlyDeleted' },
 ];
 
-const MyPlaces = () => {
+const Places = () => {
 
     const { token } = useContext(AuthContext);
 
-    const userService = usersServiceFactory(token);
+    const adminService = adminServiceFactory(token);
 
+    // State Management
     const [places, setPlaces] = useState([]);
+    const [spinnerLoading, setSpinnerLoading] = useState(false);
+    const [filter, setFilter] = useState('approved');
     const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const [spinnerLoading, setSpinnerLoading] = useState(false);
-
-    const [filter, setFilter] = useState('approved');
 
     const fetchPlaces = async () => {
 
@@ -47,11 +47,11 @@ const MyPlaces = () => {
             let response;
 
             if (filter === 'approved') {
-                response = await userService.getUserApprovedPlaces(currentPage);
+                response = await adminService.getApprovedPlaces(currentPage);
             } else if (filter === 'unapproved') {
-                response = await userService.getUserUnapprovedPlaces(currentPage);
+                response = await adminService.getUnapprovedPlaces(currentPage);
             } else if (filter === 'recentlyDeleted') {
-                response = await userService.getUserRecentlyDeletedPlaces(currentPage);
+                response = await adminService.getDeletedPlaces(currentPage);
             }
 
             setPagesCount(response.pagination.pagesCount);
@@ -140,6 +140,7 @@ const MyPlaces = () => {
                     </ConfigProvider>
                 </Card>
             </div>
+
             {
                 spinnerLoading ?
                     <div style={{
@@ -151,7 +152,7 @@ const MyPlaces = () => {
                         <ConfigProvider theme={{
                             components: {
                                 Spin: {
-                                    colorPrimary: 'green'
+                                    colorPrimary: 'white'
                                 }
                             }
                         }}>
@@ -160,7 +161,9 @@ const MyPlaces = () => {
                     </div> :
                     <>
                         {places?.length > 0 ?
-                            <PlacesList places={places} /> :
+
+                            <PlacesList isForAdmin={true} places={places} /> :
+
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -206,16 +209,7 @@ const MyPlaces = () => {
                         }
 
                         {pagesCount > 1 &&
-                            <ConfigProvider theme={{
-                                components: {
-                                    Pagination: {
-                                        itemActiveBg: '#e8fffb',
-                                        itemActiveColor: '#52c41a',
-                                        colorPrimary: '#52c41a',
-                                        colorPrimaryHover: '#389e0d',
-                                    },
-                                }
-                            }}>
+                            <ConfigProvider>
                                 <Pagination
                                     align='center'
                                     onChange={handlePageChange}
@@ -223,6 +217,7 @@ const MyPlaces = () => {
                                     total={pagesCount * 6}
                                     pageSize={6}
                                     style={{ textAlign: 'center', marginBottom: '1rem' }}
+                                    className={styles.customPagination}
                                 />
                             </ConfigProvider>
                         }
@@ -232,4 +227,4 @@ const MyPlaces = () => {
     );
 };
 
-export default MyPlaces;
+export default Places;

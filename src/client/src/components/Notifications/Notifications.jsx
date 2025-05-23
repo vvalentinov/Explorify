@@ -56,23 +56,28 @@ const Notifications = () => {
         setSpinnerLoading(true);
         setShouldScroll(true);
 
-        const MIN_SPINNER_TIME = 1000;
-        const startTime = Date.now();
+        // const MIN_SPINNER_TIME = 1000;
+        // const startTime = Date.now();
 
         notificationsService
             .getNotifications(currentPage)
             .then(res => {
 
-                const elapsed = Date.now() - startTime;
-                const remaining = MIN_SPINNER_TIME - elapsed;
+                // const elapsed = Date.now() - startTime;
+                // const remaining = MIN_SPINNER_TIME - elapsed;
 
-                setTimeout(() => {
-                    setNotifications(res.notifications);
-                    setNotificationsCount(res.recordsCount);
-                    setPagesCount(res.pagesCount);
-                    setSpinnerLoading(false);
+                setNotifications(res.notifications);
+                setNotificationsCount(res.recordsCount);
+                setPagesCount(res.pagesCount);
+                setSpinnerLoading(false);
 
-                }, remaining > 0 ? remaining : 0);
+                // setTimeout(() => {
+                //     setNotifications(res.notifications);
+                //     setNotificationsCount(res.recordsCount);
+                //     setPagesCount(res.pagesCount);
+                //     setSpinnerLoading(false);
+
+                // }, remaining > 0 ? remaining : 0);
 
             }).catch(err => console.log(err));
 
