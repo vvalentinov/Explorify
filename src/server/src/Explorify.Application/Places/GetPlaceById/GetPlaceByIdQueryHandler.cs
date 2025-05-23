@@ -32,7 +32,8 @@ public class GetPlaceByIdQueryHandler
         GetPlaceByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var query = _repository.AllAsNoTracking<Place>();
+        var query = _repository
+            .AllAsNoTracking<Place>();
 
         if (request.CurrentUserId is null)
         {
@@ -67,6 +68,7 @@ public class GetPlaceByIdQueryHandler
                         Id = x.PlaceVibeId,
                         Name = x.PlaceVibe.Name,
                     }).ToList(),
+                SlugifiedName = x.SlugifiedName,
                 //AvgRating = x.Reviews.Where(r => !r.IsDeleted && r.IsApproved)
                 //    .Select(r => (double?)r.Rating)
                 //    .Average() ?? 0

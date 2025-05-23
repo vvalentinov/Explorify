@@ -151,7 +151,7 @@ public class UploadPlaceCommandHandler
             _blobService.UploadBlobAsync(
                 file.Content,
                 file.FileName,
-                $"PlacesImages/{category.Name}/{subcategory.Name}/{model.Name}-{Guid.NewGuid}/"));
+                $"PlacesImages/{category.Name}/{subcategory.Name}/{model.Name}-{Guid.NewGuid()}/"));
 
         var urls = await Task.WhenAll(uploadTasks);
 

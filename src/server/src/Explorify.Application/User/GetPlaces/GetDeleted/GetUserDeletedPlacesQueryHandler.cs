@@ -48,6 +48,7 @@ public class GetUserDeletedPlacesQueryHandler
                 Name = x.Name,
                 ImageUrl = x.ThumbUrl,
                 SlugifiedName = x.SlugifiedName,
+                IsDeleted = x.IsDeleted,
             }).ToListAsync(cancellationToken);
 
         var responseModel = new PlacesListResponseModel

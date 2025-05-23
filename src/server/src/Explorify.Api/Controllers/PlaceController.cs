@@ -4,6 +4,7 @@ using Explorify.Application.Places.Upload;
 using Explorify.Application.Places.Delete;
 using Explorify.Application.Places.Update;
 using Explorify.Application.Places.GetPlace;
+using Explorify.Application.Places.RevertPlace;
 using Explorify.Application.Places.GetEditData;
 using Explorify.Application.Places.GetPlacesInCategory;
 using Explorify.Application.Places.GetPlacesInSubcategory;
@@ -95,6 +96,14 @@ public class PlaceController : BaseController
 
         var result = await _mediator.Send(command);
 
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpPut(nameof(Revert))]
+    public async Task<IActionResult> Revert(Guid placeId)
+    {
+        var revertPlaceCommand = new RevertPlaceCommand(placeId, User.GetId(), User.IsAdmin());
+        var result = await _mediator.Send(revertPlaceCommand);
         return this.OkOrProblemDetails(result);
     }
 }
