@@ -1,5 +1,8 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { App, Typography } from "antd";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+
 import { useState, useEffect, useContext } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 import { placesServiceFactory } from "../../services/placesService";
 import { reviewsServiceFactory } from '../../services/reviewsService';
@@ -17,6 +20,8 @@ const PlaceDetails = () => {
 
     const { placeName } = useParams();
 
+    const { modal } = App.useApp();
+
     const navigate = useNavigate();
 
     const { userId, token } = useContext(AuthContext);
@@ -28,14 +33,42 @@ const PlaceDetails = () => {
 
     const [place, setPlace] = useState({});
     const [reviews, setReviews] = useState([]);
-
     const [pagesCount, setPagesCount] = useState(0);
-
     const [mapUrl, setMapUrl] = useState('');
-
     const [loading, setLoading] = useState(true);
 
     const isOwner = userId && place?.userId === userId;
+
+    const confirm = () => {
+        modal.confirm({
+            title: 'Delete Place',
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <p>
+                    Are you sure you want to delete this place? <br />
+                    <Typography.Text type="danger" strong>
+                        This action will soft-delete the place. You will have 5 minutes to revert the deletion before it is permanently removed.
+                    </Typography.Text>
+                </p>
+            ),
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk: () => handlePlaceDelete()
+        });
+    };
+
+    const handlePlaceDelete = () => {
+        console.log(place.id);
+
+        placeService
+            .deletePlace(place?.id)
+            .then(res => {
+                navigate('/', { state: { successOperation: { message: res.successMessage } } })
+            }).catch(err => {
+                fireError(err);
+            })
+    }
 
     useEffect(() => {
 
@@ -152,9 +185,7 @@ const PlaceDetails = () => {
                             }}>
                                 <h3 style={{ color: '#cf1322', marginBottom: '1rem' }}>No longer relevant?</h3>
                                 <button
-                                    onClick={() => {
-                                        // optional confirm modal or navigate to deletion logic
-                                    }}
+                                    onClick={() => confirm()}
                                     style={{
                                         backgroundColor: '#cf1322',
                                         border: 'none',

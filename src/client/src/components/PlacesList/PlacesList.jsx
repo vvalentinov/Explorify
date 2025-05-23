@@ -1,18 +1,20 @@
-import { Card } from 'antd';
-
-import { Link } from 'react-router-dom';
+import { Card, Button } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 import styles from './PlacesList.module.css';
 
-import { motion } from 'framer-motion';
+import { AuthContext } from '../../contexts/AuthContext';
+
+import { useContext, } from 'react';
+
+import { placesServiceFactory } from '../../services/placesService';
 
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
-        transition: {
-            staggerChildren: 0.15,
-        },
+        transition: { staggerChildren: 0.15 },
     },
 };
 
@@ -22,6 +24,24 @@ const itemVariants = {
 };
 
 const PlacesList = ({ places, isForAdmin }) => {
+
+    const { token } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
+    const placesService = placesServiceFactory(token);
+
+    const handleRevert = async (placeId) => {
+        try {
+            placesService
+                .revertPlace(placeId)
+                .then(res => {
+                    navigate('/', { state: { successOperation: { message: res.successMessage } } })
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <motion.section
@@ -42,18 +62,13 @@ const PlacesList = ({ places, isForAdmin }) => {
                     variants={itemVariants}
                     style={{
                         width: 'calc(33.33% - 1rem)',
-                        cursor: 'pointer',
+                        cursor: place.isDeleted ? 'default' : 'pointer',
                         textDecoration: 'none',
                     }}
-                // whileHover={{ scale: 1.03 }}
                 >
-                    <Link
-                        to={isForAdmin ? `/admin/place/${place.slugifiedName}` : `/place/${place.slugifiedName}`}
-                        state={{ placeId: place.id }}
-                        style={{ textDecoration: 'none' }}
-                    >
-                        <Card className={styles.card}
-                            hoverable
+                    {place.isDeleted ? (
+                        <Card
+                            className={styles.card}
                             cover={
                                 <img
                                     alt={place.name}
@@ -71,19 +86,66 @@ const PlacesList = ({ places, isForAdmin }) => {
                                 overflow: 'hidden',
                                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                                 transition: 'transform 0.3s ease',
-                                border: 'none'
+                                border: 'none',
                             }}
                             styles={{
                                 body: {
-                                    backgroundColor: isForAdmin ? '#89ADFF' : '#eafffb',
+                                    backgroundColor: '#fff1f0',
                                     textAlign: 'center',
                                     padding: '1rem',
-                                }
+                                },
                             }}
                         >
                             <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+                            <Button block
+                                type="primary"
+                                danger
+                                style={{ marginTop: '1rem' }}
+                                onClick={() => handleRevert(place.id)}
+                            >
+                                Revert
+                            </Button>
                         </Card>
-                    </Link>
+                    ) : (
+                        <Link
+                            to={isForAdmin ? `/admin/place/${place.slugifiedName}` : `/place/${place.slugifiedName}`}
+                            state={{ placeId: place.id }}
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <Card
+                                className={styles.card}
+                                hoverable
+                                cover={
+                                    <img
+                                        alt={place.name}
+                                        src={place.imageUrl}
+                                        style={{
+                                            height: '200px',
+                                            objectFit: 'cover',
+                                            borderTopLeftRadius: '8px',
+                                            borderTopRightRadius: '8px',
+                                        }}
+                                    />
+                                }
+                                style={{
+                                    borderRadius: '8px',
+                                    overflow: 'hidden',
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                                    transition: 'transform 0.3s ease',
+                                    border: 'none',
+                                }}
+                                styles={{
+                                    body: {
+                                        backgroundColor: isForAdmin ? '#89ADFF' : '#eafffb',
+                                        textAlign: 'center',
+                                        padding: '1rem',
+                                    },
+                                }}
+                            >
+                                <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+                            </Card>
+                        </Link>
+                    )}
                 </motion.div>
             ))}
         </motion.section>

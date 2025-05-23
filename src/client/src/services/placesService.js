@@ -11,6 +11,7 @@ export const placesServiceFactory = (token) => {
         getPlaceDetailsBySlugifiedName: (name) => request.get(`${baseUrl}/Place/GetPlaceDetailsBySlugifiedName?slugifiedName=${name}`),
         deletePlace: (placeId) => request.delete(`${baseUrl}/Place/Delete?placeId=${placeId}`),
         getEditData: (placeId) => request.get(`${baseUrl}/Place/GetEditData?placeId=${placeId}`),
-        editPlace: (data) => request.put(`${baseUrl}/Place/Edit`, data)
+        editPlace: (data) => request.put(`${baseUrl}/Place/Edit`, data),
+        revertPlace: (placeId) => request.put(`${baseUrl}/Place/Revert?placeId=${placeId}`)
     }
 };
