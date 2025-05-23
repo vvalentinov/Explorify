@@ -8,30 +8,30 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Admin.GetApprovedPlaces;
+namespace Explorify.Application.Admin.GetPlaces.GetUnapprovedPlaces;
 
-public class GetApprovedPlacesQueryHandler
-    : IQueryHandler<GetApprovedPlacesQuery, PlacesListResponseModel>
+public class GetUnapprovedPlacesQueryHandler
+    : IQueryHandler<GetUnapprovedPlacesQuery, PlacesListResponseModel>
 {
     private readonly IRepository _repository;
 
-    public GetApprovedPlacesQueryHandler(IRepository repository)
+    public GetUnapprovedPlacesQueryHandler(IRepository repository)
     {
         _repository = repository;
     }
 
     public async Task<Result<PlacesListResponseModel>> Handle(
-        GetApprovedPlacesQuery request,
+        GetUnapprovedPlacesQuery request,
         CancellationToken cancellationToken)
     {
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved)
+            .Where(x => !x.IsApproved)
             .OrderByDescending(x => x.CreatedOn);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
-        var approvedPlaces = await query
+        var unapprovedPlaces = await query
             .Skip((request.Page - 1) * PlacesPerPageCount)
             .Take(PlacesPerPageCount)
             .Select(x => new PlaceDisplayResponseModel
@@ -44,7 +44,7 @@ public class GetApprovedPlacesQueryHandler
 
         var response = new PlacesListResponseModel
         {
-            Places = approvedPlaces,
+            Places = unapprovedPlaces,
             Pagination = new PaginationResponseModel
             {
                 PageNumber = request.Page,

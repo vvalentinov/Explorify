@@ -8,7 +8,7 @@ using static Explorify.Domain.Constants.PlaceConstants;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Admin.GetDeletedPlaces;
+namespace Explorify.Application.Admin.GetPlaces.GetDeletedPlaces;
 
 public class GetDeletedPlacesQueryHandler
     : IQueryHandler<GetDeletedPlacesQuery, PlacesListResponseModel>
@@ -25,11 +25,13 @@ public class GetDeletedPlacesQueryHandler
         CancellationToken cancellationToken)
     {
         //var thresholdDate = DateTime.UtcNow.AddDays(-30);
-        var thresholdDate = DateTime.UtcNow.AddMinutes(-2);
+
+        // in the last 5 minutes
+        var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var query = _repository
             .AllAsNoTracking<Place>(withDeleted: true)
-            .Where(x => x.IsDeleted && x.DeletedOn >= thresholdDate)
+            .Where(x => x.IsDeleted && x.DeletedOn >= cutoff)
             .OrderByDescending(x => x.CreatedOn);
 
         var recordsCount = await query.CountAsync(cancellationToken);

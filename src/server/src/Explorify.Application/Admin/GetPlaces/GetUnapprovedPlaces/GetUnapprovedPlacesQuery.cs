@@ -1,7 +1,7 @@
 ﻿using Explorify.Application.Places;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.Admin.GetApprovedPlaces;
+namespace Explorify.Application.Admin.GetPlaces.GetUnapprovedPlaces;
 
-public record GetApprovedPlacesQuery(int Page)
+public record GetUnapprovedPlacesQuery(int Page)
     : IQuery<PlacesListResponseModel>;
