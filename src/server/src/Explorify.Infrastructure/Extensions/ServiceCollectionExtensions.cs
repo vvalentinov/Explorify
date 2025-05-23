@@ -13,6 +13,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Quartz;
+using Explorify.Infrastructure.BackgroundJobs;
+using Microsoft.Extensions.Options;
 
 namespace Explorify.Infrastructure.Extensions;
 
@@ -40,6 +43,20 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeocodingService, GeocodingService>();
 
         services.AddScoped<IWeatherInfoService, WeatherInfoService>();
+
+        services.AddQuartz(q =>
+        {
+            var jobKey = nameof(DeleteExpiredContentJob);
+
+            q
+                .AddJob<DeleteExpiredContentJob>(JobKey.Create(jobKey))
+                .AddTrigger(triggerConfig =>
+                    triggerConfig
+                    .ForJob(jobKey)
+                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(10).RepeatForever()));
+        });
+
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         return services;
     }
