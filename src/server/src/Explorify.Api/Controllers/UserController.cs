@@ -1,22 +1,30 @@
 ﻿using Explorify.Api.Extensions;
-using Explorify.Application.User;
 using Explorify.Infrastructure.Attributes;
-using Explorify.Application.User.GetPlaces;
+//using Explorify.Application.User.GetPlaces;
 using Explorify.Application.Identity.Login;
-using Explorify.Application.User.ChangeEmail;
 using Explorify.Application.Identity.Register;
-using Explorify.Application.User.ConfirmEmail;
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.User.ChangeUserName;
-using Explorify.Application.User.ChangePassword;
 using Explorify.Application.User.GetProfileInfo;
 using Explorify.Application.Abstractions.Interfaces;
-using Explorify.Application.User.ChangeProfileImage;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.User.GetPlaces.GetApproved;
+using Explorify.Application.User.GetPlaces.GetUnapproved;
+using Explorify.Application.User.GetPlaces.GetDeleted;
+using Explorify.Application.User.Account.ChangeEmail;
+using Explorify.Application.User.Account.ChangeUserName;
+using Explorify.Application.User.Account.ChangePassword;
+using Explorify.Application.User.Account.ForgotPassword;
+using Explorify.Application.User.Account.ResetPassword;
+using Explorify.Application.User.Account.ChangeProfileImage;
+using Explorify.Application.User.Account.ConfirmEmail;
+using Explorify.Application.Admin.GetReviews.GetApproved;
+using Explorify.Application.User.GetReviews.GetApproved;
+using Explorify.Application.User.GetReviews.GetUnapproved;
+using Explorify.Application.User.GetReviews.GetDeleted;
 
 namespace Explorify.Api.Controllers;
 
@@ -155,10 +163,50 @@ public class UserController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
-    [HttpGet(nameof(GetPlaces))]
-    public async Task<IActionResult> GetPlaces(int page)
+    [HttpGet(nameof(GetApprovedPlaces))]
+    public async Task<IActionResult> GetApprovedPlaces(int page)
     {
-        var query = new GetUserPlacesQuery(User.GetId(), page);
+        var query = new GetUserApprovedPlacesQuery(page, User.GetId());
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetUnapprovedPlaces))]
+    public async Task<IActionResult> GetUnapprovedPlaces(int page)
+    {
+        var query = new GetUserUnapprovedPlacesQuery(User.GetId(), page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetRecentlyDeletedPlaces))]
+    public async Task<IActionResult> GetRecentlyDeletedPlaces(int page)
+    {
+        var query = new GetUserDeletedPlacesQuery(User.GetId(), page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetApprovedReviews))]
+    public async Task<IActionResult> GetApprovedReviews(int page)
+    {
+        var query = new GetApprovedUserReviewsQuery(User.GetId(), page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetUnapprovedReviews))]
+    public async Task<IActionResult> GetUnapprovedReviews(int page)
+    {
+        var query = new GetUnapprovedUserReviewsQuery(User.GetId(), page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetDeletedReviews))]
+    public async Task<IActionResult> GetDeletedReviews(int page)
+    {
+        var query = new GetDeletedUserReviewsQuery(User.GetId(), page);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

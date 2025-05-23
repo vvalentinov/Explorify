@@ -2,11 +2,12 @@
 using Explorify.Application.Admin.ApprovePlace;
 using Explorify.Application.Admin.ApproveReview;
 using Explorify.Application.Admin.GetDashboardInfo;
-using Explorify.Application.Admin.GetDeletedPlaces;
-using Explorify.Application.Admin.GetApprovedPlaces;
-using Explorify.Application.Admin.GetUnapprovedPlaces;
-using Explorify.Application.Admin.GetUnapprovedPlace;
-using Explorify.Application.Admin.GetUnapprovedReviews;
+using Explorify.Application.Admin.GetPlaces.GetDeletedPlaces;
+using Explorify.Application.Admin.GetPlaces.GetApprovedPlaces;
+using Explorify.Application.Admin.GetPlaces.GetUnapprovedPlaces;
+using Explorify.Application.Admin.GetReviews.GetUnapproved;
+using Explorify.Application.Admin.GetReviews.GetApproved;
+using Explorify.Application.Admin.GetReviews.GetDeleted;
 
 using static Explorify.Domain.Constants.ApplicationRoleConstants;
 
@@ -14,6 +15,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Admin.GetPlaceInfo;
 
 namespace Explorify.Api.Controllers;
 
@@ -71,6 +73,14 @@ public class AdminController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [HttpGet(nameof(GetApprovedReviews))]
+    public async Task<IActionResult> GetApprovedReviews(int page)
+    {
+        var query = new GetApprovedReviewsQuery(page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
     [HttpGet(nameof(GetUnapprovedReviews))]
     public async Task<IActionResult> GetUnapprovedReviews(int page)
     {
@@ -79,10 +89,18 @@ public class AdminController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
-    [HttpGet(nameof(GetUnapprovedPlace))]
-    public async Task<IActionResult> GetUnapprovedPlace(Guid placeId)
+    [HttpGet(nameof(GetDeletedReviews))]
+    public async Task<IActionResult> GetDeletedReviews(int page)
     {
-        var query = new GetUnapprovedPlaceQuery(placeId);
+        var query = new GetDeletedReviewsQuery(page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetPlaceInfo))]
+    public async Task<IActionResult> GetPlaceInfo(Guid placeId)
+    {
+        var query = new GetPlaceInfoQuery(placeId);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
