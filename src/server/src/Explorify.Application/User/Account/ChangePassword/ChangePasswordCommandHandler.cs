@@ -2,7 +2,7 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangePassword;
+namespace Explorify.Application.User.Account.ChangePassword;
 
 public class ChangePasswordCommandHandler
     : ICommandHandler<ChangePasswordCommand>

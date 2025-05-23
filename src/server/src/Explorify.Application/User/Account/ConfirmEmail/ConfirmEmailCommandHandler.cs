@@ -2,23 +2,22 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangeEmail;
+namespace Explorify.Application.User.Account.ConfirmEmail;
 
-public class ChangeEmailCommandHandler
-    : ICommandHandler<ChangeEmailCommand>
+public class ConfirmEmailCommandHandler
+    : ICommandHandler<ConfirmEmailCommand>
 {
     private readonly IProfileService _profileService;
 
-    public ChangeEmailCommandHandler(IProfileService profileService)
+    public ConfirmEmailCommandHandler(IProfileService profileService)
     {
         _profileService = profileService;
     }
 
     public async Task<Result> Handle(
-        ChangeEmailCommand request,
+        ConfirmEmailCommand request,
         CancellationToken cancellationToken)
-            => await _profileService.ChangeEmailAsync(
+            => await _profileService.ConfirmEmailAsync(
                     request.UserId,
-                    request.NewEmail,
                     request.Token);
 }

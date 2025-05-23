@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Explorify.Application.User.ChangePassword;
+namespace Explorify.Application.User.Account.ChangePassword;
 
 public class ChangePasswordRequestModelValidator
     : AbstractValidator<ChangePasswordRequestModel>

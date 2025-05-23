@@ -2,7 +2,7 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangeProfileImage;
+namespace Explorify.Application.User.Account.ChangeProfileImage;
 
 public class ChangeProfileImageCommandHandler
     : ICommandHandler<ChangeProfileImageCommand, string>

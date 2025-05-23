@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.User.ChangeEmail;
+﻿namespace Explorify.Application.User.Account.ChangeEmail;
 
 public class EmailChangeRequestModel
 {

@@ -1,6 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangePassword;
+namespace Explorify.Application.User.Account.ChangePassword;
 
 public record ChangePasswordCommand(
     Guid UserId,

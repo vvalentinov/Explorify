@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.User;
+﻿namespace Explorify.Application.User.Account.ResetPassword;
 
 public class ResetPasswordRequestModel
 {

@@ -2,7 +2,7 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User;
+namespace Explorify.Application.User.Account.ResetPassword;
 
 public class ResetPasswordCommandHandler
     : ICommandHandler<ResetPasswordCommand>

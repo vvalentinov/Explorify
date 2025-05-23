@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Explorify.Application.User.ChangeUserName;
+namespace Explorify.Application.User.Account.ChangeUserName;
 
 public class ChangeUserNameRequestModelValidator
     : AbstractValidator<ChangeUserNameRequestModel>

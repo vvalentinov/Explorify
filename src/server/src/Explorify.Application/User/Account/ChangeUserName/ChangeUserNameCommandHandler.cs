@@ -2,7 +2,7 @@
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.User.ChangeUserName;
+namespace Explorify.Application.User.Account.ChangeUserName;
 
 public class ChangeUserNameCommandHandler
     : ICommandHandler<ChangeUserNameCommand>
