@@ -30,6 +30,8 @@ public class Place : BaseDeletableEntity<Guid>
 
     public string? Address { get; set; }
 
+    public bool IsCleaned { get; set; }
+
     public ICollection<PlacePhoto> Photos { get; set; }
         = new List<PlacePhoto>();
 

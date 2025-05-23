@@ -12,8 +12,10 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
     public void Configure(EntityTypeBuilder<Review> builder)
     {
-        builder.HasQueryFilter(x => x.IsDeleted == false);
-        builder.HasQueryFilter(x => x.Place.IsDeleted == false);
+        //builder.HasQueryFilter(x => x.IsDeleted == false);
+        //builder.HasQueryFilter(x => x.Place.IsDeleted == false);
+
+        builder.HasQueryFilter(x => !x.IsDeleted && !x.Place.IsDeleted);
 
         builder
             .Property(r => r.Content)
