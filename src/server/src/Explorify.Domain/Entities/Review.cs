@@ -20,6 +20,8 @@ public class Review : BaseDeletableEntity<Guid>
 
     public bool IsCleaned { get; set; }
 
+    public bool IsDeletedByAdmin { get; set; }
+
     public ICollection<ReviewPhoto> Photos { get; set; }
          = new List<ReviewPhoto>();
 

@@ -27,7 +27,7 @@ public class PlaceConfiguration : IEntityTypeConfiguration<Place>
             .HasMaxLength(PlaceDescriptionMaxLength)
             .IsRequired();
 
-        builder.HasQueryFilter(x => x.IsDeleted == false);
+        builder.HasQueryFilter(x => !x.IsDeleted && !x.IsCleaned);
 
         builder
             .Property(x => x.ThumbUrl)

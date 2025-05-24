@@ -32,6 +32,8 @@ public class Place : BaseDeletableEntity<Guid>
 
     public bool IsCleaned { get; set; }
 
+    public bool IsDeletedByAdmin { get; set; }
+
     public ICollection<PlacePhoto> Photos { get; set; }
         = new List<PlacePhoto>();
 
