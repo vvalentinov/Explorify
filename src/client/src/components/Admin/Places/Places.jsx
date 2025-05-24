@@ -77,7 +77,10 @@ const Places = () => {
     }, [places]);
 
     const handlePageChange = (page) => setCurrentPage(page);
-    const handleSortChange = (e) => setFilter(e.target.value);
+    const handleSortChange = (e) => {
+        setCurrentPage(1);
+        setFilter(e.target.value);
+    };
 
     return (
         <>

@@ -5,9 +5,24 @@ import {
     Divider,
 } from 'antd';
 
-import { CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+    CloseCircleOutlined,
+    DeleteOutlined,
+} from '@ant-design/icons';
 
-const ApprovedPlaceCard = () => {
+import { useState } from 'react';
+
+import UnapprovePlaceModal from '../Modals/UnapprovePlaceModal';
+import DeletePlaceModal from '../Modals/DeletePlaceModal';
+
+const ApprovedPlaceCard = ({ place }) => {
+
+    const [isUnapproveModalVisible, setIsUnapproveModalVisible] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+    const onUnapprovePlace = () => setIsUnapproveModalVisible(true);
+    const onDeletePlace = () => setIsDeleteModalVisible(true);
+
     return (
         <Card
             style={{
@@ -43,7 +58,7 @@ const ApprovedPlaceCard = () => {
                         boxShadow: '0 4px 10px rgba(255, 77, 79, 0.3)',
                         borderRadius: '999px',
                     }}
-                    onClick={() => console.log('Unapprove logic here')}
+                    onClick={() => onUnapprovePlace()}
                 >
                     Unapprove
                 </Button>
@@ -74,11 +89,24 @@ const ApprovedPlaceCard = () => {
                         boxShadow: '0 4px 10px rgba(168, 7, 26, 0.3)',
                         borderRadius: '999px',
                     }}
-                    onClick={() => console.log('Delete logic here')}
+                    onClick={() => onDeletePlace()}
                 >
                     Delete
                 </Button>
             </div>
+
+            <UnapprovePlaceModal
+                placeId={place?.id}
+                setVisible={setIsUnapproveModalVisible}
+                visible={isUnapproveModalVisible}
+            />
+
+            <DeletePlaceModal
+                placeId={place?.id}
+                setVisible={setIsDeleteModalVisible}
+                visible={isDeleteModalVisible}
+                isPlaceApproved={true}
+            />
 
         </Card>
     );

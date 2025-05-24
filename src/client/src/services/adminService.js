@@ -15,5 +15,8 @@ export const adminServiceFactory = (token) => {
         getApprovedPlaces: (page) => request.get(`${baseUrl}/Admin/GetApprovedPlaces?page=${page}`),
         getDeletedPlaces: (page) => request.get(`${baseUrl}/Admin/GetDeletedPlaces?page=${page}`),
         getPlaceInfo: (placeId) => request.get(`${baseUrl}/Admin/GetPlaceInfo?placeId=${placeId}`),
+        unapprovePlace: (data) => request.put(`${baseUrl}/Admin/UnapprovePlace`, data),
+        deletePlace: (data) => request.delete(`${baseUrl}/Admin/DeletePlace`, data),
+        revertPlace: (placeId) => request.put(`${baseUrl}/Admin/RevertPlace`, placeId)
     }
 };

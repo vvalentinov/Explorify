@@ -14,6 +14,7 @@ import UnapprovedPlaceCard from './Cards/UnapprovedPlaceCard';
 import PlaceDetailsSection from '../../PlaceDetails/PlaceDetailsSection/PlaceDetailsSection';
 
 import { fireError } from '../../../utils/fireError';
+import { getGoogleMapsUrl } from '../../../utils/getGoogleMapsUrl';
 
 const Place = () => {
 
@@ -38,9 +39,7 @@ const Place = () => {
 
                     setPlace(res);
                     setIsLoading(false);
-
-                    const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
-                    setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${res.coordinates.latitude},${res.coordinates.longitude}`);
+                    setMapUrl(getGoogleMapsUrl(res.coordinates.latitude, res.coordinates.longitude));
 
                 }).catch(err => {
                     fireError(err);
@@ -73,17 +72,19 @@ const Place = () => {
                                 loading={false}
                             />}
 
-                            {/* {place.isApproved && <ApprovedPlaceCard />}
-
-                            {!place?.isApproved && <UnapprovedPlaceCard />} */}
-
-                            {place?.isDeleted ? (
-                                <DeletedPlaceCard />
-                            ) : place?.isApproved ? (
-                                <ApprovedPlaceCard />
-                            ) : (
-                                <UnapprovedPlaceCard />
-                            )}
+                            {
+                                place?.isDeleted ?
+                                    (
+                                        <DeletedPlaceCard />
+                                    ) :
+                                    place?.isApproved ?
+                                        (
+                                            <ApprovedPlaceCard place={place} />
+                                        ) :
+                                        (
+                                            <UnapprovedPlaceCard place={place} />
+                                        )
+                            }
 
                         </>
                     )

@@ -56,28 +56,14 @@ const Notifications = () => {
         setSpinnerLoading(true);
         setShouldScroll(true);
 
-        // const MIN_SPINNER_TIME = 1000;
-        // const startTime = Date.now();
-
         notificationsService
             .getNotifications(currentPage)
             .then(res => {
-
-                // const elapsed = Date.now() - startTime;
-                // const remaining = MIN_SPINNER_TIME - elapsed;
 
                 setNotifications(res.notifications);
                 setNotificationsCount(res.recordsCount);
                 setPagesCount(res.pagesCount);
                 setSpinnerLoading(false);
-
-                // setTimeout(() => {
-                //     setNotifications(res.notifications);
-                //     setNotificationsCount(res.recordsCount);
-                //     setPagesCount(res.pagesCount);
-                //     setSpinnerLoading(false);
-
-                // }, remaining > 0 ? remaining : 0);
 
             }).catch(err => console.log(err));
 
