@@ -30,7 +30,7 @@ public class GetDeletedReviewsQueryHandler
         var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var query = _repository
-             .AllAsNoTracking<Review>(withDeleted: true)
+             .AllAsNoTracking<Domain.Entities.Review>(ignoreQueryFilters: true)
              .Where(x =>
                 x.IsDeleted &&
                 x.UserId != x.Place.UserId &&

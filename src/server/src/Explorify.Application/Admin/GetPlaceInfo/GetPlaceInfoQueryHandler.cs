@@ -29,7 +29,7 @@ public class GetPlaceInfoQueryHandler
         CancellationToken cancellationToken)
     {
         var responseModel = await _repository
-           .AllAsNoTracking<Place>(withDeleted: true)
+           .AllAsNoTracking<Domain.Entities.Place>(ignoreQueryFilters: true)
            .Select(x => new AdminPlaceInfoResponseModel
            {
                Id = x.Id,
@@ -65,7 +65,7 @@ public class GetPlaceInfoQueryHandler
         }
 
         var userReview = await _repository
-            .AllAsNoTracking<Review>()
+            .AllAsNoTracking<Domain.Entities.Review>()
             .FirstOrDefaultAsync(x =>
                 x.PlaceId == request.PlaceId && x.UserId == responseModel.UserId,
                 cancellationToken);

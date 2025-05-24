@@ -3,15 +3,18 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.ApplicationUserConstants;
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Admin.ApprovePlace;
+namespace Explorify.Application.Admin.Place.ApprovePlace;
 
 public class ApprovePlaceCommandHandler
     : ICommandHandler<ApprovePlaceCommand>
 {
     private readonly IRepository _repository;
+
     private readonly IUserService _userService;
     private readonly INotificationService _notificationHubService;
 
@@ -21,6 +24,7 @@ public class ApprovePlaceCommandHandler
         INotificationService notificationHubService)
     {
         _repository = repository;
+
         _userService = userService;
         _notificationHubService = notificationHubService;
     }
@@ -29,12 +33,12 @@ public class ApprovePlaceCommandHandler
         ApprovePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        //var place = await _repository.GetByIdAsync<Place>(request.PlaceId);
-
         var place = await _repository
-            .All<Place>()
+            .All<Domain.Entities.Place>()
             .Include(x => x.Reviews)
-            .FirstOrDefaultAsync(x => x.Id == request.PlaceId, cancellationToken);
+            .FirstOrDefaultAsync(x =>
+                x.Id == request.PlaceId,
+                cancellationToken);
 
         if (place == null)
         {
@@ -44,13 +48,16 @@ public class ApprovePlaceCommandHandler
 
         place.IsApproved = true;
 
-        var review = place.Reviews.First(x => x.UserId == place.UserId);
+        var review = place.Reviews.FirstOrDefault(x => x.UserId == place.UserId);
 
-        review.IsApproved = true;
+        if (review != null)
+        {
+            review.IsApproved = true;
+        }
 
         await _userService.IncreaseUserPointsAsync(
             place.UserId.ToString(),
-            10);
+            UserPlaceUploadPoints);
 
         var notification = new Notification
         {

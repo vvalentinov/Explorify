@@ -27,15 +27,15 @@ public class GetUserDeletedPlacesQueryHandler
         var currPage = request.Page;
         var currUserId = request.CurrentUserId;
 
-        // in the last 5 minutes
         var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var query = _repository
-            .AllAsNoTracking<Place>(withDeleted: true)
+            .AllAsNoTracking<Place>(ignoreQueryFilters: true)
             .Where(x =>
                 x.IsDeleted &&
                 x.DeletedOn >= cutoff &&
-                x.UserId == currUserId);
+                x.UserId == currUserId &&
+                !x.IsDeletedByAdmin);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 

@@ -26,7 +26,7 @@ public class GetDashboardInfoQueryHandler
         CancellationToken cancellationToken)
     {
         var unapprovedPlacesCount = await _repository
-            .AllAsNoTracking<Place>()
+            .AllAsNoTracking<Domain.Entities.Place>()
             .Where(x => x.IsApproved == false)
             .CountAsync(cancellationToken);
 

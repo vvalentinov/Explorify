@@ -28,7 +28,7 @@ public class RevertReviewCommandHandler
         var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var review = await _repository
-            .All<Review>(withDeleted: true)
+            .All<Review>(ignoreQueryFilters: true)
             .Where(x =>
                 x.IsDeleted &&
                 !x.Place.IsDeleted &&

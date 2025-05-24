@@ -25,7 +25,7 @@ public class GetApprovedPlacesQueryHandler
         CancellationToken cancellationToken)
     {
         var query = _repository
-            .AllAsNoTracking<Place>()
+            .AllAsNoTracking<Domain.Entities.Place>()
             .Where(x => x.IsApproved)
             .OrderByDescending(x => x.CreatedOn);
 

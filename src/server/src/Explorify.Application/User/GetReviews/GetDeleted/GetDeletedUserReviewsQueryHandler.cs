@@ -26,12 +26,13 @@ public class GetDeletedUserReviewsQueryHandler :
         var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var query = _repository
-            .AllAsNoTracking<Review>(withDeleted: true)
+            .AllAsNoTracking<Review>(ignoreQueryFilters: true)
             .Where(x =>
                 x.IsDeleted &&
                 x.DeletedOn >= cutoff &&
                 x.UserId == request.CurrentUserId &&
-                !x.Place.IsDeleted);
+                !x.Place.IsDeleted &&
+                !x.IsDeletedByAdmin);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 

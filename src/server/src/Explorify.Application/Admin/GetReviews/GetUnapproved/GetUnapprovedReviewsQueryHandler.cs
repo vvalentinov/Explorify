@@ -28,7 +28,7 @@ public class GetUnapprovedReviewsQueryHandler :
         CancellationToken cancellationToken)
     {
         var query = _repository
-             .AllAsNoTracking<Review>()
+             .AllAsNoTracking<Domain.Entities.Review>()
              .Where(x =>
                 !x.IsApproved &&
                 x.UserId != x.Place.UserId)

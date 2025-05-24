@@ -29,7 +29,9 @@ public class GetUserApprovedPlacesQueryHandler
 
         var query = _repository
             .AllAsNoTracking<Place>()
-            .Where(x => x.IsApproved && x.UserId == currUserId);
+            .Where(x =>
+                x.IsApproved &&
+                x.UserId == currUserId);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 
@@ -42,6 +44,7 @@ public class GetUserApprovedPlacesQueryHandler
                 Name = x.Name,
                 ImageUrl = x.ThumbUrl,
                 SlugifiedName = x.SlugifiedName,
+                IsDeleted = x.IsDeleted,
             }).ToListAsync(cancellationToken);
 
         var responseModel = new PlacesListResponseModel

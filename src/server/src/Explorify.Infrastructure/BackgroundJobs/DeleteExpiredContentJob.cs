@@ -50,7 +50,7 @@ public class DeleteExpiredContentJob : IJob
     private async Task DeleteExpiredPlaces(DateTime cutoff)
     {
         var expiredPlaces = await _repository
-            .All<Place>(withDeleted: true)
+            .All<Place>(ignoreQueryFilters: true)
             .Where(p =>
                 p.IsDeleted &&
                 p.DeletedOn <= cutoff &&
@@ -99,10 +99,11 @@ public class DeleteExpiredContentJob : IJob
     private async Task DeleteExpiredReviews(DateTime cutoff)
     {
         var reviews = await _repository
-            .All<Review>(withDeleted: true)
+            .All<Review>(ignoreQueryFilters: true)
             .Where(review =>
                 review.IsDeleted &&
-                review.DeletedOn <= cutoff)
+                review.DeletedOn <= cutoff &&
+                !review.IsCleaned)
             .Include(x => x.Photos)
             .Include(x => x.ReviewLikes)
             .Include(x => x.Place)

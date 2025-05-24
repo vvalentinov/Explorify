@@ -29,7 +29,8 @@ public class GetUnapprovedUserReviewsQueryHandler
            .Where(x =>
                !x.IsApproved &&
                x.UserId == request.CurrentUserId &&
-               x.Place.UserId != request.CurrentUserId);
+               x.Place.UserId != request.CurrentUserId &&
+               !x.Place.IsDeleted);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 

@@ -19,15 +19,15 @@ public class Repository : IRepository, IDisposable
         where T : BaseModel
             => _dbContext.Set<T>();
 
-    public IQueryable<T> All<T>(bool withDeleted = false)
+    public IQueryable<T> All<T>(bool ignoreQueryFilters = false)
         where T : BaseModel
-            => withDeleted ?
+            => ignoreQueryFilters ?
                 DbSet<T>().IgnoreQueryFilters() :
                 DbSet<T>();
 
-    public IQueryable<T> AllAsNoTracking<T>(bool withDeleted = false)
+    public IQueryable<T> AllAsNoTracking<T>(bool ignoreQueryFilters = false)
         where T : BaseModel
-            => withDeleted ?
+            => ignoreQueryFilters ?
                 DbSet<T>().AsNoTracking().IgnoreQueryFilters() :
                 DbSet<T>().AsNoTracking();
 

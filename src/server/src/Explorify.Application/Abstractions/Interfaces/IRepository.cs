@@ -5,10 +5,10 @@ namespace Explorify.Application.Abstractions.Interfaces;
 
 public interface IRepository
 {
-    IQueryable<T> All<T>(bool withDeleted = false)
+    IQueryable<T> All<T>(bool ignoreQueryFilters = false)
         where T : BaseModel;
 
-    IQueryable<T> AllAsNoTracking<T>(bool withDeleted = false)
+    IQueryable<T> AllAsNoTracking<T>(bool ignoreQueryFilters = false)
         where T : BaseModel;
 
     Task AddAsync<T>(T entity)

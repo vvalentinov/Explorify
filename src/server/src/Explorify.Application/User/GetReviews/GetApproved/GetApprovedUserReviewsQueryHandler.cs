@@ -25,11 +25,12 @@ public class GetApprovedUserReviewsQueryHandler
     {
         var query = _repository
             .AllAsNoTracking<Review>()
-            .Include(x => x.Place)
-            .Where(x =>
-                x.IsApproved &&
-                x.UserId == request.CurrentUserId &&
-                x.Place.UserId != request.CurrentUserId);
+            .Include(review => review.Place)
+            .Where(review =>
+                review.IsApproved &&
+                review.UserId == request.CurrentUserId &&
+                review.Place.UserId != request.CurrentUserId &&
+                !review.Place.IsDeleted);
 
         var recordsCount = await query.CountAsync(cancellationToken);
 

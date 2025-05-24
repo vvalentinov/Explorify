@@ -24,10 +24,14 @@ public class DeletePlaceCommandHandler
         DeletePlaceCommand request,
         CancellationToken cancellationToken)
     {
+        var placeId = request.PlaceId;
+        var currUserId = request.CurrentUserId;
+        var isCurrUserAdmin = request.IsCurrUserAdmin;
+
         var place = await _repository
             .All<Place>()
             .Include(p => p.Reviews)
-            .Where(p => p.Id == request.PlaceId)
+            .Where(p => p.Id == placeId)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (place == null)

@@ -1,6 +1,4 @@
 ﻿using Explorify.Api.Extensions;
-using Explorify.Application.Admin.ApprovePlace;
-using Explorify.Application.Admin.ApproveReview;
 using Explorify.Application.Admin.GetDashboardInfo;
 using Explorify.Application.Admin.GetPlaces.GetDeletedPlaces;
 using Explorify.Application.Admin.GetPlaces.GetApprovedPlaces;
@@ -16,6 +14,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Explorify.Application.Admin.GetPlaceInfo;
+using Explorify.Application.Admin.Place.DeletePlace;
+using Explorify.Application.Admin.Place.ApprovePlace;
+using Explorify.Application.Admin.Place.UnapprovePlace;
+using Explorify.Application.Admin.Place.RevertPlace;
+using Explorify.Application.Admin.Review.ApproveReview;
 
 namespace Explorify.Api.Controllers;
 
@@ -102,6 +105,30 @@ public class AdminController : BaseController
     {
         var query = new GetPlaceInfoQuery(placeId);
         var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpDelete(nameof(DeletePlace))]
+    public async Task<IActionResult> DeletePlace(AdminDeletePlaceDto model)
+    {
+        var command = new AdminDeletePlaceCommand(User.GetId(), model);
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpPut(nameof(UnapprovePlace))]
+    public async Task<IActionResult> UnapprovePlace(UnapprovePlaceCommandDto model)
+    {
+        var command = new UnapprovePlaceCommand(model, User.GetId());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpPut(nameof(RevertPlace))]
+    public async Task<IActionResult> RevertPlace([FromBody] Guid placeId)
+    {
+        var command = new AdminRevertPlaceCommand(placeId, User.GetId());
+        var result = await _mediator.Send(command);
         return this.OkOrProblemDetails(result);
     }
 }

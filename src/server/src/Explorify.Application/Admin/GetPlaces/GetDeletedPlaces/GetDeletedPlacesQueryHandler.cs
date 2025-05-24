@@ -30,8 +30,8 @@ public class GetDeletedPlacesQueryHandler
         var cutoff = DateTime.UtcNow.AddMinutes(-5);
 
         var query = _repository
-            .AllAsNoTracking<Place>(withDeleted: true)
-            .Where(x => x.IsDeleted && x.DeletedOn >= cutoff)
+            .AllAsNoTracking<Domain.Entities.Place>(ignoreQueryFilters: true)
+            .Where(x => x.IsDeleted && x.DeletedOn >= cutoff && !x.IsCleaned)
             .OrderByDescending(x => x.CreatedOn);
 
         var recordsCount = await query.CountAsync(cancellationToken);
@@ -45,6 +45,7 @@ public class GetDeletedPlacesQueryHandler
                 Name = x.Name,
                 ImageUrl = x.ThumbUrl,
                 SlugifiedName = x.SlugifiedName,
+                IsDeleted = x.IsDeleted
             }).ToListAsync(cancellationToken);
 
         var response = new PlacesListResponseModel
