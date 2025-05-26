@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-
-using Explorify.Application.Places.Upload;
 using Explorify.Application.Abstractions.Models;
 
 using static System.Security.Claims.ClaimTypes;
@@ -8,6 +6,7 @@ using static System.Security.Claims.ClaimTypes;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
+using Explorify.Application.Place.Upload;
 
 namespace Explorify.Infrastructure.Binders;
 

@@ -33,7 +33,7 @@ public class UploadReviewCommandHandler
         //var place = await _repository.GetByIdAsync<Place>(request.Model.PlaceId);
 
         var place = await _repository
-            .AllAsNoTracking<Place>()
+            .AllAsNoTracking<Domain.Entities.Place>()
             .Include(x => x.Category)
             .FirstOrDefaultAsync(x => x.Id == request.Model.PlaceId, cancellationToken);
 

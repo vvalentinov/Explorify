@@ -53,7 +53,8 @@ public static class ServiceCollectionExtensions
                 .AddTrigger(triggerConfig =>
                     triggerConfig
                     .ForJob(jobKey)
-                    .WithSimpleSchedule(x => x.WithIntervalInSeconds(10).RepeatForever()));
+                    //.WithSimpleSchedule(x => x.WithIntervalInSeconds(10).RepeatForever()));
+                    .WithSimpleSchedule(x => x.WithIntervalInMinutes(5).RepeatForever()));
         });
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
