@@ -3,6 +3,6 @@
 namespace Explorify.Application.Reviews.Delete;
 
 public record DeleteReviewCommand(
-    Guid Reviewid,
+    DeleteReviewRequestDto Model,
     Guid CurrentUserId,
     bool IsCurrUserAdmin) : ICommand;

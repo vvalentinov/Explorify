@@ -1,4 +1,4 @@
-﻿using Explorify.Application.Places.GetEditData;
+﻿using Explorify.Application.Place.Edit.GetEditData;
 
 namespace Explorify.Application.Reviews.GetEditInfo;
 

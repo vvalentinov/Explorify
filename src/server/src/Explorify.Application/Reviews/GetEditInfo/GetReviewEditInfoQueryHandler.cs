@@ -1,57 +1,85 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Data;
+
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Places.GetEditData;
-using Explorify.Application.Abstractions.Interfaces;
+using Explorify.Application.Place.Edit.GetEditData;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace Explorify.Application.Reviews.GetEditInfo;
 
 public class GetReviewEditInfoQueryHandler :
     IQueryHandler<GetReviewEditInfoQuery, GetReviewEditInfoResponseModel>
 {
-    private readonly IRepository _repository;
+    private readonly IDbConnection _dbConnection;
 
-    public GetReviewEditInfoQueryHandler(IRepository repository)
+    public GetReviewEditInfoQueryHandler(IDbConnection dbConnection)
     {
-        _repository = repository;
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result<GetReviewEditInfoResponseModel>> Handle(
         GetReviewEditInfoQuery request,
         CancellationToken cancellationToken)
     {
-        var review = await _repository
-            .AllAsNoTracking<Review>()
-            .Select(x => new GetReviewEditInfoResponseModel
-            {
-                Id = x.Id,
-                Rating = x.Rating,
-                Content = x.Content,
-                UserId = x.UserId,
-                Images = x.Photos.Select(photo => new ImageResponseModel
-                {
-                    Id = photo.Id,
-                    Url = photo.Url,
-                }).ToList()
-            })
-            .FirstOrDefaultAsync(x =>
-                x.Id == request.ReviewId,
-                cancellationToken);
+        const string sql = @"
+            SELECT 
+                r.Id,
+                r.Rating,
+                r.Content,
+                r.UserId,
+                p.Id AS PhotoId,
+                p.Url
+            FROM Reviews r
+            INNER JOIN Places pl ON r.PlaceId = pl.Id
+            LEFT JOIN ReviewPhotos p ON r.Id = p.ReviewId
+            WHERE r.Id = @ReviewId AND r.IsDeleted = 0 AND pl.UserId <> @CurrentUserId";
 
-        if (review == null)
+        var reviewDictionary = new Dictionary<Guid, GetReviewEditInfoResponseModel>();
+
+        var result = await _dbConnection.QueryAsync<
+            GetReviewEditInfoResponseModel,
+            ImageResponseModel,
+            GetReviewEditInfoResponseModel>(
+            sql,
+            (review, photo) =>
+            {
+                if (!reviewDictionary.TryGetValue(review.Id, out var currentReview))
+                {
+                    currentReview = review;
+                    currentReview.Images = new List<ImageResponseModel>();
+                    reviewDictionary.Add(currentReview.Id, currentReview);
+                }
+
+                if (photo != null && photo.Id != 0)
+                {
+                    currentReview.Images.Add(new ImageResponseModel
+                    {
+                        Id = photo.Id,
+                        Url = photo.Url
+                    });
+                }
+
+                return currentReview;
+            },
+            param: new { request.ReviewId, request.CurrentUserId },
+            splitOn: "PhotoId"
+       );
+
+        var reviewResult = reviewDictionary.Values.FirstOrDefault();
+
+        if (reviewResult == null)
         {
-            var error = new Error("No review was found!", ErrorType.Validation);
+            var error = new Error("No review was found, or it's for your own place!", ErrorType.Validation);
             return Result.Failure<GetReviewEditInfoResponseModel>(error);
         }
 
-        if (review.UserId != request.CurrentUserId)
+        if (reviewResult.UserId != request.CurrentUserId)
         {
             var error = new Error("Only review owner can edit it!", ErrorType.Validation);
             return Result.Failure<GetReviewEditInfoResponseModel>(error);
         }
 
-        return Result.Success(review);
+        return Result.Success(reviewResult);
     }
 }

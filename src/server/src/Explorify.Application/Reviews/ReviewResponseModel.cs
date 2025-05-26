@@ -1,6 +1,4 @@
-﻿using Explorify.Application.Abstractions.Models;
-
-namespace Explorify.Application.Reviews;
+﻿namespace Explorify.Application.Reviews;
 
 public class ReviewResponseModel
 {
@@ -14,7 +12,17 @@ public class ReviewResponseModel
 
     public string PlaceName { get; set; } = string.Empty;
 
-    public UserReviewDto User { get; set; } = new();
+    public Guid UserId { get; set; }
+
+    public string UserName { get; set; } = default!;
+
+    public string? ProfileImageUrl { get; set; }
+
+    public bool HasLikedReview { get; set; }
 
     public IEnumerable<string> ImagesUrls { get; set; } = [];
+
+    public bool IsApproved { get; set; }
+
+    public bool IsDeleted { get; set; }
 }
