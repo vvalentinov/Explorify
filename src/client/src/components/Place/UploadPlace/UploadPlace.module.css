@@ -1,0 +1,69 @@
+.uploadPlaceSection {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 20px;
+}
+
+.uploadPlaceCard {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    border: solid 1px green;
+}
+
+.tagCheckboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reviewCard {
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    background-color: #faf5ff;
+    border: 1px solid #d3adf7;
+    box-shadow: 0 4px 12px rgba(0 0 0 0.06);
+}
+
+.uploadButton {
+    color: white;
+    transition: all 0.3s ease;
+    background-color: #13c2c2 !important;
+    border-color: #13c2c2 !important;
+}
+
+.uploadButton:hover {
+    border-color: #0ea5a5 !important;
+    background-color: #0ea5a5 !important;
+}
+
+.customTagCheckbox {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid #0ea5a5;
+    border-radius: 16px;
+    background-color: #f1fdfa;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    font-size: 0.95rem;
+}
+
+.customTagCheckbox :global(.ant-checkbox) {
+    display: none !important;
+}
+
+:global(.ant-checkbox-wrapper-checked).customTagCheckbox {
+    background-color: #0ea5a5 !important;
+    color: white !important;
+    border-color: #0ea5a5 !important;
+}
+
+.customTagCheckbox:hover {
+    border-color: #0ea5a5;
+    background-color: #e0f7f7;
+}
