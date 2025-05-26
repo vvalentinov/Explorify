@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.Notifications;
+﻿namespace Explorify.Application.Notification;
 
 public class NotificationResponseModel
 {

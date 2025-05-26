@@ -1,16 +1,16 @@
-﻿using Explorify.Domain.Entities;
-using Explorify.Application.Abstractions.Models;
+﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Notifications.MarkNotificationAsRead;
+namespace Explorify.Application.Notification.MarkNotificationAsRead;
 
 public class MarkNotificationAsReadCommandHandler
     : ICommandHandler<MarkNotificationAsReadCommand>
 {
     private readonly IRepository _repository;
+
     private readonly INotificationService _notificationHubService;
 
     public MarkNotificationAsReadCommandHandler(
@@ -18,6 +18,7 @@ public class MarkNotificationAsReadCommandHandler
         INotificationService notificationHubService)
     {
         _repository = repository;
+
         _notificationHubService = notificationHubService;
     }
 
@@ -26,9 +27,10 @@ public class MarkNotificationAsReadCommandHandler
         CancellationToken cancellationToken)
     {
         var notification = await _repository
-            .All<Notification>()
+            .All<Domain.Entities.Notification>()
             .FirstOrDefaultAsync(x =>
-                x.Id == request.NotificationId && x.ReceiverId == request.UserId,
+                x.Id == request.NotificationId &&
+                x.ReceiverId == request.UserId,
                 cancellationToken);
 
         if (notification == null)
