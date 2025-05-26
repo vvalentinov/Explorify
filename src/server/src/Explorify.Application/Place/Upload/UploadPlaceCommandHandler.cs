@@ -9,7 +9,7 @@ using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Explorify.Application.Places.Upload;
+namespace Explorify.Application.Place.Upload;
 
 public class UploadPlaceCommandHandler
     : ICommandHandler<UploadPlaceCommand>
@@ -63,7 +63,7 @@ public class UploadPlaceCommandHandler
             return Result.Failure(error);
         }
 
-        var country = await _repository.GetByIdAsync<Country>(model.CountryId);
+        var country = await _repository.GetByIdAsync<Domain.Entities.Country>(model.CountryId);
 
         if (country == null)
         {
@@ -91,7 +91,7 @@ public class UploadPlaceCommandHandler
             Content = model.ReviewContent,
         };
 
-        var place = new Place
+        var place = new Domain.Entities.Place
         {
             Name = model.Name,
             UserId = model.UserId,
@@ -124,11 +124,6 @@ public class UploadPlaceCommandHandler
             place.Latitude = model.Latitude;
             place.Longitude = model.Longitude;
         }
-        //else
-        //{
-        //    var error = new Error("Both latitude and longitude must be provided together or omitted.", ErrorType.Validation);
-        //    return Result.Failure(error);
-        //}
 
         var placeVibeAssignments = new List<PlaceVibeAssignment>();
 

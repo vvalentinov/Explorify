@@ -1,15 +1,18 @@
 ﻿using System.Text.Json;
+
 using Explorify.Application.Vibes;
 
-namespace Explorify.Application.Places;
+namespace Explorify.Application.Place;
 
 public class PlaceDetailsResponseModel
 {
     public Guid Id { get; set; }
 
-    public double AvgRating { get; set; }
+    public double AvgRating { get; set; } = 0.0;
 
-    public PlaceCoordinates Coordinates { get; set; } = default!;
+    public double Latitude { get; set; }
+
+    public double Longitude { get; set; }
 
     public string Name { get; set; } = string.Empty;
 
@@ -27,11 +30,13 @@ public class PlaceDetailsResponseModel
 
     public string UserReviewContent { get; set; } = string.Empty;
 
-    public IEnumerable<string> ImagesUrls { get; set; } = [];
+    public List<string> ImagesUrls { get; set; } = [];
 
     public JsonElement WeatherData { get; set; }
 
     public List<VibeResponseModel> Tags { get; set; } = [];
 
     public bool IsApproved { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

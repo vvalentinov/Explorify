@@ -1,8 +1,8 @@
 ﻿using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-namespace Explorify.Application.Places.Delete;
+namespace Explorify.Application.Place.Revert;
 
-public record DeletePlaceCommand(
+public record RevertPlaceCommand(
     Guid PlaceId,
     Guid CurrentUserId,
     bool IsCurrUserAdmin) : ICommand;

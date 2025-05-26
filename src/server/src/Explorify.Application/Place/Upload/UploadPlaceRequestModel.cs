@@ -1,6 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Models;
 
-namespace Explorify.Application.Places.Upload;
+namespace Explorify.Application.Place.Upload;
 
 public class UploadPlaceRequestModel
 {

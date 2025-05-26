@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.Places;
+﻿namespace Explorify.Application.Place;
 
 public class PlaceCoordinates
 {
