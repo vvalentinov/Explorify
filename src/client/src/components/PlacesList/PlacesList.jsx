@@ -9,7 +9,6 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { useContext, } from 'react';
 
 import { placesServiceFactory } from '../../services/placesService';
-import { adminServiceFactory } from '../../services/adminService';
 
 import { fireError } from '../../utils/fireError';
 
@@ -33,27 +32,16 @@ const PlacesList = ({ places, isForAdmin }) => {
     const navigate = useNavigate();
 
     const placesService = placesServiceFactory(token);
-    const adminService = adminServiceFactory(token);
 
     const handleRevert = (placeId) => {
 
-        if (isForAdmin) {
-            adminService
-                .revertPlace(placeId)
-                .then(res => {
-                    navigate('/admin', { state: { successOperation: { message: res.successMessage } } })
-                }).catch(err => {
-                    fireError(err);
-                })
-        } else {
-            placesService
-                .revertPlace(placeId)
-                .then(res => {
-                    navigate('/', { state: { successOperation: { message: res.successMessage } } })
-                }).catch(err => {
-                    fireError(err);
-                })
-        }
+        placesService
+            .revertPlace(placeId)
+            .then(res => {
+                navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } })
+            }).catch(err => {
+                fireError(err);
+            })
 
     };
 
