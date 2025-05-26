@@ -30,6 +30,7 @@ const MyPlaces = () => {
     const { token } = useContext(AuthContext);
 
     const userService = usersServiceFactory(token);
+    const placesService = placesServiceFactory(token);
 
     const [places, setPlaces] = useState([]);
     const [pagesCount, setPagesCount] = useState(0);
@@ -47,11 +48,11 @@ const MyPlaces = () => {
             let response;
 
             if (filter === 'approved') {
-                response = await userService.getUserApprovedPlaces(currentPage);
+                response = await placesService.getApproved(currentPage, false);
             } else if (filter === 'unapproved') {
-                response = await userService.getUserUnapprovedPlaces(currentPage);
+                response = await placesService.getUnapproved(currentPage, false);
             } else if (filter === 'recentlyDeleted') {
-                response = await userService.getUserRecentlyDeletedPlaces(currentPage);
+                response = await placesService.getDeleted(currentPage, false);
             }
 
             setPagesCount(response.pagination.pagesCount);
@@ -77,7 +78,10 @@ const MyPlaces = () => {
     }, [places]);
 
     const handlePageChange = (page) => setCurrentPage(page);
-    const handleSortChange = (e) => setFilter(e.target.value);
+    const handleSortChange = (e) => {
+        setFilter(e.target.value);
+        setCurrentPage(1);
+    };
 
     return (
         <>

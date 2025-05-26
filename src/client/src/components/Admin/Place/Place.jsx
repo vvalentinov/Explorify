@@ -3,7 +3,7 @@ import { Spin, ConfigProvider } from 'antd';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 
-import { adminServiceFactory } from '../../../services/adminService';
+import { placesServiceFactory } from '../../../services/placesService';
 
 import { AuthContext } from '../../../contexts/AuthContext';
 
@@ -11,7 +11,7 @@ import PlaceStatusPill from './PlaceStatusPill';
 import DeletedPlaceCard from './Cards/DeletedPlaceCard';
 import ApprovedPlaceCard from './Cards/ApprovedPlaceCard';
 import UnapprovedPlaceCard from './Cards/UnapprovedPlaceCard';
-import PlaceDetailsSection from '../../PlaceDetails/PlaceDetailsSection/PlaceDetailsSection';
+import PlaceDetailsSection from '../../Place/PlaceDetails/PlaceDetailsSection/PlaceDetailsSection';
 
 import { fireError } from '../../../utils/fireError';
 import { getGoogleMapsUrl } from '../../../utils/getGoogleMapsUrl';
@@ -22,7 +22,7 @@ const Place = () => {
 
     const location = useLocation();
 
-    const adminService = adminServiceFactory(token);
+    const placeService = placesServiceFactory(token);
 
     // State Management
     const [place, setPlace] = useState();
@@ -33,17 +33,15 @@ const Place = () => {
 
         if (location.state?.placeId) {
 
-            adminService
-                .getPlaceInfo(location.state?.placeId)
+            placeService
+                .getPlaceDetailsById(location.state?.placeId, true)
                 .then(res => {
-
                     setPlace(res);
                     setIsLoading(false);
-                    setMapUrl(getGoogleMapsUrl(res.coordinates.latitude, res.coordinates.longitude));
-
+                    setMapUrl(getGoogleMapsUrl(res.latitude, res.longitude));
                 }).catch(err => {
                     fireError(err);
-                });
+                })
         }
 
     }, []);

@@ -1,25 +1,28 @@
 import { Route, Routes } from 'react-router-dom';
 
 import Home from '../Home/Home';
-import SignIn from '../SignIn/SignIn';
-import SignUp from '../SignUp/SignUp';
 import Categories from '../Categories/Categories';
-import Profile from '../Profile/Profile';
 import Subcategories from '../Subcategories/Subcategories';
 import NoPathFound from '../NoPathFound/NoPathFound';
-import Logout from '../Logout/Logout';
-import UploadPlace from '../UploadPlace/UploadPlace';
 import PlacesInSubcategory from '../PlacesInSubcategory/PlacesInSubcategory';
-import PlaceDetails from '../PlaceDetails/PlaceDetails';
-import ProfileLayout from '../ProfileLayout/ProfileLayout';
-import ChangeUsername from '../ChangeUsername/ChangeUsername';
-import ChangePassword from '../ChangePassword/ChangePassword';
-import ChangeEmail from '../ChangeEmail/ChangeEmail';
-import ForgotPassword from '../ForgotPassword/ForgotPassword';
-import ResetPassword from '../ResetPassword/ResetPassword';
 import MyPlaces from '../MyPlaces/MyPlaces';
 import Notifications from '../Notifications/Notifications';
-import EditPlace from '../EditPlace/EditPlace';
+
+// Account
+import Profile from '../Account/Profile/Profile';
+import Logout from '../Account/Logout/Logout';
+import SignIn from '../Account/SignIn/SignIn';
+import SignUp from '../Account/SignUp/SignUp';
+import ChangeUsername from '../Account/ChangeUsername/ChangeUsername';
+import ChangePassword from '../Account/ChangePassword/ChangePassword';
+import ChangeEmail from '../Account/ChangeEmail/ChangeEmail';
+import ForgotPassword from '../Account/ForgotPassword/ForgotPassword';
+import ResetPassword from '../Account/ResetPassword/ResetPassword';
+
+// Place
+import EditPlace from '../Place/EditPlace/EditPlace';
+import UploadPlace from '../Place/UploadPlace/UploadPlace';
+import PlaceDetails from '../Place/PlaceDetails/PlaceDetails';
 
 import ScrollToTop from '../ScrollToTop/ScrollToTop';
 

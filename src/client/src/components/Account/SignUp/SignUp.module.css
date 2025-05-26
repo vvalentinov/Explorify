@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
+
+.section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 100px);
+}
+
+.container {
+    width: 40%;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.footer {
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+}

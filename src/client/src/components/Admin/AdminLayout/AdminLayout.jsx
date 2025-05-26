@@ -11,9 +11,9 @@ import {
     CloseCircleOutlined
 } from '@ant-design/icons';
 
-import AdminUsers from '../AdminUsers/AdminUsers';
+import AdminUsers from '../Users/Users';
 import AdminDashboard from '../AdminDashboard/AdminDashboard';
-import UnapprovedReviews from '../UnapprovedReviews/UnapprovedReviews';
+import Reviews from '../Reviews/Reviews';
 
 import Places from '../Places/Places';
 import Place from '../Place/Place';
@@ -25,28 +25,6 @@ const { Header, Content, Footer } = Layout;
 const AdminLayout = () => {
 
     const navigate = useNavigate();
-
-    const reviewsMenu = {
-        items: [
-            {
-                key: 'approved-reviews',
-                icon: <CommentOutlined />,
-                label: 'Approved Reviews',
-                onClick: () => navigate('/admin/approved-reviews'),
-            },
-            {
-                key: 'unapproved-reviews',
-                label: 'Unapproved Reviews',
-                icon: <CloseCircleOutlined />,
-                onClick: () => navigate('/admin/unapproved-reviews'),
-            },
-            {
-                key: 'deleted',
-                label: 'Deleted reviews',
-                disabled: true,
-            },
-        ]
-    }
 
     const leftMenuItems = [
         {
@@ -62,26 +40,10 @@ const AdminLayout = () => {
             onClick: () => navigate('/admin/places'),
         },
         {
-            key: 'reviews-dropdown',
-            label: (
-                <Dropdown placement='bottom' menu={reviewsMenu}>
-                    <span
-                        style={{
-                            cursor: 'pointer',
-                            pointerEvents: 'auto',
-                            display: 'flex',
-                            alignItems: 'center',
-                            color: '#a7adb4',
-                        }}
-                        onClick={(e) => e.preventDefault()}
-                    >
-                        <Space>
-                            <CommentOutlined /> Reviews
-                        </Space>
-                    </span>
-                </Dropdown>
-            ),
-            disabled: true,
+            key: 'reviews',
+            icon: <CommentOutlined />,
+            label: 'Reviews',
+            onClick: () => navigate('/admin/reviews'),
         },
         {
             key: 'users',
@@ -134,10 +96,11 @@ const AdminLayout = () => {
                     <Route index element={<AdminDashboard />} />
 
                     <Route path="users" element={<AdminUsers />} />
-                    <Route path="unapproved-reviews" element={<UnapprovedReviews />} />
 
                     <Route path='places' element={<Places />} />
                     <Route path='place/:placeName' element={<Place />} />
+
+                    <Route path='reviews' element={<Reviews />} />
                 </Routes>
 
                 <FloatButton.BackTop />

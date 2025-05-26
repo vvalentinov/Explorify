@@ -18,7 +18,7 @@ const UnapprovedPlaceCard = ({ place }) => {
 
     const navigate = useNavigate();
 
-    const { token } = useContext(AuthContext);
+    const { token, userId } = useContext(AuthContext);
 
     const adminService = adminServiceFactory(token);
 
@@ -33,13 +33,24 @@ const UnapprovedPlaceCard = ({ place }) => {
             title: 'Approve Place',
             icon: <ExclamationCircleOutlined />,
             content: (
-                <p>
-                    Are you sure you want to approve this place? <br />
-                    <Typography.Text type="danger" strong>
-                        This action will mark the place as approved and the place will be visible on the site.
-                        The user will gain points and receive notification.
-                    </Typography.Text>
-                </p>
+                <>
+                    <div>
+                        <Typography.Text type="secondary" strong>
+                            Are you sure you want to approve this place?
+                        </Typography.Text>
+                    </div>
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            This action will mark the place as approved and the place will be visible on the site.
+                        </Typography.Text>
+                    </div>
+                    {place?.userId != userId && <div>
+                        <Typography.Text type="danger" strong>
+                            The user will gain points and receive notification.
+                        </Typography.Text>
+                    </div>}
+
+                </>
             ),
             okText: 'Approve',
             okType: 'danger',
@@ -99,6 +110,7 @@ const UnapprovedPlaceCard = ({ place }) => {
             </Card>
 
             <DeletePlaceModal
+                placeUserId={place?.userId}
                 isPlaceApproved={false}
                 placeId={place?.id}
                 setVisible={setIsDeleteModalVisible}

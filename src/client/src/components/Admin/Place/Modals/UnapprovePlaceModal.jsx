@@ -11,16 +11,14 @@ import { fireError } from '../../../../utils/fireError';
 
 const { TextArea } = Input;
 
-const UnapprovePlaceModal = ({ placeId, visible, setVisible }) => {
+const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
 
     const navigate = useNavigate();
 
-    const { token } = useContext(AuthContext);
+    const { token, userId } = useContext(AuthContext);
 
     const adminService = adminServiceFactory(token);
 
-    // const [visible, setVisible] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
 
     const [form] = Form.useForm();
 
@@ -60,7 +58,6 @@ const UnapprovePlaceModal = ({ placeId, visible, setVisible }) => {
             okText="Unapprove"
             okType="danger"
             onOk={handleOk}
-            confirmLoading={submitting}
             onCancel={handleCancel}
         >
             <Typography.Paragraph>
@@ -70,38 +67,50 @@ const UnapprovePlaceModal = ({ placeId, visible, setVisible }) => {
                         This action will mark the place as not approved.
                     </Typography.Text>
                 </div>
-                <div>
-                    <Typography.Text type="danger" strong>
-                        The user who uploaded it will lose points and receive notification.
-                    </Typography.Text>
-                </div>
+                {userId != placeUserId &&
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            The user who uploaded it will lose points and receive notification.
+                        </Typography.Text>
+                    </div>
+                }
+
+                {userId == placeUserId &&
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            You will lose points.
+                        </Typography.Text>
+                    </div>
+                }
+
             </Typography.Paragraph>
 
 
             <Form form={form} layout="vertical">
-                <Form.Item
-                    name="reason"
-                    label="Reason for Unapproval"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please provide a reason.'
-                        },
-                        {
-                            type: 'string',
-                            min: 5,
-                            max: 200,
-                            message: 'Reason must be between 5 and 200 characters.'
-                        }
-                    ]}
-                >
-                    <TextArea
-                        rows={4}
-                        maxLength={200}
-                        minLength={5}
-                        placeholder="Explain why this place is being unapproved..."
-                    />
-                </Form.Item>
+                {placeUserId != userId &&
+                    <Form.Item
+                        name="reason"
+                        label="Reason for Unapproval"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please provide a reason.'
+                            },
+                            {
+                                type: 'string',
+                                min: 5,
+                                max: 200,
+                                message: 'Reason must be between 5 and 200 characters.'
+                            }
+                        ]}
+                    >
+                        <TextArea
+                            rows={4}
+                            maxLength={200}
+                            minLength={5}
+                            placeholder="Explain why this place is being unapproved..."
+                        />
+                    </Form.Item>}
             </Form>
         </Modal>
     );

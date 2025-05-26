@@ -96,12 +96,14 @@ const ApprovedPlaceCard = ({ place }) => {
             </div>
 
             <UnapprovePlaceModal
+                placeUserId={place?.userId}
                 placeId={place?.id}
                 setVisible={setIsUnapproveModalVisible}
                 visible={isUnapproveModalVisible}
             />
 
             <DeletePlaceModal
+                placeUserId={place?.userId}
                 placeId={place?.id}
                 setVisible={setIsDeleteModalVisible}
                 visible={isDeleteModalVisible}

@@ -10,6 +10,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 
 import { adminServiceFactory } from '../../../services/adminService';
+import { placesServiceFactory } from '../../../services/placesService';
 
 import { Pagination, ConfigProvider, Spin, Card, Typography, Radio, Empty } from 'antd';
 
@@ -30,6 +31,7 @@ const Places = () => {
     const { token } = useContext(AuthContext);
 
     const adminService = adminServiceFactory(token);
+    const placeService = placesServiceFactory(token);
 
     // State Management
     const [places, setPlaces] = useState([]);
@@ -47,11 +49,14 @@ const Places = () => {
             let response;
 
             if (filter === 'approved') {
-                response = await adminService.getApprovedPlaces(currentPage);
+                // response = await adminService.getApprovedPlaces(currentPage);
+                response = await placeService.getApproved(currentPage, true);
             } else if (filter === 'unapproved') {
-                response = await adminService.getUnapprovedPlaces(currentPage);
+                // response = await adminService.getUnapprovedPlaces(currentPage);
+                response = await placeService.getUnapproved(currentPage, true);
             } else if (filter === 'recentlyDeleted') {
-                response = await adminService.getDeletedPlaces(currentPage);
+                // response = await adminService.getDeletedPlaces(currentPage);
+                response = await placeService.getDeleted(currentPage, true);
             }
 
             setPagesCount(response.pagination.pagesCount);

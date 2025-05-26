@@ -1,7 +1,7 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import { Modal, Typography, Form, Input } from 'antd';
 
-import { adminServiceFactory } from '../../../../services/adminService';
+import { placesServiceFactory } from '../../../../services/placesService';
 
 import { AuthContext } from '../../../../contexts/AuthContext';
 
@@ -11,16 +11,13 @@ import { fireError } from '../../../../utils/fireError';
 
 const { TextArea } = Input;
 
-const DeletePlaceModal = ({ placeId, visible, setVisible, isPlaceApproved }) => {
+const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceApproved }) => {
 
     const navigate = useNavigate();
 
-    const { token } = useContext(AuthContext);
+    const { token, userId } = useContext(AuthContext);
 
-    const adminService = adminServiceFactory(token);
-
-    // const [visible, setVisible] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
+    const placeService = placesServiceFactory(token);
 
     const [form] = Form.useForm();
 
@@ -34,7 +31,7 @@ const DeletePlaceModal = ({ placeId, visible, setVisible, isPlaceApproved }) => 
                     ...values
                 };
 
-                adminService
+                placeService
                     .deletePlace(payload)
                     .then(res => {
                         navigate('/admin', { state: { successOperation: { message: res.successMessage } } });
@@ -60,7 +57,6 @@ const DeletePlaceModal = ({ placeId, visible, setVisible, isPlaceApproved }) => 
             okText="Delete"
             okType="danger"
             onOk={handleOk}
-            confirmLoading={submitting}
             onCancel={handleCancel}
         >
             <Typography.Paragraph>
@@ -70,15 +66,31 @@ const DeletePlaceModal = ({ placeId, visible, setVisible, isPlaceApproved }) => 
                         This action will mark the place as deleted.
                     </Typography.Text>
                 </div>
-                <div>
-                    <Typography.Text type="danger" strong>
-                        {
-                            isPlaceApproved ?
-                                'The user who uploaded it will lose points and receive notification.' :
-                                'The user who uploaded it will receive notification.'
-                        }
-                    </Typography.Text>
-                </div>
+
+                {isPlaceApproved && placeUserId !== userId &&
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            The user who uploaded it will lose points and receive notification.
+                        </Typography.Text>
+                    </div>
+                }
+
+                {isPlaceApproved && placeUserId === userId &&
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            You will lose points.
+                        </Typography.Text>
+                    </div>
+                }
+
+                {!isPlaceApproved && placeUserId !== userId &&
+                    <div>
+                        <Typography.Text type="danger" strong>
+                            The user who uploaded it will receive notification.
+                        </Typography.Text>
+                    </div>
+                }
+
                 <div>
                     <Typography.Text type="secondary" strong>
                         You will have a time window in which you can revert it back.
@@ -86,32 +98,34 @@ const DeletePlaceModal = ({ placeId, visible, setVisible, isPlaceApproved }) => 
                 </div>
             </Typography.Paragraph>
 
-
             <Form form={form} layout="vertical">
-                <Form.Item
-                    name="reason"
-                    label="Reason for Delete"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please provide a reason.'
-                        },
-                        {
-                            type: 'string',
-                            min: 5,
-                            max: 200,
-                            message: 'Reason must be between 5 and 200 characters.'
-                        }
-                    ]}
-                >
-                    <TextArea
-                        rows={4}
-                        maxLength={200}
-                        minLength={5}
-                        placeholder="Explain why this place is being unapproved..."
-                    />
-                </Form.Item>
+                {placeUserId !== userId && (
+                    <Form.Item
+                        name="reason"
+                        label="Reason for Delete"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please provide a reason.',
+                            },
+                            {
+                                type: 'string',
+                                min: 5,
+                                max: 200,
+                                message: 'Reason must be between 5 and 200 characters.',
+                            },
+                        ]}
+                    >
+                        <TextArea
+                            rows={4}
+                            maxLength={200}
+                            minLength={5}
+                            placeholder="Explain why this place is being deleted..."
+                        />
+                    </Form.Item>
+                )}
             </Form>
+
         </Modal>
     );
 };

@@ -61,8 +61,8 @@ const Notifications = () => {
             .then(res => {
 
                 setNotifications(res.notifications);
-                setNotificationsCount(res.recordsCount);
-                setPagesCount(res.pagesCount);
+                setNotificationsCount(res.pagination.recordsCount);
+                setPagesCount(res.pagination.pagesCount);
                 setSpinnerLoading(false);
 
             }).catch(err => console.log(err));
