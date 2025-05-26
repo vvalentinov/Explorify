@@ -1,14 +1,18 @@
 ﻿using Explorify.Api.DTOs;
 using Explorify.Api.Extensions;
-using Explorify.Application.Places.Upload;
-using Explorify.Application.Places.Delete;
-using Explorify.Application.Places.Update;
-using Explorify.Application.Places.GetPlace;
-using Explorify.Application.Places.RevertPlace;
-using Explorify.Application.Places.GetEditData;
-using Explorify.Application.Places.GetPlacesInCategory;
-using Explorify.Application.Places.GetPlacesInSubcategory;
-using Explorify.Application.Places.GetPlaceBySlugifiedName;
+using Explorify.Application.Place.Edit;
+using Explorify.Application.Place.Upload;
+using Explorify.Application.Place.Delete;
+using Explorify.Application.Place.Revert;
+using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Place.Edit.GetEditData;
+using Explorify.Application.Place.GetPlaces.GetDeleted;
+using Explorify.Application.Place.GetPlaces.GetApproved;
+using Explorify.Application.Place.GetPlace.GetPlaceById;
+using Explorify.Application.Place.GetPlaces.GetUnapproved;
+using Explorify.Application.Place.GetPlaces.GetPlacesInCategory;
+using Explorify.Application.Place.GetPlaces.GetPlacesInSubcategory;
+using Explorify.Application.Place.GetPlace.GetPlaceBySlugifiedName;
 
 using static Explorify.Api.Extensions.ControllerBaseExtensions;
 
@@ -57,13 +61,14 @@ public class PlaceController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsById))]
-    public async Task<IActionResult> GetPlaceDetailsById(Guid placeId)
-        => this.OkOrProblemDetails(
-                await _mediator.Send(
-                    new GetPlaceByIdQuery(
-                        placeId,
-                        User.GetId(),
-                        User.IsAdmin())));
+    public async Task<IActionResult> GetPlaceDetailsById(Guid placeId, bool isForAdmin)
+    {
+        var query = new GetPlaceByIdQuery(placeId, isForAdmin, User.GetId(), User.IsAdmin());
+
+        var result = await _mediator.Send(query);
+
+        return this.OkOrProblemDetails(result);
+    }
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]
@@ -73,13 +78,12 @@ public class PlaceController : BaseController
                     new GetPlaceBySlugifiedNameQuery(slugifiedName)));
 
     [HttpDelete(nameof(Delete))]
-    public async Task<IActionResult> Delete([FromQuery] Guid placeId)
-        => this.OkOrProblemDetails(
-            await _mediator.Send(
-                new DeletePlaceCommand(
-                    placeId,
-                    User.GetId(),
-                    User.IsAdmin())));
+    public async Task<IActionResult> Delete(DeletePlaceDto model)
+    {
+        var command = new DeletePlaceCommand(model, User.GetId(), User.IsAdmin());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
 
     [HttpGet(nameof(GetEditData))]
     public async Task<IActionResult> GetEditData(Guid placeId)
@@ -92,7 +96,7 @@ public class PlaceController : BaseController
     {
         var applicationModel = await model.ToApplicationModelAsync(User.GetId());
 
-        var command = new UpdatePlaceCommand(applicationModel);
+        var command = new EditPlaceCommand(applicationModel);
 
         var result = await _mediator.Send(command);
 
@@ -102,8 +106,70 @@ public class PlaceController : BaseController
     [HttpPut(nameof(Revert))]
     public async Task<IActionResult> Revert(Guid placeId)
     {
-        var revertPlaceCommand = new RevertPlaceCommand(placeId, User.GetId(), User.IsAdmin());
+        var revertPlaceCommand = new RevertPlaceCommand(
+            placeId,
+            User.GetId(),
+            User.IsAdmin());
+
         var result = await _mediator.Send(revertPlaceCommand);
+
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetApproved))]
+    public async Task<IActionResult> GetApproved(int page, bool isForAdmin)
+    {
+        if (!User.IsAdmin() && isForAdmin)
+        {
+            var error = new Error("Only admins can access all approved places.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
+        var query = new GetApprovedPlacesQuery(
+            page,
+            isForAdmin,
+            User.GetId());
+
+        var result = await _mediator.Send(query);
+
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetUnapproved))]
+    public async Task<IActionResult> GetUnapproved(int page, bool isForAdmin)
+    {
+        if (!User.IsAdmin() && isForAdmin)
+        {
+            var error = new Error("Only admins can access all unapproved places.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
+        var query = new GetUnapprovedPlacesQuery(
+            page,
+            isForAdmin,
+            User.GetId());
+
+        var result = await _mediator.Send(query);
+
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpGet(nameof(GetDeleted))]
+    public async Task<IActionResult> GetDeleted(int page, bool isForAdmin)
+    {
+        if (!User.IsAdmin() && isForAdmin)
+        {
+            var error = new Error("Only admins can access all recently deleted places.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
+        var query = new GetDeletedPlacesQuery(
+            page,
+            isForAdmin,
+            User.GetId());
+
+        var result = await _mediator.Send(query);
+
         return this.OkOrProblemDetails(result);
     }
 }

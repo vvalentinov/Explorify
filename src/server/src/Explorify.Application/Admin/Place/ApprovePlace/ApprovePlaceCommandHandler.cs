@@ -1,5 +1,4 @@
-﻿using Explorify.Domain.Entities;
-using Explorify.Application.Abstractions.Models;
+﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
@@ -59,19 +58,26 @@ public class ApprovePlaceCommandHandler
             place.UserId.ToString(),
             UserPlaceUploadPoints);
 
-        var notification = new Notification
+        if (place.UserId != request.CurrentUserId)
         {
-            ReceiverId = place.UserId,
-            SenderId = request.CurrentUserId,
-            Content = $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned 10 adventure points – keep exploring!"
-        };
+            var notification = new Domain.Entities.Notification
+            {
+                ReceiverId = place.UserId,
+                SenderId = request.CurrentUserId,
+                Content = $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned 10 adventure points – keep exploring!"
+            };
 
-        await _repository.AddAsync(notification);
+            await _repository.AddAsync(notification);
+        }
+        
         await _repository.SaveChangesAsync();
 
-        await _notificationHubService.NotifyAsync(
-            "Admin approved your place upload!",
-            place.UserId);
+        if (place.UserId != request.CurrentUserId)
+        {
+            await _notificationHubService.NotifyAsync(
+                "Admin approved your place upload!",
+                place.UserId);
+        }
 
         return Result.Success("Successfully approved place!");
     }

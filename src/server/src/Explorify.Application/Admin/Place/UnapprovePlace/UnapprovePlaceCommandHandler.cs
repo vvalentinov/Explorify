@@ -1,5 +1,4 @@
-﻿using Explorify.Domain.Entities;
-using Explorify.Application.Abstractions.Models;
+﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
@@ -33,14 +32,15 @@ public class UnapprovePlaceCommandHandler
         UnapprovePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        var model = request.Model;
+        var placeId = request.Model.PlaceId;
+        var reason = request.Model.Reason;
         var currUserId = request.CurrentUserId;
 
         var place = await _repository
             .All<Domain.Entities.Place>()
             .Include(x => x.Reviews)
             .FirstOrDefaultAsync(x =>
-                x.Id == model.PlaceId,
+                x.Id == placeId,
                 cancellationToken);
 
         if (place == null)
@@ -68,19 +68,32 @@ public class UnapprovePlaceCommandHandler
             place.UserId.ToString(),
             UserPlaceUploadPoints);
 
-        var notification = new Notification
+        if (place.UserId != currUserId && string.IsNullOrWhiteSpace(reason))
         {
-            ReceiverId = place.UserId,
-            SenderId = request.CurrentUserId,
-            Content = $"Sad news! Your place \"{place.Name}\" was unapproved by an admin. Reason: {model.Reason}."
-        };
+            var error = new Error("Reason for unapproving is required!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
 
-        await _repository.AddAsync(notification);
+        if (place.UserId != currUserId)
+        {
+            var notification = new Domain.Entities.Notification
+            {
+                ReceiverId = place.UserId,
+                SenderId = request.CurrentUserId,
+                Content = $"Sad news! Your place \"{place.Name}\" was unapproved by an admin. Reason: {reason}."
+            };
+
+            await _repository.AddAsync(notification);
+        }
+
         await _repository.SaveChangesAsync();
 
-        await _notificationService.NotifyAsync(
-            "Admin unapproved one of your places! Check your notifications.",
-            place.UserId);
+        if (place.UserId != currUserId)
+        {
+            await _notificationService.NotifyAsync(
+                "Admin unapproved one of your places! Check your notifications.",
+                place.UserId);
+        }
 
         return Result.Success("Successfully unapproved place!");
     }

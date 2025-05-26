@@ -1,33 +1,58 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Data;
+
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
-using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace Explorify.Application.Categories.GetSubcategories;
 
 public class GetSubcategoriesQueryHandler
     : IQueryHandler<GetSubcategoriesQuery, SubcategoriesResponseModel>
 {
-    private readonly IRepository _repository;
+    private readonly IDbConnection _dbConnection;
 
-    public GetSubcategoriesQueryHandler(IRepository repository)
+    public GetSubcategoriesQueryHandler(IDbConnection dbConnection)
     {
-        _repository = repository;
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result<SubcategoriesResponseModel>> Handle(
         GetSubcategoriesQuery request,
         CancellationToken cancellationToken)
     {
-        var category = await _repository
-            .AllAsNoTracking<Category>()
-            .Include(x => x.Children)
-            .Select(x => new { x.Id, x.Name, x.Description, x.Children })
-            .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken);
+        const string categorySql =
+            """
+            
+            SELECT
+                Id,
+                Name,
+                Description
+            FROM Categories
+            WHERE Id = @CategoryId
+        
+            """;
+
+        const string subcategoriesSql =
+            """
+            
+            SELECT
+                Id,
+                Name,
+                SlugifiedName,
+                ImageUrl
+            FROM Categories
+            WHERE ParentId = @CategoryId
+        
+            """
+        ;
+
+        var category = await _dbConnection.QueryFirstOrDefaultAsync(categorySql, new
+        {
+            request.CategoryId
+        });
 
         if (category == null)
         {
@@ -35,19 +60,16 @@ public class GetSubcategoriesQueryHandler
             return Result.Failure<SubcategoriesResponseModel>(error);
         }
 
+        var subcategories = await _dbConnection.QueryAsync<CategoryResponseModel>(subcategoriesSql, new
+        {
+            request.CategoryId
+        });
+
         var subcategoriesResponse = new SubcategoriesResponseModel
         {
             CategoryName = category.Name,
+            Subcategories = subcategories,
             CategoryDescription = category.Description ?? string.Empty,
-            Subcategories = category
-                .Children
-                .Select(x => new CategoryResponseModel
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    SlugifiedName = x.SlugifiedName,
-                    ImageUrl = x.ImageUrl
-                })
         };
 
         return Result.Success(subcategoriesResponse);

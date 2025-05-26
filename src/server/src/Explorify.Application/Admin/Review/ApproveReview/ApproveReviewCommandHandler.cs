@@ -1,5 +1,4 @@
-﻿using Explorify.Domain.Entities;
-using Explorify.Application.Abstractions.Models;
+﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
@@ -70,7 +69,7 @@ public class ApproveReviewCommandHandler
             return Result.Success("Successfully approved review!");
         }
 
-        var notification = new Notification
+        var notification = new Domain.Entities.Notification
         {
             ReceiverId = review.UserId,
             SenderId = request.CurrentUserId,

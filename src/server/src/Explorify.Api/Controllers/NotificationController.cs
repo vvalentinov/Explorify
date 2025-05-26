@@ -1,10 +1,11 @@
 ﻿using Explorify.Api.Extensions;
-using Explorify.Application.Notifications.Delete;
-using Explorify.Application.Notifications.GetUserNotifications;
-using Explorify.Application.Notifications.MarkNotificationAsRead;
-using Explorify.Application.Notifications.GetUnreadNotificationsCount;
+using Explorify.Application.Notification.Delete;
+using Explorify.Application.Notification.GetUserNotifications;
+using Explorify.Application.Notification.MarkNotificationAsRead;
+using Explorify.Application.Notification.GetUnreadNotificationsCount;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Explorify.Api.Controllers;

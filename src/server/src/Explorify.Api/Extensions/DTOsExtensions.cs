@@ -1,7 +1,7 @@
 ﻿using Explorify.Api.DTOs;
-using Explorify.Application.Places;
-using Explorify.Application.Places.Upload;
 using Explorify.Application.Abstractions.Models;
+using Explorify.Application.Place.Edit;
+using Explorify.Application.Place.Upload;
 
 namespace Explorify.Api.Extensions;
 

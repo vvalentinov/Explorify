@@ -1,37 +1,39 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Data;
+
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace Explorify.Application.Categories.GetCategories;
 
 public class GetCategoriesQueryHandler
     : IQueryHandler<GetCategoriesQuery, IEnumerable<CategoryResponseModel>>
 {
-    private readonly IRepository _repository;
+    private readonly IDbConnection _dbConnection;
 
-    public GetCategoriesQueryHandler(IRepository repository)
+    public GetCategoriesQueryHandler(IDbConnection dbConnection)
     {
-        _repository = repository;
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result<IEnumerable<CategoryResponseModel>>> Handle(
         GetCategoriesQuery request,
         CancellationToken cancellationToken)
     {
-        var categories = (IEnumerable<CategoryResponseModel>)await _repository
-            .AllAsNoTracking<Category>()
-            .Where(x => x.ParentId == null)
-            .Select(x => new CategoryResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                SlugifiedName = x.SlugifiedName,
-                ImageUrl = x.ImageUrl,
-                Description = x.Description ?? string.Empty,
-            }).ToListAsync(cancellationToken);
+        var categoriesSql =
+            """
+            SELECT
+                Id,
+                Name,
+                SlugifiedName,
+                ImageUrl,
+                Description
+            FROM Categories
+            WHERE ParentId IS NULL
+            """;
+
+        var categories = await _dbConnection.QueryAsync<CategoryResponseModel>(categoriesSql);
 
         return Result.Success(categories);
     }

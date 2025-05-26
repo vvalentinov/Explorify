@@ -1,7 +1,8 @@
 ﻿using Explorify.Api.Extensions;
-using Explorify.Application.Countries;
+using Explorify.Application.Country;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 

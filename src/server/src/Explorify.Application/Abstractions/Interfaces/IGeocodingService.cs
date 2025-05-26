@@ -1,4 +1,4 @@
-﻿using Explorify.Application.Places;
+﻿using Explorify.Application.Place;
 
 namespace Explorify.Application.Abstractions.Interfaces;
 
