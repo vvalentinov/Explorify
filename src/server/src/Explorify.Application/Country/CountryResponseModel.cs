@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.Countries;
+﻿namespace Explorify.Application.Country;
 
 public class CountryResponseModel
 {

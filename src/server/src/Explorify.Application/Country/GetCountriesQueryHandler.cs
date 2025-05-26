@@ -1,25 +1,25 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Data;
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using Microsoft.EntityFrameworkCore;
+using Dapper;
+
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Explorify.Application.Countries;
+namespace Explorify.Application.Country;
 
 public class GetCountriesQueryHandler
     : IQueryHandler<GetCountriesQuery, IEnumerable<CountryResponseModel>>
 {
-    private readonly IRepository _repository;
     private readonly IMemoryCache _memoryCache;
+    private readonly IDbConnection _dbConnection;
 
     public GetCountriesQueryHandler(
-        IRepository repository,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache,
+        IDbConnection dbConnection)
     {
-        _repository = repository;
         _memoryCache = memoryCache;
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result<IEnumerable<CountryResponseModel>>> Handle(
@@ -34,11 +34,15 @@ public class GetCountriesQueryHandler
 
         const string cacheKey = "Countries";
 
-        if (!_memoryCache.TryGetValue(cacheKey, out List<Country>? countries))
+        if (!_memoryCache.TryGetValue(cacheKey, out List<CountryResponseModel>? countries))
         {
-            countries = await _repository
-                .AllAsNoTracking<Country>()
-                .ToListAsync(cancellationToken);
+            const string sql = @"
+                SELECT
+                    Id,
+                    Name
+                FROM Countries";
+
+            countries = (await _dbConnection.QueryAsync<CountryResponseModel>(sql)).ToList();
 
             _memoryCache.Set(
                 cacheKey,
@@ -52,16 +56,9 @@ public class GetCountriesQueryHandler
 
         var trimmedNameFilter = request.NameFilter.Trim();
 
-        countries ??= new List<Country>();
+        var filteredCountries = countries?
+           .Where(x => x.Name.Contains(trimmedNameFilter, StringComparison.OrdinalIgnoreCase));
 
-        var filteredCountries = countries
-            .Where(x => x.Name.Contains(trimmedNameFilter, StringComparison.OrdinalIgnoreCase))
-            .Select(x => new CountryResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name
-            });
-
-        return Result.Success(filteredCountries);
+        return Result.Success(filteredCountries!);
     }
 }
