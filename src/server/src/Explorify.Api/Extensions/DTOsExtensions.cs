@@ -2,6 +2,7 @@
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Place.Edit;
 using Explorify.Application.Place.Upload;
+using Explorify.Application.Reviews.Edit;
 
 namespace Explorify.Api.Extensions;
 
@@ -51,6 +52,20 @@ public static class DTOsExtensions
             NewImages = await MapFilesAsync(dto.NewImages),
             UserId = UserId,
             PlaceId = dto.PlaceId,
+            ToBeRemovedImagesIds = dto.ToBeRemovedImagesIds,
+        };
+
+        return model;
+    }
+
+    public static async Task<EditReviewRequestModel> ToApplicationModelAsync(this EditReviewRequestDto dto)
+    {
+        var model = new EditReviewRequestModel
+        {
+            Id = dto.Id,
+            Rating = dto.Rating,
+            Content = dto.Content,
+            NewImages = await MapFilesAsync(dto.NewImages),
             ToBeRemovedImagesIds = dto.ToBeRemovedImagesIds,
         };
 

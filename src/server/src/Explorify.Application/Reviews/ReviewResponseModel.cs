@@ -25,4 +25,6 @@ public class ReviewResponseModel
     public bool IsApproved { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public bool IsDeletedByAdmin { get; set; }
 }

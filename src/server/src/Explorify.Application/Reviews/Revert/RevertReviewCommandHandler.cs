@@ -51,6 +51,12 @@ public class RevertReviewCommandHandler
             return Result.Failure(error);
         }
 
+        if (!isCurrUserAdmin && review.IsDeletedByAdmin)
+        {
+            var error = new Error("An administrator deleted this review! You don't have access!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
+
         review.IsApproved = false;
         review.IsDeleted = false;
         review.DeletedOn = null;

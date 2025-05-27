@@ -17,6 +17,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Reviews.Edit;
 
 namespace Explorify.Api.Controllers;
 
@@ -36,6 +37,15 @@ public class ReviewController : BaseController
         var command = new UploadReviewCommand(applicationModel);
         var result = await _mediator.Send(command);
         return this.CreatedAtActionOrProblemDetails(result, nameof(Upload));
+    }
+
+    [HttpPut(nameof(Edit))]
+    public async Task<IActionResult> Edit([FromForm] EditReviewRequestDto model)
+    {
+        var applicationModel = await model.ToApplicationModelAsync();
+        var command = new EditReviewCommand(applicationModel, User.GetId());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
     }
 
     [HttpPost(nameof(Like))]

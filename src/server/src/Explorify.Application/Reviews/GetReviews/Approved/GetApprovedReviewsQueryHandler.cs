@@ -41,6 +41,7 @@ public class GetApprovedReviewsQueryHandler
                 r.UserId,
                 r.IsApproved,
                 r.IsDeleted,
+                r.IsDeletedByAdmin,
                 p.Name AS PlaceName,
                 u.UserName,
                 u.ProfileImageUrl
@@ -86,7 +87,8 @@ public class GetApprovedReviewsQueryHandler
         // Get images
         var reviewIds = reviews.Select(r => r.Id).ToList();
         var photos = await _dbConnection.QueryAsync<(Guid ReviewId, string Url)>(
-            "SELECT ReviewId, Url FROM ReviewPhotos WHERE ReviewId IN @ReviewIds",
+            "SELECT ReviewId, Url FROM ReviewPhotos WHERE ReviewId IN @ReviewIds AND (IsDeleted = 0 OR IsDeleted IS NULL)",
+
             new { ReviewIds = reviewIds }
         );
 

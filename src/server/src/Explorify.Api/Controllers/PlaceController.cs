@@ -20,6 +20,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Place.Search;
 
 namespace Explorify.Api.Controllers;
 
@@ -170,6 +171,15 @@ public class PlaceController : BaseController
 
         var result = await _mediator.Send(query);
 
+        return this.OkOrProblemDetails(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet(nameof(Search))]
+    public async Task<IActionResult> Search([FromQuery] SearchPlaceRequestDto model, int page)
+    {
+        var query = new SearchPlaceQuery(model, page, User.GetId());
+        var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
 }

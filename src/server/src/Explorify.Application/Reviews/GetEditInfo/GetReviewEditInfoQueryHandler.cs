@@ -28,11 +28,11 @@ public class GetReviewEditInfoQueryHandler :
                 r.Rating,
                 r.Content,
                 r.UserId,
-                p.Id AS PhotoId,
+                p.Id,
                 p.Url
             FROM Reviews r
-            INNER JOIN Places pl ON r.PlaceId = pl.Id
-            LEFT JOIN ReviewPhotos p ON r.Id = p.ReviewId
+            JOIN Places pl ON r.PlaceId = pl.Id
+            LEFT JOIN ReviewPhotos p ON r.Id = p.ReviewId AND (p.IsDeleted = 0 OR p.IsDeleted IS NULL)
             WHERE r.Id = @ReviewId AND r.IsDeleted = 0 AND pl.UserId <> @CurrentUserId";
 
         var reviewDictionary = new Dictionary<Guid, GetReviewEditInfoResponseModel>();
@@ -63,7 +63,7 @@ public class GetReviewEditInfoQueryHandler :
                 return currentReview;
             },
             param: new { request.ReviewId, request.CurrentUserId },
-            splitOn: "PhotoId"
+            splitOn: "Id"
        );
 
         var reviewResult = reviewDictionary.Values.FirstOrDefault();

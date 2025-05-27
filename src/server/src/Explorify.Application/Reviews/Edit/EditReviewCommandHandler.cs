@@ -34,6 +34,9 @@ public class EditReviewCommandHandler
         var review = await _repository
             .All<Review>()
             .Include(x => x.Place)
+            .ThenInclude(x => x.Category)
+            .Include(x => x.Photos)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x =>
                 x.Id == model.Id,
                 cancellationToken);
@@ -88,7 +91,7 @@ public class EditReviewCommandHandler
                 _blobService.UploadBlobAsync(
                     file.Content,
                     file.FileName,
-                    $"ReviewsImages/{review.Place.Category.Name}/{review.Place.Name}-{Guid.NewGuid()}/"));
+                    $"ReviewsImages/{review.Place.Category.Name}/{review.Place.Name}/"));
 
             var urls = await Task.WhenAll(uploadTasks);
 
