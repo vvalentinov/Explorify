@@ -33,3 +33,7 @@ export const placeEditPath = 'place/:placeName/edit';
 export const notificationsPath = '/notifications';
 
 export const myPlacesPath = '/my-places';
+
+export const myReviewsPath = '/my-reviews';
+
+export const reviewEditPath = '/review/edit';
