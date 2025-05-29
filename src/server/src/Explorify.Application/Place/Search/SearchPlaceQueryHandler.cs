@@ -99,32 +99,36 @@ public class SearchPlaceQueryHandler
                 whereConditions.Add("p.UserId = @CurrentUserId");
                 parameters.Add("CurrentUserId", request.CurrentUserId);
 
-                if (model.Status == "Approved")
+                if (model.Status?.ToLower() == "approved")
                 {
                     whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
                 }
-                else if (model.Status == "Unapproved")
+                else if (model.Status?.ToLower() == "unapproved")
                 {
                     whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
                 }
-                else if (model.Status == "Deleted")
+                else if (model.Status?.ToLower() == "deleted")
                 {
                     var cutoff = DateTime.UtcNow.AddMinutes(-5);
                     parameters.Add("Cutoff", cutoff);
-                    whereConditions.Add("p.IsDeleted = 1 AND p.IsDeletedByAdmin = 0 AND p.DeletedOn >= @Cutoff");
+                    whereConditions.Add(@"
+                        p.IsDeleted = 1 AND
+                        p.IsDeletedByAdmin = 0 AND
+                        p.DeletedOn >= @Cutoff AND
+                        p.IsCleaned = 0");
                 }
                 break;
 
             case SearchContext.Admin:
-                if (model.Status == "Approved")
+                if (model.Status?.ToLower() == "approved")
                 {
                     whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
                 }
-                else if (model.Status == "Unapproved")
+                else if (model.Status?.ToLower() == "unapproved")
                 {
                     whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
                 }
-                else if (model.Status == "Deleted")
+                else if (model.Status?.ToLower() == "deleted")
                 {
                     var cutoff = DateTime.UtcNow.AddMinutes(-5);
                     parameters.Add("Cutoff", cutoff);
@@ -165,9 +169,9 @@ public class SearchPlaceQueryHandler
             Places = places,
             Pagination = new PaginationResponseModel
             {
+                RecordsCount = totalCount,
                 PageNumber = request.Page,
                 ItemsPerPage = PlacesPerPageCount,
-                RecordsCount = totalCount,
             }
         };
 

@@ -11,30 +11,16 @@ public static class ClaimsPrincipalExtensions
     public static Guid GetId(this ClaimsPrincipal user)
     {
         string userId = user.FindFirstValue(NameIdentifier) ?? string.Empty;
-
         return userId == string.Empty ? Guid.Empty : Guid.Parse(userId);
     }
 
     public static string GetUserName(this ClaimsPrincipal user)
-        => user.FindFirstValue(Name) ??
-            throw new InvalidOperationException("UserName was not found!");
+        => user.FindFirstValue(Name) ?? string.Empty;
 
     public static bool IsAdmin(this ClaimsPrincipal user)
-    {
-        //var roleClaim = user.Claims.FirstOrDefault(x => x.ValueType == Role);
+        => user.Identity?.IsAuthenticated == true &&
+           user.IsInRole(AdminRoleName);
 
-        //if (roleClaim != null)
-        //{
-        //    if (roleClaim.Value == AdminRoleName)
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
-        //return false;
-
-        return user.IsInRole(AdminRoleName);
-    }
+    public static bool IsAuthenticated(this ClaimsPrincipal user)
+        => user.Identity?.IsAuthenticated == true;
 }

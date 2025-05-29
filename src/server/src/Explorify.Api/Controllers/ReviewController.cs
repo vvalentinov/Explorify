@@ -1,5 +1,6 @@
 ﻿using Explorify.Api.DTOs;
 using Explorify.Api.Extensions;
+using Explorify.Application.Reviews.Edit;
 using Explorify.Application.Reviews.Upload;
 using Explorify.Application.Reviews.Delete;
 using Explorify.Application.Reviews.Revert;
@@ -17,7 +18,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.Reviews.Edit;
 
 namespace Explorify.Api.Controllers;
 
@@ -37,6 +37,14 @@ public class ReviewController : BaseController
         var command = new UploadReviewCommand(applicationModel);
         var result = await _mediator.Send(command);
         return this.CreatedAtActionOrProblemDetails(result, nameof(Upload));
+    }
+
+    [HttpGet(nameof(GetEditInfo))]
+    public async Task<IActionResult> GetEditInfo(Guid reviewId)
+    {
+        var query = new GetReviewEditInfoQuery(reviewId, User.GetId());
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
     }
 
     [HttpPut(nameof(Edit))]
@@ -90,20 +98,12 @@ public class ReviewController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
-    [HttpGet(nameof(GetEditInfo))]
-    public async Task<IActionResult> GetEditInfo(Guid reviewId)
-    {
-        var query = new GetReviewEditInfoQuery(reviewId, User.GetId());
-        var result = await _mediator.Send(query);
-        return this.OkOrProblemDetails(result);
-    }
-
     [AllowAnonymous]
     [HttpGet(nameof(GetReviewsForPlace))]
     public async Task<IActionResult> GetReviewsForPlace(
         Guid placeId,
-        [FromQuery] int page,
-        [FromQuery] ReviewsOrderEnum order)
+        [FromQuery] ReviewsOrderEnum order,
+        int page = 1)
     {
         var query = new GetReviewsForPlaceQuery(
             placeId,
@@ -117,7 +117,7 @@ public class ReviewController : BaseController
     }
 
     [HttpGet(nameof(GetApproved))]
-    public async Task<IActionResult> GetApproved(int page, bool isForAdmin)
+    public async Task<IActionResult> GetApproved(bool isForAdmin, int page = 1)
     {
         if (!User.IsAdmin() && isForAdmin)
         {
@@ -137,7 +137,7 @@ public class ReviewController : BaseController
     }
 
     [HttpGet(nameof(GetUnapproved))]
-    public async Task<IActionResult> GetUnapproved(int page, bool isForAdmin)
+    public async Task<IActionResult> GetUnapproved(bool isForAdmin, int page = 1)
     {
         if (!User.IsAdmin() && isForAdmin)
         {
@@ -157,7 +157,7 @@ public class ReviewController : BaseController
     }
 
     [HttpGet(nameof(GetDeleted))]
-    public async Task<IActionResult> GetDeleted(int page, bool isForAdmin)
+    public async Task<IActionResult> GetDeleted(bool isForAdmin, int page = 1)
     {
         if (!User.IsAdmin() && isForAdmin)
         {

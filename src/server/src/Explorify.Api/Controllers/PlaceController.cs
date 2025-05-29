@@ -4,12 +4,10 @@ using Explorify.Application.Place.Edit;
 using Explorify.Application.Place.Upload;
 using Explorify.Application.Place.Delete;
 using Explorify.Application.Place.Revert;
+using Explorify.Application.Place.Search;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Place.Edit.GetEditData;
-using Explorify.Application.Place.GetPlaces.GetDeleted;
-using Explorify.Application.Place.GetPlaces.GetApproved;
 using Explorify.Application.Place.GetPlace.GetPlaceById;
-using Explorify.Application.Place.GetPlaces.GetUnapproved;
 using Explorify.Application.Place.GetPlaces.GetPlacesInCategory;
 using Explorify.Application.Place.GetPlaces.GetPlacesInSubcategory;
 using Explorify.Application.Place.GetPlace.GetPlaceBySlugifiedName;
@@ -20,7 +18,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.Place.Search;
 
 namespace Explorify.Api.Controllers;
 
@@ -38,33 +35,38 @@ public class PlaceController : BaseController
     public async Task<IActionResult> Upload([FromForm] UploadPlaceRequestDto model)
     {
         var applicationModel = await model.ToApplicationModelAsync(User.GetId());
-
         var command = new UploadPlaceCommand(applicationModel);
-
         var result = await _mediator.Send(command);
-
         return this.CreatedAtActionOrProblemDetails(result, nameof(Upload));
     }
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInCategory))]
     public async Task<IActionResult> GetPlacesInCategory(int categoryId, int page)
-        => this.OkOrProblemDetails(
-                await _mediator.Send(
-                    new GetPlacesInCategoryQuery(categoryId, page)));
+    {
+        var query = new GetPlacesInCategoryQuery(categoryId, page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlacesInSubcategory))]
     public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId, int page)
-        => this.OkOrProblemDetails(
-                await _mediator.Send(
-                    new GetPlacesInSubcategoryQuery(subcategoryId, page)));
+    {
+        var query = new GetPlacesInSubcategoryQuery(subcategoryId, page);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
 
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsById))]
     public async Task<IActionResult> GetPlaceDetailsById(Guid placeId, bool isForAdmin)
     {
-        var query = new GetPlaceByIdQuery(placeId, isForAdmin, User.GetId(), User.IsAdmin());
+        var query = new GetPlaceByIdQuery(
+            placeId,
+            isForAdmin,
+            User.GetId(),
+            User.IsAdmin());
 
         var result = await _mediator.Send(query);
 
@@ -74,9 +76,11 @@ public class PlaceController : BaseController
     [AllowAnonymous]
     [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]
     public async Task<IActionResult> GetPlaceDetailsBySlugifiedName(string slugifiedName)
-        => this.OkOrProblemDetails(
-                await _mediator.Send(
-                    new GetPlaceBySlugifiedNameQuery(slugifiedName)));
+    {
+        var query = new GetPlaceBySlugifiedNameQuery(slugifiedName);
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
 
     [HttpDelete(nameof(Delete))]
     public async Task<IActionResult> Delete(DeletePlaceDto model)
@@ -88,19 +92,18 @@ public class PlaceController : BaseController
 
     [HttpGet(nameof(GetEditData))]
     public async Task<IActionResult> GetEditData(Guid placeId)
-        => this.OkOrProblemDetails(
-                await _mediator.Send(
-                    new GetEditDataQuery(placeId, User.GetId())));
+    {
+        var query = new GetEditDataQuery(placeId, User.GetId());
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
 
     [HttpPut(nameof(Edit))]
     public async Task<IActionResult> Edit([FromForm] EditPlaceRequestDto model)
     {
         var applicationModel = await model.ToApplicationModelAsync(User.GetId());
-
         var command = new EditPlaceCommand(applicationModel);
-
         var result = await _mediator.Send(command);
-
         return this.OkOrProblemDetails(result);
     }
 
@@ -117,67 +120,22 @@ public class PlaceController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
-    [HttpGet(nameof(GetApproved))]
-    public async Task<IActionResult> GetApproved(int page, bool isForAdmin)
-    {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all approved places.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
-        var query = new GetApprovedPlacesQuery(
-            page,
-            isForAdmin,
-            User.GetId());
-
-        var result = await _mediator.Send(query);
-
-        return this.OkOrProblemDetails(result);
-    }
-
-    [HttpGet(nameof(GetUnapproved))]
-    public async Task<IActionResult> GetUnapproved(int page, bool isForAdmin)
-    {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all unapproved places.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
-        var query = new GetUnapprovedPlacesQuery(
-            page,
-            isForAdmin,
-            User.GetId());
-
-        var result = await _mediator.Send(query);
-
-        return this.OkOrProblemDetails(result);
-    }
-
-    [HttpGet(nameof(GetDeleted))]
-    public async Task<IActionResult> GetDeleted(int page, bool isForAdmin)
-    {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all recently deleted places.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
-        var query = new GetDeletedPlacesQuery(
-            page,
-            isForAdmin,
-            User.GetId());
-
-        var result = await _mediator.Send(query);
-
-        return this.OkOrProblemDetails(result);
-    }
-
     [AllowAnonymous]
     [HttpGet(nameof(Search))]
     public async Task<IActionResult> Search([FromQuery] SearchPlaceRequestDto model, int page)
     {
+        if (!User.IsAdmin() && model.Context == SearchContext.Admin)
+        {
+            var error = new Error("You are not authorized to perform this search.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
+        if (!User.IsAuthenticated() && model.Context == SearchContext.UserPlaces)
+        {
+            var error = new Error("You must be authorized to perform this search.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
         var query = new SearchPlaceQuery(model, page, User.GetId());
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
