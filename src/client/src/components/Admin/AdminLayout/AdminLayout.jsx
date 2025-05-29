@@ -1,6 +1,6 @@
 import styles from './AdminLayout.module.css';
 
-import { Layout, Menu, Dropdown, Space, FloatButton } from 'antd';
+import { Layout, Menu, FloatButton } from 'antd';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import {
     DashboardOutlined,
@@ -8,17 +8,20 @@ import {
     HomeOutlined,
     EnvironmentOutlined,
     CommentOutlined,
-    CloseCircleOutlined
 } from '@ant-design/icons';
 
-import AdminUsers from '../Users/Users';
-import AdminDashboard from '../AdminDashboard/AdminDashboard';
-import Reviews from '../Reviews/Reviews';
+import AdminDashboard from '../AdminDashboard';
+import AdminUsers from '../Users';
 
-import Places from '../Places/Places';
-import Place from '../Place/Place';
+// import Reviews from '../../Review/Reviews';
+
+import AdminPlaces from '../../Place/AdminPlaces';
+
+import PlaceDetails from '../../Place/PlaceDetails/PlaceDetails';
 
 import ScrollToTop from '../../ScrollToTop/ScrollToTop';
+
+import ReviewsSection from '../../Review/ReviewsSection';
 
 const { Header, Content, Footer } = Layout;
 
@@ -97,10 +100,10 @@ const AdminLayout = () => {
 
                     <Route path="users" element={<AdminUsers />} />
 
-                    <Route path='places' element={<Places />} />
-                    <Route path='place/:placeName' element={<Place />} />
+                    <Route path='places' element={<AdminPlaces />} />
+                    <Route path='place/:placeName' element={<PlaceDetails isForAdmin={true} />} />
 
-                    <Route path='reviews' element={<Reviews />} />
+                    <Route path='reviews' element={<ReviewsSection isForPlace={false} isForUser={false} isForAdmin={true} />} />
                 </Routes>
 
                 <FloatButton.BackTop />

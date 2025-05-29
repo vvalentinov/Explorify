@@ -181,10 +181,6 @@ const EditPlace = () => {
         data.PlaceId = editData?.placeId;
         const formData = generateFormData(data, toBeRemovedImagesIds);
 
-        // for (const [key, value] of formData.entries()) {
-        //     console.log(`${key}:`, value);
-        // }
-
         placesService
             .editPlace(formData)
             .then(res => {

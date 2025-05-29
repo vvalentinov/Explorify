@@ -1,0 +1,58 @@
+.tagCheckboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.customTagCheckbox {
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid #0ea5a5;
+    border-radius: 16px;
+    background-color: #f1fdfa;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    user-select: none;
+    font-size: 13px;
+}
+
+.customTagCheckbox :global(.ant-checkbox) {
+    display: none !important;
+}
+
+:global(.ant-checkbox-wrapper-checked).customTagCheckbox {
+    background-color: #0ea5a5 !important;
+    color: white !important;
+    border-color: #0ea5a5 !important;
+}
+
+.customTagCheckbox:hover {
+    border-color: #0ea5a5;
+    background-color: #e0f7f7;
+}
+
+.scrollTarget {
+    scroll-margin-top: 50px;
+}
+
+.customTagCheckbox {
+    padding: 6px 14px;
+    border: 1px solid #0ea5a5;
+    border-radius: 20px;
+    background-color: #f0fdfa;
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+    user-select: none;
+    font-size: 11px;
+}
+
+.customTagCheckbox:hover {
+    background-color: #e0f7f7;
+    border-color: #0ea5a5;
+}
+
+.checked {
+    background-color: #0ea5a5 !important;
+    color: white !important;
+    border-color: #0ea5a5 !important;
+}

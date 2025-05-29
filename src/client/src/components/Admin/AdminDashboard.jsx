@@ -11,9 +11,9 @@ const { Title, Paragraph } = Typography;
 
 import { useEffect, useContext, useState } from 'react';
 
-import { AuthContext } from '../../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
-import { adminServiceFactory } from '../../../services/adminService';
+import { adminServiceFactory } from '../../services/adminService';
 
 import { motion } from 'framer-motion';
 
