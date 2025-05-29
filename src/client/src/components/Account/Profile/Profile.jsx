@@ -8,11 +8,7 @@ import {
     LoadingOutlined,
     PlusOutlined,
     AppstoreOutlined,
-    StarOutlined,
-    UserOutlined,
-    LockOutlined,
-    MailOutlined,
-    SafetyOutlined,
+    StarOutlined
 } from '@ant-design/icons';
 
 import { usersServiceFactory } from '../../../services/usersService';
@@ -84,7 +80,6 @@ const cardVariants = {
         transition: { duration: 0.6, ease: "easeOut" }
     }
 };
-
 
 const Profile = () => {
 
@@ -210,7 +205,6 @@ const Profile = () => {
                                     icon={<AppstoreOutlined />}
                                     onMouseEnter={e => e.currentTarget.style.backgroundColor = 'lightgreen'}
                                     onMouseLeave={e => e.currentTarget.style.backgroundColor = 'green'}
-                                // className={`${styles.actionBtn} ${styles.primaryBtn}`}
                                 >
                                     My Places
                                 </Button>
@@ -297,6 +291,7 @@ const Profile = () => {
             </Card>
 
         </section>
+
     );
 };
 export default Profile;

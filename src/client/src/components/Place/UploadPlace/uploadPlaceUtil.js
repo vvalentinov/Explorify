@@ -23,6 +23,16 @@ export const mapCountryOptions = (countries) => {
     return options;
 };
 
+export const mapTagsOptions = (tags) => {
+
+    const options = tags.map(tag => ({
+        value: tag.id,
+        label: tag.name,
+    }));
+
+    return options;
+};
+
 export const generateFormData = (data) => {
 
     console.log(data.CategoryId);

@@ -44,6 +44,10 @@ const menuItems = [
         label: <Link style={{ fontSize: '1.2rem' }} to='/categories'>Categories</Link>,
         key: "categories",
     },
+    {
+        label: <Link style={{ fontSize: '1.2rem' }} to='/search'>Search</Link>,
+        key: "search",
+    }
 ];
 
 const Header = () => {
@@ -58,6 +62,10 @@ const Header = () => {
 
         if (location.pathname === '/' || location.pathname === '') {
             return 'home';
+        }
+
+        if (location.pathname === '/search') {
+            return 'search';
         }
 
         return '';

@@ -26,6 +26,8 @@ import {
 
 const { Title, Text } = Typography;
 
+import { motion } from "framer-motion";
+
 const Notifications = () => {
 
     const { token } = useContext(AuthContext);
@@ -111,10 +113,18 @@ const Notifications = () => {
     return (
         <section className={styles.notificationsSection}>
 
-            <Title level={2} className={styles.notificationsTitle}>
-                <BellOutlined style={{ fontSize: "1.5rem" }} />
-                Notifications ({notificationsCount})
-            </Title>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    whileHover={{ scale: 1.05 }}
+                    className={styles.notificationsPill}
+                >
+                    <BellOutlined style={{ fontSize: "1.4rem", marginRight: "0.6rem" }} />
+                    Notifications ({notificationsCount})
+                </motion.div>
+            </div>
 
             {
                 spinnerLoading ?

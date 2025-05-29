@@ -2,6 +2,7 @@ import { baseUrl } from '../constants/baseUrl';
 import { requestFactory } from '../lib/requester';
 
 export const reviewsServiceFactory = (token) => {
+
     const request = requestFactory(token);
 
     return {
@@ -13,6 +14,8 @@ export const reviewsServiceFactory = (token) => {
         getUnapproved: (page, isForAdmin) => request.get(`${baseUrl}/Review/GetUnapproved?page=${page}&isForAdmin=${isForAdmin}`),
         getDeleted: (page, isForAdmin) => request.get(`${baseUrl}/Review/GetDeleted?page=${page}&isForAdmin=${isForAdmin}`),
         deleteReview: (data) => request.delete(`${baseUrl}/Review/Delete`, data),
-        revertReview: (reviewId) => request.put(`${baseUrl}/Review/Revert?reviewId=${reviewId}`)
+        revertReview: (reviewId) => request.put(`${baseUrl}/Review/Revert?reviewId=${reviewId}`),
+        getEditInfo: (reviewId) => request.get(`${baseUrl}/Review/GetEditInfo?reviewId=${reviewId}`),
+        edit: (data) => request.put(`${baseUrl}/Review/Edit`, data)
     }
 };

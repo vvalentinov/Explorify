@@ -15,13 +15,13 @@ const WeatherCard = ({ data, isForAdmin }) => {
             className={styles.weatherCard}
             title={
                 <Space>
-                    <Typography.Text strong>{data.location.name}, {data.location.country}</Typography.Text>
+                    <Typography.Text style={{ color: 'white' }}>{data.location.name}, {data.location.country}</Typography.Text>
                 </Space>
             }
             style={{
-                width: '100%'
+                width: '100%',
             }}
-            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb' } }}
+            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#57ae53' } }}
         >
             <div className={styles.weatherContent}>
                 <img src={iconUrl} alt={data.current?.condition?.text} />

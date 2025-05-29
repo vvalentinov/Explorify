@@ -77,13 +77,12 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
     }
 
     return (
-        <Card style={{ margin: '2rem 0' }}>
+        <>
             <Form.Item
                 name="Images"
                 label="Upload Images"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
-            // required={true}
             >
 
                 <Upload
@@ -134,7 +133,7 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
                 />
             )}
 
-        </Card>
+        </>
     )
 };
 

@@ -39,22 +39,12 @@ const Categories = () => {
 
         setShowSpinner(true);
 
-        // const startTime = Date.now();
-
         categoriesService
             .getCategories()
             .then((res) => {
 
                 setCategories(res);
                 setShowSpinner(false);
-
-                // const elapsed = Date.now() - startTime;
-                // const remainingTime = Math.max(1000 - elapsed, 0);
-
-                // setTimeout(() => {
-                //     setCategories(res);
-                //     setShowSpinner(false);
-                // }, remainingTime);
 
             }).catch(err => {
                 fireError(err);

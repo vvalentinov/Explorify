@@ -29,14 +29,10 @@ const PlaceDetailsSection = ({
         <section className={styles.placeDetailsCardSection}>
             <Card
                 className={styles.placeDetailsCard}
-                style={{
-                    border: isForAdmin ? 'solid 1px black' : 'solid 1px green'
-                }}
                 styles={{
                     header:
                     {
-                        backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb',
-                        // borderBottom: isForAdmin ? '1px solid violet' : '1px solid green'
+                        backgroundColor: isForAdmin ? '#89ADFF' : '#57ae53',
                     }
                 }}
                 title={
@@ -101,7 +97,7 @@ const PlaceDetailsSection = ({
                             styles={{
                                 header:
                                 {
-                                    backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb',
+                                    backgroundColor: isForAdmin ? '#89ADFF' : '#57ae53',
                                 }
                             }}
                             style={{
@@ -144,7 +140,7 @@ const PlaceDetailsSection = ({
 
                         <Card loading={loading}
                             style={{ boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)', width: '100%' }}
-                            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#e8fffb' } }}
+                            styles={{ header: { backgroundColor: isForAdmin ? '#89ADFF' : '#57ae53' } }}
                             title={
                                 <div className={styles.reviewCardHeader}>
                                     <div className={styles.reviewCardHeaderContainer}>
@@ -171,13 +167,12 @@ const PlaceDetailsSection = ({
                                 styles={{
                                     header:
                                     {
-                                        backgroundColor: '#e8fffb',
-                                        borderBottom: '1px solid green'
+                                        backgroundColor: isForAdmin ? '#89ADFF' : '#57ae53'
                                     }
                                 }}
                                 style={{
                                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                                    border: '1px solid green',
+                                    border: 'none',
                                     width: '100%'
                                 }}>
                                 <Flex gap="1rem" wrap>
@@ -195,7 +190,7 @@ const PlaceDetailsSection = ({
                             place.weatherData?.current &&
                             Object.keys(place.weatherData.current).length > 0 &&
                             (
-                                <WeatherCard isForAdmin={true} data={place.weatherData} />
+                                <WeatherCard isForAdmin={isForAdmin} data={place.weatherData} />
                             )
                         }
 

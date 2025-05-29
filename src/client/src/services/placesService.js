@@ -2,6 +2,7 @@ import { baseUrl } from '../constants/baseUrl';
 import { requestFactory } from '../lib/requester';
 
 export const placesServiceFactory = (token) => {
+
     const request = requestFactory(token);
 
     return {
@@ -15,6 +16,7 @@ export const placesServiceFactory = (token) => {
         revertPlace: (placeId) => request.put(`${baseUrl}/Place/Revert?placeId=${placeId}`),
         getApproved: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetApproved?page=${page}&isForAdmin=${isForAdmin}`),
         getUnapproved: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetUnapproved?page=${page}&isForAdmin=${isForAdmin}`),
-        getDeleted: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetDeleted?page=${page}&isForAdmin=${isForAdmin}`)
+        getDeleted: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetDeleted?page=${page}&isForAdmin=${isForAdmin}`),
+        searchPlace: (queryParms) => request.get(`${baseUrl}/Place/Search?${queryParms}`)
     }
 };

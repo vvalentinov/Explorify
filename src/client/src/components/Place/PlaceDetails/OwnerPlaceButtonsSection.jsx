@@ -1,6 +1,10 @@
 import { App, Typography } from "antd";
 
+import { useNavigate } from "react-router-dom";
+
 const OwnerPlaceButtonsSection = ({ placeService, place }) => {
+
+    const navigate = useNavigate();
 
     const { modal } = App.useApp();
 

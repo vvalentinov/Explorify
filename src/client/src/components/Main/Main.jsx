@@ -4,9 +4,12 @@ import Home from '../Home/Home';
 import Categories from '../Categories/Categories';
 import Subcategories from '../Subcategories/Subcategories';
 import NoPathFound from '../NoPathFound/NoPathFound';
-import PlacesInSubcategory from '../PlacesInSubcategory/PlacesInSubcategory';
-import MyPlaces from '../MyPlaces/MyPlaces';
+import PlacesInSubcategory from '../Place/PlacesInSubcategory/PlacesInSubcategory';
 import Notifications from '../Notifications/Notifications';
+
+import MyPlaces from '../Place/MyPlaces';
+import MyReviews from '../Review/MyReviews/MyReviews';
+import ReviewEdit from '../Review/ReviewEdit/ReviewEdit';
 
 // Account
 import Profile from '../Account/Profile/Profile';
@@ -23,6 +26,8 @@ import ResetPassword from '../Account/ResetPassword/ResetPassword';
 import EditPlace from '../Place/EditPlace/EditPlace';
 import UploadPlace from '../Place/UploadPlace/UploadPlace';
 import PlaceDetails from '../Place/PlaceDetails/PlaceDetails';
+
+import PlaceSearch from '../Place/PlaceSearch/PlaceSearch';
 
 import ScrollToTop from '../ScrollToTop/ScrollToTop';
 
@@ -53,14 +58,19 @@ const Main = () => {
                     <Route path={paths.logoutPath} element={<Logout />} />
                     <Route path={paths.uploadPlacePath} element={<UploadPlace />} />
                     <Route path={paths.placesInSubcategoryPath} element={<PlacesInSubcategory />} />
-                    <Route path={paths.placeDetailsPath} element={<PlaceDetails />} />
+                    <Route path={paths.placeDetailsPath} element={<PlaceDetails isForAdmin={false} />} />
                     <Route path={paths.notificationsPath} element={<Notifications />} />
                     <Route path={paths.placeEditPath} element={<EditPlace />} />
 
                     <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
                     <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
+                    <Route path='/search' element={<PlaceSearch />} />
+
                     <Route path={paths.myPlacesPath} element={<MyPlaces />} />
+                    <Route path={paths.myReviewsPath} element={<MyReviews />} />
+
+                    <Route path={paths.reviewEditPath} element={<ReviewEdit />} />
 
                     <Route path='*' element={<NoPathFound />} />
 
