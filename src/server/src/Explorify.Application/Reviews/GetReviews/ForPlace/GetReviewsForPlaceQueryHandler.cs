@@ -48,6 +48,7 @@ public class GetReviewsForPlaceQueryHandler
                 r.Content,
                 r.Likes,
                 r.UserId,
+                r.CreatedOn,
                 u.UserName,
                 u.ProfileImageUrl,
                 p.Name AS PlaceName,

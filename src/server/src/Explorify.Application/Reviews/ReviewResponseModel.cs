@@ -22,6 +22,8 @@ public class ReviewResponseModel
 
     public IEnumerable<string> ImagesUrls { get; set; } = [];
 
+    public DateTime CreatedOn { get; set; }
+
     public bool IsApproved { get; set; }
 
     public bool IsDeleted { get; set; }
