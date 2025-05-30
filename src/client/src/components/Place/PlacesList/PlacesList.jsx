@@ -59,7 +59,8 @@ const PlacesList = ({
                                     flexWrap: 'wrap',
                                     justifyContent: 'center',
                                     gap: '1.5rem',
-                                    padding: '2rem',
+                                    padding: '2rem 8rem',
+                                    // border: 'solid 1px black'
                                 }}
                                 variants={containerVariants}
                                 initial="hidden"

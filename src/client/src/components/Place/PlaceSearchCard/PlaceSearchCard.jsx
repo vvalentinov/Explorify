@@ -6,6 +6,7 @@ import {
     Input,
     Select,
     Cascader,
+    Typography
 } from "antd";
 
 import {
@@ -14,6 +15,8 @@ import {
     GlobalOutlined,
     TagsOutlined,
 } from '@ant-design/icons';
+
+import styles from './PlaceSearchCard.module.css';
 
 const PlaceSearchCard = ({
     state,
@@ -25,35 +28,55 @@ const PlaceSearchCard = ({
     isForAdmin
 }) => {
     return (
-        <Card
-            title={
-                <div style={{
+        // <Card
+        //     title={
+        //         <div style={{
+        //             display: 'flex',
+        //             alignItems: 'center',
+        //             gap: '0.75rem',
+        //             fontSize: '1.3rem',
+        //             fontWeight: 600,
+        //             color: '#fff',
+        //         }}>
+        //             <SearchOutlined style={{ fontSize: '1.5rem' }} />
+
+        //             {state.searchContext === 'global' ? 'Search Places' : (state.filter ? `Search in ${state.filter} Places` : 'Search Places')}
+        //         </div>
+        //     }
+        //     style={{
+        //         marginTop: '1.5rem',
+        //         width: state.searchContext === 'global' ? '50%' : '100%',
+        //         border: 'none'
+        //     }}
+        //     styles={{
+        //         header: {
+        //             textAlign: 'left',
+        //             background: isForAdmin
+        //                 ? 'linear-gradient(90deg, #1677ff 0%, #69c0ff 100%)' // bluish gradient
+        //                 : 'linear-gradient(90deg, #52c41a 0%, #36cfc9 100%)', // greenish gradient
+        //         }
+        //     }}
+        // >
+
+        <div className={styles.searchPanel}>
+
+            <Typography.Title
+                level={4}
+                className={styles.searchTitle}
+                style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.75rem',
-                    fontSize: '1.3rem',
-                    fontWeight: 600,
-                    color: '#fff',
-                }}>
-                    <SearchOutlined style={{ fontSize: '1.5rem' }} />
+                    gap: '0.5rem',
+                    marginBottom: '1.5rem',
+                    color: '#333',
+                }}
+            >
+                <SearchOutlined />
+                {state.searchContext === 'global'
+                    ? 'Search Places'
+                    : (state.filter ? `Search in ${state.filter} Places` : 'Search Places')}
+            </Typography.Title>
 
-                    {state.searchContext === 'global' ? 'Search Places' : (state.filter ? `Search in ${state.filter} Places` : 'Search Places')}
-                </div>
-            }
-            style={{
-                marginTop: '1.5rem',
-                width: state.searchContext === 'global' ? '50%' : '100%',
-                border: 'none'
-            }}
-            styles={{
-                header: {
-                    textAlign: 'left',
-                    background: isForAdmin
-                        ? 'linear-gradient(90deg, #1677ff 0%, #69c0ff 100%)' // bluish gradient
-                        : 'linear-gradient(90deg, #52c41a 0%, #36cfc9 100%)', // greenish gradient
-                }
-            }}
-        >
 
             <Input
                 allowClear
@@ -156,8 +179,10 @@ const PlaceSearchCard = ({
                 />
 
             </ConfigProvider>
+        </div>
 
-        </Card>
+
+        // </Card>
     );
 };
 

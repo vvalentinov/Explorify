@@ -1,11 +1,10 @@
 .heroSection {
     position: relative;
-    height: calc(100vh - 63px);
+    height: calc(100vh - 100px);
     isolation: isolate;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
-    padding: 2rem 3rem 0 0;
     overflow: hidden;
 }
 
@@ -25,6 +24,10 @@
     z-index: 1;
     width: 100%;
     max-width: 700px;
+    text-align: justify;
+    /* border: solid 1px red; */
+    margin-right: 1.7rem;
+    font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
 /* --- */
@@ -55,18 +58,12 @@
 .heroTitle,
 .heroTitle * {
     outline: none !important;
-    /* remove outlines */
     background: transparent !important;
-    /* remove any background */
     box-shadow: none !important;
-    /* remove shadows */
     -webkit-tap-highlight-color: transparent !important;
-    /* remove tap highlight on mobile */
     user-select: text !important;
-    /* keep text selectable */
 }
 
-/* Remove any selection highlight (blue/grey) on text selection */
 .heroTitle::selection,
 .heroTitle *::selection {
     background: transparent !important;

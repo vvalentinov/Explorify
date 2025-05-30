@@ -1,216 +1,197 @@
-.profileCardSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 63px);
+.profilePage {
+    position: relative;
+    width: 100%;
+    padding-bottom: 4rem;
+}
+
+.coverWrapper {
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+}
+
+.coverImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .profileCard {
-    width: 70%;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin: 2rem auto;
-    box-shadow: 0 6px 20px rgba(0, 128, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
-    border: solid 1px green
-}
-
-.userInfo {
-    margin-top: 1rem;
-}
-
-.userInfo h2 {
-    margin-bottom: 4px;
-    font-size: 20px;
-    color: #333;
-}
-
-.userInfo p {
-    margin: 0;
-    font-size: 14px;
-    color: #888;
-}
-
-.profileActions {
-    margin-top: 1.5rem;
-    /* border: solid 1px black; */
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-}
-
-.profileActionsBtn {
-    background-color: #9a4eca;
-    border: none;
-    color: white;
-    padding: 1.5rem 1.5rem;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 10px;
-    width: 100%;
-    box-shadow: none;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-}
-
-.profileActionsBtn:hover {
-    background-color: #bb7fe0 !important;
-    color: #fff !important;
-}
-
-.tagsContainer {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-}
-
-.tagsContainer :global(.ant-tag) {
-    font-size: 14px;
-
-    padding: 0.5rem 1rem;
-}
-
-.settingsGrid {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-/* --- */
-
-.profileHeader {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f3e9fe, #ffffff);
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 960px;
+    background-color: #fff;
     border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    z-index: 10;
+}
+
+.profileContent {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
 }
 
 .avatarWrapper {
-    margin-bottom: 1rem;
+    flex-shrink: 0;
 }
 
-.avatarImage {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
+/* .avatarImage {
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: transform 0.3s;
-}
-
-.avatarImage:hover {
-    transform: scale(1.05);
-    cursor: pointer;
-}
+    object-fit: cover;
+} */
 
 .avatarPlaceholder {
-    width: 120px;
-    height: 120px;
-    background-color: #e0d4f7;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
+    background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #6a2c91;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    font-weight: 500;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: transform 0.3s;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #999;
 }
 
-.avatarPlaceholder:hover {
-    transform: scale(1.05);
+.userInfo {
+    flex: 1;
+    margin-left: 1.1rem;
 }
 
-.userDetails {
-    margin-top: 1rem;
-}
-
-.username {
+.userInfo h2 {
     font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+    margin: 0;
 }
 
-.email {
-    font-size: 1rem;
+.userInfo p {
     color: #666;
+    margin: 0.25rem 0 1rem;
+}
+
+.userStats {
     margin-bottom: 1rem;
 }
 
-.tags {
-    margin-bottom: 1.5rem;
-}
-
-.profileActions {
+.actions {
     display: flex;
     gap: 1rem;
-    justify-content: center;
-}
-
-.actionBtn {
-    min-width: 120px;
-    font-weight: 500;
-    border-radius: 8px;
-}
-
-.profileActions {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    margin-top: 2rem;
     flex-wrap: wrap;
 }
 
-.actionBtn {
-    font-size: 1.05rem;
+
+
+.statRow {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.statBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 70px;
+}
+
+.statLabel {
+    font-size: 1.1rem;
     font-weight: 600;
-    padding: 0.85rem 2rem;
-    border-radius: 12px;
+    color: #333;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+.statCount {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #222;
+    margin-top: 0.3rem;
+}
+
+.avatarImageContainer {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.avatarImageContainer:hover {
+    transform: scale(1.02);
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: filter 0.3s ease;
+}
+
+.avatarOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-width: 180px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    transition: background 0.3s ease;
 }
 
-.actionBtn:hover {
-    /* transform: translateY(-2px); */
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+.avatarText {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
-/* Custom colors */
-.primaryBtn {
-    background: linear-gradient(135deg, #4fc3f7, #1976d2);
-    color: white;
+.avatarImageContainer:hover .avatarOverlay {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.avatarImageContainer:hover .avatarText {
+    opacity: 1;
+}
+
+.avatarWrapper :global(.ant-upload) {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+.settingsButton {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+}
+
+.settingsButton .ant-btn {
+    color: #555;
     border: none;
+    background: transparent;
+    transition: color 0.3s ease;
 }
 
-.primaryBtn:hover {
-    background: linear-gradient(135deg, #42a5f5, #1565c0);
-}
-
-.secondaryBtn {
-    background: linear-gradient(135deg, #ffd54f, #ff9800);
-    color: white;
-    border: none;
-}
-
-.secondaryBtn:hover {
-    background: linear-gradient(135deg, #ffca28, #f57c00);
+.settingsButton .ant-btn:hover {
+    color: #00a8cc;
 }

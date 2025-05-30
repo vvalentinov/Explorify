@@ -80,8 +80,6 @@ const Home = () => {
             }}>
                 <div style={{ marginBottom: '1.5rem' }}>
                     <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-
-
                         <motion.div
                             initial={{ scale: 1 }}
                             whileHover={{ scale: 1.05, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)' }}

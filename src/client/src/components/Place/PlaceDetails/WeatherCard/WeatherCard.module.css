@@ -1,15 +1,58 @@
 .weatherCard {
+    background-color: #f0fcf5;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    padding: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.weatherHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+.locationText {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #2e7d32;
 }
 
 .weatherContent {
     text-align: center;
 }
 
+.weatherIcon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.5rem;
+}
+
+.tempText {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1c1c1c;
+    margin: 0;
+}
+
+.conditionText {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+}
+
 .weatherMeta {
     margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
+    font-size: 0.95rem;
+    color: #444;
 }

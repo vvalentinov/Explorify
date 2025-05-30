@@ -1,3 +1,4 @@
+import styles from './ReviewsSection.module.css';
 
 import { useState, useContext, useEffect } from "react";
 
@@ -29,7 +30,7 @@ const filterOptions = [
 import WriteReviewCard from './WriteReviewCard';
 import UploadReviewModal from './UploadReviewModal';
 
-import { Card, Empty } from "antd";
+import { Card, Empty, Typography } from "antd";
 
 const ReviewsSection = ({
     isForAdmin = false,
@@ -105,52 +106,35 @@ const ReviewsSection = ({
 
     return (
         <>
-            <Card
-                style={{
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-                    border: 'none',
-                    margin: '2rem 3rem',
-                    padding: 0,
-                    backgroundColor: isForAdmin ? '#292840' : '#ffffff',
-                }}
-                title={isForUser ? 'My Reviews' : 'Reviews Section'}
-                styles={{
-                    header: {
-                        background: isForAdmin
-                            ? 'linear-gradient(90deg, #1677ff 0%, #69c0ff 100%)' // bluish gradient
-                            : 'linear-gradient(90deg, #52c41a 0%, #36cfc9 100%)', // greenish gradient
-                        color: isForAdmin ? '#003a8c' : 'inherit',
-                    },
-                }}
-            >
+            <div className={styles.reviewsSectionContainer}>
+                <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                    <Typography.Title level={3} style={{ marginBottom: 0 }}>
+                        {isForUser ? 'My Reviews' : 'Reviews'}
+                    </Typography.Title>
+                </div>
 
-                {/* Show Write Review Card */}
+                {/* Write Review */}
                 {isForPlace && <WriteReviewCard handleOpenModal={handleWriteReviewClick} />}
 
-                {/* Show Sort Options */}
+                {/* Sort/Filter */}
                 {isForPlace && pagesCount > 1 && renderOrderReviewsCard(sortOptions, sortOption, handleSortChange)}
-
-                {/* Show Filter Options */}
                 {!isForPlace && renderFilterReviewsCard(filterOptions, filter, handleFilterChange, isForAdmin)}
 
-                {/* Show Write Review Modal */}
-                {
-                    isForPlace &&
-                    placeId &&
+                {/* Modal */}
+                {isForPlace && placeId && (
                     <UploadReviewModal
                         isModalOpen={isUploadReviewModalOpen}
                         placeId={placeId}
                         reviewService={reviewsService}
                         setIsModalOpen={setIsUploadReviewModalOpen}
                     />
-                }
+                )}
 
-                {/* Show Reviews List */}
-                {
-                    spinnerLoading ?
-                        renderSpinner(spinnerLoading, isForAdmin) :
-                        (reviews?.length > 0 ? (
-
+                {/* Reviews List */}
+                {spinnerLoading
+                    ? renderSpinner(spinnerLoading, isForAdmin)
+                    : (reviews?.length > 0
+                        ? (
                             <ReviewsList
                                 reviews={reviews}
                                 isForAdmin={isForAdmin}
@@ -158,14 +142,12 @@ const ReviewsSection = ({
                                 isForUser={isForUser}
                                 setReviews={setReviews}
                             />
+                        ) : renderEmptyState(isForAdmin))}
 
-                        ) : renderEmptyState(isForAdmin))
-                }
-
-                {/* Show Pagination */}
+                {/* Pagination */}
                 {!spinnerLoading && renderPagination(pagesCount, currentPage, handlePageChange, isForAdmin)}
+            </div>
 
-            </Card>
         </>
     )
 

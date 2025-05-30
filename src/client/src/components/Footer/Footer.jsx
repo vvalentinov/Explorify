@@ -43,21 +43,21 @@ const Footer = () => {
                 >
                     <Button style={{ marginRight: '1rem' }}
                         color='cyan'
-                        variant='filled'
+                        variant='solid'
                         size='large'>
                         About
                     </Button>
 
                     <Button style={{ marginRight: '1rem' }}
                         color='cyan'
-                        variant='filled'
+                        variant='solid'
                         size='large'>
                         Help
                     </Button>
 
                     <Button
                         color='cyan'
-                        variant='filled'
+                        variant='solid'
                         size='large'>
                         Terms & Conditions
                     </Button>

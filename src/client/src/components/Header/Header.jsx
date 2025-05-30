@@ -21,6 +21,8 @@ import {
     BellOutlined
 } from '@ant-design/icons';
 
+import ResponsiveMenu from './ResponsiveMenu';
+
 import { useContext } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 
@@ -30,14 +32,31 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 import { NotificationContext } from '../../contexts/NotificationContext';
 
-import { useState } from 'react';
-
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
 
+import { motion } from 'framer-motion';
+
+import logo from '../../assets/explorify.png';
+
 const menuItems = [
     {
-        label: <Link style={{ fontSize: '1.2rem' }} to='/'>Explorify</Link>,
+        label: (
+            <motion.div
+                whileHover={{
+                    scale: 1.05,
+                    y: -2,
+                    color: "#43c0c1",
+                    transition: { type: 'spring', stiffness: 300, damping: 10 }
+                }}
+                whileTap={{ scale: 0.97 }}
+            >
+                <Link to="/" className={styles.logoMenuItem}>
+                    <img src={logo} alt="Explorify" className={styles.logoImage} />
+                    <span>Explorify</span>
+                </Link>
+            </motion.div>
+        ),
         key: "home",
     },
     {
@@ -51,25 +70,6 @@ const menuItems = [
 ];
 
 const Header = () => {
-
-    const location = useLocation();
-
-    const getSelectedKey = () => {
-
-        if (location.pathname.startsWith('/categories')) {
-            return 'categories';
-        }
-
-        if (location.pathname === '/' || location.pathname === '') {
-            return 'home';
-        }
-
-        if (location.pathname === '/search') {
-            return 'search';
-        }
-
-        return '';
-    };
 
     const { isAuthenticated, profileImageUrl, isAdmin } = useContext(AuthContext);
     const { notificationCount } = useContext(NotificationContext);
@@ -88,15 +88,6 @@ const Header = () => {
                 </NavLink>
             ),
         },
-        {
-            key: '2',
-            label: (
-                <NavLink style={{ fontSize: '1.2rem' }} to={paths.uploadPlacePath}>
-                    <UploadOutlined style={{ marginRight: '0.5rem' }} />
-                    Upload
-                </NavLink>
-            ),
-        },
         ...(isAdmin
             ? [
                 {
@@ -110,6 +101,15 @@ const Header = () => {
                 },
             ]
             : []),
+        {
+            key: '2',
+            label: (
+                <NavLink style={{ fontSize: '1.2rem' }} to={paths.uploadPlacePath}>
+                    <UploadOutlined style={{ marginRight: '0.5rem' }} />
+                    Upload
+                </NavLink>
+            ),
+        },
         {
             type: 'divider',
         },
@@ -131,18 +131,18 @@ const Header = () => {
             justifyContent: "space-between",
             margin: "0 auto",
             maxWidth: token.screenXL,
-            padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`
+            padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`,
+            // border: 'solid 1px black'
         },
         header: {
-            // backgroundColor: '#E9FFF1',
-            // borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBgBase}`,
             backgroundColor: token.colorBgContainer,
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
             position: "fixed",
             top: 0,
             width: "100%",
             zIndex: 1000,
-            minHeight: '63px'
+            // minHeight: '63px',
+            padding: '1.5rem 0'
         },
         logo: {
             display: "block",
@@ -172,30 +172,57 @@ const Header = () => {
             theme={{
                 token: {
                     colorPrimary: '#43c0c1',
-                    // colorPrimary: '#4c6a76',
                 },
                 components: {
-                    // Dropdown: {
-                    //     backgroundColor: '#e6fffb',
-                    // }
-                }
+                    Menu: {
+                        itemSelectedColor: 'inherit',
+                        itemSelectedBg: 'transparent',
+                        horizontalItemSelectedColor: 'inherit',
+                        horizontalItemHoverBorderBottom: '0px',
+                        horizontalItemSelectedBorderBottom: '0px',
+                    },
+                },
             }}
         >
+
             <nav style={dynamicStyles.header}>
                 <div style={dynamicStyles.container}>
                     <div style={dynamicStyles.menuContainer}>
-                        <Menu
+                        {/* <Menu
                             style={dynamicStyles.menu}
                             mode="horizontal"
                             items={menuItems}
-                            // onClick={onClick}
-                            // selectedKeys={screens.md ? [current] : ""}
-                            selectedKeys={[getSelectedKey()]}  // use this here
                             overflowedIndicator={
                                 <Button type="text" icon={<MenuOutlined />}></Button>
                             }
                             defaultSelectedKeys={['home']}
-                        />
+                        /> */}
+
+                        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                            <motion.div
+                                whileHover={{
+                                    scale: 1.05,
+                                    y: -2,
+                                    transition: { type: 'spring', stiffness: 300, damping: 15 }
+                                }}
+                                whileTap={{ scale: 0.97 }}
+                            >
+                                <Link to="/" className={styles.logoMenuItem}>
+                                    <img src={logo} alt="Explorify" className={styles.logoImage} />
+                                    <span>Explorify</span>
+                                </Link>
+                            </motion.div>
+
+                            <NavLink to="/categories" className={styles.navItem}>
+                                Categories
+                            </NavLink>
+                            <NavLink to="/search" className={styles.navItem}>
+                                Search
+                            </NavLink>
+                        </div> */}
+
+                        <ResponsiveMenu />
+
                     </div>
                     <Space>
                         {
@@ -220,35 +247,48 @@ const Header = () => {
                                 >
 
                                     <Badge title="Notifications" color="green" size="small" count={notificationCount}>
-                                        <Link
-                                            to="/notifications"
-                                            style={{
-                                                color: 'inherit',
-                                                textDecoration: 'none',
-                                                display: 'flex',
-                                                alignItems: 'center',
+                                        <motion.div
+                                            whileHover={{
+                                                scale: 1.1,
+                                                rotate: -10,
+                                                transition: { type: 'spring', stiffness: 250, damping: 12 }
                                             }}
+                                            whileTap={{ scale: 0.95 }}
+                                            style={{ display: 'flex', alignItems: 'center' }}
                                         >
-                                            <BellOutlined style={{ fontSize: '1.5rem' }} />
-                                        </Link>
+                                            <Link
+                                                to="/notifications"
+                                                style={{
+                                                    color: 'inherit',
+                                                    textDecoration: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <BellOutlined style={{ fontSize: '1.5rem' }} />
+                                            </Link>
+                                        </motion.div>
                                     </Badge>
 
-                                    <Dropdown
-                                        arrow={true}
-                                        menu={{ items: dropDownItems }}
-                                        placement="bottom"
-                                    >
-                                        {profileImageUrl ?
-                                            (<Avatar
-                                                style={{ marginRight: '2rem' }}
-                                                size="large"
-                                                src={profileImageUrl}
-                                            />) : (<Avatar
-                                                style={{ marginRight: '2rem' }}
-                                                size="large"
-                                                icon={<UserOutlined />}
-                                            />)}
-                                    </Dropdown>
+
+                                    <div style={{ marginRight: '2rem' }}>
+                                        <Dropdown
+                                            arrow
+                                            menu={{ items: dropDownItems }}
+                                            placement="bottom"
+                                            trigger={['click']}
+                                        >
+                                            <div className={styles.avatarHoverWrapper}>
+                                                {profileImageUrl ? (
+                                                    <Avatar size={50} src={profileImageUrl} />
+
+                                                ) : (
+                                                    <Avatar size="large" icon={<UserOutlined />} />
+                                                )}
+                                            </div>
+                                        </Dropdown>
+                                    </div>
+
                                 </div>
                         }
                     </Space>

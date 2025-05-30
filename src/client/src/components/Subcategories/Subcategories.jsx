@@ -80,7 +80,7 @@ const Subcategories = () => {
                             (
                                 <>
 
-                                    <div style={{
+                                    {/* <div style={{
                                         display: 'flex',
                                         justifyContent: 'center',
                                         padding: '1rem 0'
@@ -117,7 +117,13 @@ const Subcategories = () => {
                                                 {categoryData.categoryDescription}
                                             </Typography.Paragraph>
                                         </Card>
+                                    </div> */}
+
+                                    <div className={styles.categoryCard}>
+                                        <h2 className={styles.categoryTitle}>{categoryData.categoryName}</h2>
+                                        <p className={styles.categoryDescription}>{categoryData.categoryDescription}</p>
                                     </div>
+
 
                                     <div className={styles.subcategoriesContainer}>
                                         {categoryData.subcategories.map(x =>

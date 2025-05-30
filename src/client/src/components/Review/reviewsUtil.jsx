@@ -248,8 +248,6 @@ export const renderPagination = (pagesCount, currentPage, handlePageChange, isFo
             colorPrimaryHover: '#389e0d',
         };
 
-
-
     return (
         <ConfigProvider
             theme={{

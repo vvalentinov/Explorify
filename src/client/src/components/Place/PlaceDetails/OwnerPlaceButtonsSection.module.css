@@ -1,0 +1,64 @@
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 8rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    min-width: 250px;
+    background-color: #f9f9fb;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.cardTitle {
+    color: #222;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.actionButton {
+    font-family: 'Poppins', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.editButton {
+    background-color: #13c2c2;
+    color: white;
+}
+
+.editButton:hover {
+    background-color: #0ea7a7;
+}
+
+.deleteButton {
+    background-color: #cf1322;
+    color: white;
+}
+
+.deleteButton:hover {
+    background-color: #a50f1a;
+}

@@ -198,7 +198,10 @@ const ReviewsList = ({
                     flexWrap: 'wrap',
                     gap: '1.5rem',
                     justifyContent: 'center',
-                    marginTop: '1.5rem'
+                    marginTop: '1.5rem',
+                    // border: 'solid 1px black',
+                    margin: '1.5rem 4rem'
+                    // padding: '0 5rem'
                 }}
             >
                 {reviews.map(review => (
@@ -206,130 +209,139 @@ const ReviewsList = ({
                         key={review.id}
                         variants={cardVariants}
                         style={{
-                            flex: '1 1 300px', // allows wrapping and sizing
-                            maxWidth: '350px', // prevents full row stretch
-                            minWidth: '280px', // optional: controls responsiveness
+                            flex: '1 1 300px',
+                            maxWidth: '350px',
+                            minWidth: '280px',
                         }}
                     >
+
                         <Card
                             key={review.id}
+                            hoverable={isForPlace}
+                            onClick={() => isForPlace ? handleOpenModal(review) : undefined}
                             style={{
                                 overflow: 'hidden',
-                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06)',
-                                border: 'none'
+                                borderRadius: '16px',
+                                border: '1px solid #eaeaea',
+                                marginBottom: '1.5rem',
+                                boxShadow: '0 6px 18px rgba(0,0,0,0.05)',
+                                cursor: isForPlace ? 'pointer' : 'default',
                             }}
+                            className={styles.reviewCard}
                             styles={{
-                                header: {
-                                    backgroundColor: !isForAdmin ? '#5fad55' : '#e8fffb'
+                                body: {
+                                    padding: '1.25rem 1.5rem'
                                 }
                             }}
-                            hoverable={isForPlace}
-                            className={styles.reviewCard}
-                            title={
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} className={styles.reviewCardHeader}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }} className={styles.reviewCardHeaderContainer}>
-                                        <Avatar
-                                            src={review.profileImageUrl || undefined}
-                                            size={40}
-                                            icon={!review.profileImageUrl && <UserOutlined />}
-                                        />
-                                        <span style={{ marginLeft: '5px' }} className={styles.placeTitle}>{review.userName}</span>
-                                    </div>
-                                    <Rate style={{ padding: '0', margin: '0' }} disabled value={review.rating} />
-                                </div>
-                            }
-                            onClick={() => isForPlace ? handleOpenModal(review) : undefined}
                         >
+                            {/* Header */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                                {/* User Info */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <Avatar
+                                        src={review.profileImageUrl || undefined}
+                                        size={44}
+                                        icon={!review.profileImageUrl && <UserOutlined />}
+                                    />
+                                    <div>
+                                        <Typography.Text strong style={{ fontSize: '15px' }}>{review.userName}</Typography.Text>
+                                        <br />
+                                        <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+                                            {new Date(review.createdOn).toLocaleDateString()}
+                                        </Typography.Text>
+                                    </div>
+                                </div>
+
+                                {/* Rating */}
+                                <Rate disabled value={review.rating} style={{ fontSize: '16px' }} />
+                            </div>
+
+                            {/* Review Content */}
                             <Typography.Paragraph
-                                style={{ textAlign: 'justify' }}
+                                style={{ fontSize: '15px', lineHeight: 1.6, textAlign: 'justify', marginBottom: '1rem' }}
                                 ellipsis={{ rows: isForPlace ? 10 : 5 }}
                             >
                                 {review.content}
                             </Typography.Paragraph>
 
-                            <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px', flexWrap: 'wrap' }}>
-
+                            {/* Action Buttons */}
+                            <div style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '0.5rem',
+                                marginTop: '0.5rem'
+                            }}>
+                                {/* Viewer (admin/user) */}
                                 {!isForPlace && (
                                     <Button
                                         icon={<EyeOutlined />}
-                                        variant="solid"
-                                        color={isForAdmin ? 'primary' : 'cyan'}
                                         onClick={() => handleOpenModal(review)}
+                                        type="default"
+                                        block
                                     >
                                         Open
                                     </Button>
                                 )}
 
-                                {isForUser && (
+                                {/* User Controls */}
+                                {isForUser && !review.isDeleted && (
                                     <>
+                                        <Button
+                                            icon={<EditOutlined />}
+                                            type="default"
+                                            onClick={() => navigate('/review/edit', { state: { reviewId: review.id } })}
+                                            block
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            icon={<DeleteOutlined />}
+                                            danger
+                                            onClick={() => handleDelete(review)}
+                                            block
+                                        >
+                                            Delete
+                                        </Button>
+                                    </>
+                                )}
 
-                                        {!review.isDeleted && (
+                                {isForUser && review.isDeleted && !review.isDeletedByAdmin && (
+                                    <Button block type="primary" onClick={() => handleRevert(review.id)}>
+                                        Revert
+                                    </Button>
+                                )}
+
+                                {/* Admin Controls */}
+                                {isForAdmin && (
+                                    <>
+                                        {review.isDeleted ? (
+                                            <Button block type="primary" onClick={() => handleRevert(review.id)}>
+                                                Revert
+                                            </Button>
+                                        ) : review.isApproved ? (
                                             <>
-                                                <Button
-                                                    icon={<EditOutlined />}
-                                                    variant="solid"
-                                                    color="gold"
-                                                    onClick={() => navigate('/review/edit', { state: { reviewId: review.id } })}
-                                                >
-                                                    Edit
+                                                <Button block onClick={() => handleUnapprove(review)}>
+                                                    Unapprove
                                                 </Button>
-                                                <Button
-                                                    icon={<DeleteOutlined />}
-                                                    variant="solid"
-                                                    color="danger"
-                                                    onClick={() => handleDelete(review)}
-                                                >
+                                                <Button block danger onClick={() => handleDelete(review)}>
+                                                    Delete
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Button block type="primary" onClick={() => approveReviewModal(review)}>
+                                                    Approve
+                                                </Button>
+                                                <Button block danger onClick={() => handleDelete(review)}>
                                                     Delete
                                                 </Button>
                                             </>
                                         )}
-
-                                        {review.isDeleted && !review.isDeletedByAdmin && (
-                                            <Button type="primary" onClick={() => handleRevert(review.id)}>
-                                                Revert
-                                            </Button>
-                                        )}
                                     </>
                                 )}
-
-
-                                {
-                                    isForAdmin &&
-                                    (
-                                        <>
-                                            {review.isDeleted ?
-                                                (
-                                                    <Button type="primary" onClick={() => handleRevert(review.id)}>
-                                                        Revert
-                                                    </Button>
-                                                ) : review.isApproved ?
-                                                    (
-                                                        <>
-                                                            <Button variant='solid' color='yellow' onClick={() => handleUnapprove(review)}>
-                                                                Unapprove
-                                                            </Button>
-                                                            <Button variant='solid' color='danger' onClick={() => handleDelete(review)}>
-                                                                Delete
-                                                            </Button>
-                                                        </>
-                                                    ) :
-                                                    (
-                                                        <>
-                                                            <Button variant='solid' color='green' onClick={() => approveReviewModal(review)}>
-                                                                Approve
-                                                            </Button>
-                                                            <Button variant='solid' color='red' onClick={() => handleDelete(review)}>
-                                                                Delete
-                                                            </Button>
-                                                        </>
-                                                    )}
-                                        </>
-                                    )
-                                }
-
                             </div>
-
                         </Card>
+
                     </motion.div>
                 ))}
             </motion.div>
@@ -374,15 +386,19 @@ const ReviewsList = ({
                                 <Rate style={{ marginLeft: '10px' }} disabled value={selectedReview?.rating} />
                             </div>
 
-                            <Button
-                                onClick={onHelpfulBtnClick}
-                                variant={selectedReview?.hasLikedReview ? 'solid' : 'outlined'}
-                                color='cyan'
-                                style={{ padding: '1.3rem' }}
-                            >
-                                <LikeOutlined style={{ fontSize: 25 }} />
-                                <span style={{ fontSize: 20 }}>({selectedReview?.likes})</span>
-                            </Button>
+                            {!isForAdmin && (
+                                <Button
+                                    onClick={onHelpfulBtnClick}
+                                    variant={selectedReview?.hasLikedReview ? 'solid' : 'outlined'}
+                                    color='cyan'
+                                    style={{ padding: '1.3rem' }}
+                                >
+                                    <LikeOutlined style={{ fontSize: 25 }} />
+                                    <span style={{ fontSize: 20 }}>({selectedReview?.likes})</span>
+                                </Button>
+                            )}
+
+
 
                         </div>
 
