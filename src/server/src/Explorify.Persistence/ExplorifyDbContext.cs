@@ -39,6 +39,8 @@ public class ExplorifyDbContext :
 
     public DbSet<PlaceVibeAssignment> PlaceVibeAssignments { get; set; }
 
+    public DbSet<UserFollow> UserFollows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(ExplorifyDbContext).Assembly);
