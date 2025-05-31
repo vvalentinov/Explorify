@@ -1,106 +1,3 @@
-// import styles from './PlaceDetailsSection.module.css';
-
-// import { UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
-
-// import WeatherCard from '../WeatherCard/WeatherCard';
-
-// import {
-//     Carousel,
-//     Card,
-//     Typography,
-//     Avatar,
-//     Rate,
-//     Tag,
-//     Flex,
-//     Spin,
-//     ConfigProvider
-// } from 'antd';
-
-// const PlaceDetailsSection = ({
-//     place,
-//     mapUrl,
-//     loading,
-//     isForAdmin
-// }) => {
-
-//     return (
-
-//         <section className={styles.placeDetailsSection}>
-//             <div className={styles.heroSection}>
-//                 <div className={styles.placeInfo}>
-//                     <h1>{place.name}</h1>
-//                     <div className={styles.meta}>
-//                         <Avatar src={place.userProfileImageUrl} icon={<UserOutlined />} />
-//                         <span>{place.userName}</span>
-//                     </div>
-//                 </div>
-
-//                 {loading ? (
-//                     <div className={styles.spinnerWrapper}>
-//                         <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
-//                             <Spin size="large" />
-//                         </ConfigProvider>
-//                     </div>
-//                 ) : (
-//                     <Carousel className={styles.carousel} autoplay arrows dotPosition="bottom">
-//                         {place.imagesUrls?.map((url, idx) => (
-//                             <img src={url} alt={`Slide ${idx}`} key={idx} />
-//                         ))}
-//                     </Carousel>
-//                 )}
-//             </div>
-
-//             {/* 👇 Full width description before flex layout */}
-//             <div className={styles.sectionBox}>
-//                 <h2>Description</h2>
-//                 <p>{place.description}</p>
-//             </div>
-
-//             <div className={styles.detailsFlex}>
-//                 <div className={styles.leftColumn}>
-//                     {mapUrl && (
-//                         <div className={styles.sectionBox}>
-//                             <h2>Map</h2>
-//                             <iframe src={mapUrl} className={styles.mapIframe} allowFullScreen="" />
-//                         </div>
-//                     )}
-
-//                     {place.tags?.length > 0 && (
-//                         <div className={styles.sectionBox}>
-//                             <h2>Tags</h2>
-//                             <div className={styles.tagList}>
-//                                 {place.tags.map(tag => (
-//                                     <span key={tag.id} className={styles.tag}>
-//                                         {tag.name}
-//                                     </span>
-//                                 ))}
-//                             </div>
-//                         </div>
-//                     )}
-//                 </div>
-
-//                 <div className={styles.rightColumn}>
-//                     <div className={styles.sectionBox}>
-//                         <div className={styles.reviewHeader}>
-//                             <Avatar src={place.userProfileImageUrl} />
-//                             <span>{place.userName}</span>
-//                         </div>
-//                         <Rate disabled value={place.userReviewRating} />
-//                         <p>{place.userReviewContent}</p>
-//                     </div>
-
-//                     {place.weatherData?.current && Object.keys(place.weatherData.current).length > 0 && (
-//                         <WeatherCard isForAdmin={isForAdmin} data={place.weatherData} />
-//                     )}
-//                 </div>
-//             </div>
-//         </section>
-
-//     );
-// };
-
-// export default PlaceDetailsSection;
-
 import styles from './PlaceDetailsSection.module.css';
 import { UserOutlined } from '@ant-design/icons';
 import WeatherCard from '../WeatherCard/WeatherCard';
@@ -115,6 +12,10 @@ import {
 import { Typography } from 'antd';
 const { Title, Paragraph } = Typography;
 
+import { Link } from 'react-router-dom';
+
+import slugify from 'slugify';
+
 const PlaceDetailsSection = ({
     place,
     mapUrl,
@@ -125,13 +26,39 @@ const PlaceDetailsSection = ({
         <section className={styles.placeDetailsSection}>
             {/* Header + Carousel */}
             <div className={styles.heroSection}>
-                <div className={styles.placeInfo}>
+
+                {/* <div className={styles.placeInfo}>
                     <h1>{place.name}</h1>
                     <div className={styles.meta}>
-                        <Avatar src={place.userProfileImageUrl} icon={<UserOutlined />} />
+                        <Link
+                            to={{ pathname: `/profile/${slugify(place.userName ?? '', { lower: true })}` }}
+                            state={{ userId: place.userId }}
+                        >
+                            <Avatar src={place.userProfileImageUrl} icon={<UserOutlined />} />
+                        </Link>
+
                         <span>{place.userName}</span>
                     </div>
+                </div> */}
+
+                <div className={styles.placeInfo}>
+                    <h1 className={styles.placeName}>{place.name}</h1>
+                    <div className={styles.uploader}>
+                        <Link
+                            to={{ pathname: `/profile/${slugify(place.userName ?? '', { lower: true })}` }}
+                            state={{ userId: place.userId }}
+                        >
+                            <Avatar
+                                src={place.userProfileImageUrl}
+                                icon={<UserOutlined />}
+                                size={64}
+                                className={styles.avatarHover}
+                            />
+                        </Link>
+                        <span className={styles.userName}>{place.userName}</span>
+                    </div>
                 </div>
+
 
                 {loading ? (
                     <div className={styles.spinnerWrapper}>

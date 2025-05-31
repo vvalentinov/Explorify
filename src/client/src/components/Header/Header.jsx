@@ -39,6 +39,8 @@ import { motion } from 'framer-motion';
 
 import logo from '../../assets/explorify.png';
 
+import slugify from 'slugify';
+
 const menuItems = [
     {
         label: (
@@ -71,7 +73,7 @@ const menuItems = [
 
 const Header = () => {
 
-    const { isAuthenticated, profileImageUrl, isAdmin } = useContext(AuthContext);
+    const { isAuthenticated, profileImageUrl, isAdmin, userName } = useContext(AuthContext);
     const { notificationCount } = useContext(NotificationContext);
 
     const { token } = useToken();
@@ -82,7 +84,7 @@ const Header = () => {
         {
             key: '1',
             label: (
-                <NavLink style={{ fontSize: '1.2rem' }} to={paths.profilePath}>
+                <NavLink style={{ fontSize: '1.2rem' }} to={`/profile/${slugify(userName ?? '', { lower: true })}`}>
                     <UserOutlined style={{ marginRight: '0.5rem' }} />
                     Profile
                 </NavLink>
@@ -188,41 +190,7 @@ const Header = () => {
             <nav style={dynamicStyles.header}>
                 <div style={dynamicStyles.container}>
                     <div style={dynamicStyles.menuContainer}>
-                        {/* <Menu
-                            style={dynamicStyles.menu}
-                            mode="horizontal"
-                            items={menuItems}
-                            overflowedIndicator={
-                                <Button type="text" icon={<MenuOutlined />}></Button>
-                            }
-                            defaultSelectedKeys={['home']}
-                        /> */}
-
-                        {/* <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                            <motion.div
-                                whileHover={{
-                                    scale: 1.05,
-                                    y: -2,
-                                    transition: { type: 'spring', stiffness: 300, damping: 15 }
-                                }}
-                                whileTap={{ scale: 0.97 }}
-                            >
-                                <Link to="/" className={styles.logoMenuItem}>
-                                    <img src={logo} alt="Explorify" className={styles.logoImage} />
-                                    <span>Explorify</span>
-                                </Link>
-                            </motion.div>
-
-                            <NavLink to="/categories" className={styles.navItem}>
-                                Categories
-                            </NavLink>
-                            <NavLink to="/search" className={styles.navItem}>
-                                Search
-                            </NavLink>
-                        </div> */}
-
                         <ResponsiveMenu />
-
                     </div>
                     <Space>
                         {

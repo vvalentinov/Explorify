@@ -12,6 +12,13 @@ export const usersServiceFactory = (token) => {
         forgotPassword: (data) => request.post(`${baseUrl}/User/ForgotPassword`, data),
         resetPassword: (data) => request.post(`${baseUrl}/User/ResetPassword`, data),
         changeProfileImage: (data) => request.post(`${baseUrl}/User/ChangeProfilePicture`, data),
-        getProfileInfo: () => request.get(`${baseUrl}/User/GetProfileInfo`),
+        getProfileInfo: (userId) =>
+            request.get(
+                userId
+                    ? `${baseUrl}/User/GetProfileInfo?userId=${userId}`
+                    : `${baseUrl}/User/GetProfileInfo`
+            ),
+        followUser: (userId) => request.post(`${baseUrl}/Follow/${userId}`),
+        unfollowUser: (userId) => request.delete(`${baseUrl}/Follow/${userId}`)
     }
 };

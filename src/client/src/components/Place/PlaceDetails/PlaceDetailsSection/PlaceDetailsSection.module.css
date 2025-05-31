@@ -26,12 +26,20 @@
     border-radius: 12px;
 }
 
-.placeInfo {
+/* .placeInfo {
     margin-top: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
+} */
+
+.placeInfo {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .placeInfo h1 {
@@ -152,6 +160,39 @@
     text-align: justify;
 }
 
+
+.placeName {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    color: #222;
+}
+
+.uploader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.userName {
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+.avatarHover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid green;
+    border-radius: 50%;
+}
+
+.avatarHover:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
 
 
 @media (max-width: 768px) {

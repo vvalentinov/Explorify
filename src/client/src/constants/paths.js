@@ -10,7 +10,7 @@ export const subcategoriesPath = '/categories/:categoryName';
 
 export const placesInSubcategoryPath = '/categories/:categoryName/:subcategoryName';
 
-export const profilePath = '/account';
+export const profilePath = '/profile/:userName';
 
 export const changeUsernamePath = '/account/change-username';
 

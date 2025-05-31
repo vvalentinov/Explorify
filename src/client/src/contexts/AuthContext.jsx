@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         token: auth.accessToken,
         userId: auth.userId,
         isAdmin: auth.isAdmin,
-        username: auth.userName,
+        userName: auth.userName,
         isAuthenticated: !!auth.accessToken,
         profileImageUrl: auth.profileImageUrl
     };
