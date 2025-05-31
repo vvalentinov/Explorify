@@ -2,17 +2,19 @@
 
 public class GetProfileInfoResponseModel
 {
-    public string UserId { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
 
     public string? ProfileImageUrl { get; set; }
 
     public string UserName { get; set; } = string.Empty;
 
-    public string Email { get; set; } = string.Empty;
-
     public int Points { get; set; }
 
-    public int UploadedPlacesCount { get; set; }
+    public int Contributions { get; set; }
 
-    public int UploadedReviewsCount { get; set; }
+    public int FollowersCount { get; set; }
+
+    public int FollowingCount { get; set; }
+
+    public bool IsFollowedByCurrentUser { get; set; }
 }

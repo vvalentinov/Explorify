@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.User.GetProfileInfo;
 
-public record GetProfileInfoQuery(string UserId)
+public record GetProfileInfoQuery(string UserId, Guid CurrentUserId)
     : IQuery<GetProfileInfoResponseModel>;

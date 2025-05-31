@@ -1,5 +1,4 @@
 ﻿using Explorify.Application.Abstractions.Models;
-using Explorify.Application.User.GetProfileInfo;
 
 namespace Explorify.Application.Abstractions.Interfaces;
 
@@ -43,6 +42,4 @@ public interface IProfileService
     Task<Result> ChangeProfileImageAsync(
         string userId,
         string imageUrl);
-
-    Task<Result<GetProfileInfoResponseModel>> GetProfileInfoAsync(string userId);
 }

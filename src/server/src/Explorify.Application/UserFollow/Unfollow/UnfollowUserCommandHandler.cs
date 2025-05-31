@@ -72,7 +72,9 @@ public class UnfollowUserCommandHandler
             ReceiverId = followeeId,
         };
 
-        _repository.HardDelete(userFollow);
+        _repository.SoftDelete(userFollow);
+        _repository.Update(userFollow);
+
         await _repository.AddAsync(notification);
 
         await _repository.SaveChangesAsync();

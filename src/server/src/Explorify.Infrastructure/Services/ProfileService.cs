@@ -5,7 +5,6 @@ using Explorify.Persistence.Identity;
 using Explorify.Infrastructure.Extensions;
 using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.User.GetProfileInfo;
 using Explorify.Application.Abstractions.Interfaces;
 
 using static Explorify.Domain.Constants.EmailConstants;
@@ -13,7 +12,6 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -252,29 +250,5 @@ public class ProfileService : IProfileService
         await _userManager.UpdateAsync(user);
 
         return Result.Success();
-    }
-
-    public async Task<Result<GetProfileInfoResponseModel>> GetProfileInfoAsync(string userId)
-    {
-        var model = await _userManager
-            .Users
-            .Select(user => new GetProfileInfoResponseModel
-            {
-                Points = user.Points,
-                UserId = user.Id.ToString(),
-                Email = user.Email ?? string.Empty,
-                ProfileImageUrl = user.ProfileImageUrl,
-                UserName = user.UserName ?? string.Empty,
-                UploadedPlacesCount = user.Places.Where(x => !x.IsDeleted).Count(),
-                UploadedReviewsCount = user.Reviews.Count(r => !user.Places.Where(x => !x.IsDeleted).Select(p => p.Id).Contains(r.PlaceId)),
-            }).FirstOrDefaultAsync(x => x.UserId == userId);
-
-        if (model == null)
-        {
-            var error = new Error(NoUserWithIdFoundError, ErrorType.Validation);
-            return Result.Failure<GetProfileInfoResponseModel>(error);
-        }
-
-        return Result.Success(model);
     }
 }

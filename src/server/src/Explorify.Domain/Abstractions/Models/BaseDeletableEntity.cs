@@ -2,6 +2,14 @@
 
 namespace Explorify.Domain.Abstractions.Models;
 
+public abstract class BaseDeletableEntity
+    : BaseEntity, IDeletableEntity
+{
+    public bool IsDeleted { get; set; }
+
+    public DateTime? DeletedOn { get; set; }
+}
+
 public abstract class BaseDeletableEntity<TKey>
     : BaseEntity<TKey>, IDeletableEntity
 {

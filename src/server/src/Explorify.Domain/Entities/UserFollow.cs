@@ -2,7 +2,7 @@
 
 namespace Explorify.Domain.Entities;
 
-public class UserFollow : BaseModel
+public class UserFollow : BaseDeletableEntity
 {
     public Guid FollowerId { get; set; }
 

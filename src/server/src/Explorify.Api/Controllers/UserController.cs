@@ -43,10 +43,19 @@ public class UserController : BaseController
         return Ok(new { imageUrl = result.Data });
     }
 
+    [AllowAnonymous]
     [HttpGet(nameof(GetProfileInfo))]
-    public async Task<IActionResult> GetProfileInfo()
+    public async Task<IActionResult> GetProfileInfo(string? userId)
     {
-        var query = new GetProfileInfoQuery(User.GetId().ToString());
+        if (userId is null && !User.IsAuthenticated())
+        {
+            var error = new Error("", ErrorType.Validation);
+            return this.OkOrProblemDetails(error);
+        }
+
+        var resolvedUserId = userId ?? User.GetId().ToString();
+
+        var query = new GetProfileInfoQuery(resolvedUserId, User.GetId());
         var result = await _mediator.Send(query);
         return Ok(result.Data);
     }

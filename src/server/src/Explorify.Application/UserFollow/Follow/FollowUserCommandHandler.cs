@@ -41,35 +41,51 @@ public class FollowUserCommandHandler
             return Result.Failure(error);
         }
 
-        // check if already follow exists
-
-        var userFollowExists = await _repository
-            .AllAsNoTracking<Domain.Entities.UserFollow>()
-            .AnyAsync(uf =>
+        var existingFollow = await _repository
+            .All<Domain.Entities.UserFollow>(ignoreQueryFilters: true)
+            .FirstOrDefaultAsync(uf =>
                 uf.FollowerId == followerId &&
                 uf.FolloweeId == followeeId,
                 cancellationToken);
 
-        if (userFollowExists)
+        if (existingFollow != null)
         {
-            var error = new Error("You are already following this user!", ErrorType.Validation);
-            return Result.Failure(error);
+            if (!existingFollow.IsDeleted)
+            {
+                var error = new Error("You are already following this user!", ErrorType.Validation);
+                return Result.Failure(error);
+            }
+
+            // cooldown enforcement
+            //var cooldownPeriod = TimeSpan.FromHours(1);
+            var cooldownPeriod = TimeSpan.FromSeconds(30);
+
+            if (existingFollow.DeletedOn != null &&
+                DateTime.UtcNow - existingFollow.DeletedOn < cooldownPeriod)
+            {
+                var error = new Error("You can follow this user again after some time.", ErrorType.Validation);
+                return Result.Failure(error);
+            }
+
+            // Revive the follow
+            existingFollow.IsDeleted = false;
+            existingFollow.DeletedOn = null;
+            existingFollow.CreatedOn = DateTime.UtcNow;
+            _repository.Update(existingFollow);
+        }
+        else
+        {
+            var newFollow = new Domain.Entities.UserFollow
+            {
+                FollowerId = followerId,
+                FolloweeId = followeeId,
+            };
+
+            await _repository.AddAsync(newFollow);
         }
 
-        var userFollow = new Domain.Entities.UserFollow
-        {
-            FolloweeId = followeeId,
-            FollowerId = followerId,
-        };
-
-        var increaseUserPointsResult = await _userService.IncreaseUserPointsAsync(
-            followeeId.ToString(),
-            UserFollowPoints);
-
-        if (increaseUserPointsResult.IsFailure)
-        {
-            return increaseUserPointsResult;
-        }
+        var increasePointsResult = await _userService.IncreaseUserPointsAsync(followeeId.ToString(), UserFollowPoints);
+        if (increasePointsResult.IsFailure) return increasePointsResult;
 
         var notification = new Domain.Entities.Notification
         {
@@ -78,14 +94,10 @@ public class FollowUserCommandHandler
             ReceiverId = followeeId,
         };
 
-        await _repository.AddAsync(userFollow);
         await _repository.AddAsync(notification);
-
         await _repository.SaveChangesAsync();
 
-        await _notificationService.NotifyAsync(
-            $"{currUserName} started following you.",
-            followeeId);
+        await _notificationService.NotifyAsync($"{currUserName} started following you.", followeeId);
 
         return Result.Success("Successfully followed user!");
     }
