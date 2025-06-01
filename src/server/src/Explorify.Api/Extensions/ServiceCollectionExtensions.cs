@@ -1,11 +1,11 @@
-﻿using Explorify.Persistence.Extensions;
+﻿using Explorify.Api.DTOs.Validators;
+using Explorify.Persistence.Extensions;
 using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
 using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
-using Microsoft.AspNetCore.Identity;
-using Explorify.Api.DTOs.Validators;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 namespace Explorify.Api.Extensions;
 
@@ -48,6 +48,10 @@ public static class ServiceCollectionExtensions
             });
 
         services.AddValidatorsFromAssemblyContaining<UploadPlaceRequestDtoValidator>();
+
+        //services.AddApplicationInsightsTelemetry();
+
+        
 
         return services;
     }

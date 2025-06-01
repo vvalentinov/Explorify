@@ -21,6 +21,7 @@ public static class WebApplicationExtensions
 
         app
             .UseHttpsRedirection()
+            .UseMiddleware<RequestTimingMiddleware>()
             .UseExceptionHandler()
             .UseCors("CorsPolicy")
             .UseAuthentication()
