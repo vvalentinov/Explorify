@@ -135,6 +135,42 @@ public class SearchPlaceQueryHandler
                     whereConditions.Add("p.IsDeleted = 1 AND p.DeletedOn >= @Cutoff");
                 }
                 break;
+
+            case SearchContext.UserFollowing:
+
+                if (!model.UserFollowingId.HasValue)
+                {
+                    var error = new Error("UserFollowingId is required for UserFollowing context.", ErrorType.Validation);
+                    return Result.Failure<PlacesListResponseModel>(error);
+                }
+
+                const string followCheckSql = @"
+                    SELECT COUNT(1)
+                    FROM UserFollows
+                    WHERE FollowerId = @CurrentUserId AND FolloweeId = @UserFollowingId AND IsDeleted = 0;
+                ";
+
+                var isFollowing = await _dbConnection.ExecuteScalarAsync<bool>(
+                    followCheckSql,
+                    new
+                    {
+                        request.CurrentUserId,
+                        model.UserFollowingId
+                    }
+                );
+
+                if (!isFollowing)
+                {
+                    var error = new Error("You are not following the specified user.", ErrorType.Validation);
+                    return Result.Failure<PlacesListResponseModel>(error);
+                }
+
+                whereConditions.Add("p.UserId = @UserFollowingId");
+                whereConditions.Add("p.IsApproved = 1");
+                whereConditions.Add("p.IsDeleted = 0");
+                parameters.Add("UserFollowingId", model.UserFollowingId);
+                break;
+
         }
 
         var whereClause = whereConditions.Count > 0

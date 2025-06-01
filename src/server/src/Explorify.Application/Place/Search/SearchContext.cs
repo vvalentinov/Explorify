@@ -4,5 +4,6 @@ public enum SearchContext
 {
     Global,
     UserPlaces,
-    Admin
+    Admin,
+    UserFollowing
 }

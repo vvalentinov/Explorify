@@ -15,4 +15,6 @@ public class SearchPlaceRequestDto
     public string? Status { get; set; }
 
     public SearchContext Context { get; set; }
+
+    public Guid? UserFollowingId { get; set; }
 }
