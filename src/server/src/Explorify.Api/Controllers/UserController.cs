@@ -11,13 +11,14 @@ using Explorify.Application.User.Account.ResetPassword;
 using Explorify.Application.User.Account.ChangeUserName;
 using Explorify.Application.User.Account.ChangePassword;
 using Explorify.Application.User.Account.ForgotPassword;
+using Explorify.Application.UserFollow.GetFollowedUsers;
 using Explorify.Application.User.Account.ChangeProfileImage;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.UserFollow.GetFollowedUsers;
+using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -97,6 +98,15 @@ public class UserController : BaseController
         return registerResult.ToProblemDetails();
     }
 
+    [AllowAnonymous]
+    [HttpPost(nameof(Refresh))]
+    public async Task<IActionResult> Refresh()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        return Ok();
+    }
+
     [HttpPost(nameof(ChangeUsername))]
     public async Task<IActionResult> ChangeUsername(ChangeUserNameRequestModel model)
         => this.OkOrProblemDetails(
@@ -165,6 +175,7 @@ public class UserController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [PageValidationFilter]
     [HttpGet(nameof(GetFollowing))]
     public async Task<IActionResult> GetFollowing(int page)
     {

@@ -18,6 +18,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -41,6 +42,7 @@ public class PlaceController : BaseController
     }
 
     [AllowAnonymous]
+    [PageValidationFilter]
     [HttpGet(nameof(GetPlacesInCategory))]
     public async Task<IActionResult> GetPlacesInCategory(int categoryId, int page)
     {
@@ -50,6 +52,7 @@ public class PlaceController : BaseController
     }
 
     [AllowAnonymous]
+    [PageValidationFilter]
     [HttpGet(nameof(GetPlacesInSubcategory))]
     public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId, int page)
     {
@@ -121,6 +124,7 @@ public class PlaceController : BaseController
     }
 
     [AllowAnonymous]
+    [PageValidationFilter]
     [HttpGet(nameof(Search))]
     public async Task<IActionResult> Search([FromQuery] SearchPlaceRequestDto model, int page)
     {

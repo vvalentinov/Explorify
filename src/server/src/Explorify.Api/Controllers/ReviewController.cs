@@ -18,6 +18,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -99,6 +100,7 @@ public class ReviewController : BaseController
     }
 
     [AllowAnonymous]
+    [PageValidationFilter]
     [HttpGet(nameof(GetReviewsForPlace))]
     public async Task<IActionResult> GetReviewsForPlace(
         Guid placeId,
@@ -116,8 +118,9 @@ public class ReviewController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [PageValidationFilter]
     [HttpGet(nameof(GetApproved))]
-    public async Task<IActionResult> GetApproved(bool isForAdmin, int page = 1)
+    public async Task<IActionResult> GetApproved(bool isForAdmin, int page)
     {
         if (!User.IsAdmin() && isForAdmin)
         {
@@ -136,6 +139,7 @@ public class ReviewController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [PageValidationFilter]
     [HttpGet(nameof(GetUnapproved))]
     public async Task<IActionResult> GetUnapproved(bool isForAdmin, int page = 1)
     {
@@ -156,6 +160,7 @@ public class ReviewController : BaseController
         return this.OkOrProblemDetails(result);
     }
 
+    [PageValidationFilter]
     [HttpGet(nameof(GetDeleted))]
     public async Task<IActionResult> GetDeleted(bool isForAdmin, int page = 1)
     {

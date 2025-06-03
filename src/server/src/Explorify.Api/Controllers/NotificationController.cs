@@ -7,6 +7,7 @@ using Explorify.Application.Notification.GetUnreadNotificationsCount;
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -19,6 +20,7 @@ public class NotificationController : BaseController
         _mediator = mediator;
     }
 
+    [PageValidationFilter]
     [HttpGet(nameof(GetNotifications))]
     public async Task<IActionResult> GetNotifications(int page = 1)
     {

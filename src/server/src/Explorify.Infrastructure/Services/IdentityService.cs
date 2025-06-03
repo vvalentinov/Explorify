@@ -39,6 +39,32 @@ public class IdentityService : IIdentityService
         _profileService = profileService;
     }
 
+    public async Task<Result<IEnumerable<Claim>>> GetUserClaims(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            var error = new Error("No user with id found!", ErrorType.Validation);
+            return Result.Failure<IEnumerable<Claim>>(error);
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.UserName ?? string.Empty),
+        };
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        foreach (string role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        return Result.Success((IEnumerable<Claim>)claims);
+    }
+
     public async Task<Result<AuthResponseModel>> LoginUserAsync(LoginRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);

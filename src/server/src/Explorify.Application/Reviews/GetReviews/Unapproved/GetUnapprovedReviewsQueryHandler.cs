@@ -47,7 +47,7 @@ public class GetUnapprovedReviewsQueryHandler
             FROM Reviews r
             JOIN Places p ON r.PlaceId = p.Id
             JOIN AspNetUsers u ON r.UserId = u.Id
-            WHERE r.IsApproved = 0 AND p.IsDeleted = 0
+            WHERE r.IsApproved = 0 AND p.IsDeleted = 0 AND r.IsDeleted = 0
               AND (
                 (@IsAdmin = 1 AND r.UserId != p.UserId)
                 OR
