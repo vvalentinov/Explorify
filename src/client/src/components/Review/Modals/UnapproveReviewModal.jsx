@@ -62,44 +62,62 @@ const UnapproveReviewModal = ({
 
     return (
         <Modal
-            title="Unapprove Place"
+            title={<span style={{ fontSize: '2rem' }}>Unapprove Review</span>}
             open={visible}
             okText="Unapprove"
             okType="danger"
             onOk={handleOk}
             onCancel={handleCancel}
+            width={800}
+            okButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
+            cancelButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
         >
             <Space direction="vertical" size={6} style={{ display: 'flex' }}>
-                <Typography.Paragraph style={{ marginBottom: 0 }}>
+
+                <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
                     <Space size={6}>
                         <CloseCircleOutlined style={{ color: '#fa541c' }} />
                         Are you sure you want to unapprove this review?
                     </Space>
                 </Typography.Paragraph>
 
-                <Space size={6}>
-                    <WarningOutlined style={{ color: '#ff4d4f' }} />
-                    <Typography.Text type="danger" strong>
+                <Typography.Text style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                    <Space size={6}>
+                        <WarningOutlined style={{ color: '#ff4d4f' }} />
                         This action will mark the review as not approved.
-                    </Typography.Text>
-                </Space>
+                    </Space>
+                </Typography.Text>
 
                 {userId !== reviewUserId && (
-                    <Space size={6}>
-                        <BellOutlined style={{ color: '#faad14' }} />
-                        <Typography.Text type="danger" style={{ lineHeight: 1.4 }}>
-                            The reviewer will <Typography.Text strong>lose points</Typography.Text> and <Typography.Text strong>receive a notification</Typography.Text>.
-                        </Typography.Text>
-                    </Space>
+                    <Typography.Text style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                        <Space size={6}>
+                            <BellOutlined style={{ color: '#faad14' }} />
+                            The reviewer will lose points and receive a notification.
+                        </Space>
+                    </Typography.Text>
                 )}
 
                 {userId === reviewUserId && (
-                    <Space size={6}>
-                        <WarningOutlined style={{ color: '#ff4d4f' }} />
-                        <Text type="danger" style={{ lineHeight: 1.4 }}>
-                            You will <Text strong>lose points</Text>.
-                        </Text>
-                    </Space>
+                    <Typography.Text style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                        <Space size={6}>
+                            <WarningOutlined style={{ color: '#ff4d4f' }} />
+                            You will lose points.
+                        </Space>
+                    </Typography.Text>
                 )}
             </Space>
 
@@ -108,7 +126,7 @@ const UnapproveReviewModal = ({
                 {reviewUserId != userId &&
                     <Form.Item
                         name="reason"
-                        label="Reason for Unapproval"
+                        label={<span style={{ fontSize: '1.5rem' }}>Reason for Unapproval</span>}
                         rules={[
                             {
                                 required: true,
@@ -127,6 +145,7 @@ const UnapproveReviewModal = ({
                             maxLength={200}
                             minLength={5}
                             placeholder="Explain why this review is being unapproved..."
+                            style={{ fontSize: '1.5rem' }}
                         />
                     </Form.Item>}
             </Form>

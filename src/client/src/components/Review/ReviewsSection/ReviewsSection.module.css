@@ -1,0 +1,19 @@
+.reviewsSectionContainer {
+    padding: 0;
+    margin-left: 3rem;
+    margin-right: 3rem;
+    padding-bottom: 3rem;
+}
+
+:global(.radio-large .ant-radio-button-wrapper) {
+    padding: 20px 24px;
+    font-size: 2rem !important;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:global(.radio-large .ant-radio-button-wrapper-checked) {
+    font-weight: 600;
+}

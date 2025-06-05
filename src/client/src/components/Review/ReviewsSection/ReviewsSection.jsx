@@ -2,18 +2,16 @@ import styles from './ReviewsSection.module.css';
 
 import { useState, useContext, useEffect } from "react";
 
-import { reviewsServiceFactory } from "../../services/reviewsService";
+import { reviewsServiceFactory } from "../../../services/reviewsService";
 
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 import {
     renderEmptyState,
-    renderFilterReviewsCard, // only for admin and user
-    renderPagination,
     renderSpinner,
-    renderOrderReviewsCard // only for place reviews
-} from './reviewsUtil';
-import ReviewsList from "./ReviewsList";
+    renderOrderReviewsCard
+} from '../reviewsUtil';
+import ReviewsList from "../ReviewsList";
 
 const sortOptions = [
     { label: 'Newest', value: 'Newest' },
@@ -21,22 +19,20 @@ const sortOptions = [
     { label: 'Most Helpful', value: 'MostHelpful' },
 ];
 
-const filterOptions = [
-    { label: 'Approved', value: 'approved' },
-    { label: 'Unapproved', value: 'unapproved' },
-    { label: 'Recently Deleted', value: 'recentlyDeleted' },
-];
+import WriteReviewCard from '../WriteReviewCard';
+import UploadReviewModal from '../Modals/UploadReviewModal';
+import FilterCard from '../../FilterCard/FilterCard';
 
-import WriteReviewCard from './WriteReviewCard';
-import UploadReviewModal from './UploadReviewModal';
+import { Typography } from "antd";
 
-import { Card, Empty, Typography } from "antd";
+import Pagination from '../../Pagination/Pagination';
 
 const ReviewsSection = ({
     isForAdmin = false,
     isForPlace = true,
     isForUser = false,
-    placeId = null
+    placeId = null,
+    isOwner
 }) => {
 
     const { token } = useContext(AuthContext);
@@ -46,7 +42,7 @@ const ReviewsSection = ({
     // State Management
     const [reviews, setReviews] = useState([]);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
-    const [filter, setFilter] = useState('approved');
+    const [filter, setFilter] = useState('Approved');
     const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -63,27 +59,27 @@ const ReviewsSection = ({
         let response;
 
         if (isForAdmin) {
-            if (filter === 'approved') {
+            if (filter === 'Approved') {
                 response = await reviewsService.getApproved(currentPage, true);
-            } else if (filter === 'unapproved') {
+            } else if (filter === 'Unapproved') {
                 response = await reviewsService.getUnapproved(currentPage, true);
-            } else if (filter === 'recentlyDeleted') {
+            } else if (filter === 'Deleted') {
                 response = await reviewsService.getDeleted(currentPage, true);
             }
         } else if (isForUser) {
-            if (filter === 'approved') {
+            if (filter === 'Approved') {
                 response = await reviewsService.getApproved(currentPage, false);
-            } else if (filter === 'unapproved') {
+            } else if (filter === 'Unapproved') {
                 response = await reviewsService.getUnapproved(currentPage, false);
-            } else if (filter === 'recentlyDeleted') {
+            } else if (filter === 'Deleted') {
                 response = await reviewsService.getDeleted(currentPage, false);
             }
         } else if (isForPlace && placeId) {
             response = await reviewsService.getPlaceReviews(placeId, currentPage, sortOption);
         }
 
-        setPagesCount(response.pagination?.pagesCount);
-        setReviews(response.reviews);
+        setPagesCount(response?.pagination?.pagesCount);
+        setReviews(response?.reviews);
         setSpinnerLoading(false);
 
     };
@@ -107,20 +103,33 @@ const ReviewsSection = ({
     return (
         <>
             <div className={styles.reviewsSectionContainer}>
-                <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-                    <Typography.Title level={3} style={{ marginBottom: 0 }}>
-                        {isForUser ? 'My Reviews' : 'Reviews'}
-                    </Typography.Title>
-                </div>
+
+                {!isForAdmin && (
+                    <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+                        <Typography.Title level={3} style={{ marginBottom: 0 }}>
+                            {isForUser ? 'My Reviews' : 'Reviews'}
+                        </Typography.Title>
+                    </div>
+                )}
 
                 {/* Write Review */}
-                {isForPlace && <WriteReviewCard handleOpenModal={handleWriteReviewClick} />}
+                {isForPlace && !isOwner &&
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <WriteReviewCard handleOpenModal={handleWriteReviewClick} />
+                    </div>
+                }
 
                 {/* Sort/Filter */}
                 {isForPlace && pagesCount > 1 && renderOrderReviewsCard(sortOptions, sortOption, handleSortChange)}
-                {!isForPlace && renderFilterReviewsCard(filterOptions, filter, handleFilterChange, isForAdmin)}
 
-                {/* Modal */}
+                {!isForPlace && (
+                    <div style={{ display: 'flex', justifyContent: 'center', width: 'auto' }}>
+                        <FilterCard defaultValue={filter} handleFilterChange={handleFilterChange} isForAdmin={isForAdmin} value={filter} />
+                    </div>
+                )}
+
+
+                {/* Upload Review Modal */}
                 {isForPlace && placeId && (
                     <UploadReviewModal
                         isModalOpen={isUploadReviewModalOpen}
@@ -145,7 +154,15 @@ const ReviewsSection = ({
                         ) : renderEmptyState(isForAdmin))}
 
                 {/* Pagination */}
-                {!spinnerLoading && renderPagination(pagesCount, currentPage, handlePageChange, isForAdmin)}
+                {
+                    !spinnerLoading && pagesCount > 1 &&
+                    <Pagination
+                        currentPage={currentPage}
+                        handlePageChange={handlePageChange}
+                        isForAdmin={isForAdmin}
+                        pagesCount={pagesCount}
+                    />
+                }
             </div>
 
         </>

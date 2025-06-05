@@ -7,7 +7,6 @@ import {
     DeleteOutlined,
     WarningOutlined,
     BellOutlined,
-    // ArrowUndoOutlined,
 } from '@ant-design/icons';
 
 import { reviewsServiceFactory } from '../../../services/reviewsService';
@@ -20,7 +19,13 @@ import { fireError } from '../../../utils/fireError';
 
 const { TextArea } = Input;
 
-const DeleteReviewModal = ({ reviewId, reviewUserId, visible, setVisible, isReviewApproved }) => {
+const DeleteReviewModal = ({
+    reviewId,
+    reviewUserId,
+    visible,
+    setVisible,
+    isReviewApproved
+}) => {
 
     const navigate = useNavigate();
 
@@ -61,63 +66,79 @@ const DeleteReviewModal = ({ reviewId, reviewUserId, visible, setVisible, isRevi
 
     return (
         <Modal
-            title="Delete Review"
+            title={<span style={{ fontSize: '2rem' }}>Delete Review</span>}
             open={visible}
             okText="Delete"
             okType="danger"
             onOk={handleOk}
+            width={800}
             onCancel={handleCancel}
+            okButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
+            cancelButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
         >
 
             <Space direction="vertical" size={6} style={{ display: 'flex' }}>
-                <Typography.Paragraph style={{ marginBottom: 0 }}>
+
+                <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
                     <Space size={6}>
                         <DeleteOutlined style={{ color: '#ff4d4f' }} />
                         Are you sure you want to delete this review?
                     </Space>
                 </Typography.Paragraph>
 
-                <Space size={6}>
-                    <WarningOutlined style={{ color: '#ff4d4f' }} />
-                    <Typography.Text type="danger" strong>
+                <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                    <Space size={6}>
+                        <WarningOutlined style={{ color: '#ff4d4f' }} />
                         This action will mark the review as deleted.
-                    </Typography.Text>
-                </Space>
+                    </Space>
+                </Typography.Paragraph>
 
                 {isReviewApproved && reviewUserId !== userId && (
-                    <Space size={6}>
-                        <BellOutlined style={{ color: '#faad14' }} />
-                        <Typography.Text type="danger" style={{ lineHeight: 1.4 }}>
-                            The reviewer will <Typography.Text strong>lose points</Typography.Text> and <Typography.Text strong>receive a notification</Typography.Text>.
-                        </Typography.Text>
-                    </Space>
+                    <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                        <Space size={6}>
+                            <BellOutlined style={{ color: '#faad14' }} />
+                            The reviewer will lose points and receive a notification.
+                        </Space>
+                    </Typography.Paragraph>
                 )}
 
                 {isReviewApproved && reviewUserId === userId && (
-                    <Space size={6}>
-                        <WarningOutlined style={{ color: '#ff4d4f' }} />
-                        <Typography.Text type="danger" style={{ lineHeight: 1.4 }}>
-                            You will <Typography.Text strong>lose points</Typography.Text>.
-                        </Typography.Text>
-                    </Space>
+                    <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                        <Space size={6}>
+                            <WarningOutlined style={{ color: '#ff4d4f' }} />
+                            You will lose points.
+                        </Space>
+                    </Typography.Paragraph>
                 )}
 
                 {!isReviewApproved && reviewUserId !== userId && (
-                    <Space size={6}>
-                        <BellOutlined style={{ color: '#faad14' }} />
-                        <Typography.Text type="danger" style={{ lineHeight: 1.4 }}>
-                            The reviewer will <Typography.Text strong>receive a notification</Typography.Text>.
-                        </Typography.Text>
-                    </Space>
+                    <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.7rem' }}>
+                        <Space size={6}>
+                            <BellOutlined style={{ color: '#faad14' }} />
+                            The reviewer will receive a notification.
+                        </Space>
+                    </Typography.Paragraph>
                 )}
 
                 <Divider style={{ margin: '6px 0' }} />
 
-                <Space size={6}>
-                    <Typography.Text type="secondary" strong>
-                        You will have a limited time to undo this action.
-                    </Typography.Text>
-                </Space>
+                <Typography.Paragraph style={{ marginBottom: 0, fontSize: '1.3rem', fontStyle: 'italic' }}>
+                    You will have a limited time to undo this action.
+                </Typography.Paragraph>
             </Space>
 
 
@@ -125,7 +146,7 @@ const DeleteReviewModal = ({ reviewId, reviewUserId, visible, setVisible, isRevi
                 {reviewUserId !== userId && (
                     <Form.Item
                         name="reason"
-                        label="Reason for Delete"
+                        label={<span style={{ fontSize: '1.5rem' }}>Reason for Delete</span>}
                         rules={[
                             {
                                 required: true,
@@ -144,6 +165,7 @@ const DeleteReviewModal = ({ reviewId, reviewUserId, visible, setVisible, isRevi
                             maxLength={200}
                             minLength={5}
                             placeholder="Explain why this review is being deleted..."
+                            style={{ fontSize: '1.5rem' }}
                         />
                     </Form.Item>
                 )}

@@ -7,11 +7,12 @@ import {
     Button,
     Form,
     Input,
-    Upload,
     App,
 } from 'antd';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { fireError } from '../../../utils/fireError';
+
+import UploadReviewImages from './UploadReviewImages';
 
 const UploadReviewModal = ({
     isModalOpen,
@@ -28,6 +29,7 @@ const UploadReviewModal = ({
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setFileList([]);
+        form.resetFields();
     };
 
     const handleFileChange = ({ fileList: newFileList }) => {
@@ -63,12 +65,15 @@ const UploadReviewModal = ({
 
     return (
         <Modal
-            title="Write Your Review"
             open={isModalOpen}
             onCancel={handleCloseModal}
             footer={null}
-            width={700}
-            style={{ top: 20 }}
+            width={1000}
+            styles={{
+                body: {
+                    padding: '1.5rem'
+                }
+            }}
         >
             <Form
                 form={form}
@@ -81,10 +86,10 @@ const UploadReviewModal = ({
                         backgroundColor: '#e8fffb',
                         borderRadius: '12px',
                         border: '1px solid green',
-                        marginTop: '1rem',
+                        marginTop: '2.5rem',
                     }}
                     title={
-                        <span>
+                        <span style={{ fontSize: '1.5rem' }}>
                             Upload Images
                         </span>
                     }
@@ -99,30 +104,8 @@ const UploadReviewModal = ({
                             alignItems: 'center',
                         }}
                     >
-                        <Upload
-                            listType="picture"
-                            fileList={fileList}
-                            onChange={handleFileChange}
-                            beforeUpload={() => false}
-                            multiple
-                            maxCount={5}
-                        >
-                            <Button
-                                color='cyan'
-                                variant='solid'
-                                size='large'
-                                icon={<UploadOutlined />}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: '#fff',
-                                    fontWeight: 500,
-                                }}
-                            >
-                                Select Up To 5 Images
-                            </Button>
-                        </Upload>
+                        <UploadReviewImages />
+
                     </Form.Item>
                 </Card>
 
@@ -137,19 +120,19 @@ const UploadReviewModal = ({
 
                     <Form.Item
                         name="Rating"
-                        label="Your Rating"
+                        label={<span style={{ fontSize: '1.5rem' }}>Your Rating</span>}
                         rules={[{ required: true }]}
                         colon={false}
                     >
-                        <Rate id='Your Rating' allowClear={true} />
+                        <Rate style={{ fontSize: '3rem' }} id='Your Rating' allowClear={true} />
                     </Form.Item>
 
                     <Form.Item
                         name="Content"
-                        label="Your Content"
+                        label={<span style={{ fontSize: '1.5rem' }}>Your Content</span>}
                         rules={[{ required: true }]}
                     >
-                        <Input.TextArea showCount={true} rows={8} placeholder="Share your thoughts..." />
+                        <Input.TextArea style={{ fontSize: '1.5rem' }} rows={8} placeholder="Share your thoughts..." />
                     </Form.Item>
 
                 </Card>
@@ -161,6 +144,7 @@ const UploadReviewModal = ({
                         size='large'
                         htmlType="submit"
                         block
+                        style={{ fontSize: '1.5rem', padding: '2rem 0' }}
                     >
                         Submit Review
                     </Button>

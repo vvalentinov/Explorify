@@ -13,17 +13,14 @@
 }
 
 .spinnerContainer {
-    min-height: calc(100vh - 65px);
-    background: linear-gradient(135deg, #e6f4ea, #d0f0c0, #b2dfdb);
-
+    min-height: calc(100vh - 100px);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
 .categoryCard {
-    width: 60%;
+    width: 50%;
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -31,6 +28,8 @@
     text-align: center;
     border: 1px solid #e0e0e0;
     margin: 1rem auto;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
 }
 
 .categoryTitle {
@@ -43,8 +42,26 @@
 
 .categoryDescription {
     margin-top: 1rem;
-    font-size: 1rem;
+    font-size: 1.3rem;
     color: #555;
     font-family: 'Poppins', sans-serif;
     line-height: 1.6;
+}
+
+@media screen and (max-width: 1000px) {
+    .subcategoriesContainer {
+        flex-direction: column;
+        padding: 2rem 2rem;
+    }
+
+    .cardLink {
+        width: 100% !important;
+    }
+
+    .categoryCard {
+        width: 80%;
+        margin-top: 4rem;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }

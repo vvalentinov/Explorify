@@ -1,0 +1,11 @@
+.reviewCard {
+    flex-basis: 30%;
+    transition: transform 0.3s ease;
+}
+
+.reviewCard:hover {
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    transform: scale(1.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}

@@ -6,20 +6,22 @@ const WriteReviewCard = ({ handleOpenModal }) => {
             style={{
                 background: '#e8fffb',
                 border: '1px solid green',
-                borderRadius: '12px',
+                borderRadius: '20px',
                 textAlign: 'center',
                 margin: '0 10rem',
                 padding: 0,
-                marginBottom: '1.5rem'
+                marginBottom: '1.5rem',
+                width: '60%'
             }}
         >
 
-            <Typography.Title level={4}>What did you think of this place?</Typography.Title>
-            <Typography.Paragraph>
+            <Typography.Title style={{ fontSize: '2rem' }} level={4}>What did you think of this place?</Typography.Title>
+            <Typography.Paragraph style={{ fontSize: '1.4rem' }}>
                 Share your experience and help others explore with confidence!
             </Typography.Paragraph>
 
             <Button
+                style={{ fontSize: '1.7rem', padding: '2.5rem 2rem', borderRadius: '20px' }}
                 color='cyan'
                 variant='solid'
                 size='large'
