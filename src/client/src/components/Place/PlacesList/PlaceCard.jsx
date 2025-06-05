@@ -3,6 +3,7 @@ import { Card } from 'antd';
 import { Link } from 'react-router-dom';
 
 const PlaceCard = ({ place, isForAdmin }) => {
+
     return (
         <Link
             to={isForAdmin ? `/admin/place/${place.slugifiedName}` : `/place/${place.slugifiedName}`}

@@ -53,23 +53,42 @@ const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
 
     return (
         <Modal
-            title="Unapprove Place"
+            title={<span style={{ fontSize: '2rem' }}>Unapprove Place</span>}
             open={visible}
             okText="Unapprove"
             okType="danger"
             onOk={handleOk}
             onCancel={handleCancel}
+            width={800}
+            okButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
+            cancelButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
         >
             <Typography.Paragraph>
-                Are you sure you want to unapprove this place?
+
+                <span style={{ fontSize: '1.5rem' }}>Are you sure you want to unapprove this place?</span>
+
                 <div>
-                    <Typography.Text type="danger" strong>
+                    <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                         This action will mark the place as not approved.
                     </Typography.Text>
                 </div>
                 {userId != placeUserId &&
                     <div>
-                        <Typography.Text type="danger" strong>
+                        <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                             The user who uploaded it will lose points and receive notification.
                         </Typography.Text>
                     </div>
@@ -77,7 +96,7 @@ const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
 
                 {userId == placeUserId &&
                     <div>
-                        <Typography.Text type="danger" strong>
+                        <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                             You will lose points.
                         </Typography.Text>
                     </div>
@@ -90,7 +109,7 @@ const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
                 {placeUserId != userId &&
                     <Form.Item
                         name="reason"
-                        label="Reason for Unapproval"
+                        label={<span style={{ fontSize: '1.5rem' }}>Reason for Unapproval</span>}
                         rules={[
                             {
                                 required: true,
@@ -109,6 +128,7 @@ const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
                             maxLength={200}
                             minLength={5}
                             placeholder="Explain why this place is being unapproved..."
+                            style={{ fontSize: '1.5rem' }}
                         />
                     </Form.Item>}
             </Form>

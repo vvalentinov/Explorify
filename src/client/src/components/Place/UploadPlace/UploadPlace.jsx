@@ -18,9 +18,10 @@ import {
     Rate,
     Spin,
     Checkbox,
+    Empty
 } from 'antd';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, CommentOutlined } from '@ant-design/icons';
 
 import { useDebounce } from 'use-debounce';
 
@@ -30,6 +31,8 @@ import { vibesServiceFactory } from '../../../services/vibesService';
 import { placesServiceFactory } from '../../../services/placesService';
 import { countriesServiceFactory } from '../../../services/countriesService';
 import { categoriesServiceFactory } from '../../../services/categoriesService';
+
+import { motion } from 'framer-motion';
 
 import ImageUpload from './ImageUpload/ImageUpload';
 
@@ -154,30 +157,32 @@ const UploadPlace = () => {
     return (
         <section className={styles.uploadPlaceSection}>
 
-            <Card
-                className={styles.uploadPlaceCard}
-                title={<span><UploadOutlined /> Upload Place</span>}
-                styles={{
-                    header: {
-                        backgroundColor: '#f0fdfa',
-                        borderRadius: '16px 16px 0 0',
-                        borderBottom: 'solid 1px green'
-                    }
-                }}
-            >
+            <div className={styles.uploadFormWrapper}>
+
+                <h1 className={styles.pageTitle}><UploadOutlined /> Upload Place</h1>
+
                 <Form form={form} onFinish={onSubmit} layout="vertical" size="large">
 
                     <Form.Item
                         name="Name"
-                        label="Name"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Name</span>}
+                        rules={[{ required: true, max: 100 }]}
                     >
-                        <Input placeholder="Enter place name..." />
+                        <Input style={{ fontSize: '1.5rem' }} size='large' placeholder="Enter place name..." />
                     </Form.Item>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
-                        <Form.Item style={{ width: '50%' }} name="Latitude" label="Latitude">
-                            <Input
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: '2rem',
+                            marginTop: '1.5rem'
+                        }}
+                    >
+
+                        <Form.Item style={{ width: '50%' }} name="Latitude" label={<span style={{ fontSize: '1.3rem' }}>Latitude</span>}>
+                            <Input style={{ fontSize: '1.5rem' }}
                                 onChange={(e) => {
                                     const newLat = parseFloat(e.target.value);
                                     if (!isNaN(newLat)) {
@@ -187,8 +192,9 @@ const UploadPlace = () => {
                             />
                         </Form.Item>
 
-                        <Form.Item style={{ width: '50%' }} name="Longitude" label="Longitude">
+                        <Form.Item style={{ width: '50%' }} name="Longitude" label={<span style={{ fontSize: '1.3rem' }}>Longitude</span>}>
                             <Input
+                                style={{ fontSize: '1.5rem' }}
                                 onChange={(e) => {
                                     const newLng = parseFloat(e.target.value);
                                     if (!isNaN(newLng)) {
@@ -203,31 +209,39 @@ const UploadPlace = () => {
 
                     <Form.Item
                         name="Address"
-                        label="Address"
+                        label={<span style={{ fontSize: '1.3rem' }}>Address</span>}
+                        style={{ marginTop: '1.5rem', marginBottom: '0' }}
                     >
-                        <Input placeholder="Enter address here..." />
+                        <Input style={{ fontSize: '1.5rem' }} placeholder="Enter address here..." />
                     </Form.Item>
 
                     <Form.Item
                         name="CategoryId"
-                        label="Category"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Category</span>}
+                        rules={[{ required: true }]}
+                        style={{ marginTop: '1.5rem' }}
                     >
                         <Cascader
                             options={categoryOptions}
                             placeholder="Select category"
+                            style={{
+                                height: '52px',
+                                fontFamily: 'Poppins, Segoe UI, sans-serif',
+                            }}
+                            className={styles.cascaderInput}
+                            classNames={{ popup: { root: 'dropdownPopup' } }}
                         />
-
                     </Form.Item>
 
                     <Form.Item
                         name="CountryId"
-                        label="Country"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Country</span>}
+                        rules={[{ required: true }]}
                     >
                         <Select
                             showSearch
-                            allowClear={true}
+                            className={styles.countriesSelect}
+                            classNames={{ popup: { root: 'customCountryDropdown' } }}
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
                             onSearch={(value) => {
@@ -240,28 +254,32 @@ const UploadPlace = () => {
                                 setOpenDropdown(false);
                             }}
                             options={countryOptions}
-                            notFoundContent={selectLoading ? (
-                                <div style={{ padding: '2rem 0', textAlign: 'center' }}>
-                                    <ConfigProvider theme={{
-                                        components: {
-                                            Spin: {
-                                                colorPrimary: 'green'
-                                            }
-                                        }
-                                    }}>
-                                        <Spin size="large" />
-                                    </ConfigProvider>
-                                </div>
-                            ) : null}
+
+                            notFoundContent={
+                                selectLoading ? (
+                                    <div style={{ padding: '2rem 0', textAlign: 'center' }}>
+                                        <ConfigProvider
+                                            theme={{
+                                                components: {
+                                                    Spin: { colorPrimary: 'green' }
+                                                }
+                                            }}
+                                        >
+                                            <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+                                                <Spin style={{ transform: 'scale(1.5)' }} size="large" />
+                                            </div>
+                                        </ConfigProvider>
+                                    </div>
+                                ) : <Empty style={{ transform: 'scale(1.2)', margin: '2rem 0' }} />
+                            }
                             open={openDropdown}
                             onOpenChange={(open) => {
-                                // Don't allow dropdown to close if we're still loading
                                 if (!selectLoading) setOpenDropdown(open);
                             }}
                         />
                     </Form.Item>
 
-                    <Form.Item name="Tags" label="Tags">
+                    <Form.Item name="Tags" label={<span style={{ fontSize: '1.3rem' }}>Tags</span>}>
                         <Checkbox.Group
                             style={{ width: '100%' }}
                             value={selectedTags}
@@ -291,40 +309,65 @@ const UploadPlace = () => {
 
                     <Form.Item
                         name="Description"
-                        label="Description"
-                    // rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Description</span>}
+                        rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
                         <Input.TextArea
-                            // value={description}
-                            // onChange={(e) => setDescription(e.target.value)}
                             maxLength={2000}
                             placeholder="Write your best description for this place..."
                             rows={6}
+                            style={{ fontSize: '1.5rem' }}
                         />
                     </Form.Item>
 
                     <ImageUpload />
 
-                    <Card title="Review" type="inner" className={styles.reviewCard}>
+                    <Card type="inner" className={styles.reviewCard}>
+
+                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                whileHover={{
+                                    scale: 1.05,
+                                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+                                }}
+                                transition={{ duration: 0.4, ease: 'easeOut' }}
+                                style={{
+                                    background: 'linear-gradient(135deg, #b7eb8f, #87e8de)', // pastel green-teal
+                                    color: '#004d40',
+                                    borderRadius: '16px',
+                                    padding: '0.75rem 2rem',
+                                    display: 'inline-block',
+                                    fontWeight: '600',
+                                    fontSize: '1.4rem',
+                                    letterSpacing: '0.5px',
+                                    border: '1px solid rgba(0, 0, 0, 0.05)',
+                                    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                                }}
+                            >
+                                <CommentOutlined style={{ fontSize: '2rem', marginRight: '10px' }} /> Review
+                            </motion.div>
+                        </div>
 
                         <Form.Item
                             name="Rating"
-                            label="Rating"
-                        // rules={[{ required: true }]}
+                            label={<span style={{ fontSize: '1.3rem' }}>Rating</span>}
+                            rules={[{ required: true }]}
                         >
-                            <Rate id="Rating" allowClear />
+                            <Rate style={{ fontSize: '3rem' }} id="Rating" allowClear />
                         </Form.Item>
 
                         <Form.Item
                             name="ReviewContent"
-                            label="Content"
-                        // rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
+                            label={<span style={{ fontSize: '1.3rem' }}>Content</span>}
+                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
                         >
                             <Input.TextArea
                                 placeholder="Share your experience..."
                                 rows={10}
                                 maxLength={1000}
-                                style={{ fontSize: '1.1rem' }}
+                                style={{ fontSize: '1.5rem' }}
                             />
                         </Form.Item>
 
@@ -356,7 +399,9 @@ const UploadPlace = () => {
                     </Button>
 
                 </Form>
-            </Card>
+
+                {/* </ConfigProvider> */}
+            </div>
 
         </section>
     );

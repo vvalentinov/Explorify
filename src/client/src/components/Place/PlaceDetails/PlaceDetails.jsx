@@ -20,7 +20,7 @@ import ApprovedPlaceCard from './Cards/ApprovedPlaceCard';
 import UnapprovedPlaceCard from './Cards/UnapprovedPlaceCard';
 import DeletedPlaceCard from "./Cards/DeletedPlaceCard";
 
-import ReviewsSection from '../../Review/ReviewsSection';
+import ReviewsSection from '../../Review/ReviewsSection/ReviewsSection';
 
 const PlaceDetails = ({ isForAdmin = false }) => {
 
@@ -86,8 +86,9 @@ const PlaceDetails = ({ isForAdmin = false }) => {
             {place && (
                 <>
                     {isForAdmin && <PlaceStatusPill place={place} />}
+
                     {/* Place Details Section */}
-                    <PlaceDetailsSection isForAdmin={isForAdmin} loading={loading} place={place} mapUrl={mapUrl} />
+                    <PlaceDetailsSection setPlace={setPlace} isForAdmin={isForAdmin} loading={loading} place={place} mapUrl={mapUrl} />
 
                     {/* Owner Buttons Section */}
                     {
@@ -96,12 +97,13 @@ const PlaceDetails = ({ isForAdmin = false }) => {
 
                     {/* Reviews Section */}
                     {place.isApproved && !isForAdmin && (
-                        // <ReviewsSection
-                        //     place={place}
-                        //     reviewsService={reviewsService}
-                        //     userId={userId}
-                        // />
-                        <ReviewsSection isForAdmin={false} isForPlace={true} isForUser={false} placeId={place?.id} />
+                        <ReviewsSection
+                            isForAdmin={false}
+                            isForPlace={true}
+                            isForUser={false}
+                            placeId={place?.id}
+                            isOwner={isOwner}
+                        />
                     )}
 
                     {isForAdmin && (

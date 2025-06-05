@@ -1,7 +1,7 @@
 import PlacesWithSearchPage from "./PlacesWithSearchPage/PlacesWithSearchPage";
 
-const AdminPlaces = () => {
-    return <PlacesWithSearchPage isForAdmin={true} searchContext="Admin" />
-};
+import { PlaceSearchContext } from '../../constants/placeSearchContext';
+
+const AdminPlaces = () => <PlacesWithSearchPage isForAdmin={true} searchContext={PlaceSearchContext.Admin} />;
 
 export default AdminPlaces;

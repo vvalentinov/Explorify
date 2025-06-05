@@ -19,49 +19,45 @@ const NoPlacesFoundCard = ({ isForAdmin = false }) => {
             textColor: '#389e0d',
         };
 
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+            }}
         >
-            <div
+
+            <Card
                 style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    width: '100%',
-                    margin: '2rem 0',
+                    textAlign: 'center',
+                    backgroundColor: styles.backgroundColor,
+                    borderRadius: '16px',
+                    boxShadow: '0 6px 18px rgba(0, 0, 0, 0.05)',
+                    border: `1px solid ${styles.borderColor}`,
+                    width: '50%',
                 }}
             >
-                <Card
-                    style={{
-                        textAlign: 'center',
-                        backgroundColor: styles.backgroundColor,
-                        borderRadius: '16px',
-                        boxShadow: '0 6px 18px rgba(0, 0, 0, 0.05)',
-                        border: `1px solid ${styles.borderColor}`,
-                        width: '60%',
+                <Empty
+                    image={<EnvironmentOutlined style={{ fontSize: '80px', color: styles.iconColor }} />}
+                    description={
+                        <div style={{ fontSize: '2rem', fontWeight: 600, color: styles.textColor }}>
+                            No places found!
+                        </div>
+                    }
+                    styles={{
+                        image: {
+                            marginBottom: '8px',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        },
                     }}
-                >
-                    <Empty
-                        image={<EnvironmentOutlined style={{ fontSize: '50px', color: styles.iconColor }} />}
-                        description={
-                            <div style={{ fontSize: '18px', fontWeight: 600, color: styles.textColor }}>
-                                No places found!
-                            </div>
-                        }
-                        styles={{
-                            image: {
-                                marginBottom: '8px',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            },
-                        }}
-                    />
-                </Card>
-            </div>
+                />
+            </Card>
+
         </motion.div>
     );
 };

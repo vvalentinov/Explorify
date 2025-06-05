@@ -1,12 +1,12 @@
+import styles from './PlaceSearchCard.module.css';
+
 import {
     Spin,
     ConfigProvider,
-    Card,
     Empty,
     Input,
     Select,
     Cascader,
-    Typography
 } from "antd";
 
 import {
@@ -16,7 +16,9 @@ import {
     TagsOutlined,
 } from '@ant-design/icons';
 
-import styles from './PlaceSearchCard.module.css';
+import { motion } from "framer-motion";
+
+import { PlaceSearchContext } from '../../../constants/placeSearchContext';
 
 const PlaceSearchCard = ({
     state,
@@ -25,82 +27,103 @@ const PlaceSearchCard = ({
     countryOptions,
     setCountryOptions,
     tags,
-    isForAdmin
+    isForAdmin,
+    userFollowingUserName
 }) => {
     return (
-        // <Card
-        //     title={
-        //         <div style={{
-        //             display: 'flex',
-        //             alignItems: 'center',
-        //             gap: '0.75rem',
-        //             fontSize: '1.3rem',
-        //             fontWeight: 600,
-        //             color: '#fff',
-        //         }}>
-        //             <SearchOutlined style={{ fontSize: '1.5rem' }} />
 
-        //             {state.searchContext === 'global' ? 'Search Places' : (state.filter ? `Search in ${state.filter} Places` : 'Search Places')}
-        //         </div>
-        //     }
-        //     style={{
-        //         marginTop: '1.5rem',
-        //         width: state.searchContext === 'global' ? '50%' : '100%',
-        //         border: 'none'
-        //     }}
-        //     styles={{
-        //         header: {
-        //             textAlign: 'left',
-        //             background: isForAdmin
-        //                 ? 'linear-gradient(90deg, #1677ff 0%, #69c0ff 100%)' // bluish gradient
-        //                 : 'linear-gradient(90deg, #52c41a 0%, #36cfc9 100%)', // greenish gradient
-        //         }
-        //     }}
-        // >
+        <div className={isForAdmin ? styles.adminSearchPanel : styles.searchPanel}>
 
-        <div className={styles.searchPanel}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
 
-            <Typography.Title
-                level={4}
-                className={styles.searchTitle}
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    marginBottom: '1.5rem',
-                    color: '#333',
-                }}
-            >
-                <SearchOutlined />
-                {state.searchContext === 'global'
-                    ? 'Search Places'
-                    : (state.filter ? `Search in ${state.filter} Places` : 'Search Places')}
-            </Typography.Title>
-
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        whileHover={{
+                            scale: 1.05,
+                            boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+                        }}
+                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                        style={{
+                            background: isForAdmin ? 'linear-gradient(135deg, #91d5ff, #bae7ff)' : 'linear-gradient(135deg, #b7eb8f, #87e8de)',
+                            color: '#004d40',
+                            borderRadius: '16px',
+                            padding: '0.75rem 2rem',
+                            display: 'inline-block',
+                            fontWeight: '600',
+                            fontSize: '1.4rem',
+                            letterSpacing: '0.5px',
+                            border: '1px solid rgba(0, 0, 0, 0.05)',
+                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                        }}
+                    >
+                        <SearchOutlined style={{ marginRight: 10 }} />
+                        {state.searchContext === PlaceSearchContext.Global && 'Search Places'}
+                        {state.searchContext === PlaceSearchContext.UserPlaces && `Search in ${state.filter} Places`}
+                        {state.searchContext === PlaceSearchContext.Admin && `Search in ${state.filter} Places`}
+                        {state.searchContext === PlaceSearchContext.UserFollowing && `Search in ${userFollowingUserName}'s places`}
+                        {state.searchContext === PlaceSearchContext.FavPlace && `Search in Favorite Places`}
+                    </motion.div>
+                </div>
+            </div>
 
             <Input
                 allowClear
                 size="large"
                 placeholder="Start typing place name..."
-                prefix={<SearchOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a' }} />}
+                prefix={<SearchOutlined
+                    style={{
+                        color: isForAdmin ? '#1677ff' : '#52c41a',
+                        fontSize: 20,
+                        marginRight: 10
+                    }}
+                />}
                 value={state.placeName}
                 onChange={(e) => dispatch({ type: 'SET_PLACE_NAME', payload: e.target.value })}
+                name="PlaceName"
+                style={{
+                    height: '4rem',
+                    fontSize: '1.4rem',
+                    paddingLeft: '12px',
+                    fontFamily: 'Poppins, Segoe UI, sans-serif',
+                }}
             />
 
             <Cascader
-                prefix={<AppstoreOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a' }} />}
+                prefix={<AppstoreOutlined
+                    style={{
+                        color: isForAdmin ? '#1677ff' : '#52c41a',
+                        fontSize: 20,
+                        marginRight: 10
+                    }} />}
                 options={categoryOptions}
                 value={state.selectedCategoryPath}
                 onChange={(value) => dispatch({ type: 'SET_CATEGORY', payload: value })}
                 placeholder="Select category/subcategory"
                 allowClear
-                style={{ width: '100%', textAlign: 'left', marginTop: '1rem' }}
+                style={{
+                    width: '100%',
+                    marginTop: '1rem',
+                    height: '4rem',
+                    fontFamily: 'Poppins, Segoe UI, sans-serif',
+                }}
+                styles={{
+                    popup: {
+                        fontSize: '1.4rem',
+                    }
+                }}
+                className={styles.cascaderInput}
+                classNames={{ popup: { root: 'dropdownPopup' } }}
                 changeOnSelect
                 expandTrigger="hover"
+                size="large"
             />
 
             <Select
-                prefix={<GlobalOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a' }} />}
+                className={styles.countriesSelect}
+                classNames={{ popup: { root: 'customCountryDropdown' } }}
+                prefix={<GlobalOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a', fontSize: 20, marginRight: 10 }} />}
                 size='large'
                 showSearch
                 allowClear
@@ -141,48 +164,38 @@ const PlaceSearchCard = ({
                                     }
                                 }}
                             >
-                                <Spin size="large" />
+                                <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+                                    <Spin style={{ transform: 'scale(1.5)' }} size="large" />
+                                </div>
                             </ConfigProvider>
                         </div>
-                    ) : <Empty />
+                    ) : <Empty style={{ transform: 'scale(1.2)', margin: '2rem 0' }} />
                 }
                 options={countryOptions}
             />
 
-            <ConfigProvider
-                theme={{
-                    components: {
-                        Select: {
-                            optionActiveBg: '#ecfffb',
-                            optionSelectedBg: '#d6f5e3',
-                            optionSelectedColor: '#1a3d2f',
-                        }
+            <Select
+                className={styles.tagsSelect}
+                classNames={{ popup: { root: 'tagsSelectDropdown' } }}
+                prefix={<TagsOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a', marginRight: 10 }} />}
+                mode="multiple"
+                style={{ width: '100%', marginTop: '2rem', textAlign: 'left' }}
+                placeholder="Select Tags"
+                onChange={(value) => {
+                    if (value.length <= 20) {
+                        dispatch({ type: 'SET_TAGS', payload: value });
                     }
                 }}
-            >
-                <Select
-                    prefix={<TagsOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a' }} />}
-                    mode="multiple"
-                    style={{ width: '100%', marginTop: '1rem', textAlign: 'left' }}
-                    placeholder="Select Tags"
-                    onChange={(value) => {
-                        if (value.length <= 20) {
-                            dispatch({ type: 'SET_TAGS', payload: value });
-                        }
-                    }}
-                    options={tags}
-                    size='large'
-                    allowClear
-                    showSearch
-                    optionFilterProp="label"
-                    value={state.selectedTagIds}
-                />
+                options={tags}
+                size='large'
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                value={state.selectedTagIds}
+            />
 
-            </ConfigProvider>
         </div>
 
-
-        // </Card>
     );
 };
 

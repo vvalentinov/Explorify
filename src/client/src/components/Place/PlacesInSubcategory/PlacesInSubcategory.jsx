@@ -77,7 +77,7 @@ const PlacesInSubcategory = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    minHeight: 'calc(100vh - 63px)'
+                    minHeight: 'calc(100vh - 100px)'
                 }}>
                     <ConfigProvider theme={{
                         components: {
@@ -89,31 +89,21 @@ const PlacesInSubcategory = () => {
                         <Spin size='large' spinning={spinnerLoading} />
                     </ConfigProvider>
                 </div> :
-                <>
-                    <PlacesList places={places} />
-
-                    {pagesCount > 1 &&
-                        <ConfigProvider theme={{
-                            components: {
-                                Pagination: {
-                                    itemActiveBg: '#e8fffb',
-                                    itemActiveColor: '#52c41a',
-                                    colorPrimary: '#52c41a',
-                                    colorPrimaryHover: '#389e0d',
-                                },
-                            }
-                        }}><Pagination
-                                align='center'
-                                onChange={handlePageChange}
-                                current={currentPage}
-                                total={pagesCount * 6}
-                                pageSize={6}
-                                style={{ textAlign: 'center', marginBottom: '1rem' }}
-                            />
-                        </ConfigProvider>
-                    }
-
-                </>
+                <div style={{
+                    minHeight: 'calc(100vh - 100px)',
+                    paddingTop: '4rem',
+                    paddingLeft: '8rem',
+                    paddingRight: '8rem'
+                }}>
+                    <PlacesList
+                        places={places}
+                        currentPage={currentPage}
+                        handlePageChange={handlePageChange}
+                        isForAdmin={false}
+                        pagesCount={pagesCount}
+                        spinnerLoading={spinnerLoading}
+                    />
+                </div>
             }
         </>
     );

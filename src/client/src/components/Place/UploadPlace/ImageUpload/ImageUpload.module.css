@@ -1,0 +1,42 @@
+/* .uploadCard {
+    margin-bottom: 10rem !important;
+} */
+
+.uploadCard :global(.ant-upload) {
+    min-height: 150px !important;
+    min-width: 150px !important;
+}
+
+.uploadCard :global(.ant-upload-list-item-container) {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+.uploadCard :global(.ant-upload-list-item),
+.uploadCard :global(.ant-upload-select-picture-card) {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+.customUploadButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Enlarge the hover icons (eye and delete) */
+.uploadCard :global(.ant-upload-list-item-actions) {
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; */
+}
+
+/* Optionally make the icons slightly bolder or clearer */
+.uploadCard :global(.ant-upload-list-item-actions .anticon) {
+    font-size: 1.6rem !important;
+    /* Apply directly to icons if needed */
+    color: rgba(0, 0, 0, 0.65);
+    transition: transform 0.2s;
+}

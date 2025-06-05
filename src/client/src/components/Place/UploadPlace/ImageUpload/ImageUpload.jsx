@@ -6,6 +6,8 @@ import { PlusOutlined } from '@ant-design/icons';
 
 import { motion } from "framer-motion";
 
+import styles from './ImageUpload.module.css';
+
 import { getBase64, normFile } from './imageUploadUtil';
 
 const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
@@ -80,42 +82,29 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
         <>
             <Form.Item
                 name="Images"
-                label="Upload Images"
+                label={<span style={{ fontSize: '1.3rem' }}>Upload Images</span>}
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
+                required={true}
             >
 
                 <Upload
+                    accept="image/*"
                     multiple
-                    // maxCount={10}
+                    maxCount={10}
                     fileList={fileList}
                     listType="picture-card"
                     onPreview={handlePreview}
                     onChange={handleFileChange}
                     beforeUpload={beforeUpload}
                     onRemove={handleRemove}
+                    className={styles.uploadCard}
                 >
 
-                    <motion.div
-                        whileHover={{ scale: 1.07 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 100,
-                            height: 100,
-                            border: '1px dashed #d9d9d9',
-                            borderRadius: 4,
-                            backgroundColor: '#fafafa',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {/* <PlusOutlined style={{ fontSize: 24 }} /> */}
-                        <span style={{ fontSize: '0.9rem', marginTop: 8 }}>Upload</span>
-                    </motion.div>
+                    <div className={styles.customUploadButton}>
+                        <PlusOutlined style={{ fontSize: 20 }} />
+                        <span style={{ fontSize: '1.1rem', marginTop: 8 }}>Upload</span>
+                    </div>
 
                 </Upload>
 

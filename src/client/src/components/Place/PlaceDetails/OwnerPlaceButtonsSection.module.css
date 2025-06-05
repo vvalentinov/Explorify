@@ -2,13 +2,13 @@
     display: flex;
     justify-content: center;
     gap: 2rem;
-    margin: 2rem 8rem;
     flex-wrap: wrap;
+    /* border: solid 1px green; */
+    padding: 0 5rem;
 }
 
 .card {
-    flex: 1;
-    min-width: 250px;
+    width: 40%;
     background-color: #f9f9fb;
     padding: 1.5rem;
     border-radius: 16px;
@@ -18,15 +18,11 @@
     transition: transform 0.3s ease;
 }
 
-.card:hover {
-    transform: translateY(-4px);
-}
-
 .cardTitle {
     color: #222;
     font-weight: 600;
     margin-bottom: 1rem;
-    font-size: 1.2rem;
+    font-size: 2rem !important;
 }
 
 .actionButton {
@@ -38,7 +34,7 @@
     border: none;
     padding: 0.6rem 1.2rem;
     border-radius: 30px;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;

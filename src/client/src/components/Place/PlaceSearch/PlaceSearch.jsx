@@ -1,7 +1,7 @@
 import PlacesWithSearchPage from "../PlacesWithSearchPage/PlacesWithSearchPage";
 
-const PlaceSearch = () => {
-    return <PlacesWithSearchPage isForAdmin={false} searchContext="global" />
-};
+import { PlaceSearchContext } from "../../../constants/placeSearchContext";
+
+const PlaceSearch = () => <PlacesWithSearchPage isForAdmin={false} searchContext={PlaceSearchContext.Global} />;
 
 export default PlaceSearch;

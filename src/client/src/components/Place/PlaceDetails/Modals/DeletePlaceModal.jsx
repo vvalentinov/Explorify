@@ -52,24 +52,41 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
 
     return (
         <Modal
-            title="Delete Place"
+            title={<span style={{ fontSize: '2rem' }}>Delete Place</span>}
             open={visible}
             okText="Delete"
             okType="danger"
             onOk={handleOk}
             onCancel={handleCancel}
+            width={800}
+            okButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
+            cancelButtonProps={{
+                style: {
+                    height: '48px',
+                    fontSize: '1.5rem',
+                    padding: '0 2rem',
+                    fontWeight: 600,
+                },
+            }}
         >
             <Typography.Paragraph>
-                Are you sure you want to delete this place?
+                <span style={{ fontSize: '1.5rem' }}>Are you sure you want to delete this place?</span>
                 <div>
-                    <Typography.Text type="danger" strong>
+                    <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                         This action will mark the place as deleted.
                     </Typography.Text>
                 </div>
 
                 {isPlaceApproved && placeUserId !== userId &&
                     <div>
-                        <Typography.Text type="danger" strong>
+                        <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                             The user who uploaded it will lose points and receive notification.
                         </Typography.Text>
                     </div>
@@ -77,7 +94,7 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
 
                 {isPlaceApproved && placeUserId === userId &&
                     <div>
-                        <Typography.Text type="danger" strong>
+                        <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                             You will lose points.
                         </Typography.Text>
                     </div>
@@ -85,14 +102,14 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
 
                 {!isPlaceApproved && placeUserId !== userId &&
                     <div>
-                        <Typography.Text type="danger" strong>
+                        <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
                             The user who uploaded it will receive notification.
                         </Typography.Text>
                     </div>
                 }
 
                 <div>
-                    <Typography.Text type="secondary" strong>
+                    <Typography.Text style={{ fontSize: '1.2rem', fontStyle: 'italic' }} type="secondary" strong>
                         You will have a time window in which you can revert it back.
                     </Typography.Text>
                 </div>
@@ -102,7 +119,7 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
                 {placeUserId !== userId && (
                     <Form.Item
                         name="reason"
-                        label="Reason for Delete"
+                        label={<span style={{ fontSize: '1.5rem' }}>Reason for Delete</span>}
                         rules={[
                             {
                                 required: true,
@@ -121,6 +138,7 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
                             maxLength={200}
                             minLength={5}
                             placeholder="Explain why this place is being deleted..."
+                            style={{ fontSize: '1.5rem' }}
                         />
                     </Form.Item>
                 )}

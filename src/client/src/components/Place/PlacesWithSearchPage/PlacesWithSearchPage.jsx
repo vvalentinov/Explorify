@@ -1,3 +1,5 @@
+import styles from './PlacesWithSearchPage.module.css';
+
 import { vibesServiceFactory } from '../../../services/vibesService';
 import { placesServiceFactory } from '../../../services/placesService';
 import { countriesServiceFactory } from '../../../services/countriesService';
@@ -6,25 +8,19 @@ import { categoriesServiceFactory } from '../../../services/categoriesService';
 import { useState, useEffect, useContext, useReducer } from "react";
 
 import { useDebounce } from 'use-debounce';
-import { ConfigProvider, Card, Typography, Radio } from "antd";
 
 import PlacesList from '../PlacesList/PlacesList';
 import PlaceSearchCard from '../PlaceSearchCard/PlaceSearchCard';
 
 import { fireError } from "../../../utils/fireError";
 import { AuthContext } from '../../../contexts/AuthContext';
+import { PlaceSearchContext } from '../../../constants/placeSearchContext';
 
 import {
     mapCategoriesOptions,
     mapCountryOptions,
     mapTagsOptions,
 } from '../UploadPlace/uploadPlaceUtil';
-
-const options = [
-    { label: 'Approved', value: 'Approved' },
-    { label: 'Unapproved', value: 'Unapproved' },
-    { label: 'Recently Deleted', value: 'Deleted' },
-];
 
 const initialState = {
     placeName: '',
@@ -38,6 +34,8 @@ const initialState = {
     countryLoading: false,
     searchContext: 'global',
 };
+
+import FilterCard from '../../FilterCard/FilterCard';
 
 function filtersReducer(state, action) {
     switch (action.type) {
@@ -68,7 +66,12 @@ function filtersReducer(state, action) {
     }
 }
 
-const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) => {
+const PlacesWithSearchPage = ({
+    searchContext = PlaceSearchContext.Global,
+    isForAdmin = false,
+    userFollowingId = null,
+    userFollowingUserName = null
+}) => {
 
     const { token } = useContext(AuthContext);
 
@@ -96,10 +99,8 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
         { ...initialState, searchContext }
     );
 
-
     const [debouncedPlaceName] = useDebounce(state.placeName, 500);
     const [debouncedCountrySearch] = useDebounce(state.countrySearch, 500);
-
 
     const fetchPlaces = async () => {
 
@@ -111,8 +112,12 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
                 context: searchContext,
                 name: debouncedPlaceName,
                 page: state.currentPage,
-                status: state.filter
+                status: state.filter,
             });
+
+            if (userFollowingId) {
+                params.append('userFollowingId', userFollowingId);
+            }
 
             if (state.selectedCategoryPath?.length === 2) {
                 params.append('categoryId', state.selectedCategoryPath[0]);
@@ -141,7 +146,6 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
         }
     };
 
-
     useEffect(() => {
         fetchPlaces();
     }, [
@@ -158,7 +162,6 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
         setSpinnerLoading(true);
 
     }, [state.placeName]);
-
 
     useEffect(() => {
 
@@ -208,14 +211,10 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
     }, [debouncedCountrySearch]);
 
     return (
-        <>
+        <section style={{ paddingTop: '3rem' }}>
 
-            {searchContext === 'global' && (
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
+            {(searchContext === PlaceSearchContext.Global || searchContext === PlaceSearchContext.FavPlace) && (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <PlaceSearchCard
                         categoryOptions={categoryOptions}
                         countryOptions={countryOptions}
@@ -228,65 +227,17 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
                 </div>
             )}
 
-            {searchContext !== 'global' && (
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        width: '100%'
-                    }}
-                >
+            {
+                (searchContext === PlaceSearchContext.Admin || searchContext === PlaceSearchContext.UserPlaces)
+                &&
+                (
                     <>
-                        <Card
-                            style={{
-                                width: '60%',
-                                padding: '1rem 2rem',
-                                backgroundColor: isForAdmin ? '#e6f4ff' : '#f3e9fe',
-                                border: `1px solid ${isForAdmin ? '#1890ff' : '#9c4dcc'}`,
-                                borderRadius: '16px',
-                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.1)',
-                                textAlign: 'center',
-                                marginTop: '2rem'
-                            }}
-                        >
-                            <ConfigProvider
-                                theme={{
-                                    components: {
-                                        Radio: {
-                                            colorPrimary: isForAdmin ? '#1890ff' : '#9c4dcc',
-                                            buttonBg: isForAdmin ? '#cce4ff' : '#e6d4f5',
-                                            buttonColor: isForAdmin ? '#0958d9' : '#6a2c91',
-                                            buttonSolidCheckedBg: isForAdmin ? '#1890ff' : '#9c4dcc',
-                                            buttonSolidCheckedColor: 'white',
-                                            buttonSolidCheckedHoverBg: isForAdmin ? '#1677ff' : '#8a3dac',
-                                            buttonSolidCheckedActiveBg: isForAdmin ? '#1890ff' : '#9c4dcc',
-                                            borderRadius: 12,
-                                        },
-                                    },
-                                }}
-                            >
-                                <Typography.Paragraph style={{ fontSize: '1.1rem' }} italic={true}>
-                                    Filter
-                                </Typography.Paragraph>
+                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                            <FilterCard isForAdmin={isForAdmin} defaultValue={state.filter} value={state.filter}
+                                handleFilterChange={handleFilterChange} />
+                        </div>
 
-                                <Radio.Group
-                                    options={options}
-                                    defaultValue={state.filter}
-                                    optionType="button"
-                                    value={state.filter}
-                                    buttonStyle="solid"
-                                    size="large"
-                                    style={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        gap: '1rem',
-                                        flexWrap: 'wrap',
-                                    }}
-                                    onChange={handleFilterChange}
-                                    name='Sort'
-                                />
-                            </ConfigProvider>
+                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
 
                             <PlaceSearchCard
                                 categoryOptions={categoryOptions}
@@ -297,21 +248,40 @@ const PlacesWithSearchPage = ({ searchContext = 'global', isForAdmin = false }) 
                                 dispatch={dispatch}
                                 isForAdmin={isForAdmin}
                             />
-
-                        </Card>
+                        </div>
                     </>
-                </div>
+                )}
+
+            {searchContext === PlaceSearchContext.UserFollowing && (
+                <PlaceSearchCard
+                    categoryOptions={categoryOptions}
+                    countryOptions={countryOptions}
+                    setCountryOptions={setCountryOptions}
+                    tags={tags}
+                    state={state}
+                    dispatch={dispatch}
+                    isForAdmin={isForAdmin}
+                    userFollowingUserName={userFollowingUserName}
+                />
             )}
 
-            <PlacesList
-                currentPage={state.currentPage}
-                handlePageChange={handlePageChange}
-                isForAdmin={isForAdmin}
-                pagesCount={pagesCount}
-                places={places}
-                spinnerLoading={spinnerLoading}
-            />
-        </>
+            <div
+                style={{
+                    padding: '4rem 8rem',
+                }}
+                className={styles.placesContainer}
+            >
+                <PlacesList
+                    currentPage={state.currentPage}
+                    handlePageChange={handlePageChange}
+                    isForAdmin={isForAdmin}
+                    pagesCount={pagesCount}
+                    places={places}
+                    spinnerLoading={spinnerLoading}
+                />
+            </div>
+
+        </section>
     );
 };
 

@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* font-size: 5rem !important; */
 }
 
 .weatherHeader {
@@ -15,12 +16,12 @@
     gap: 8px;
     margin-bottom: 1rem;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: #333;
 }
 
 .locationText {
-    font-size: 1rem;
+    font-size: 1.7rem;
     font-weight: 500;
     color: #2e7d32;
 }
@@ -30,8 +31,8 @@
 }
 
 .weatherIcon {
-    width: 64px;
-    height: 64px;
+    width: 70px;
+    height: 70px;
     margin-bottom: 0.5rem;
 }
 
@@ -43,7 +44,7 @@
 }
 
 .conditionText {
-    font-size: 1rem;
+    font-size: 1.7rem;
     font-weight: 500;
     color: #555;
 }
@@ -53,6 +54,6 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: 0.95rem;
+    /* font-size: 1.2rem !important; */
     color: #444;
 }

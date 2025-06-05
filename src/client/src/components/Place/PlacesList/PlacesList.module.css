@@ -1,6 +1,8 @@
 .card {
-    flex-basis: 30%;
     transition: transform 0.3s ease;
+    border-radius: 1rem !important;
+    height: 300px;
+    width: 100%;
 }
 
 .card:hover {
@@ -11,14 +13,18 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-
-
+.cardWrapper {
+    flex-basis: 30%;
+    cursor: pointer;
+    text-decoration: none;
+}
 
 .imageWrapper {
     position: relative;
-    height: 200px;
+    height: 300px;
     width: 100%;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .placeImage {
@@ -39,7 +45,7 @@
     width: 100%;
     padding: 0.6rem 0.8rem;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     text-align: center;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
     white-space: nowrap;
@@ -47,4 +53,26 @@
     text-overflow: ellipsis;
     font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif;
     letter-spacing: 0.5px;
+}
+
+.placesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+    align-items: stretch;
+    /* margin-bottom: 2rem; */
+}
+
+
+
+@media screen and (max-width: 1000px) {
+    .cardWrapper {
+        flex-basis: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .placesSection {
+        padding: 2rem;
+    }
 }

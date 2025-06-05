@@ -26,7 +26,7 @@ const ApprovedPlaceCard = ({ place }) => {
     return (
         <Card
             style={{
-                margin: '2rem 3rem',
+                margin: '2rem 20rem',
                 backgroundColor: '#fff1f0',
                 border: '1px solid #ffa39e',
                 borderRadius: '12px',
@@ -35,10 +35,10 @@ const ApprovedPlaceCard = ({ place }) => {
                 padding: '2rem',
             }}
         >
-            <Typography.Title level={3} style={{ color: '#cf1322', marginBottom: '1rem' }}>
+            <Typography.Title level={3} style={{ color: '#cf1322', marginBottom: '1rem', fontSize: '3rem' }}>
                 Unapprove This Place?
             </Typography.Title>
-            <Typography.Paragraph style={{ fontSize: '16px', color: '#4b5563', marginBottom: '2rem' }}>
+            <Typography.Paragraph style={{ fontSize: '1.2rem', color: '#4b5563', marginBottom: '2rem' }}>
                 If you've changed your mind or found an issue with this place, you can unapprove it. This will remove it from public listings.
             </Typography.Paragraph>
 
@@ -54,9 +54,10 @@ const ApprovedPlaceCard = ({ place }) => {
                     size="large"
                     icon={<CloseCircleOutlined />}
                     style={{
-                        padding: '0 2rem',
+                        padding: '2rem 2.5rem',
                         boxShadow: '0 4px 10px rgba(255, 77, 79, 0.3)',
                         borderRadius: '999px',
+                        fontSize: '1.5rem'
                     }}
                     onClick={() => onUnapprovePlace()}
                 >
@@ -66,11 +67,14 @@ const ApprovedPlaceCard = ({ place }) => {
 
             <Divider size='large' />
 
-            <Typography.Title level={3} style={{ color: '#cf1322', marginBottom: '1rem' }}>
+            <Typography.Title level={3} style={{ color: '#cf1322', marginBottom: '1rem', fontSize: '3rem' }}>
                 Delete This Place?
             </Typography.Title>
-            <Typography.Paragraph style={{ fontSize: '16px', color: '#4b5563', marginBottom: '2rem' }}>
-                If you've changed your mind or found an issue with this place, you can delete it. This action is irreversible and will delete the place.
+            <Typography.Paragraph style={{ fontSize: '1.2rem', color: '#4b5563' }}>
+                If you've changed your mind or found an issue with this place, you can delete it.
+            </Typography.Paragraph>
+            <Typography.Paragraph style={{ fontSize: '1.2rem', color: '#4b5563', marginBottom: '2rem' }}>
+                This will mark the place as deleted. You will have a time window to revert it back.
             </Typography.Paragraph>
 
             <div style={{
@@ -85,9 +89,10 @@ const ApprovedPlaceCard = ({ place }) => {
                         backgroundColor: '#a8071a',
                         borderColor: '#a8071a',
                         color: '#fff',
-                        padding: '0 2rem',
+                        padding: '2rem 2.5rem',
                         boxShadow: '0 4px 10px rgba(168, 7, 26, 0.3)',
                         borderRadius: '999px',
+                        fontSize: '1.5rem'
                     }}
                     onClick={() => onDeletePlace()}
                 >
