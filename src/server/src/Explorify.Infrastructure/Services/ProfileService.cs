@@ -18,6 +18,7 @@ namespace Explorify.Infrastructure.Services;
 public class ProfileService : IProfileService
 {
     private readonly IEmailSender _emailSender;
+
     private readonly UserManager<ApplicationUser> _userManager;
 
     public ProfileService(

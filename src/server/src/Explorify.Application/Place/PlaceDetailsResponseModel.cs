@@ -22,6 +22,8 @@ public class PlaceDetailsResponseModel
 
     public string UserName { get; set; } = string.Empty;
 
+    public bool IsFavPlace { get; set; }
+
     public Guid UserId { get; set; }
 
     public string UserProfileImageUrl { get; set; } = string.Empty;

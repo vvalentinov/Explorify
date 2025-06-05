@@ -13,9 +13,11 @@ namespace Explorify.Infrastructure.BackgroundJobs;
 public class DeleteExpiredContentJob : IJob
 {
     private readonly IRepository _repository;
+
     private readonly IBlobService _blobService;
-    private readonly ILogger<DeleteExpiredContentJob> _logger;
     private readonly IUserService _userService;
+
+    private readonly ILogger<DeleteExpiredContentJob> _logger;
 
     public DeleteExpiredContentJob(
         IRepository repository,
@@ -24,8 +26,10 @@ public class DeleteExpiredContentJob : IJob
         IUserService userService)
     {
         _logger = logger;
-        _userService = userService;
+
         _repository = repository;
+
+        _userService = userService;
         _blobService = blobService;
     }
 
@@ -89,7 +93,9 @@ public class DeleteExpiredContentJob : IJob
 
             if (place.IsApproved)
             {
-               await _userService.DecreaseUserPointsAsync(place.UserId.ToString(), UserPlaceUploadPoints);
+               await _userService.DecreaseUserPointsAsync(
+                   place.UserId.ToString(),
+                   UserPlaceUploadPoints);
             }
         }
 

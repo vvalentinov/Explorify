@@ -171,6 +171,12 @@ public class SearchPlaceQueryHandler
                 parameters.Add("UserFollowingId", model.UserFollowingId);
                 break;
 
+            case SearchContext.FavPlace:
+                whereConditions.Add("p.Id IN (SELECT fp.PlaceId FROM FavoritePlaces AS fp WHERE fp.UserId = @CurrentUserId)");
+                whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
+                parameters.Add("CurrentUserId", request.CurrentUserId);
+                break;
+
         }
 
         var whereClause = whereConditions.Count > 0

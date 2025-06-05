@@ -2,5 +2,6 @@
 
 namespace Explorify.Application.Place.GetPlace.GetPlaceBySlugifiedName;
 
-public record GetPlaceBySlugifiedNameQuery(string SlugifiedName)
-    : IQuery<PlaceDetailsResponseModel>;
+public record GetPlaceBySlugifiedNameQuery(
+    string SlugifiedName,
+    Guid CurrentUserId) : IQuery<PlaceDetailsResponseModel>;

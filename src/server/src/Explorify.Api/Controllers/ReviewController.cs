@@ -1,4 +1,5 @@
 ﻿using Explorify.Api.DTOs;
+using Explorify.Infrastructure;
 using Explorify.Api.Extensions;
 using Explorify.Application.Reviews.Edit;
 using Explorify.Application.Reviews.Upload;
@@ -18,7 +19,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -34,7 +34,7 @@ public class ReviewController : BaseController
     [HttpPost(nameof(Upload))]
     public async Task<IActionResult> Upload(UploadReviewRequestDto model)
     {
-        var applicationModel = model.ToApplicationModel(User.GetId());
+        var applicationModel = await model.ToApplicationModelAsync(User.GetId());
         var command = new UploadReviewCommand(applicationModel);
         var result = await _mediator.Send(command);
         return this.CreatedAtActionOrProblemDetails(result, nameof(Upload));

@@ -1,5 +1,6 @@
 ﻿using Explorify.Api.DTOs;
 using Explorify.Api.Extensions;
+using Explorify.Infrastructure;
 using Explorify.Application.Place.Edit;
 using Explorify.Application.Place.Upload;
 using Explorify.Application.Place.Delete;
@@ -18,7 +19,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Infrastructure;
 
 namespace Explorify.Api.Controllers;
 
@@ -80,7 +80,7 @@ public class PlaceController : BaseController
     [HttpGet(nameof(GetPlaceDetailsBySlugifiedName))]
     public async Task<IActionResult> GetPlaceDetailsBySlugifiedName(string slugifiedName)
     {
-        var query = new GetPlaceBySlugifiedNameQuery(slugifiedName);
+        var query = new GetPlaceBySlugifiedNameQuery(slugifiedName, User.GetId());
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
@@ -135,6 +135,12 @@ public class PlaceController : BaseController
         }
 
         if (!User.IsAuthenticated() && model.Context == SearchContext.UserPlaces)
+        {
+            var error = new Error("You must be authorized to perform this search.", ErrorType.Validation);
+            return this.OkOrProblemDetails(Result.Failure(error));
+        }
+
+        if (!User.IsAuthenticated() && model.Context == SearchContext.FavPlace)
         {
             var error = new Error("You must be authorized to perform this search.", ErrorType.Validation);
             return this.OkOrProblemDetails(Result.Failure(error));

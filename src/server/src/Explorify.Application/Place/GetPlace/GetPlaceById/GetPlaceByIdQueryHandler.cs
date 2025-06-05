@@ -6,8 +6,8 @@ using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using static Explorify.Application.Place.GetPlace.GetPlaceSqlGenerator;
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+using static Explorify.Application.Place.GetPlace.GetPlaceSqlGenerator;
 
 using Dapper;
 
@@ -32,18 +32,15 @@ public class GetPlaceByIdQueryHandler
         GetPlaceByIdQuery request,
         CancellationToken cancellationToken)
     {
-        string sql;
+        string sql = request.IsForAdmin ? GetPlaceByIdForAdmin() : GetPlaceByIdForUser();
 
-        if (request.IsForAdmin)
-        {
-            sql = GetPlaceByIdForAdmin();
-        }
-        else
-        {
-            sql = GetPlaceByIdForUser();
-        }
-
-        using var multi = await _dbConnection.QueryMultipleAsync(sql, new { request.PlaceId });
+        using var multi = await _dbConnection.QueryMultipleAsync(
+            sql,
+            new
+            {
+                request.PlaceId,
+                UserId = request.CurrentUserId
+            });
 
         var place = await multi.ReadFirstOrDefaultAsync<PlaceDetailsResponseModel>();
 

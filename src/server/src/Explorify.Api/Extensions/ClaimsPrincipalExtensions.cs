@@ -8,11 +8,14 @@ namespace Explorify.Api.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
+    //public static Guid GetId(this ClaimsPrincipal user)
+    //{
+    //    string userId = user.FindFirstValue(NameIdentifier) ?? string.Empty;
+    //    return userId == string.Empty ? Guid.Empty : Guid.Parse(userId);
+    //}
+
     public static Guid GetId(this ClaimsPrincipal user)
-    {
-        string userId = user.FindFirstValue(NameIdentifier) ?? string.Empty;
-        return userId == string.Empty ? Guid.Empty : Guid.Parse(userId);
-    }
+        => Guid.TryParse(user.FindFirstValue(NameIdentifier), out Guid id) ? id : Guid.Empty;
 
     public static string GetUserName(this ClaimsPrincipal user)
         => user.FindFirstValue(Name) ?? string.Empty;

@@ -1,31 +1,30 @@
-﻿using Explorify.Domain.Entities;
+﻿using System.Data;
+
 using Explorify.Application.Vibes;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
-using Microsoft.EntityFrameworkCore;
-
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
+using static Explorify.Application.Place.GetPlace.GetPlaceSqlGenerator;
+
+using Dapper;
 
 namespace Explorify.Application.Place.GetPlace.GetPlaceBySlugifiedName;
 
 public class GetPlaceBySlugifiedNameQueryHandler
     : IQueryHandler<GetPlaceBySlugifiedNameQuery, PlaceDetailsResponseModel>
 {
-    private readonly IRepository _repository;
+    private readonly IDbConnection _dbConnection;
 
-    private readonly IUserService _userService;
     private readonly IWeatherInfoService _weatherInfoService;
 
     public GetPlaceBySlugifiedNameQueryHandler(
-        IRepository repository,
-        IUserService userService,
+        IDbConnection dbConnection,
         IWeatherInfoService weatherInfoService)
     {
-        _repository = repository;
+        _dbConnection = dbConnection;
 
-        _userService = userService;
         _weatherInfoService = weatherInfoService;
     }
 
@@ -33,71 +32,27 @@ public class GetPlaceBySlugifiedNameQueryHandler
         GetPlaceBySlugifiedNameQuery request,
         CancellationToken cancellationToken)
     {
-        var responseModel = await _repository
-            .AllAsNoTracking<Domain.Entities.Place>()
-            .Where(x => x.IsApproved)
-            .Select(x => new PlaceDetailsResponseModel
-            {
-                Id = x.Id,
-                Name = x.Name,
-                SlugifiedName = x.SlugifiedName,
-                UserId = x.UserId,
-                Description = x.Description,
-                ImagesUrls = x.Photos
-                    .OrderByDescending(x => x.CreatedOn)
-                    .Select(c => c.Url)
-                    .ToList(),
-                //Coordinates = new PlaceCoordinates
-                //{
-                //    Latitude = (double)(x.Latitude ?? 0),
-                //    Longitude = (double)(x.Longitude ?? 0)
-                //},
-                Latitude = (double)(x.Latitude ?? 0),
-                Longitude = (double)(x.Longitude ?? 0),
-                Tags = x.PlaceVibeAssignments
-                    .Select(x => new VibeResponseModel
-                    {
-                        Id = x.PlaceVibeId,
-                        Name = x.PlaceVibe.Name,
-                    }).ToList(),
-            }).FirstOrDefaultAsync(
-                x => x.SlugifiedName == request.SlugifiedName,
-                cancellationToken);
+        var sql = GetPlaceBySlugifiedNameForUser();
 
-        if (responseModel == null)
+        using var multi = await _dbConnection.QueryMultipleAsync(sql, new
+        {
+            request.SlugifiedName,
+            UserId = request.CurrentUserId
+        });
+
+        var place = await multi.ReadFirstOrDefaultAsync<PlaceDetailsResponseModel>();
+
+        if (place is null)
         {
             var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure<PlaceDetailsResponseModel>(error);
         }
 
-        var userReview = await _repository
-            .AllAsNoTracking<Review>()
-            .FirstOrDefaultAsync(x =>
-                x.PlaceId == responseModel.Id && x.UserId == responseModel.UserId,
-                cancellationToken);
+        place.ImagesUrls = [.. await multi.ReadAsync<string>()];
+        place.Tags = [.. await multi.ReadAsync<VibeResponseModel>()];
 
-        if (userReview == null)
-        {
-            var error = new Error("No user review for place was found!", ErrorType.Validation);
-            return Result.Failure<PlaceDetailsResponseModel>(error);
-        }
+        place.WeatherData = await _weatherInfoService.GetWeatherInfo(place.Latitude, place.Longitude);
 
-        responseModel.UserReviewRating = userReview.Rating;
-        responseModel.UserReviewContent = userReview.Content;
-
-        var userDto = (await _userService.GetUserDtoByIdAsync(responseModel.UserId.ToString())).Data;
-
-        responseModel.UserName = userDto.UserName;
-        responseModel.UserProfileImageUrl = userDto.ProfileImageUrl ?? string.Empty;
-
-        responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(
-            responseModel.Latitude,
-            responseModel.Longitude);
-
-        //responseModel.WeatherData = await _weatherInfoService.GetWeatherInfo(
-        //    responseModel.Latitude,
-        //    responseModel.Longitude);
-
-        return Result.Success(responseModel);
+        return Result.Success(place);
     }
 }

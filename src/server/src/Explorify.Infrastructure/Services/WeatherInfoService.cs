@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
-using Explorify.Application.Abstractions.Interfaces;
+
 using Explorify.Infrastructure.Settings;
+using Explorify.Application.Abstractions.Interfaces;
 
 using Microsoft.Extensions.Options;
 
