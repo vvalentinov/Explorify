@@ -17,22 +17,22 @@
 .notificationCard {
     position: relative;
     padding: 1.5rem;
-    background-color: #e8f5e9 !important;
-    border: 2px solid #d9f7be;
+    background-color: #f0fff4 !important;
+    border: 2px solid #b7eb8f;
     border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 6px 16px rgba(34, 139, 34, 0.08);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
     font-family: 'Poppins', sans-serif !important;
 }
 
 
 .notificationCard:hover {
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(34, 139, 34, 0.15);
+    transform: translateY(-3px);
 }
 
 .read {
-    background-color: #f6f6f6;
+    background-color: #e6f7e6 !important;
     opacity: 0.85;
 }
 
@@ -63,4 +63,13 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }

@@ -13,15 +13,13 @@ import {
 import AdminDashboard from '../AdminDashboard';
 import AdminUsers from '../Users';
 
-// import Reviews from '../../Review/Reviews';
-
 import AdminPlaces from '../../Place/AdminPlaces';
 
 import PlaceDetails from '../../Place/PlaceDetails/PlaceDetails';
 
 import ScrollToTop from '../../ScrollToTop/ScrollToTop';
 
-import ReviewsSection from '../../Review/ReviewsSection';
+import ReviewsSection from '../../Review/ReviewsSection/ReviewsSection';
 
 const { Header, Content, Footer } = Layout;
 
@@ -32,25 +30,25 @@ const AdminLayout = () => {
     const leftMenuItems = [
         {
             key: 'dashboard',
-            icon: <DashboardOutlined />,
+            icon: <DashboardOutlined style={{ fontSize: '25px' }} />,
             label: 'Dashboard',
             onClick: () => navigate('/admin'),
         },
         {
             key: 'places',
-            icon: <EnvironmentOutlined />,
+            icon: <EnvironmentOutlined style={{ fontSize: '25px' }} />,
             label: 'Places',
             onClick: () => navigate('/admin/places'),
         },
         {
             key: 'reviews',
-            icon: <CommentOutlined />,
+            icon: <CommentOutlined style={{ fontSize: '25px' }} />,
             label: 'Reviews',
             onClick: () => navigate('/admin/reviews'),
         },
         {
             key: 'users',
-            icon: <UserOutlined />,
+            icon: <UserOutlined style={{ fontSize: '25px' }} />,
             label: 'Users',
             onClick: () => navigate('/admin/users'),
         },
@@ -59,39 +57,40 @@ const AdminLayout = () => {
     const rightMenuItems = [
         {
             key: 'home',
-            icon: <HomeOutlined />,
+            icon: <HomeOutlined style={{ fontSize: '25px' }} />,
             label: 'Main Site',
             onClick: () => navigate('/'),
         },
     ];
 
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout>
 
             <ScrollToTop />
 
             <Header className={styles.adminHeader}>
-
                 <div className={styles.adminNavContainer}>
 
-                    {/* Left side: admin links */}
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        items={leftMenuItems}
-                        className={styles.adminMenuLeft}
-                    />
+                    <div className={styles.adminMenuLeft}>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            items={leftMenuItems}
+                        />
+                    </div>
 
-                    {/* Right side: main site link */}
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        items={rightMenuItems}
-                        selectable={false}
-                        className={styles.adminMenuRight}
-                    />
+                    <div className={styles.adminMenuRight}>
+                        <Menu
+                            theme="dark"
+                            mode="horizontal"
+                            items={rightMenuItems}
+                            selectable={false}
+                        />
+                    </div>
+
                 </div>
             </Header>
+
 
             <Content className={styles.adminContent}>
 
@@ -106,7 +105,7 @@ const AdminLayout = () => {
                     <Route path='reviews' element={<ReviewsSection isForPlace={false} isForUser={false} isForAdmin={true} />} />
                 </Routes>
 
-                <FloatButton.BackTop />
+                <FloatButton.BackTop className="custom-backtop" />
 
             </Content>
 
@@ -119,7 +118,7 @@ const AdminLayout = () => {
                     borderTop: '1px solid #2c2c3e',
                 }}
             >
-                <div style={{ fontSize: '14px' }}>
+                <div style={{ fontSize: '20px' }}>
                     Admin Panel · Explorify ©{new Date().getFullYear()} · Built with ❤️ by the Explorify Team
                 </div>
             </Footer>

@@ -1,69 +1,88 @@
-import { Button, Grid, Space, theme, Typography } from "antd";
+import { Button, Grid, Space, Typography } from "antd";
 
-const { useToken } = theme;
 const { useBreakpoint } = Grid;
 
 const Footer = () => {
-    const { token } = useToken();
     const screens = useBreakpoint();
-
-    const styles = {
-        container: {
-            alignItems: "center",
-            display: "flex",
-            flexDirection: screens.md ? "row" : "column",
-            gap: token.marginLG,
-            justifyContent: "space-between",
-            margin: "0 auto",
-            maxWidth: token.screenXL,
-            padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`
-        },
-        footer: {
-            backgroundColor: token.colorBgBase,
-            borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
-            padding: `${token.sizeXXL}px 0px`,
-        },
-        nav: {
-            alignItems: "center",
-            marginLeft: screens.md ? `-${token.margin}px` : 0,
-        },
-        text: {
-            color: token.colorTextSecondary,
-            textAlign: screens.md ? "right" : "center"
-        }
-    };
+    const isMdUp = screens.md;
 
     return (
-        <footer style={styles.footer}>
-            <div style={styles.container}>
+        <footer
+            style={{
+                backgroundColor: "#f9f9f9",
+                borderTop: "1px solid #e0e0e0",
+                padding: "2.5rem 1rem",
+                width: "100%",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: isMdUp ? "row" : "column",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    maxWidth: "1200px",
+                    margin: "0 auto",
+                    gap: "1.5rem",
+                    padding: isMdUp ? "0 2rem" : "0 1rem",
+                }}
+            >
                 <Space
-                    style={styles.nav}
-                    direction={screens.md ? "horizontal" : "vertical"}
-                    size={screens.md ? 0 : "small"}
+                    direction={isMdUp ? "horizontal" : "vertical"}
+                    size={isMdUp ? "middle" : "small"}
+                    style={{
+                        display: "flex",
+                        justifyContent: isMdUp ? "flex-start" : "center",
+                        width: isMdUp ? "auto" : "100%",
+                        textAlign: "center",
+                    }}
                 >
-                    <Button style={{ marginRight: '1rem' }}
-                        color='cyan'
-                        variant='solid'
-                        size='large'>
+                    <Button
+                        variant="solid"
+                        size="large"
+                        color="cyan"
+                        style={{
+                            border: "none",
+                            fontSize: "1.5rem",
+                            padding: "1.8rem 1.2rem",
+                        }}
+                    >
                         About
                     </Button>
-
-                    <Button style={{ marginRight: '1rem' }}
-                        color='cyan'
-                        variant='solid'
-                        size='large'>
+                    <Button
+                        variant="solid"
+                        size="large"
+                        color="cyan"
+                        style={{
+                            border: "none",
+                            fontSize: "1.5rem",
+                            padding: "1.8rem 1.2rem",
+                        }}
+                    >
                         Help
                     </Button>
-
                     <Button
-                        color='cyan'
-                        variant='solid'
-                        size='large'>
+                        variant="solid"
+                        size="large"
+                        color="cyan"
+                        style={{
+                            border: "none",
+                            fontSize: "1.5rem",
+                            padding: "1.8rem 1.2rem",
+                        }}
+                    >
                         Terms & Conditions
                     </Button>
-
                 </Space>
-                <Typography.Text style={styles.text}>
+
+                <Typography.Text
+                    style={{
+                        color: "#888",
+                        fontSize: "1.2rem",
+                        textAlign: isMdUp ? "right" : "center",
+                        width: isMdUp ? "auto" : "100%",
+                    }}
+                >
                     © {new Date().getFullYear()} Explorify. All Rights Reserved.
                 </Typography.Text>
             </div>

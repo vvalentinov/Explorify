@@ -40,28 +40,28 @@ const AdminDashboard = () => {
 
     const cards = [
         {
-            title: 'Places Awaiting Approval',
+            title: <span style={{ fontSize: '1.5rem' }}>Places Awaiting Approval</span>,
             value: stats.pendingPlaces,
             icon: <EnvironmentOutlined />,
-            description: 'New places submitted by users',
+            description: <span style={{ fontSize: '1.3rem' }}>New places submitted by users</span>,
             background: '#f6ffed',
             borderColor: '#b7eb8f',
             iconColor: '#52c41a',
         },
         {
-            title: 'Reviews Awaiting Approval',
+            title: <span style={{ fontSize: '1.5rem' }}>Reviews Awaiting Approval</span>,
             value: stats.pendingReviews,
             icon: <FileSearchOutlined />,
-            description: 'New user-submitted reviews to moderate',
+            description: <span style={{ fontSize: '1.3rem' }}>New user-submitted reviews to moderate</span>,
             background: '#fffbe6',
             borderColor: '#ffe58f',
             iconColor: '#faad14',
         },
         {
-            title: 'Registered Users',
+            title: <span style={{ fontSize: '1.5rem' }}>Registered Users</span>,
             value: stats.totalUsers,
             icon: <UserOutlined />,
-            description: 'Total users on Explorify',
+            description: <span style={{ fontSize: '1.5rem' }}>Total users on Explorify</span>,
             background: '#e6f7ff',
             borderColor: '#91d5ff',
             iconColor: '#1890ff',
@@ -69,9 +69,9 @@ const AdminDashboard = () => {
     ];
 
     return (
-        <div style={{ padding: '2rem' }}>
+        <div>
 
-            <Title level={2} style={{ color: '#fff', textAlign: 'center' }}>
+            <Title level={2} style={{ color: '#fff', textAlign: 'center', fontSize: '4rem', marginTop: '2rem', marginBottom: 0 }}>
                 Welcome to the Admin Dashboard
                 <motion.span
                     animate={{ rotate: [0, 20, -10, 20, -5, 10, 0] }}
@@ -86,7 +86,8 @@ const AdminDashboard = () => {
                     👋
                 </motion.span>
             </Title>
-            <Paragraph style={{ color: '#fff', textAlign: 'center' }} type="secondary">
+
+            <Paragraph style={{ color: '#fff', textAlign: 'center', fontSize: '1.5rem' }} type="secondary">
                 Keep an eye on what’s happening in the app. Here’s a quick overview of items.
             </Paragraph>
 
@@ -96,7 +97,9 @@ const AdminDashboard = () => {
                     gap: '2rem',
                     flexWrap: 'wrap',
                     marginTop: '2rem',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    // border: 'solid 1px red',
+                    padding: '0 6rem'
                 }}
             >
                 {cards.map((card, index) => (
@@ -110,9 +113,7 @@ const AdminDashboard = () => {
                             ease: 'easeOut'
                         }}
                         style={{
-                            flex: '1 1 300px',
-                            minWidth: '280px',
-                            maxWidth: '360px',
+                            flexBasis: '30%'
                         }}
                     >
                         <Card
@@ -124,7 +125,7 @@ const AdminDashboard = () => {
                                 background: card.background,
                                 border: `1px solid ${card.borderColor}`,
                                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                                padding: '1rem',
+                                padding: '2rem', // Increased from 1rem
                             }}
                             styles={{
                                 header: {
@@ -134,30 +135,31 @@ const AdminDashboard = () => {
                                 }
                             }}
                         >
+
                             <div
                                 style={{
-                                    width: '48px',
-                                    height: '48px',
+                                    width: '70px',
+                                    height: '70px',
                                     borderRadius: '50%',
                                     background: card.iconColor + '20',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    marginBottom: '1rem',
+                                    marginBottom: '1.5rem',
                                 }}
                             >
-                                {React.cloneElement(card.icon, { style: { fontSize: '24px', color: card.iconColor } })}
+                                {React.cloneElement(card.icon, { style: { fontSize: '32px', color: card.iconColor } })}
                             </div>
 
 
-                            <Title level={3} style={{ margin: '0 0 0.5rem 0' }}>
+                            <Title level={3} style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>
                                 {card.value}
                             </Title>
-
 
                             <Paragraph type="secondary" style={{ margin: 0 }}>
                                 {card.description}
                             </Paragraph>
+
                         </Card>
                     </motion.div>
                 ))}

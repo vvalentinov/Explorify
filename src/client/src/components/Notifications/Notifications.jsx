@@ -83,24 +83,84 @@ const Notifications = () => {
             }).catch(err => fireError(err));
     }
 
+    const [markingAll, setMarkingAll] = useState(false);
+
+    const handleMarkAllAsRead = () => {
+        setMarkingAll(true);
+        notificationsService
+            .markAllAsRead()
+            .then(res => {
+                message.success(res.successMessage || "All notifications marked as read", 5);
+                setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+                setNotificationsCount(0);
+            })
+            .catch(err => fireError(err))
+            .finally(() => setMarkingAll(false));
+    };
+
     return (
         <section className={styles.notificationsSection}>
 
-            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-                <Title level={3} style={{ color: "#389e0d", fontFamily: 'Poppins, sans-serif' }}>
-                    <BellOutlined style={{ marginRight: "0.5rem" }} />
-                    Notifications ({notificationsCount})
-                </Title>
+            <div className={styles.headerRow}>
+
+                {notifications.length > 0 && (
+                    <>
+                        <Title level={3} style={{ color: "#389e0d", fontFamily: 'Poppins, sans-serif', margin: 0 }}>
+                            <BellOutlined style={{ marginRight: "0.5rem" }} />
+                            Notifications ({notificationsCount})
+                        </Title>
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Button
+                                loading={markingAll}
+                                type="primary"
+                                onClick={handleMarkAllAsRead}
+                                style={{
+                                    backgroundColor: '#52c41a',
+                                    borderColor: '#52c41a',
+                                    fontWeight: 600
+                                }}
+                            >
+                                Mark All As Read
+                            </Button>
+                        </motion.div>
+                    </>
+                )}
             </div>
+
 
             {spinnerLoading ? (
                 <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
-                    <Spin size='large' spinning={spinnerLoading} />
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        minHeight: 'calc(100vh - 235.6px)'
+                    }}>
+
+                        <Spin size='large' spinning={spinnerLoading} />
+                    </div>
                 </ConfigProvider>
             ) : (
                 <div className={styles.notificationsContainer}>
                     {notifications.length === 0 ? (
-                        <Empty description="No notifications yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            minHeight: 'calc(100vh - 235.6px)'
+                        }}>
+                            <Empty
+                                description={
+                                    <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                                        No notifications yet
+                                    </span>
+                                }
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            />
+                        </div>
                     ) : (
                         notifications.map((notif, index) => (
                             <motion.div

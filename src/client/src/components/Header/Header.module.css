@@ -26,6 +26,17 @@
     height: 20%;
 }
 
+.customBadgeDot :global(.ant-badge-dot) {
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    border-radius: 50% !important;
+    top: 2px !important;
+    right: 5px !important;
+}
+
+
+
 
 .avatarHoverWrapper {
     display: inline-block;
@@ -58,7 +69,7 @@
 }
 
 .navItem {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: #2c3e50;
     text-decoration: none;
     padding: 0.4rem 1rem;
@@ -73,7 +84,6 @@
 .navItem:nth-of-type(3) {
     margin-left: 1rem;
 }
-
 
 .navItem:hover {
     background-color: rgba(0, 0, 0, 0.05);

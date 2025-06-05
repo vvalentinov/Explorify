@@ -8,7 +8,7 @@ import PlacesInSubcategory from '../Place/PlacesInSubcategory/PlacesInSubcategor
 import Notifications from '../Notifications/Notifications';
 
 import MyPlaces from '../Place/MyPlaces';
-import MyReviews from '../Review/MyReviews/MyReviews';
+import MyReviews from '../Review/MyReviews';
 import ReviewEdit from '../Review/ReviewEdit/ReviewEdit';
 
 // Account
@@ -27,13 +27,21 @@ import EditPlace from '../Place/EditPlace/EditPlace';
 import UploadPlace from '../Place/UploadPlace/UploadPlace';
 import PlaceDetails from '../Place/PlaceDetails/PlaceDetails';
 
+import FavPlaces from '../Place/FavPlaces/FavPlaces';
+
 import PlaceSearch from '../Place/PlaceSearch/PlaceSearch';
 
 import ScrollToTop from '../ScrollToTop/ScrollToTop';
 
 import { FloatButton } from 'antd';
 
+import MyFollowing from '../MyFollowing/MyFollowing';
+
 import * as paths from '../../constants/paths';
+
+import UserFollowingPlaces from '../Place/UserFollowingPlaces';
+
+import Settings from '../Account/Settings/Settings';
 
 const Main = () => {
     return (
@@ -62,8 +70,12 @@ const Main = () => {
                     <Route path={paths.notificationsPath} element={<Notifications />} />
                     <Route path={paths.placeEditPath} element={<EditPlace />} />
 
+                    <Route path={paths.favPlacesPath} element={<FavPlaces />}></Route>
+
                     <Route path={paths.forgotPasswordPath} element={<ForgotPassword />} />
                     <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
+
+                    <Route path={paths.accountSettingsPath} element={<Settings />} />
 
                     <Route path='/search' element={<PlaceSearch />} />
 
@@ -72,11 +84,15 @@ const Main = () => {
 
                     <Route path={paths.reviewEditPath} element={<ReviewEdit />} />
 
+                    <Route path={paths.myFollowingPath} element={<MyFollowing />} />
+
+                    <Route path={paths.userPlaces} element={<UserFollowingPlaces />} />
+
                     <Route path='*' element={<NoPathFound />} />
 
                 </Routes>
 
-                <FloatButton.BackTop />
+                <FloatButton.BackTop className="custom-backtop" />
 
             </div>
 

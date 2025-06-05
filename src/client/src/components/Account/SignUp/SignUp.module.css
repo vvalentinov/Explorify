@@ -1,21 +1,147 @@
-@import url('https://fonts.googleapis.com/css2?family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
-
-.section {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    min-height: calc(100vh - 100px);
+.signInSection {
+    position: relative;
+    height: calc(100vh - 100px);
+    isolation: isolate;
+    overflow: hidden;
 }
 
-.container {
+.signInBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url("../../../assets/authBackground.jpg");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: brightness(50%);
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    gap: 2rem;
+    min-height: calc(100vh - 100px);
+    padding: 0 8rem;
+}
+
+.cardWrapper {
+    width: 50%;
+}
+
+.textContainer {
+    z-index: 1;
+
+    max-width: 700px;
+    font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif;
+    padding: 2rem;
+    color: #ffffff;
+    text-align: left;
+}
+
+.textContainerWrapper {
     width: 40%;
-    border-radius: 10px;
-    padding: 1rem;
+
+    position: relative;
+    z-index: 1;
+}
+
+.title {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #fefefe !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    text-align: justify;
+}
+
+.description {
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) !important;
+    text-align: justify;
+}
+
+.signInCard {
+    /* width: 50%; */
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif !important;
+    /* background: linear-gradient(to bottom right, #e8f5f0, #f7faf9); */
+    background: #e8f5f0;
+    backdrop-filter: blur(10px);
+}
+
+.signInCard .ant-card-head-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #00684a;
+}
+
+.signInCard .ant-form-item-label>label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #00684a;
+}
+
+.signInCard :global(.ant-input),
+.signInCard :global(.ant-input-password) {
+    font-size: 1.7rem !important;
+}
+
+.signInCard :global(.ant-btn) {
+    background-color: #00aa6c;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    padding: 1.7rem 0;
+    border-radius: 12px;
+    transition: background-color 0.3s ease;
+}
+
+.signInCard :global(.ant-btn:hover) {
+    background-color: #009f63 !important;
+    color: #fff !important;
 }
 
 .footer {
-    text-align: center;
     width: 100%;
     margin-top: 1rem;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer a {
+    color: #00aed7;
+    font-style: italic;
+    font-size: 1.5rem;
+}
+
+.footer a:hover {
+    color: black !important;
+}
+
+
+@media (max-width: 1300px) {
+    .wrapper {
+        flex-direction: column;
+        padding: 4rem 2rem;
+    }
+
+    .cardWrapper {
+        width: 100%;
+    }
+
+    .textContainer {
+        width: 100%;
+    }
 }

@@ -1,7 +1,8 @@
 import styles from './SignIn.module.css';
 
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Typography, ConfigProvider, Image } from "antd";
+import { LockOutlined, UserOutlined, LoginOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Typography, Card, ConfigProvider, Image } from "antd";
+
 
 import { useContext, useState } from 'react';
 import { NavLink, useNavigate, Link } from "react-router-dom";
@@ -14,6 +15,42 @@ import myImage from '../../../assets/image.png';
 import logoImage from '../../../assets/logo.png';
 
 const { Text, Title, Paragraph } = Typography;
+
+import { motion } from 'framer-motion';
+
+const AnimatedEmoji = () => (
+    <motion.span
+        style={{
+            display: 'inline-block',
+            cursor: 'pointer',
+            fontSize: '3rem',
+            borderRadius: '8px',
+            padding: '0.2rem',
+            outline: 'none',
+            userSelect: 'none',
+            WebkitTapHighlightColor: 'transparent',
+            backgroundColor: 'transparent'
+        }}
+        whileHover={{
+            scale: 1.2,
+            rotate: 10,
+            transition: { type: 'spring', stiffness: 200, damping: 12 }
+        }}
+        whileTap={{
+            scale: [1, 0.8, 1],
+            rotate: 0,
+            transition: { duration: 0.3, ease: 'easeInOut' }
+        }}
+        aria-label="Globe emoji"
+        role="img"
+        onMouseDown={(e) => e.preventDefault()}
+        onFocus={(e) => e.target.blur()}
+    >
+        🌍
+    </motion.span>
+);
+
+
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -40,121 +77,134 @@ const SignIn = () => {
     };
 
     return (
-        <ConfigProvider
-            theme={{
-                components: {}
-            }}
-        >
+        <section className={styles.signInSection}>
 
-            <section className={styles.section}>
+            <div className={styles.signInBackground} />
 
-                <div className={styles.container}>
-                    <div className={styles.header}>
-
-                        <div style={{ display: "flex", justifyContent: 'center' }}>
-                            <Image preview={false} src={logoImage} height={'60px'} width={'60px'} />
-                        </div>
-
-
-                        <Title
-                            style={{ textAlign: 'center' }}
-                            level={2}
-                            className={styles.title}>
-                            Sign In
-                        </Title>
-                        <Paragraph style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                            Welcome back to Explorify!
-                        </Paragraph>
-                        <Paragraph style={{ fontStyle: 'italic', textAlign: 'center' }}>
-                            Please enter your details below to sign in.
-                        </Paragraph>
-                    </div>
-
-                    <Form
-                        name="normal_login"
-                        onFinish={onFinish}
-                        layout="vertical"
+            <div className={styles.wrapper}>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{
+                        duration: 0.4,
+                        ease: [0.25, 0.8, 0.25, 1],
+                        type: 'spring',
+                        stiffness: 120,
+                        damping: 20,
+                    }}
+                    className={styles.cardWrapper}
+                >
+                    <Card styles={
+                        {
+                            header: {
+                                border: 'none'
+                            }
+                        }
+                    }
+                        className={styles.signInCard}
+                        title={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <LoginOutlined style={{ fontSize: '2.5rem', color: '#00684a' }} />
+                                <span style={{ fontSize: '2.2rem', fontWeight: 600, color: '#00684a' }}>Sign In</span>
+                            </div>
+                        }
                     >
-                        <Form.Item
-                            name="username"
-                            layout='vertical'
-                            label='Username'
-                            style={{ marginBottom: '30px' }}
-                            rules={[
-                                {
-                                    type: "string",
-                                    required: true,
-                                    message: "Please input your Username!",
-                                },
-                            ]}
 
-                        >
-                            <Input
-                                size='large'
-                                prefix={<UserOutlined />}
-                                placeholder="Some cool username here..."
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
+                        <Form
+                            name="normal_login"
+                            onFinish={onFinish}
                             layout="vertical"
-                            label="Password"
-                            style={{ marginBottom: '30px' }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please input your Password!",
-                                },
-                                {
-                                    min: 6,
-                                    message: "Password must be at least 6 characters long!"
-                                }
-                            ]}
                         >
-                            <Input.Password
-                                size='large'
-                                // style={{ fontSize: '18px' }}
-                                prefix={<LockOutlined />}
-                                type="password"
-                                placeholder="Some strong password here..."
-                            />
-                        </Form.Item>
-
-                        <Form.Item style={{ marginBottom: "0px" }}>
-
-                            <Button
-                                color='cyan'
-                                variant='solid'
-                                size='large'
-                                block="true"
-                                htmlType="submit"
+                            <Form.Item
+                                name="username"
+                                layout='vertical'
+                                label={<span style={{ fontSize: '1.5rem' }}>Username</span>}
+                                style={{ marginBottom: '2.5rem' }}
+                                rules={[
+                                    {
+                                        type: "string",
+                                        required: true,
+                                        message: "Please input your Username!",
+                                    },
+                                ]}
                             >
-                                {isSigningIn ? 'Signing you in...' : 'Sign In'}
-                            </Button>
+                                <Input
+                                    size='large'
+                                    prefix={<UserOutlined />}
+                                    placeholder="Some cool username here..."
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="password"
+                                layout="vertical"
+                                label={<span style={{ fontSize: '1.5rem' }}>Password</span>}
+                                style={{ marginBottom: '2.5rem' }}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Please input your Password!",
+                                    },
+                                    {
+                                        min: 6,
+                                        message: "Password must be at least 6 characters long!"
+                                    }
+                                ]}
+                            >
+                                <Input.Password
+                                    size='large'
+                                    prefix={<LockOutlined />}
+                                    type="password"
+                                    placeholder="Some strong password here..."
+                                />
+                            </Form.Item>
 
-                            <div className={styles.footer}>
-                                <Text className={styles.text}>Don't have an account?</Text>{" "}
-                                <NavLink style={{ color: '#00aed7', fontStyle: 'italic' }} to={signUpPath}>Sign up now</NavLink>
-                            </div>
+                            <Form.Item style={{ marginBottom: "0px" }}>
 
-                            <div className={styles.footer}>
-                                <Link style={{ color: '#00aed7', fontStyle: 'italic' }} to={forgotPasswordPath}>Forgot Password?</Link>
-                            </div>
+                                <Button
+                                    variant='solid'
+                                    size='large'
+                                    block="true"
+                                    htmlType="submit"
+                                >
+                                    {isSigningIn ? 'Signing you in...' : 'Sign In'}
+                                </Button>
 
-                        </Form.Item>
+                                <div className={styles.footer}>
+                                    <Link to={signUpPath}>Don't have an account?</Link>
+                                    <Link to={forgotPasswordPath}>Forgot Password?</Link>
+                                </div>
 
-                    </Form>
-                </div>
-                <div className={styles.imageContainer}>
-                    <Image
-                        preview={false}
-                        width={'100%'}
-                        height={'calc(100vh - 64px)'}
-                        src={myImage}
-                    />
-                </div>
-            </section>
-        </ConfigProvider>
+                            </Form.Item>
+
+                        </Form>
+                    </Card>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, x: -40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                        duration: 0.5,
+                        ease: [0.25, 0.8, 0.25, 1],
+                        type: 'spring',
+                        stiffness: 80,
+                        damping: 18,
+                        delay: 0.1
+                    }}
+                    className={styles.textContainerWrapper}
+                >
+                    <div className={styles.textContainer}>
+                        <Typography.Title level={3} className={styles.title}>Reconnect with the World</Typography.Title>
+                        <Typography.Paragraph className={styles.description}>
+                            Sign in to continue your journey with Explorify — a place where memories meet discovery.
+                            <br /><br />
+                            Dive back into your favorite travel moments, uncover hidden gems across the globe, and share experiences that inspire others. Your passport to adventure starts here.
+                        </Typography.Paragraph>
+                    </div>
+                </motion.div>
+            </div>
+
+        </section>
     )
 };
 

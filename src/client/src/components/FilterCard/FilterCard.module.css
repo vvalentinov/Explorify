@@ -1,0 +1,40 @@
+.filterCard {
+    width: auto;
+    padding: 1rem 2rem;
+    background-color: #f3e9fe;
+    border: 1px solid #9c4dcc !important;
+    border: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 20px !important;
+    margin-bottom: 2rem;
+}
+
+.filterCardAdmin {
+    width: auto;
+    padding: 1rem 2rem;
+    background-color: #e6f4ff;
+    border: 1px solid #1890ff !important;
+    border: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.radioGroup {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+:global(.ant-radio-button-wrapper) {
+    font-size: 1.5rem !important;
+    padding: 2rem 1.5rem !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center;
+    height: auto;
+}

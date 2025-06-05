@@ -1,11 +1,21 @@
 .adminContent {
-    padding: 32px;
     background-color: #1e1e2f;
     color: white;
-    min-height: calc(100vh - 64px);
+    padding-top: 130px !important;
+    border: solid 1px red;
+    min-height: 100vh;
 }
 
 .adminHeader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 130px;
+    background-color: #001529 !important;
+    display: flex;
+    align-items: center;
     padding: 0 !important;
 }
 
@@ -14,15 +24,27 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
+    width: 100%;
+}
+
+.adminHeader :global(.ant-menu-item) {
+    font-size: 2rem !important;
+
+    border-radius: 10px !important;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.adminHeader :global(.ant-menu) {
+    gap: 1rem !important;
 }
 
 .adminMenuLeft {
-    display: flex;
     flex: 1;
-    min-width: 0;
 }
 
 .adminMenuRight {
-    display: flex;
-    justify-content: flex-end;
+    flex-shrink: 0;
 }

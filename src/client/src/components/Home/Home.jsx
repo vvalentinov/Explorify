@@ -7,6 +7,10 @@ import { useState, useEffect } from 'react';
 
 import { fireError } from '../../utils/fireError';
 
+import { Typography } from 'antd';
+
+const { Text, Title, Paragraph } = Typography;
+
 const AnimatedEmoji = () => (
     <motion.span
         style={{ display: 'inline-block', cursor: 'pointer' }}
@@ -48,57 +52,68 @@ const Home = () => {
 
     }, []);
 
-    const pillStyle = {
-        fontSize: '1rem',
-        padding: '0.4rem 1rem',
-        borderRadius: '20px',
-        fontWeight: 'bold',
-        display: 'inline-block',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        marginBottom: '1rem'
-    };
-
     return (
         <>
             <section className={styles.heroSection}>
 
                 <div className={styles.heroBackground} />
 
-                <div className={styles.heroContent}>
-                    <h1 className={styles.heroTitle}>
+                <motion.div
+                    className={styles.heroContent}
+                    initial={{ opacity: 0, y: 80, scale: 0.9, rotate: -2 }}
+                    animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                    transition={{
+                        type: 'spring',
+                        stiffness: 90,
+                        damping: 12,
+                        duration: 0.9,
+                        delay: 0.1
+                    }}
+                >
+                    <Title level={1} className={styles.heroTitle}>
                         Discover Cool Places <AnimatedEmoji />
-                    </h1>
-                    <p className={styles.heroDescription}>
+                    </Title>
+                    <Typography.Paragraph className={styles.heroDescription}>
                         Ready to embark on unforgettable adventures? Explorify helps you discover breathtaking places, share your own experiences, and connect with fellow travelers around the world. Whether you're chasing hidden waterfalls, wandering through ancient cities, or savoring local flavors off the beaten path, Explorify is your trusted companion.
-                    </p>
-                </div>
+                    </Typography.Paragraph>
+                </motion.div>
 
             </section>
 
-            <section style={{
-                padding: '2rem'
-            }}>
-                <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <section style={{ padding: '2rem' }}>
+                <div
+                    style={{
+                        marginBottom: '1.5rem',
+                        padding: '0 8rem',
+                        paddingTop: '2rem'
+                    }}
+                    className={styles.placesContainer}
+                >
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                         <motion.div
-                            initial={{ scale: 1 }}
-                            whileHover={{ scale: 1.05, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)' }}
-                            transition={{ type: 'spring', stiffness: 300 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            whileHover={{
+                                scale: 1.05,
+                                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+                            }}
+                            transition={{ duration: 0.4, ease: 'easeOut' }}
                             style={{
-                                background: 'linear-gradient(90deg, #52c41a, #36cfc9)',
-                                color: 'white',
-                                borderRadius: '20px',
-                                padding: '0.5rem 1.2rem',
+                                background: 'linear-gradient(135deg, #b7eb8f, #87e8de)', // pastel green-teal
+                                color: '#004d40',
+                                borderRadius: '16px',
+                                padding: '0.75rem 2rem',
                                 display: 'inline-block',
                                 fontWeight: '600',
-                                fontSize: '1.5rem',
-                                cursor: 'default'
+                                fontSize: '1.4rem',
+                                letterSpacing: '0.5px',
+                                border: '1px solid rgba(0, 0, 0, 0.05)',
+                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                             }}
                         >
                             🌍 Recent Places
                         </motion.div>
                     </div>
-
 
                     <PlacesList
                         places={recentPlaces}
@@ -107,29 +122,43 @@ const Home = () => {
                         pagesCount={1}
                         spinnerLoading={false}
                     />
+
                 </div>
 
-                <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <div
+                    style={{
+                        marginBottom: '1.5rem',
+                        padding: '0 8rem',
+                        marginTop: '4rem'
+                    }}
+                    className={styles.placesContainer}
+                >
+
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                         <motion.div
-                            initial={{ scale: 1 }}
-                            whileHover={{ scale: 1.05, boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)' }}
-                            transition={{ type: 'spring', stiffness: 300 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            whileHover={{
+                                scale: 1.05,
+                                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+                            }}
+                            transition={{ duration: 0.4, ease: 'easeOut' }}
                             style={{
-                                background: 'linear-gradient(90deg, #52c41a, #36cfc9)',
-                                color: 'white',
-                                borderRadius: '20px',
-                                padding: '0.5rem 1.2rem',
+                                background: 'linear-gradient(135deg, #b7eb8f, #87e8de)',
+                                color: '#004d40',
+                                borderRadius: '16px',
+                                padding: '0.75rem 2rem',
                                 display: 'inline-block',
                                 fontWeight: '600',
-                                fontSize: '1.5rem',
-                                cursor: 'default'
+                                fontSize: '1.4rem',
+                                letterSpacing: '0.5px',
+                                border: '1px solid rgba(0, 0, 0, 0.05)',
+                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                             }}
                         >
                             ⭐ Highest Rated Places
                         </motion.div>
                     </div>
-
 
                     <PlacesList
                         places={highestRatedPlaces}

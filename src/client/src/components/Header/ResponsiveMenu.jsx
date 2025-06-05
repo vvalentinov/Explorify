@@ -11,6 +11,7 @@ import { AppstoreOutlined, SearchOutlined } from '@ant-design/icons';
 const { useBreakpoint } = Grid;
 
 const ResponsiveMenu = () => {
+
     const screens = useBreakpoint();
 
     const navLinksDropdown = (
@@ -37,6 +38,7 @@ const ResponsiveMenu = () => {
                         alignItems: 'center',
                         gap: 15,
                         cursor: 'pointer',
+                        marginRight: screens.lg ? '5rem' : '0'
                     }}
                 >
                     <motion.img
@@ -56,7 +58,7 @@ const ResponsiveMenu = () => {
                             color: '#43c0c1',
                             transition: { type: 'spring', stiffness: 250, damping: 12 }
                         }}
-                        style={{ fontWeight: 600, fontSize: '1.5rem', fontFamily: 'Courier New, monospace' }}
+                        style={{ fontWeight: 600, fontSize: '2rem', fontFamily: 'Courier New, monospace' }}
                     >
                         Explorify
                     </motion.span>

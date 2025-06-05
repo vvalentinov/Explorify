@@ -1,0 +1,96 @@
+.badgesSection {
+    margin-top: 10rem;
+    margin-bottom: 5rem;
+    padding: 3rem;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    max-width: 1200px;
+    margin-inline: auto;
+}
+
+.sectionTitle {
+    font-size: 2.6rem !important;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    text-align: center;
+    color: #003e2f;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.badgesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    gap: 2rem;
+
+    border: solid 1px red;
+}
+
+.badgeWrapper {
+    /* position: relative; */
+    text-align: center;
+    /* width: calc(25% - 3rem); */
+}
+
+.badgeImage {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+    transition: transform 0.35s ease, box-shadow 0.3s ease;
+    border-radius: 12px;
+}
+
+.locked {
+    filter: grayscale(100%) brightness(60%);
+}
+
+.lockOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 120px;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.lockIcon {
+    font-size: 28px;
+    color: #ffffff;
+}
+
+.badgeLabel {
+    margin-top: 1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #333;
+}
+
+@media (max-width: 992px) {
+    .badgeWrapper {
+        width: calc(33.333% - 2rem);
+        /* 3 per row */
+    }
+}
+
+@media (max-width: 768px) {
+    .badgeWrapper {
+        width: calc(50% - 1.5rem);
+        /* 2 per row */
+    }
+}
+
+@media (max-width: 480px) {
+    .badgeWrapper {
+        width: 100%;
+        /* 1 per row */
+    }
+}
