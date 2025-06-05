@@ -1,8 +1,9 @@
 const request = async (method, token, url, data) => {
 
-    const options = {};
-
-    options.method = method;
+    const options = {
+        method,
+        credentials: 'include',
+    };
 
     if (data) {
         if (data instanceof FormData) {

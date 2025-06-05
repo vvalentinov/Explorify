@@ -37,3 +37,11 @@ export const myPlacesPath = '/my-places';
 export const myReviewsPath = '/my-reviews';
 
 export const reviewEditPath = '/review/edit';
+
+export const myFollowingPath = '/my-following';
+
+export const userPlaces = "/:userName/places";
+
+export const accountSettingsPath = '/account/settings';
+
+export const favPlacesPath = '/favorite-places';

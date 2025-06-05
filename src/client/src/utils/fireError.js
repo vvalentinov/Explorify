@@ -2,8 +2,6 @@ import Swal from 'sweetalert2';
 
 export const fireError = (errors) => {
 
-    console.log(errors);
-
     let html = '';
 
     if (errors?.length > 1) {

@@ -19,6 +19,7 @@ export const usersServiceFactory = (token) => {
                     : `${baseUrl}/User/GetProfileInfo`
             ),
         followUser: (userId) => request.post(`${baseUrl}/Follow/${userId}`),
-        unfollowUser: (userId) => request.delete(`${baseUrl}/Follow/${userId}`)
+        unfollowUser: (userId) => request.delete(`${baseUrl}/Follow/${userId}`),
+        getFollowing: (page) => request.get(`${baseUrl}/User/GetFollowing?page=${page}`)
     }
 };
