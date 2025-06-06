@@ -12,6 +12,10 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
+using SendGrid.Helpers.Mail;
+using SendGrid;
+using Microsoft.Extensions.Options;
+using Explorify.Infrastructure.Settings;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -21,12 +25,17 @@ public class ProfileService : IProfileService
 
     private readonly UserManager<ApplicationUser> _userManager;
 
+    private readonly SendGridSettings _sendGridSettings;
+
     public ProfileService(
         UserManager<ApplicationUser> userManager,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        IOptions<SendGridSettings> sendGridSettingsOptions)
     {
         _userManager = userManager;
         _emailSender = emailSender;
+
+        _sendGridSettings = sendGridSettingsOptions.Value;
     }
 
     public async Task<Result> ChangeEmailAsync(
@@ -77,9 +86,7 @@ public class ProfileService : IProfileService
         return Result.Success(PasswordChangeSuccess);
     }
 
-    public async Task<Result> ChangeUserNameAsync(
-        Guid userId,
-        string newUserName)
+    public async Task<Result> ChangeUserNameAsync(Guid userId, string newUserName)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -122,9 +129,7 @@ public class ProfileService : IProfileService
         return Result.Success();
     }
 
-    public async Task<Result> SendEmailChangeAsync(
-        string newEmail,
-        string userId)
+    public async Task<Result> SendEmailChangeAsync(string newEmail, string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
 
@@ -136,23 +141,44 @@ public class ProfileService : IProfileService
         var token = await _userManager.GenerateChangeEmailTokenAsync(user, newEmail);
 
         var encodedToken = HttpUtility.UrlEncode(token);
+        var encodedEmail = HttpUtility.UrlEncode(newEmail);
 
-        var changeEmailLink = $"https://localhost:7189/api/User/ChangeEmail?userId={user.Id}&token={encodedToken}&newEmail={newEmail}";
+        var changeEmailLink = $"https://localhost:7189/api/User/ChangeEmail?userId={user.Id}&token={encodedToken}&newEmail={encodedEmail}";
 
-        var safeLink = HtmlEncoder.Default.Encode(changeEmailLink);
+        //var safeLink = HtmlEncoder.Default.Encode(changeEmailLink);
 
-        var subject = "Email Change!";
+        var client = new SendGridClient(_sendGridSettings.ApiKey);
 
-        var messageBody = GetEmailChangeBody(safeLink);
+        var from = new EmailAddress("noreply@explorify.click", "Explorify");
+        var to = new EmailAddress(newEmail);
+        var msg = new SendGridMessage
+        {
+            From = from,
+            TemplateId = _sendGridSettings.ConfirmEmailTemplateId,
+            Personalizations = new List<Personalization>
+            {
+                new Personalization
+                {
+                    Tos = new List<EmailAddress> { to },
+                    TemplateData = new Dictionary<string, object>
+                    {
+                        { "safeLink", changeEmailLink }
+                    }
+                }
+            }
+        };
 
-        await _emailSender.SendEmailAsync(
-            "noreply@explorify.click",
-            "Explorify",
-            newEmail,
-            subject,
-            messageBody);
+        var response = await client.SendEmailAsync(msg);
 
-        return Result.Success($"Successfully send an email to: {newEmail}");
+        if (response.IsSuccessStatusCode)
+        {
+            return Result.Success($"Successfully sent an email to: {newEmail}");
+        }
+        else
+        {
+            var error = new Error("Failed to send email!", ErrorType.Validation);
+            return Result.Failure(error);
+        }
     }
 
     // TODO: Handle uncomfirmed emails

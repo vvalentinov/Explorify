@@ -41,7 +41,9 @@ public class DeletePlaceCommandHandler
             query = query.Where(x => x.UserId == currUserId);
         }
 
-        var place = await query.Include(x => x.Reviews).FirstOrDefaultAsync(cancellationToken);
+        var place = await query
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(cancellationToken);
 
         // the place was not found
         if (place == null)

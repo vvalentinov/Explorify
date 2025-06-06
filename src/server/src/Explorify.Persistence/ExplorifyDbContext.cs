@@ -41,6 +41,10 @@ public class ExplorifyDbContext :
 
     public DbSet<UserFollow> UserFollows { get; set; }
 
+    public DbSet<Badge> Badges { get; set; }
+
+    public DbSet<UserBadge> UserBadges { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(ExplorifyDbContext).Assembly);

@@ -89,7 +89,8 @@ public static class ServiceCollectionExtensions
             .Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)))
             .Configure<AzureStorageSettings>(configuration.GetSection(nameof(AzureStorageSettings)))
             .Configure<GeocodingSettings>(configuration.GetSection(nameof(GeocodingSettings)))
-            .Configure<WeatherApiSettings>(configuration.GetSection(nameof(WeatherApiSettings)));
+            .Configure<WeatherApiSettings>(configuration.GetSection(nameof(WeatherApiSettings)))
+            .Configure<SendGridSettings>(configuration.GetSection(nameof(SendGridSettings)));
 
         return services;
     }

@@ -19,6 +19,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Explorify.Infrastructure;
+using Azure.Core;
+using System.Web;
 
 namespace Explorify.Api.Controllers;
 
@@ -147,7 +149,9 @@ public class UserController : BaseController
     [HttpGet(nameof(ChangeEmail))]
     public async Task<IActionResult> ChangeEmail(string userId, string token, string newEmail)
     {
-        var result = await _mediator.Send(new ChangeEmailCommand(userId, token, newEmail));
+        var command = new ChangeEmailCommand(userId, token, newEmail);
+
+        var result = await _mediator.Send(command);
 
         return Redirect(result.IsSuccess
             ? "http://localhost:5173/?emailChanged=true"

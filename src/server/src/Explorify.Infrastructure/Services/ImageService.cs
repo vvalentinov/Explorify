@@ -14,7 +14,7 @@ public class ImageService : IImageService
     private const int PlaceImageBoxWidth = 700;
     private const int PlaceThumbnailWidth = 300;
 
-    private const int ProfileThumbnailWidth = 100;
+    private const int ProfileThumbnailWidth = 150;
 
     public async Task<IEnumerable<UploadFile>> ProcessPlaceImagesAsync(IEnumerable<UploadFile> files)
     {
@@ -119,7 +119,7 @@ public class ImageService : IImageService
 
             var mainStream = new MemoryStream();
 
-            await image.SaveAsJpegAsync(mainStream, new JpegEncoder { Quality = 75 });
+            await image.SaveAsJpegAsync(mainStream);
 
             mainStream.Position = 0;
 
