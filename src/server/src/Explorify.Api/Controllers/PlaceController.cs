@@ -6,7 +6,6 @@ using Explorify.Application.Place.Upload;
 using Explorify.Application.Place.Delete;
 using Explorify.Application.Place.Revert;
 using Explorify.Application.Place.Search;
-using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Place.Edit.GetEditData;
 using Explorify.Application.Place.GetPlace.GetPlaceById;
 using Explorify.Application.Place.GetPlaces.GetPlacesInCategory;
@@ -56,7 +55,7 @@ public class PlaceController : BaseController
     [HttpGet(nameof(GetPlacesInSubcategory))]
     public async Task<IActionResult> GetPlacesInSubcategory(int subcategoryId, int page)
     {
-        var query = new GetPlacesInSubcategoryQuery(subcategoryId, page);
+        var query = new GetPlacesInSubcategoryQuery(subcategoryId, page, User.GetId());
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
@@ -128,25 +127,13 @@ public class PlaceController : BaseController
     [HttpGet(nameof(Search))]
     public async Task<IActionResult> Search([FromQuery] SearchPlaceRequestDto model, int page)
     {
-        if (!User.IsAdmin() && model.Context == SearchContext.Admin)
-        {
-            var error = new Error("You are not authorized to perform this search.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
+        var query = new SearchPlaceQuery(
+            model,
+            page,
+            User.GetId(),
+            User.IsAdmin(),
+            User.IsAuthenticated());
 
-        if (!User.IsAuthenticated() && model.Context == SearchContext.UserPlaces)
-        {
-            var error = new Error("You must be authorized to perform this search.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
-        if (!User.IsAuthenticated() && model.Context == SearchContext.FavPlace)
-        {
-            var error = new Error("You must be authorized to perform this search.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
-        var query = new SearchPlaceQuery(model, page, User.GetId());
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

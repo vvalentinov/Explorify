@@ -1,4 +1,6 @@
-﻿namespace Explorify.Application.Abstractions.Models;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace Explorify.Application.Abstractions.Models;
 
 public class Result
 {

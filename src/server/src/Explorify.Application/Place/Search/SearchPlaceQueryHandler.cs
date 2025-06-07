@@ -14,199 +14,59 @@ public class SearchPlaceQueryHandler
 {
     private readonly IDbConnection _dbConnection;
 
-    public SearchPlaceQueryHandler(IDbConnection dbConnection)
+    private readonly IPlaceSearchQueryBuilder _placeSearchQueryBuilder;
+    private readonly IPlaceSearchQueryValidator _placeSearchQueryValidator;
+
+    public SearchPlaceQueryHandler(
+        IDbConnection dbConnection,
+        IPlaceSearchQueryBuilder placeSearchQueryBuilder,
+        IPlaceSearchQueryValidator placeSearchQueryValidator)
     {
         _dbConnection = dbConnection;
+
+        _placeSearchQueryBuilder = placeSearchQueryBuilder;
+        _placeSearchQueryValidator = placeSearchQueryValidator;
     }
 
     public async Task<Result<PlacesListResponseModel>> Handle(
         SearchPlaceQuery request,
         CancellationToken cancellationToken)
     {
+        _placeSearchQueryBuilder.Reset();
+
         var model = request.Model;
 
-        var parameters = new DynamicParameters();
+        var validationResult = await _placeSearchQueryValidator.Validate(
+            model,
+            request.CurrentUserId,
+            request.isCurrentUserAdmin,
+            request.isUserAuthenticated);
 
-        var whereConditions = new List<string>();
-
-        if (!string.IsNullOrWhiteSpace(model.Name))
+        if (validationResult.IsFailure)
         {
-            whereConditions.Add("p.Name LIKE @Name");
-            parameters.Add("Name", $"%{model.Name}%");
+            return Result.Failure<PlacesListResponseModel>(validationResult.Error);
         }
 
-        if (model.CountryId.HasValue)
-        {
-            whereConditions.Add("p.CountryId = @CountryId");
-            parameters.Add("CountryId", model.CountryId);
-        }
+        _placeSearchQueryBuilder.BuildNameFilter(model.Name);
+        _placeSearchQueryBuilder.BuildCountryFilter(model.CountryId);
+        _placeSearchQueryBuilder.BuildCategoryFilter(model.CategoryId, model.SubcategoryId);
+        _placeSearchQueryBuilder.BuildTagsFilter(model.Tags);
 
-        if (model.CategoryId.HasValue && model.SubcategoryId.HasValue)
-        {
-            const string validationSql = @"
-                SELECT COUNT(1)
-                FROM Categories
-                WHERE Id = @SubcategoryId AND ParentId = @CategoryId
-            ";
+        _placeSearchQueryBuilder.BuildContextFilter(
+            model.Context,
+            model.Status ?? EntityStatus.Approved,
+            request.CurrentUserId,
+            model.UserFollowingId);
 
-            var isValid = await _dbConnection.ExecuteScalarAsync<bool>(
-                validationSql,
-                new { model.SubcategoryId, model.CategoryId }
-            );
-
-            if (!isValid)
-            {
-                var error = new Error("Subcategory does not belong to the specified category.", ErrorType.Validation);
-                return Result.Failure<PlacesListResponseModel>(error);
-            }
-
-            whereConditions.Add("p.CategoryId = @SubcategoryId");
-            parameters.Add("SubcategoryId", model.SubcategoryId);
-        }
-        else if (model.SubcategoryId.HasValue)
-        {
-            whereConditions.Add("p.CategoryId = @SubcategoryId");
-            parameters.Add("SubcategoryId", model.SubcategoryId);
-        }
-        else if (model.CategoryId.HasValue)
-        {
-            whereConditions.Add(@"
-                p.CategoryId IN (
-                    SELECT Id FROM Categories WHERE ParentId = @CategoryId
-                )");
-            parameters.Add("CategoryId", model.CategoryId);
-        }
-
-        if (model.Tags?.Count > 0)
-        {
-            whereConditions.Add(@"
-                EXISTS (
-                    SELECT 1
-                    FROM PlaceVibeAssignments pa
-                    WHERE pa.PlaceId = p.Id AND pa.PlaceVibeId IN @Tags
-                )");
-            parameters.Add("Tags", model.Tags);
-        }
-
-        switch (model.Context)
-        {
-            case SearchContext.Global:
-                whereConditions.Add("p.IsDeleted = 0");
-                whereConditions.Add("p.IsApproved = 1");
-                break;
-
-            case SearchContext.UserPlaces:
-                whereConditions.Add("p.UserId = @CurrentUserId");
-                parameters.Add("CurrentUserId", request.CurrentUserId);
-
-                if (model.Status?.ToLower() == "approved")
-                {
-                    whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
-                }
-                else if (model.Status?.ToLower() == "unapproved")
-                {
-                    whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
-                }
-                else if (model.Status?.ToLower() == "deleted")
-                {
-                    var cutoff = DateTime.UtcNow.AddMinutes(-5);
-                    parameters.Add("Cutoff", cutoff);
-                    whereConditions.Add(@"
-                        p.IsDeleted = 1 AND
-                        p.IsDeletedByAdmin = 0 AND
-                        p.DeletedOn >= @Cutoff AND
-                        p.IsCleaned = 0");
-                }
-                break;
-
-            case SearchContext.Admin:
-                if (model.Status?.ToLower() == "approved")
-                {
-                    whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
-                }
-                else if (model.Status?.ToLower() == "unapproved")
-                {
-                    whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
-                }
-                else if (model.Status?.ToLower() == "deleted")
-                {
-                    var cutoff = DateTime.UtcNow.AddMinutes(-5);
-                    parameters.Add("Cutoff", cutoff);
-                    whereConditions.Add("p.IsDeleted = 1 AND p.DeletedOn >= @Cutoff");
-                }
-                break;
-
-            case SearchContext.UserFollowing:
-
-                if (!model.UserFollowingId.HasValue)
-                {
-                    var error = new Error("UserFollowingId is required for UserFollowing context.", ErrorType.Validation);
-                    return Result.Failure<PlacesListResponseModel>(error);
-                }
-
-                const string followCheckSql = @"
-                    SELECT COUNT(1)
-                    FROM UserFollows
-                    WHERE FollowerId = @CurrentUserId AND FolloweeId = @UserFollowingId AND IsDeleted = 0;
-                ";
-
-                var isFollowing = await _dbConnection.ExecuteScalarAsync<bool>(
-                    followCheckSql,
-                    new
-                    {
-                        request.CurrentUserId,
-                        model.UserFollowingId
-                    }
-                );
-
-                if (!isFollowing)
-                {
-                    var error = new Error("You are not following the specified user.", ErrorType.Validation);
-                    return Result.Failure<PlacesListResponseModel>(error);
-                }
-
-                whereConditions.Add("p.UserId = @UserFollowingId");
-                whereConditions.Add("p.IsApproved = 1");
-                whereConditions.Add("p.IsDeleted = 0");
-                parameters.Add("UserFollowingId", model.UserFollowingId);
-                break;
-
-            case SearchContext.FavPlace:
-                whereConditions.Add("p.Id IN (SELECT fp.PlaceId FROM FavoritePlaces AS fp WHERE fp.UserId = @CurrentUserId)");
-                whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
-                parameters.Add("CurrentUserId", request.CurrentUserId);
-                break;
-
-        }
-
-        var whereClause = whereConditions.Count > 0
-            ? "WHERE " + string.Join(" AND ", whereConditions)
-            : string.Empty;
-
-        var countSql = $"SELECT COUNT(*) FROM Places p {whereClause}";
-        var totalCount = await _dbConnection.ExecuteScalarAsync<int>(countSql, parameters);
+        var countSql = _placeSearchQueryBuilder.BuildCountQuery();
+        var totalCount = await _dbConnection.ExecuteScalarAsync<int>(countSql, _placeSearchQueryBuilder.Parameters);
 
         var offset = (request.Page - 1) * PlacesPerPageCount;
+        var dataSql = _placeSearchQueryBuilder.BuildSearchQuery(offset, PlacesPerPageCount);
 
-        var dataSql = $@"
-            SELECT
-                p.Id,
-                p.Name,
-                p.SlugifiedName,
-                p.ThumbUrl AS ImageUrl,
-                p.IsDeleted
-            FROM Places p
-            {whereClause}
-            ORDER BY p.CreatedOn DESC
-            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-        ";
+        var places = await _dbConnection.QueryAsync<PlaceDisplayResponseModel>(dataSql, _placeSearchQueryBuilder.Parameters);
 
-        parameters.Add("Offset", offset);
-        parameters.Add("PageSize", PlacesPerPageCount);
-
-        var places = await _dbConnection.QueryAsync<PlaceDisplayResponseModel>(dataSql, parameters);
-
-        var result = new PlacesListResponseModel
+        var responseModel = new PlacesListResponseModel
         {
             Places = places,
             Pagination = new PaginationResponseModel
@@ -217,6 +77,6 @@ public class SearchPlaceQueryHandler
             }
         };
 
-        return Result.Success(result);
+        return Result.Success(responseModel);
     }
 }

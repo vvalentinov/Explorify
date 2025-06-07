@@ -26,5 +26,6 @@ public class ApplicationUser :
     public ICollection<ReviewsLikes> ReviewLikes { get; set; }
         = new List<ReviewsLikes>();
 
-    public ICollection<UserBadge> UserBadges { get; set; } = new List<UserBadge>();
+    public ICollection<UserBadge> UserBadges { get; set; }
+        = new List<UserBadge>();
 }

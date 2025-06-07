@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Explorify.Application.Place.Search;
 using Explorify.Application.Place.Upload;
 
 using FluentValidation;
@@ -25,6 +26,9 @@ public static class ServiceCollectionExtensions
             var connectionString = configuration.GetConnectionString("DbConnection");
             return new SqlConnection(connectionString);
         });
+
+        services.AddScoped<IPlaceSearchQueryBuilder, PlaceSearchQueryBuilder>();
+        services.AddScoped<IPlaceSearchQueryValidator, PlaceSearchQueryValidator>();
 
         return services;
     }

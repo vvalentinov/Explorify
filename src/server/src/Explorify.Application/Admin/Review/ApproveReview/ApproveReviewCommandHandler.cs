@@ -1,8 +1,16 @@
-﻿using Explorify.Application.Abstractions.Models;
+﻿using System.Data;
+
+using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.ApplicationUserConstants;
+
+using static Explorify.Domain.Constants.ReviewConstants;
+using static Explorify.Domain.Constants.ReviewConstants.ErrorMessages;
+using static Explorify.Domain.Constants.ReviewConstants.SuccessMessages;
+
+using Dapper;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -16,15 +24,20 @@ public class ApproveReviewCommandHandler
     private readonly IUserService _userService;
     private readonly INotificationService _notificationService;
 
+    private readonly IDbConnection _dbConnection;
+
     public ApproveReviewCommandHandler(
         IRepository repository,
         IUserService userService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IDbConnection dbConnection)
     {
         _repository = repository;
 
         _userService = userService;
         _notificationService = notificationService;
+
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result> Handle(
@@ -38,15 +51,15 @@ public class ApproveReviewCommandHandler
                 x.Id == request.ReviewId,
                 cancellationToken);
 
-        if (review == null)
+        if (review is null)
         {
-            var error = new Error("No review with given id found!", ErrorType.Validation);
+            var error = new Error(NoReviewWithIdError, ErrorType.Validation);
             return Result.Failure(error);
         }
 
         if (review.IsApproved)
         {
-            var error = new Error("This review is already approved!", ErrorType.Validation);
+            var error = new Error(ReviewAlreadyApprovedError, ErrorType.Validation);
             return Result.Failure(error);
         }
 
@@ -61,28 +74,57 @@ public class ApproveReviewCommandHandler
             return increasePointsResult;
         }
 
+        var isReviewOwner = review.UserId == request.CurrentUserId;
+
         _repository.Update(review);
 
-        if (review.UserId == request.CurrentUserId)
+        const string getUsernameSql = @"SELECT UserName FROM AspNetUsers WHERE Id = @UserId";
+        var username = await _dbConnection.QueryFirstOrDefaultAsync<string>(getUsernameSql, new { review.UserId }) ?? "Someone";
+
+        var followerIds = await _repository
+            .AllAsNoTracking<Domain.Entities.UserFollow>()
+            .Where(x => x.FolloweeId == review.UserId && x.FollowerId != request.CurrentUserId)
+            .Select(x => x.FollowerId)
+            .ToListAsync(cancellationToken);
+    
+        if (followerIds.Count > 0)
         {
-            await _repository.SaveChangesAsync();
-            return Result.Success("Successfully approved review!");
+            var followerNotifications = followerIds.Select(followerId => new Domain.Entities.Notification
+            {
+                ReceiverId = followerId,
+                SenderId = review.UserId,
+                Content = $"{username} just uploaded a new review for place: \"{review.Place.Name}\". Go and check it out!"
+            }).ToList();
+
+            await _repository.AddRangeAsync(followerNotifications);
         }
 
-        var notification = new Domain.Entities.Notification
+        if (!isReviewOwner)
         {
-            ReceiverId = review.UserId,
-            SenderId = request.CurrentUserId,
-            Content = $"Great news! Your review for place \"{review.Place.Name}\" just got the seal of approval. You've earned {UserReviewUploadPoints} adventure points – keep exploring!"
-        };
+            var notification = new Domain.Entities.Notification
+            {
+                ReceiverId = review.UserId,
+                SenderId = request.CurrentUserId,
+                Content = ReviewApprovedNotificationContent(review.Place.Name, UserReviewUploadPoints)
+            };
 
-        await _repository.AddAsync(notification);
+            await _repository.AddAsync(notification);
+        }
+
         await _repository.SaveChangesAsync();
 
-        await _notificationService.NotifyAsync(
-            "Admin approved your review request! Check your notifications.",
-            review.UserId);
+        if (!isReviewOwner)
+        {
+            await _notificationService.NotifyAsync(
+                ReviewApprovedNotification,
+                review.UserId);
+        }
 
-        return Result.Success("Successfully approved review!");
+        foreach (var followerId in followerIds)
+        {
+            await _notificationService.NotifyAsync($"{username} uploaded a new review!", followerId);
+        }
+
+        return Result.Success(ReviewApprovedSuccess);
     }
 }

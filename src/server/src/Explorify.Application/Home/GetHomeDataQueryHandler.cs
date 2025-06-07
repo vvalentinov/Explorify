@@ -25,14 +25,24 @@ public class GetHomeDataQueryHandler
             """
             
             SELECT TOP 6
-               	Id,
-               	[Name],
-               	SlugifiedName,
-               	ThumbUrl as ImageUrl,
-               	IsDeleted
-            FROM Places
-            WHERE IsDeleted = 0 AND IsApproved = 1
-            ORDER BY CreatedOn DESC
+               	p.Id,
+               	p.[Name],
+               	p.SlugifiedName,
+               	p.ThumbUrl as ImageUrl,
+               	p.IsDeleted,
+                p.CreatedOn,
+                AVG(CAST(r.Rating AS FLOAT)) AS AverageRating
+            FROM Places AS p
+            JOIN Reviews AS r ON p.Id = r.PlaceId AND r.IsApproved = 1
+            WHERE p.IsDeleted = 0 AND p.IsApproved = 1
+            GROUP BY
+                p.Id,
+                p.[Name],
+                p.SlugifiedName,
+                p.ThumbUrl,
+                p.IsDeleted,
+                p.CreatedOn
+            ORDER BY p.CreatedOn DESC
             
             """;
 

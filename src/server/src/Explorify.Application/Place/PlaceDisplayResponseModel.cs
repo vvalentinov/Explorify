@@ -11,4 +11,8 @@ public class PlaceDisplayResponseModel
     public string ImageUrl { get; set; } = string.Empty;
 
     public bool IsDeleted { get; set; }
+
+    public double AverageRating { get; set; }
+
+    public bool IsFavorite { get; set; }
 }

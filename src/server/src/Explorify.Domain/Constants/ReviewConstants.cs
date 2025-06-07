@@ -10,6 +10,11 @@ public static class ReviewConstants
 
     public const int ReviewsPerPageCount = 6;
 
+    public static string ReviewApprovedNotificationContent(string placeName, int points)
+        => $"Great news! Your review for place \"{placeName}\" just got the seal of approval. You've earned {points} adventure points – keep exploring!";
+
+    public const string ReviewApprovedNotification = "Admin approved your review request! Check your notifications.";
+
     public static class ErrorMessages
     {
         public static readonly string ReviewRatingError = $"Review rating must be between {ReviewRatingMin} and {ReviewRatingMax}!";
@@ -22,10 +27,16 @@ public static class ReviewConstants
         public const string UserReviewOwnPlaceError = "Owner of place can only leave review on place upload!";
 
         public const string UserReviewAlreadyExistsError = "You already have uploaded a review for this place!";
+
+        public const string NoReviewWithIdError = "No review with given id found!";
+
+        public const string ReviewAlreadyApprovedError = "This review is already approved!";
     }
 
     public static class SuccessMessages
     {
         public const string ReviewUploadSuccess = "Successfully uploaded review!";
+
+        public const string ReviewApprovedSuccess = "Successfully approved review!";
     }
 }

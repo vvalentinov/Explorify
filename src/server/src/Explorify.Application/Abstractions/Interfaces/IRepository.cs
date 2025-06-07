@@ -14,6 +14,9 @@ public interface IRepository
     Task AddAsync<T>(T entity)
         where T : BaseModel;
 
+    Task AddRangeAsync<T>(IEnumerable<T> entities)
+        where T : BaseModel;
+
     Task<T?> GetByIdAsync<T>(object id)
         where T : BaseModel;
 

@@ -4,4 +4,5 @@ namespace Explorify.Application.Place.GetPlaces.GetPlacesInSubcategory;
 
 public record GetPlacesInSubcategoryQuery(
     int SubcategoryId,
-    int Page) : IQuery<PlacesListResponseModel>;
+    int Page,
+    Guid CurrentUserId) : IQuery<PlacesListResponseModel>;

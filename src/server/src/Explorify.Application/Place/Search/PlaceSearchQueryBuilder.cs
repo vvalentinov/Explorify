@@ -1,113 +1,107 @@
-﻿using System.Data;
-using System.Data.Common;
-using Azure.Core;
-using Dapper;
-using Explorify.Application.Abstractions.Models;
-using MediatR;
+﻿using Dapper;
 
 namespace Explorify.Application.Place.Search;
 
 public class PlaceSearchQueryBuilder
+    : IPlaceSearchQueryBuilder
 {
-    private readonly List<string> _whereConditions = new();
-    private readonly DynamicParameters _parameters = new();
+    private List<string> _filters = new();
+    private DynamicParameters _parameters = new();
 
-    public void AddNameFilter(string? name)
+    public PlaceSearchQueryBuilder()
+    {
+        Reset();
+    }
+
+    public DynamicParameters Parameters => _parameters;
+
+    public IReadOnlyList<string> Filters => _filters;
+
+    public void Reset()
+    {
+        _filters = new List<string>();
+        _parameters = new DynamicParameters();
+    }
+
+    public void BuildNameFilter(string? name)
     {
         if (!string.IsNullOrWhiteSpace(name))
         {
-            _whereConditions.Add("p.Name LIKE @Name");
+            _filters.Add("p.Name LIKE @Name");
             _parameters.Add("Name", $"%{name}%");
         }
     }
 
-    public void AddCountryFilter(int? countryId)
+    public void BuildCountryFilter(int? countryId)
     {
         if (countryId.HasValue)
         {
-            _whereConditions.Add("p.CountryId = @CountryId");
+            _filters.Add("p.CountryId = @CountryId");
             _parameters.Add("CountryId", countryId);
         }
     }
 
-    public void AddCategoryFilter(
-        int? categoryId,
-        int? subcategoryId,
-        IDbConnection dbConnection)
+    public void BuildCategoryFilter(int? categoryId, int? subcategoryId)
     {
-        if (categoryId.HasValue && subcategoryId.HasValue)
+        if (subcategoryId.HasValue)
         {
-            const string sql = @"SELECT COUNT(1) FROM Categories WHERE Id = @SubcategoryId AND ParentId = @CategoryId";
-            var isValid = dbConnection.ExecuteScalar<bool>(sql, new { SubcategoryId = subcategoryId, CategoryId = categoryId });
-
-            if (!isValid)
-                throw new Exception("Invalid category hierarchy");
-
-            _whereConditions.Add("p.CategoryId = @SubcategoryId");
-            _parameters.Add("SubcategoryId", subcategoryId);
-        }
-        else if (subcategoryId.HasValue)
-        {
-            _whereConditions.Add("p.CategoryId = @SubcategoryId");
+            _filters.Add("p.CategoryId = @SubcategoryId");
             _parameters.Add("SubcategoryId", subcategoryId);
         }
         else if (categoryId.HasValue)
         {
-            _whereConditions.Add(@"p.CategoryId IN (SELECT Id FROM Categories WHERE ParentId = @CategoryId)");
+            _filters.Add("p.CategoryId IN (SELECT Id FROM Categories WHERE ParentId = @CategoryId)");
             _parameters.Add("CategoryId", categoryId);
         }
     }
 
-    public void AddTagFilter(List<int>? tags)
+    public void BuildTagsFilter(List<int>? tags)
     {
         if (tags?.Count > 0)
         {
-            _whereConditions.Add(@"
+            _filters.Add(@"
                 EXISTS (
                     SELECT 1
                     FROM PlaceVibeAssignments pa
                     WHERE pa.PlaceId = p.Id AND pa.PlaceVibeId IN @Tags
                 )");
+
             _parameters.Add("Tags", tags);
         }
     }
 
-    public void AddContextFilter(
-        SearchContext context,
-        SearchPlaceRequestDto model,
-        Guid currentUserId,
-        IDbConnection dbConnection)
+    public void BuildContextFilter(
+        SearchContext searchContext,
+        EntityStatus entityStatus,
+        Guid? currentUserId,
+        Guid? userFollowingId)
     {
-        switch (context)
+        switch (searchContext)
         {
             case SearchContext.Global:
-                _whereConditions.Add("p.IsDeleted = 0");
-                _whereConditions.Add("p.IsApproved = 1");
-                break;
-
-            case SearchContext.FavPlace:
-                _whereConditions.Add("p.Id IN (SELECT PlaceId FROM FavoritePlaces WHERE UserId = @CurrentUserId)");
-                _whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
-                _parameters.Add("CurrentUserId", currentUserId);
+                _filters.Add("p.IsDeleted = 0");
+                _filters.Add("p.IsApproved = 1");
                 break;
 
             case SearchContext.UserPlaces:
-                _whereConditions.Add("p.UserId = @CurrentUserId");
+                _filters.Add("p.UserId = @CurrentUserId");
                 _parameters.Add("CurrentUserId", currentUserId);
 
-                if (model.Status?.ToLower() == "approved")
+                if (entityStatus == EntityStatus.Approved)
                 {
-                    _whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
+                    _filters.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
                 }
-                else if (model.Status?.ToLower() == "unapproved")
+                else if (entityStatus == EntityStatus.Unapproved)
                 {
-                    _whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
+                    _filters.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
                 }
-                else if (model.Status?.ToLower() == "deleted")
+                else if (entityStatus == EntityStatus.Deleted)
                 {
                     var cutoff = DateTime.UtcNow.AddMinutes(-5);
+
                     _parameters.Add("Cutoff", cutoff);
-                    _whereConditions.Add(@"
+
+                    _filters.Add(@"
                         p.IsDeleted = 1 AND
                         p.IsDeletedByAdmin = 0 AND
                         p.DeletedOn >= @Cutoff AND
@@ -116,65 +110,78 @@ public class PlaceSearchQueryBuilder
                 break;
 
             case SearchContext.Admin:
-                if (model.Status?.ToLower() == "approved")
+                if (entityStatus == EntityStatus.Approved)
                 {
-                    _whereConditions.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
+                    _filters.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
                 }
-                else if (model.Status?.ToLower() == "unapproved")
+                else if (entityStatus == EntityStatus.Unapproved)
                 {
-                    _whereConditions.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
+                    _filters.Add("p.IsApproved = 0 AND p.IsDeleted = 0");
                 }
-                else if (model.Status?.ToLower() == "deleted")
+                else if (entityStatus == EntityStatus.Deleted)
                 {
                     var cutoff = DateTime.UtcNow.AddMinutes(-5);
                     _parameters.Add("Cutoff", cutoff);
-                    _whereConditions.Add("p.IsDeleted = 1 AND p.DeletedOn >= @Cutoff");
+                    _filters.Add("p.IsDeleted = 1 AND p.DeletedOn >= @Cutoff");
                 }
                 break;
 
-                //case SearchContext.UserFollowing:
+            case SearchContext.UserFollowing:
+                _filters.Add("p.UserId = @UserFollowingId");
+                _filters.Add("p.IsApproved = 1");
+                _filters.Add("p.IsDeleted = 0");
+                _parameters.Add("UserFollowingId", userFollowingId);
+                break;
 
-                //    if (!model.UserFollowingId.HasValue)
-                //    {
-                //        var error = new Error("UserFollowingId is required for UserFollowing context.", ErrorType.Validation);
-                //        return Result.Failure<PlacesListResponseModel>(error);
-                //    }
-
-                //    const string followCheckSql = @"
-                //        SELECT COUNT(1)
-                //        FROM UserFollows
-                //        WHERE FollowerId = @CurrentUserId AND FolloweeId = @UserFollowingId AND IsDeleted = 0;
-                //    ";
-
-                //    var isFollowing = await _dbConnection.ExecuteScalarAsync<bool>(
-                //    followCheckSql,
-                //        new
-                //        {
-                //            request.CurrentUserId,
-                //            model.UserFollowingId
-                //        }
-                //    );
-
-                //    if (!isFollowing)
-                //    {
-                //        var error = new Error("You are not following the specified user.", ErrorType.Validation);
-                //        return Result.Failure<PlacesListResponseModel>(error);
-                //    }
-
-                //    whereConditions.Add("p.UserId = @UserFollowingId");
-                //    whereConditions.Add("p.IsApproved = 1");
-                //    whereConditions.Add("p.IsDeleted = 0");
-                //    parameters.Add("UserFollowingId", model.UserFollowingId);
-                //    break;
-
-                //         public (string WhereClause, DynamicParameters Parameters) Build()
-                //{
-                //    var whereClause = _whereConditions.Count > 0
-                //        ? "WHERE " + string.Join(" AND ", _whereConditions)
-                //        : string.Empty;
-
-                //    return (whereClause, _parameters);
-                //}
+            case SearchContext.FavPlace:
+                _filters.Add("p.Id IN (SELECT fp.PlaceId FROM FavoritePlaces AS fp WHERE fp.UserId = @CurrentUserId)");
+                _filters.Add("p.IsApproved = 1 AND p.IsDeleted = 0");
+                _parameters.Add("CurrentUserId", currentUserId);
+                break;
         }
+    }
+
+    public string BuildSearchQuery(int offSet, int placesPerPage)
+    {
+        var whereClause = _filters.Count > 0
+            ? "WHERE " + string.Join(" AND ", _filters)
+            : string.Empty;
+
+        var dataSql = $@"
+            SELECT
+                p.Id,
+                p.Name,
+                p.SlugifiedName,
+                p.ThumbUrl AS ImageUrl,
+                p.IsDeleted,
+                p.CreatedOn,
+                COALESCE(AVG(CAST(r.Rating AS FLOAT)), 0) AS AverageRating
+            FROM Places p
+            LEFT JOIN Reviews r ON p.Id = r.PlaceId AND r.IsApproved = 1
+            {whereClause}
+            GROUP BY
+                p.Id,
+                p.Name,
+                p.SlugifiedName,
+                p.ThumbUrl,
+                p.IsDeleted,
+                p.CreatedOn
+            ORDER BY p.CreatedOn DESC
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+        ";
+
+        _parameters.Add("Offset", offSet);
+        _parameters.Add("PageSize", placesPerPage);
+
+        return dataSql;
+    }
+
+    public string BuildCountQuery()
+    {
+        var whereClause = _filters.Count > 0
+            ? "WHERE " + string.Join(" AND ", _filters)
+            : string.Empty;
+
+        return $"SELECT COUNT(*) FROM Places p {whereClause}";
     }
 }

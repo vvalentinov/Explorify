@@ -35,6 +35,10 @@ public class Repository : IRepository, IDisposable
         where T : BaseModel
             => await DbSet<T>().AddAsync(entity);
 
+    public async Task AddRangeAsync<T>(IEnumerable<T> entities)
+        where T : BaseModel
+            => await DbSet<T>().AddRangeAsync(entities);
+
     public async Task<int> SaveChangesAsync()
         => await _dbContext.SaveChangesAsync();
 

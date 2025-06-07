@@ -12,7 +12,7 @@ public class SearchPlaceRequestDto
 
     public List<int>? Tags { get; set; }
 
-    public string? Status { get; set; }
+    public EntityStatus? Status { get; set; }
 
     public SearchContext Context { get; set; }
 

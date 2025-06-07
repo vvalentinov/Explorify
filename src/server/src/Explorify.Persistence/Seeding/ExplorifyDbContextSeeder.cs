@@ -1,5 +1,5 @@
-﻿using Explorify.Application.Abstractions.Interfaces;
-using Explorify.Persistence.Seeding.Seeders;
+﻿using Explorify.Persistence.Seeding.Seeders;
+using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Persistence.Seeding;
 
@@ -20,6 +20,7 @@ public class ExplorifyDbContextSeeder : ISeeder
 
         IEnumerable<ISeeder> seeders = [
             new RolesSeeder(),
+            new BadgesSeeder(),
             new CountriesSeeder(),
             new PlaceVibesSeeder(),
             new CategoriesSeeder(_slugGenerator),
