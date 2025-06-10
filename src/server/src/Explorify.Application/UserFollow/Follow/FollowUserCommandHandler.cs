@@ -1,8 +1,12 @@
-﻿using Explorify.Application.Abstractions.Models;
+﻿using System.Data;
+
+using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.ApplicationUserConstants;
+
+using Dapper;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -14,17 +18,23 @@ public class FollowUserCommandHandler
     private readonly IRepository _repository;
 
     private readonly IUserService _userService;
-    private readonly INotificationService _notificationService;
+    private readonly IBadgeService _badgeService;
+    private readonly INotificationQueueService _notificationQueueService;
+    private readonly IDbConnection _dbConnection;
 
     public FollowUserCommandHandler(
         IRepository repository,
         IUserService userService,
-        INotificationService notificationService)
+        IBadgeService badgeService,
+        INotificationQueueService notificationQueueService,
+        IDbConnection dbConnection)
     {
         _repository = repository;
 
         _userService = userService;
-        _notificationService = notificationService;
+        _badgeService = badgeService;
+        _notificationQueueService = notificationQueueService;
+        _dbConnection = dbConnection;
     }
 
     public async Task<Result> Handle(
@@ -85,19 +95,58 @@ public class FollowUserCommandHandler
         }
 
         var increasePointsResult = await _userService.IncreaseUserPointsAsync(followeeId.ToString(), UserFollowPoints);
-        if (increasePointsResult.IsFailure) return increasePointsResult;
 
-        var notification = new Domain.Entities.Notification
+        if (increasePointsResult.IsFailure)
         {
-            Content = $"{currUserName} just followed you! 🎉 You've earned {UserFollowPoints} points for being awesome!",
-            SenderId = followerId,
-            ReceiverId = followeeId,
-        };
+            return increasePointsResult;
+        }
 
-        await _repository.AddAsync(notification);
+        var pointBadges = await _badgeService.GrantPointThresholdBadgesAsync(followeeId, increasePointsResult.Data);
+        foreach (var badge in pointBadges)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: followerId,
+                receiverId: followeeId,
+                notificationContent: $"You've unlocked the \"{badge.BadgeName}\" badge. You are making progress, keep it up!",
+                realTimeMessage: "You reached a new milestone!"
+            );
+        }
+
+        const string sql = @"
+            SELECT COUNT(*) 
+            FROM UserFollows 
+            WHERE FolloweeId = @FolloweeId AND IsDeleted = 0";
+
+        var followerCount = await _dbConnection.ExecuteScalarAsync<int>(
+            sql,
+            new { FolloweeId = followeeId });
+
+        var milestoneBadges = await _badgeService.GrantFollowerMilestoneBadgesAsync(followeeId, followerCount);
+        foreach (var badge in milestoneBadges)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: followerId,
+                receiverId: followeeId,
+                notificationContent: $"Congrats! You've unlocked the \"{badge.BadgeName}\" badge. You are making progress, keep it up!",
+                realTimeMessage: "You earned a new badge!"
+            );
+        }
+
+        _notificationQueueService.QueueNotification(
+          senderId: followerId,
+          receiverId: followeeId,
+          notificationContent: $"{currUserName} just followed you! You've earned {UserFollowPoints} points for being awesome!",
+          realTimeMessage: $"{currUserName} started following you."
+      );
+
+        var notifications = _notificationQueueService.GetPendingNotifications();
+        if (notifications.Count > 0)
+        {
+            await _repository.AddRangeAsync(notifications);
+        }
+
         await _repository.SaveChangesAsync();
-
-        await _notificationService.NotifyAsync($"{currUserName} started following you.", followeeId);
+        await _notificationQueueService.FlushAsync();
 
         return Result.Success("Successfully followed user!");
     }

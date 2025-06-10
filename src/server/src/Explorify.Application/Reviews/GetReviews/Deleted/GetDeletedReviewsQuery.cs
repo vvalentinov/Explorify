@@ -6,4 +6,6 @@ public record GetDeletedReviewsQuery(
     Guid CurrentUserId,
     bool IsCurrUserAdmin,
     int Page,
-    bool IsForAdmin) : IQuery<ReviewsListResponseModel>;
+    bool IsForAdmin,
+    OrderEnum Order,
+    IEnumerable<int> StarFilters) : IQuery<ReviewsListResponseModel>;

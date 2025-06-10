@@ -33,9 +33,9 @@ public class GetReviewsForPlaceQueryHandler
 
         var orderBy = order switch
         {
-            ReviewsOrderEnum.Newest => "r.CreatedOn DESC",
-            ReviewsOrderEnum.Oldest => "r.CreatedOn ASC",
-            ReviewsOrderEnum.MostHelpful => "r.Likes DESC",
+            OrderEnum.Newest => "r.CreatedOn DESC",
+            OrderEnum.Oldest => "r.CreatedOn ASC",
+            OrderEnum.MostHelpful => "r.Likes DESC",
             _ => "r.CreatedOn DESC"
         };
 
@@ -61,6 +61,7 @@ public class GetReviewsForPlaceQueryHandler
               AND r.IsApproved = 1
               AND r.IsDeleted = 0
               AND r.UserId != (SELECT UserId FROM Places WHERE Id = @PlaceId)
+              AND (@HasStarsFilter = 0 OR r.Rating IN @StarsFilter)
             ORDER BY {orderBy}
             OFFSET @Offset ROWS FETCH NEXT @Take ROWS ONLY;
 
@@ -70,9 +71,12 @@ public class GetReviewsForPlaceQueryHandler
             WHERE r.PlaceId = @PlaceId
               AND r.IsApproved = 1
               AND r.IsDeleted = 0
-              AND r.UserId != (SELECT UserId FROM Places WHERE Id = @PlaceId);
+              AND r.UserId != (SELECT UserId FROM Places WHERE Id = @PlaceId)
+              AND (@HasStarsFilter = 0 OR r.Rating IN @StarsFilter);
 
             """;
+
+        var starsFilterList = request.starsFilter?.ToList() ?? new List<int>();
 
         var parameters = new
         {
@@ -80,6 +84,8 @@ public class GetReviewsForPlaceQueryHandler
             CurrentUserId = currentUserId,
             Offset = offset,
             Take = take,
+            StarsFilter = starsFilterList,
+            HasStarsFilter = starsFilterList.Count != 0 ? 1 : 0
         };
 
         using var multi = await _dbConnection.QueryMultipleAsync(sql, parameters);

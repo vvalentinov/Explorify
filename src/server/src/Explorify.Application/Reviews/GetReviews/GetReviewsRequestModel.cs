@@ -6,5 +6,5 @@ public class GetReviewsRequestModel
 
     public int Page { get; set; }
 
-    public ReviewsOrderEnum Order { get; set; }
+    public OrderEnum Order { get; set; }
 }

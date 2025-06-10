@@ -129,6 +129,102 @@ public class IdentityService : IIdentityService
         return Result.Success(authResponseModel, LoginSuccess);
     }
 
+    public async Task<Result<AuthResponseModel>> LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal)
+    {
+        if (claimsPrincipal is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        var email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
+
+        if (email is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            var newUser = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(newUser);
+
+            if (!result.Succeeded)
+            {
+                throw new ArgumentNullException();
+            }
+
+            user = newUser;
+        }
+
+        var loginProvider = "Google";
+        var providerKey = email;
+        var existingLoginUser = await _userManager.FindByLoginAsync(loginProvider, providerKey);
+
+        // Only add login if it's not already associated
+        if (existingLoginUser is null)
+        {
+            var loginResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(loginProvider, providerKey, loginProvider));
+
+            if (!loginResult.Succeeded)
+            {
+                return Result.Failure<AuthResponseModel>(new Error("Failed to link Google login.", ErrorType.Failure));
+            }
+        }
+
+        var isAdmin = await _userManager.IsInRoleAsync(user, AdminRoleName);
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.UserName ?? string.Empty),
+        };
+
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        foreach (string role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var accessToken = _tokenService.GenerateAccessToken(claims);
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        var refreshTokenRecord = new RefreshToken
+        {
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpiresOn = DateTime.UtcNow.AddDays(7),
+        };
+
+        await _repository.AddAsync(refreshTokenRecord);
+        await _repository.SaveChangesAsync();
+
+        var identityResponseModel = new IdentityResponseModel
+        {
+            IsAdmin = isAdmin,
+            AccessToken = accessToken,
+            UserId = user.Id.ToString(),
+            UserName = user.UserName ?? string.Empty,
+            ProfileImageUrl = user.ProfileImageUrl,
+        };
+
+        var authResponseModel = new AuthResponseModel
+        {
+            IdentityModel = identityResponseModel,
+            RefreshToken = refreshToken
+        };
+
+        return Result.Success(authResponseModel);
+    }
+
     public async Task<Result<AuthResponseModel>> RegisterUserAsync(RegisterRequestModel model)
     {
         var user = await _userManager.FindByNameAsync(model.UserName);

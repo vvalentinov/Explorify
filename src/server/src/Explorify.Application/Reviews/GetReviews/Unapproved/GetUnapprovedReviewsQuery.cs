@@ -6,4 +6,6 @@ public record GetUnapprovedReviewsQuery(
     Guid CurrentUserId,
     bool IsCurrUserAdmin,
     int Page,
-    bool IsForAdmin) : IQuery<ReviewsListResponseModel>;
+    bool IsForAdmin,
+    OrderEnum Order,
+    IEnumerable<int> StarsFilter) : IQuery<ReviewsListResponseModel>;

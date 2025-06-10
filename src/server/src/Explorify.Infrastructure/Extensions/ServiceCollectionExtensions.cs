@@ -5,17 +5,18 @@ using Explorify.Persistence.Identity;
 using Explorify.Application.Identity;
 using Explorify.Infrastructure.Settings;
 using Explorify.Infrastructure.Services;
+using Explorify.Infrastructure.BackgroundJobs;
 using Explorify.Application.Abstractions.Email;
 using Explorify.Application.Abstractions.Interfaces;
+
+using Quartz;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Quartz;
-using Explorify.Infrastructure.BackgroundJobs;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Explorify.Infrastructure.Extensions;
 
@@ -39,21 +40,39 @@ public static class ServiceCollectionExtensions
             .AddJwtAuthentication(configuration);
 
         services.AddScoped<INotificationService, NotificationService>();
-
         services.AddScoped<IGeocodingService, GeocodingService>();
-
         services.AddScoped<IWeatherInfoService, WeatherInfoService>();
+
+        var env = configuration["ASPNETCORE_ENVIRONMENT"];
 
         services.AddQuartz(q =>
         {
-            var jobKey = nameof(DeleteExpiredContentJob);
+            //var jobKey = nameof(DeleteExpiredContentJob);
 
-            q
-                .AddJob<DeleteExpiredContentJob>(JobKey.Create(jobKey))
-                .AddTrigger(triggerConfig =>
-                    triggerConfig
-                    .ForJob(jobKey)
-                    .WithSimpleSchedule(x => x.WithIntervalInMinutes(5).RepeatForever()));
+            //q
+            //    .AddJob<DeleteExpiredContentJob>(JobKey.Create(jobKey))
+            //    .AddTrigger(triggerConfig =>
+            //        triggerConfig
+            //        .ForJob(jobKey)
+            //        .WithSimpleSchedule(x => x.WithIntervalInMinutes(5).RepeatForever()));
+
+            var jobKey = JobKey.Create(nameof(DeleteExpiredContentJob));
+            q.AddJob<DeleteExpiredContentJob>(jobKey);
+
+            q.AddTrigger(trigger =>
+            {
+                trigger.ForJob(jobKey);
+
+                if (env == "Development")
+                {
+                    trigger.WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever());
+                }
+                else if (env == "Production")
+                {
+                    // Midnight daily
+                    trigger.WithCronSchedule("0 0 0 * * ?"); 
+                }
+            });
         });
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
@@ -113,6 +132,27 @@ public static class ServiceCollectionExtensions
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddGoogle(options =>
+            {
+                var clientId = configuration["Authentication:Google:ClientId"];
+
+                if (clientId == null)
+                {
+                    throw new ArgumentNullException(nameof(clientId));
+                }
+
+                var clientSecret = configuration["Authentication:Google:ClientSecret"];
+
+                if (clientSecret == null)
+                {
+                    throw new ArgumentNullException(nameof(clientSecret));
+                }
+
+                options.ClientId = clientId;
+                options.ClientSecret = clientSecret;
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
             {

@@ -30,6 +30,7 @@ public class GetProfileInfoQueryHandler
                 u.Id AS UserId,
                 u.UserName,
                 u.ProfileImageUrl,
+                u.Bio,
                 u.Points,
                 (SELECT COUNT(*) FROM UserFollows WHERE FolloweeId = u.Id AND IsDeleted = 0) AS FollowersCount,
                 (SELECT COUNT(*) FROM UserFollows WHERE FollowerId = u.Id AND IsDeleted = 0) AS FollowingCount,

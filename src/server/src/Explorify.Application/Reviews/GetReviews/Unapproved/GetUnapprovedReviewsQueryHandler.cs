@@ -28,9 +28,22 @@ public class GetUnapprovedReviewsQueryHandler
         var page = request.Page;
         var isForAdmin = request.IsForAdmin;
 
+        if (isForAdmin && !isCurrentUserAdmin)
+        {
+            var error = new Error("Only admins can access all unapproved reviews.", ErrorType.Validation);
+            return Result.Failure<ReviewsListResponseModel>(error);
+        }
+
+        var orderBy = request.Order switch
+        {
+            OrderEnum.Newest => "r.CreatedOn DESC",
+            OrderEnum.Oldest => "r.CreatedOn ASC",
+            OrderEnum.MostHelpful => "r.Likes DESC",
+            _ => "r.CreatedOn DESC"
+        };
+
         var sql =
-            """
-            -- Unapproved Reviews
+            $"""
 
             SELECT 
                 r.Id,
@@ -41,6 +54,7 @@ public class GetUnapprovedReviewsQueryHandler
                 r.IsApproved,
                 r.IsDeleted,
                 r.IsDeletedByAdmin,
+                r.CreatedOn,
                 p.Name AS PlaceName,
                 u.UserName,
                 u.ProfileImageUrl
@@ -52,21 +66,23 @@ public class GetUnapprovedReviewsQueryHandler
                 (@IsAdmin = 1 AND r.UserId != p.UserId)
                 OR
                 (@IsAdmin = 0 AND r.UserId = @CurrentUserId AND p.UserId != @CurrentUserId)
-              )
-            ORDER BY r.CreatedOn DESC
+              ) AND (@HasStarsFilter = 0 OR r.Rating IN @StarsFilter)
+            ORDER BY {orderBy}
             OFFSET @Offset ROWS FETCH NEXT @Take ROWS ONLY;
 
-            -- Total Count
-
-            SELECT COUNT(*) FROM Reviews r
+            SELECT
+                COUNT(*)
+            FROM Reviews r
             JOIN Places p ON r.PlaceId = p.Id
-            WHERE r.IsApproved = 0 AND p.IsDeleted = 0
+            WHERE r.IsApproved = 0 AND p.IsDeleted = 0 AND r.IsDeleted = 0
               AND (
                 (@IsAdmin = 1 AND r.UserId != p.UserId)
                 OR
                 (@IsAdmin = 0 AND r.UserId = @CurrentUserId AND p.UserId != @CurrentUserId)
-              );
+              ) AND (@HasStarsFilter = 0 OR r.Rating IN @StarsFilter);
             """;
+
+        var starsFilterList = request.StarsFilter?.ToList() ?? new List<int>();
 
         var parameters = new
         {
@@ -74,6 +90,8 @@ public class GetUnapprovedReviewsQueryHandler
             IsAdmin = isForAdmin && isCurrentUserAdmin,
             Offset = (request.Page - 1) * ReviewsPerPageCount,
             Take = ReviewsPerPageCount,
+            StarsFilter = starsFilterList,
+            HasStarsFilter = starsFilterList.Count != 0 ? 1 : 0
         };
 
         using var multi = await _dbConnection.QueryMultipleAsync(sql, parameters);
