@@ -1,9 +1,7 @@
 ﻿using System.Data;
-using System.Text.Json;
 
 using Explorify.Application.Vibes;
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
@@ -18,14 +16,9 @@ public class GetPlaceByIdQueryHandler
 {
     private readonly IDbConnection _dbConnection;
 
-    private readonly IWeatherInfoService _weatherInfoService;
-
-    public GetPlaceByIdQueryHandler(
-        IDbConnection dbConnection,
-        IWeatherInfoService weatherInfoService)
+    public GetPlaceByIdQueryHandler(IDbConnection dbConnection)
     {
         _dbConnection = dbConnection;
-        _weatherInfoService = weatherInfoService;
     }
 
     public async Task<Result<PlaceDetailsResponseModel>> Handle(
@@ -52,17 +45,6 @@ public class GetPlaceByIdQueryHandler
 
         place.ImagesUrls = [.. await multi.ReadAsync<string>()];
         place.Tags = [.. await multi.ReadAsync<VibeResponseModel>()];
-
-        if (!request.IsForAdmin)
-        {
-            place.WeatherData = await _weatherInfoService.GetWeatherInfo(
-                place.Latitude,
-                place.Longitude);
-        }
-        else
-        {
-            place.WeatherData = JsonDocument.Parse("{}").RootElement;
-        }
 
         return Result.Success(place);
     }

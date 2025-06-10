@@ -88,7 +88,6 @@ public static class GetPlaceSqlGenerator
     """;
     }
 
-
     public static string GetPlaceByIdForAdmin()
     {
         var sql =

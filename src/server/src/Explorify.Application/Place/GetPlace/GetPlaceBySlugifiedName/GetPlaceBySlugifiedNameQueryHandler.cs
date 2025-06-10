@@ -2,7 +2,6 @@
 
 using Explorify.Application.Vibes;
 using Explorify.Application.Abstractions.Models;
-using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.PlaceConstants.ErrorMessages;
@@ -17,15 +16,9 @@ public class GetPlaceBySlugifiedNameQueryHandler
 {
     private readonly IDbConnection _dbConnection;
 
-    private readonly IWeatherInfoService _weatherInfoService;
-
-    public GetPlaceBySlugifiedNameQueryHandler(
-        IDbConnection dbConnection,
-        IWeatherInfoService weatherInfoService)
+    public GetPlaceBySlugifiedNameQueryHandler(IDbConnection dbConnection)
     {
         _dbConnection = dbConnection;
-
-        _weatherInfoService = weatherInfoService;
     }
 
     public async Task<Result<PlaceDetailsResponseModel>> Handle(
@@ -50,8 +43,6 @@ public class GetPlaceBySlugifiedNameQueryHandler
 
         place.ImagesUrls = [.. await multi.ReadAsync<string>()];
         place.Tags = [.. await multi.ReadAsync<VibeResponseModel>()];
-
-        place.WeatherData = await _weatherInfoService.GetWeatherInfo(place.Latitude, place.Longitude);
 
         return Result.Success(place);
     }
