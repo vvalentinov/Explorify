@@ -5,7 +5,7 @@ import { placesServiceFactory } from '../../../services/placesService';
 import { countriesServiceFactory } from '../../../services/countriesService';
 import { categoriesServiceFactory } from '../../../services/categoriesService';
 
-import { useState, useEffect, useContext, useReducer } from "react";
+import { useState, useEffect, useContext, useReducer, useRef } from "react";
 
 import { useDebounce } from 'use-debounce';
 
@@ -34,8 +34,6 @@ const initialState = {
     countryLoading: false,
     searchContext: 'global',
 };
-
-import FilterCard from '../../FilterCard/FilterCard';
 
 function filtersReducer(state, action) {
     switch (action.type) {
@@ -102,6 +100,8 @@ const PlacesWithSearchPage = ({
     const [debouncedPlaceName] = useDebounce(state.placeName, 500);
     const [debouncedCountrySearch] = useDebounce(state.countrySearch, 500);
 
+    const skipNextSearchRef = useRef(false);
+
     const fetchPlaces = async () => {
 
         setSpinnerLoading(true);
@@ -147,6 +147,11 @@ const PlacesWithSearchPage = ({
     };
 
     useEffect(() => {
+
+        if (skipNextSearchRef.current) {
+            skipNextSearchRef.current = false;
+            return;
+        }
         fetchPlaces();
     }, [
         state.filter,
@@ -211,7 +216,7 @@ const PlacesWithSearchPage = ({
     }, [debouncedCountrySearch]);
 
     return (
-        <section style={{ paddingTop: '3rem' }}>
+        <section>
 
             {(searchContext === PlaceSearchContext.Global || searchContext === PlaceSearchContext.FavPlace) && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -223,6 +228,7 @@ const PlacesWithSearchPage = ({
                         state={state}
                         dispatch={dispatch}
                         isForAdmin={isForAdmin}
+                        skipNextSearchRef={skipNextSearchRef}
                     />
                 </div>
             )}
@@ -232,10 +238,10 @@ const PlacesWithSearchPage = ({
                 &&
                 (
                     <>
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                        {/* <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                             <FilterCard isForAdmin={isForAdmin} defaultValue={state.filter} value={state.filter}
                                 handleFilterChange={handleFilterChange} />
-                        </div>
+                        </div> */}
 
                         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
 
@@ -247,6 +253,7 @@ const PlacesWithSearchPage = ({
                                 state={state}
                                 dispatch={dispatch}
                                 isForAdmin={isForAdmin}
+                                skipNextSearchRef={skipNextSearchRef}
                             />
                         </div>
                     </>
@@ -262,15 +269,11 @@ const PlacesWithSearchPage = ({
                     dispatch={dispatch}
                     isForAdmin={isForAdmin}
                     userFollowingUserName={userFollowingUserName}
+                    skipNextSearchRef={skipNextSearchRef}
                 />
             )}
 
-            <div
-                style={{
-                    padding: '4rem 8rem',
-                }}
-                className={styles.placesContainer}
-            >
+            <div style={{ padding: '0 10rem' }} className={styles.placesContainer}>
                 <PlacesList
                     currentPage={state.currentPage}
                     handlePageChange={handlePageChange}

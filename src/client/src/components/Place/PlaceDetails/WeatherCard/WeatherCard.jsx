@@ -1,14 +1,15 @@
 import { Typography } from 'antd';
-import { CloudOutlined } from '@ant-design/icons';
-
 import styles from './WeatherCard.module.css';
 
 const { Title, Text } = Typography;
 
 const WeatherCard = ({ data }) => {
-
     if (!data || !data.current || !data.location) {
-        return null;
+        return (
+            <div className={styles.weatherCard}>
+                <Text className={styles.missingText}>⚠️ Missing weather data</Text>
+            </div>
+        );
     }
 
     const iconUrl = `https:${data.current.condition.icon}`;
@@ -16,7 +17,6 @@ const WeatherCard = ({ data }) => {
     return (
         <div className={styles.weatherCard}>
             <div className={styles.weatherHeader}>
-                {/* <CloudOutlined style={{ fontSize: '40px' }} /> */}
                 <Text className={styles.locationText}>
                     {data.location.name}, {data.location.country}
                 </Text>

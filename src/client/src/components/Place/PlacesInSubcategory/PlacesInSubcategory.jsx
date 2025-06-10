@@ -8,11 +8,17 @@ import PlacesList from "../PlacesList/PlacesList";
 import { fireError } from "../../../utils/fireError";
 import { placesServiceFactory } from "../../../services/placesService";
 
+import { useContext } from "react";
+
+import { AuthContext } from "../../../contexts/AuthContext";
+
 const PlacesInSubcategory = () => {
 
     const location = useLocation();
 
-    const placeService = placesServiceFactory();
+    const { token } = useContext(AuthContext);
+    const placeService = placesServiceFactory(token);
+
 
     const [places, setPlaces] = useState([]);
 

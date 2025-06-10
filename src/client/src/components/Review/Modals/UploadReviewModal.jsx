@@ -69,11 +69,13 @@ const UploadReviewModal = ({
             onCancel={handleCloseModal}
             footer={null}
             width={1000}
+            style={{ top: '10px' }}
             styles={{
                 body: {
                     padding: '1.5rem'
                 }
             }}
+            centered
         >
             <Form
                 form={form}

@@ -1,28 +1,59 @@
 .editPlaceSection {
-    min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 60px 20px;
+    font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif !important;
+    /* border: solid 1px black; */
+    padding: 4rem 0;
 }
 
 .editPlaceCard {
-    width: 100%;
-    max-width: 900px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    background-color: #ffffff;
-    border: solid 1px green;
+    width: 80%;
+    background: #fff;
+    padding: 6rem;
+    border-radius: 20px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif !important;
 }
 
+.pageTitle {
+    font-size: 2.4rem !important;
+    font-weight: 700 !important;
+    color: #14b8a6 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+/* Review section */
 .reviewCard {
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    background-color: #faf5ff;
-    border: 1px solid #d3adf7;
-    box-shadow: 0 4px 12px rgba(0 0 0 0.06);
+    padding: 2rem;
+    background-color: #d0f0d8;
+    border: 1px solid lightgray;
+    border-radius: 20px;
+    margin-top: 2rem;
 }
 
+/* Upload button */
+.uploadButton {
+    margin-top: 2rem;
+    height: 56px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-radius: 15px;
+    background-color: #14b8a6 !important;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.uploadButton:hover {
+    background-color: #0d9488 !important;
+}
+
+/* Tags */
 .tagCheckboxGroup {
     display: flex;
     flex-wrap: wrap;
@@ -30,28 +61,124 @@
 }
 
 .customTagCheckbox {
-    margin: 0;
-    padding: 6px 12px;
-    border: 1px solid #0ea5a5;
-    border-radius: 16px;
-    background-color: #f1fdfa;
+    border: 1px solid #10b981;
+    border-radius: 20px;
+    background-color: #ecfdf5;
+    padding: 10px 18px;
+    font-size: 1.05rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    user-select: none;
-    font-size: 0.95rem;
-}
-
-.customTagCheckbox :global(.ant-checkbox) {
-    display: none !important;
-}
-
-:global(.ant-checkbox-wrapper-checked).customTagCheckbox {
-    background-color: #0ea5a5 !important;
-    color: white !important;
-    border-color: #0ea5a5 !important;
 }
 
 .customTagCheckbox:hover {
-    border-color: #0ea5a5;
-    background-color: #e0f7f7;
+    background-color: #d1fae5;
+}
+
+:global(.ant-checkbox-wrapper-checked).customTagCheckbox {
+    background-color: #10b981 !important;
+    color: white !important;
+    border-color: #10b981 !important;
+}
+
+.customTagCheckbox :global(.ant-checkbox) {
+    display: none;
+}
+
+/* Cascader */
+.cascaderInput :global(.ant-select-selection-item) {
+    font-size: 1.4rem;
+}
+
+.cascaderInput :global(.ant-select-selection-placeholder) {
+    font-size: 1.4rem;
+}
+
+.cascaderInput :global(.ant-select-arrow) {
+    transform: scale(1.4);
+}
+
+.cascaderInput :global(.ant-select-clear) {
+    transform: scale(1.4);
+}
+
+:global(.dropdownPopup .ant-cascader-menus) {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+:global(.dropdownPopup .ant-cascader-menu) {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+:global(.dropdownPopup .ant-cascader-menu-item) {
+    font-size: 1.3rem !important;
+    padding: 12px 18px !important;
+}
+
+/* Countries Select */
+.countriesSelect :global(.ant-select-selector) {
+    height: 52px !important;
+}
+
+.countriesSelect {
+    margin-bottom: 10px;
+}
+
+.countriesSelect :global(.ant-select-selection-placeholder) {
+    font-size: 1.4rem;
+}
+
+.countriesSelect :global(.ant-select-selection-search-input) {
+    font-size: 1.4rem !important;
+}
+
+.countriesSelect :global(.ant-select-arrow) {
+    top: 33px !important;
+    transform: translateY(-50%) scale(1.4) !important;
+}
+
+.countriesSelect :global(.ant-select-selection-search) {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.countriesSelect :global(.ant-select-selection-item) {
+    font-size: 1.4rem !important;
+}
+
+:global(.customCountryDropdown) {
+    font-size: 1.4rem;
+}
+
+:global(.customCountryDropdown .ant-select-item-option-content) {
+    font-size: 1.4rem;
+    padding: 12px 18px;
+}
+
+:global(.customCountryDropdown .rc-virtual-list) {
+    max-height: 400px;
+}
+
+.customFormItemMargin {
+    margin-top: 1.5rem !important;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .uploadFormWrapper {
+        padding: 1.5rem;
+    }
+
+    .pageTitle {
+        font-size: 1.8rem;
+    }
+
+    .uploadButton {
+        font-size: 1.05rem;
+    }
 }

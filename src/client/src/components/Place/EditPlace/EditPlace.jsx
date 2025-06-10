@@ -24,9 +24,11 @@ import {
     ConfigProvider,
     Rate,
     Spin,
-    Checkbox
+    Checkbox,
+    Typography,
+    Empty
 } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, CommentOutlined } from '@ant-design/icons';
 
 import { useDebounce } from 'use-debounce';
 
@@ -38,6 +40,9 @@ import {
 } from './editPlaceUtil';
 
 import LocationPicker from '../../LocationPicker/LocationPicker';
+
+const desc = ['Terrible', 'Bad', 'Okay', 'Good', 'Excellent'];
+const emojis = ['😖', '😞', '😐', '🙂', '🤩'];
 
 const EditPlace = () => {
 
@@ -158,15 +163,18 @@ const EditPlace = () => {
     }, [editData, form]);
 
     useEffect(() => {
-
         if (debounced) {
-
             countriesService
                 .getCountries(countryName)
-                .then(res => setCountryOptions(mapCountryOptions(res)))
-                .catch(err => fireError(err));
+                .then(res => {
+                    setCountryOptions(mapCountryOptions(res));
+                    setSelectLoading(false);
+                })
+                .catch(err => {
+                    fireError(err);
+                    setSelectLoading(false);
+                });
         }
-
     }, [debounced]);
 
     const handleLocationSelect = (latlng) => {
@@ -180,6 +188,11 @@ const EditPlace = () => {
 
         data.PlaceId = editData?.placeId;
         const formData = generateFormData(data, toBeRemovedImagesIds);
+
+        // To inspect the FormData contents
+        // for (let pair of formData.entries()) {
+        //     console.log(`${pair[0]}:`, pair[1]);
+        // }
 
         placesService
             .editPlace(formData)
@@ -195,38 +208,30 @@ const EditPlace = () => {
     return (
         <section className={styles.editPlaceSection}>
 
-            <Card
-                className={styles.editPlaceCard}
-                title={<span><EditOutlined /> Edit Place</span>}
-                styles={{
-                    header: {
-                        backgroundColor: '#f0fdfa',
-                        borderRadius: '16px 16px 0 0',
-                        borderBottom: 'solid 1px green'
-                    }
-                }}
-            >
+            <div className={styles.editPlaceCard}>
+
+                <Typography.Title className={styles.pageTitle}><EditOutlined /> Edit Place</Typography.Title>
+
                 <Form form={form} onFinish={onSubmit} layout="vertical" size="large">
 
                     <Form.Item
                         name="Name"
-                        label="Name"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Name</span>}
+                        rules={[{ required: true, max: 100 }]}
                     >
-                        <Input placeholder="Enter place name..." />
+                        <Input style={{ fontSize: '1.5rem' }} placeholder="Enter place name..." />
                     </Form.Item>
 
-                    <Form.Item
-                        name="Address"
-                        label="Address"
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: '2rem'
+                        }}
                     >
-                        <Input placeholder="Enter address here..." />
-                    </Form.Item>
-
-
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem' }}>
-                        <Form.Item style={{ width: '50%' }} name="Latitude" label="Latitude">
-                            <Input
+                        <Form.Item style={{ width: '50%' }} name="Latitude" label={<span style={{ fontSize: '1.3rem' }}>Latitude</span>}>
+                            <Input style={{ fontSize: '1.5rem' }}
                                 onChange={(e) => {
                                     const newLat = parseFloat(e.target.value);
                                     if (!isNaN(newLat)) {
@@ -236,8 +241,8 @@ const EditPlace = () => {
                             />
                         </Form.Item>
 
-                        <Form.Item style={{ width: '50%' }} name="Longitude" label="Longitude">
-                            <Input
+                        <Form.Item style={{ width: '50%' }} name="Longitude" label={<span style={{ fontSize: '1.3rem' }}>Longitude</span>}>
+                            <Input style={{ fontSize: '1.5rem' }}
                                 onChange={(e) => {
                                     const newLng = parseFloat(e.target.value);
                                     if (!isNaN(newLng)) {
@@ -251,25 +256,41 @@ const EditPlace = () => {
                     <LocationPicker onLocationSelect={handleLocationSelect} location={locationMap} />
 
                     <Form.Item
+                        name="Address"
+                        label={<span style={{ fontSize: '1.3rem' }}>Address</span>}
+                        style={{ marginTop: '1.5rem', marginBottom: '0' }}
+                    >
+                        <Input style={{ fontSize: '1.5rem' }} placeholder="Enter address here..." />
+                    </Form.Item>
+
+                    <Form.Item
                         name="CategoryId"
-                        label="Category"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Category</span>}
+                        rules={[{ required: true }]}
+                        style={{ marginTop: '1.5rem' }}
                     >
                         <Cascader
                             options={categoryOptions}
                             placeholder="Select category"
+                            style={{
+                                height: '52px',
+                                fontFamily: 'Poppins, Segoe UI, sans-serif',
+                            }}
+                            className={styles.cascaderInput}
+                            classNames={{ popup: { root: 'dropdownPopup' } }}
                         />
 
                     </Form.Item>
 
                     <Form.Item
                         name="CountryId"
-                        label="Country"
-                    // rules={[{ required: true }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Country</span>}
+                        rules={[{ required: true }]}
                     >
                         <Select
                             showSearch
-                            allowClear={true}
+                            className={styles.countriesSelect}
+                            classNames={{ popup: { root: 'customCountryDropdown' } }}
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
                             onSearch={(value) => {
@@ -277,33 +298,42 @@ const EditPlace = () => {
                                 setOpenDropdown(true);
                                 setSelectLoading(true);
                             }}
+                            filterOption={false}
                             onBlur={() => {
+                                if (countryOptions.length === 0) {
+                                    // Clear the field if no results
+                                    form.setFieldsValue({ CountryId: undefined });
+                                }
                                 setCountryOptions([]);
                                 setOpenDropdown(false);
                             }}
                             options={countryOptions}
-                            notFoundContent={selectLoading ? (
-                                <div style={{ padding: '2rem 0', textAlign: 'center' }}>
-                                    <ConfigProvider theme={{
-                                        components: {
-                                            Spin: {
-                                                colorPrimary: 'green'
-                                            }
-                                        }
-                                    }}>
-                                        <Spin size="large" />
-                                    </ConfigProvider>
-                                </div>
-                            ) : null}
+
+                            notFoundContent={
+                                selectLoading ? (
+                                    <div style={{ padding: '2rem 0', textAlign: 'center' }}>
+                                        <ConfigProvider
+                                            theme={{
+                                                components: {
+                                                    Spin: { colorPrimary: 'green' }
+                                                }
+                                            }}
+                                        >
+                                            <div style={{ padding: '3rem 0', textAlign: 'center' }}>
+                                                <Spin style={{ transform: 'scale(1.5)' }} size="large" />
+                                            </div>
+                                        </ConfigProvider>
+                                    </div>
+                                ) : <Empty style={{ transform: 'scale(1.2)', margin: '2rem 0' }} />
+                            }
                             open={openDropdown}
                             onOpenChange={(open) => {
-                                // Don't allow dropdown to close if we're still loading
                                 if (!selectLoading) setOpenDropdown(open);
                             }}
                         />
                     </Form.Item>
 
-                    <Form.Item name="Tags" label="Tags">
+                    <Form.Item name="Tags" label={<span style={{ fontSize: '1.3rem' }}>Tags</span>}>
 
                         <Checkbox.Group
                             style={{ width: '100%' }}
@@ -334,40 +364,120 @@ const EditPlace = () => {
 
                     <Form.Item
                         name="Description"
-                        label="Description"
-                    // rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
+                        label={<span style={{ fontSize: '1.3rem' }}>Description</span>}
+                        rules={[{ required: true }, { min: 100 }, { max: 2000 }]}
                     >
 
                         <Input.TextArea
                             rows={6}
                             maxLength={2000}
                             placeholder="Write your best description for this place..."
+                            style={{ fontSize: '1.5rem' }}
                         />
 
                     </Form.Item>
 
                     <ImageUpload setToBeRemovedImagesIds={setToBeRemovedImagesIds} />
 
-                    <Card title="Review" type="inner" className={styles.reviewCard}>
+                    <Card type="inner" className={styles.reviewCard}>
+
+                        <Typography.Title
+                            level={3}
+                            style={{
+                                textAlign: 'center',
+                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                                fontWeight: 700,
+                                fontSize: '2.5rem',
+                                letterSpacing: '0.4px',
+                                color: '#1A7F64',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '0.6rem',
+                                width: '100%'
+                            }}
+                        >
+                            <span
+                                style={{
+                                    backgroundColor: '#ffffff',
+                                    borderRadius: '50%',
+                                    padding: '0.5rem',
+                                    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <CommentOutlined style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                            </span>
+                            Review
+                        </Typography.Title>
 
                         <Form.Item
-                            name="Rating"
-                            label="Rating"
-                        // rules={[{ required: true }]}
+                            style={{
+                                background: '#e8faef',
+                                padding: '2rem 4rem',
+                                borderRadius: '16px',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.06)',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}
                         >
-                            <Rate id="Rating" allowClear />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Form.Item noStyle shouldUpdate={(prev, curr) => prev.Rating !== curr.Rating}>
+                                    {({ getFieldValue }) => {
+                                        const rating = getFieldValue('Rating');
+                                        return rating ? (
+                                            <Typography.Text
+                                                style={{
+                                                    background: '#f6ffed',
+                                                    color: '#389e0d',
+                                                    fontSize: '1.5rem',
+                                                    fontWeight: 600,
+                                                    padding: '6px 16px',
+                                                    borderRadius: '12px',
+                                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                                                    marginBottom: '1rem',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                {['😖', '😞', '😐', '🙂', '🤩'][rating - 1]}{' '}
+                                                {['Terrible', 'Bad', 'Okay', 'Good', 'Excellent'][rating - 1]}
+                                            </Typography.Text>
+                                        ) : null;
+                                    }}
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="Rating"
+                                    rules={[{ required: true, message: 'Please provide a rating.' }]}
+                                    noStyle
+                                >
+                                    <Rate allowClear={false}
+                                        style={{ fontSize: '3rem' }}
+                                        tooltips={['Terrible', 'Bad', 'Okay', 'Good', 'Excellent']}
+                                    />
+                                </Form.Item>
+                            </div>
                         </Form.Item>
 
                         <Form.Item
                             name="ReviewContent"
-                            label="Content"
-                        // rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
+                            label={<span style={{ fontSize: '1.3rem' }}>Content</span>}
+                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
                         >
                             <Input.TextArea
                                 placeholder="Share your experience..."
                                 rows={10}
                                 maxLength={1000}
-                                style={{ fontSize: '1.1rem' }}
+                                style={{ fontSize: '1.5rem' }}
                             />
                         </Form.Item>
 
@@ -379,6 +489,7 @@ const EditPlace = () => {
                         variant='solid'
                         color='cyan'
                         htmlType="submit"
+                        className={styles.uploadButton}
                     >
                         {
                             isPlaceEditing ?
@@ -399,7 +510,7 @@ const EditPlace = () => {
                     </Button>
 
                 </Form>
-            </Card>
+            </div>
 
         </section>
     );

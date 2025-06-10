@@ -7,15 +7,16 @@
 }
 
 .uploadFormWrapper {
-    width: 65%;
+    width: 80%;
     background: #fff;
-    padding: 3rem;
+    padding: 6rem 10rem;
     border-radius: 20px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06);
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
     font-family: 'Poppins', 'Segoe UI', 'Helvetica Neue', sans-serif !important;
+    border: solid 1px lightgray;
 }
 
 .pageTitle {
@@ -43,7 +44,7 @@
     height: 56px;
     font-size: 1.5rem;
     font-weight: 600;
-    border-radius: 15px;
+    border-radius: 12px;
     background-color: #14b8a6 !important;
     border: none;
     transition: all 0.3s ease;

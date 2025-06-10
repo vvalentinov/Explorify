@@ -1,8 +1,48 @@
 import styles from './PlacesList.module.css';
-import { Card } from 'antd';
+import { Card, message } from 'antd';
 import { Link } from 'react-router-dom';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
+import { favPlaceServiceFactory } from '../../../services/favPlaceService';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../../../contexts/AuthContext';
+import { fireError } from '../../../utils/fireError';
 
 const PlaceCard = ({ place, isForAdmin }) => {
+
+    const { token, isAuthenticated, userId } = useContext(AuthContext);
+
+    const favPlaceService = favPlaceServiceFactory(token);
+
+    const [isFavorite, setIsFavorite] = useState(place.isFavorite);
+
+    const handleHeartClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+            if (!isFavorite) {
+                const res = await favPlaceService.addToFavorites(place?.id);
+                setIsFavorite(true);
+                message.success(res.successMessage, 5);
+            } else {
+                const res = await favPlaceService.removeFromFavorites(place?.id);
+                setIsFavorite(false);
+                message.success(res.successMessage, 5);
+            }
+        } catch (err) {
+            fireError(err);
+        }
+    };
+
+    const heartIcon = isAuthenticated && place?.userId !== userId && (
+        <div className={styles.heartIcon} onClick={handleHeartClick}>
+            {isFavorite ? (
+                <HeartFilled style={{ color: '#ff4d4f', fontSize: '25px' }} />
+            ) : (
+                <HeartOutlined style={{ color: '#999', fontSize: '25px' }} />
+            )}
+        </div>
+    );
 
     return (
         <Link
@@ -21,8 +61,8 @@ const PlaceCard = ({ place, isForAdmin }) => {
                 }}
                 styles={{
                     body: {
-                        display: 'none'
-                    }
+                        display: 'none',
+                    },
                 }}
                 cover={
                     <div className={styles.imageWrapper}>
@@ -31,7 +71,19 @@ const PlaceCard = ({ place, isForAdmin }) => {
                             src={place.imageUrl}
                             className={styles.placeImage}
                         />
-                        <div className={styles.placeTitle}>{place.name}</div>
+
+                        {heartIcon}
+
+                        <div className={styles.placeTitle}>
+                            {place.name}
+
+                            <div className={styles.placeRating}>
+                                <span className={styles.star}>★</span>
+                                <span className={styles.ratingText}>
+                                    {place.averageRating?.toFixed(1) ?? 'N/A'}/5
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 }
             />
@@ -40,3 +92,4 @@ const PlaceCard = ({ place, isForAdmin }) => {
 };
 
 export default PlaceCard;
+

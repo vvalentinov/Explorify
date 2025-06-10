@@ -3,11 +3,11 @@
     border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* font-size: 5rem !important; */
+    border: solid 1px lightgray;
 }
 
 .weatherHeader {
@@ -18,16 +18,19 @@
     font-weight: 600;
     font-size: 1.5rem;
     color: #333;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
 .locationText {
     font-size: 1.7rem;
     font-weight: 500;
     color: #2e7d32;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
 .weatherContent {
     text-align: center;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
 .weatherIcon {
@@ -41,12 +44,14 @@
     font-weight: 600;
     color: #1c1c1c;
     margin: 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
 .conditionText {
     font-size: 1.7rem;
     font-weight: 500;
     color: #555;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
 .weatherMeta {
@@ -54,6 +59,14 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    /* font-size: 1.2rem !important; */
     color: #444;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+}
+
+.missingText {
+    font-size: 1.5rem;
+    color: #999;
+    text-align: center;
+    padding: 1rem;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }

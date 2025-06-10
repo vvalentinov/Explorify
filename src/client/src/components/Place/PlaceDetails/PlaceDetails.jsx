@@ -2,17 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 import { placesServiceFactory } from "../../../services/placesService";
-import { reviewsServiceFactory } from '../../../services/reviewsService';
 
 import { fireError } from "../../../utils/fireError";
 
 import { AuthContext } from '../../../contexts/AuthContext';
 
-// import ReviewsSection from './ReviewsSection/ReviewsSection';
 import OwnerPlaceButtonsSection from "./OwnerPlaceButtonsSection";
 import PlaceDetailsSection from './PlaceDetailsSection/PlaceDetailsSection';
-
-import { getGoogleMapsUrl } from '../../../utils/getGoogleMapsUrl';
 
 import PlaceStatusPill from './PlaceStatusPill';
 
@@ -31,13 +27,13 @@ const PlaceDetails = ({ isForAdmin = false }) => {
     const { userId, token } = useContext(AuthContext);
 
     const placeService = placesServiceFactory(token);
-    const reviewsService = reviewsServiceFactory(token);
 
     const [place, setPlace] = useState({});
-    const [mapUrl, setMapUrl] = useState('');
     const [loading, setLoading] = useState(true);
 
     const isOwner = userId && place?.userId === userId;
+
+    const [weatherData, setWeatherData] = useState(null);
 
     useEffect(() => {
 
@@ -50,14 +46,17 @@ const PlaceDetails = ({ isForAdmin = false }) => {
                     setPlace(res);
                     setLoading(false);
 
-                    if (res?.latitude && res?.longitude) {
-                        setMapUrl(getGoogleMapsUrl(res.latitude, res.longitude));
-                    }
-
                 }).catch(err => {
                     fireError(err);
                     navigate('/');
                 });
+
+            if (!isForAdmin) {
+                placeService
+                    .getPlaceWeatherData(location.state?.placeId)
+                    .then(res => setWeatherData(res.weatherData))
+                    .catch(err => fireError(err));
+            }
 
         } else {
 
@@ -67,10 +66,6 @@ const PlaceDetails = ({ isForAdmin = false }) => {
 
                     setPlace(res);
                     setLoading(false);
-
-                    if (res?.latitude && res?.longitude) {
-                        setMapUrl(getGoogleMapsUrl(res.latitude, res.longitude));
-                    }
 
                 }).catch(err => {
                     fireError(err);
@@ -88,7 +83,13 @@ const PlaceDetails = ({ isForAdmin = false }) => {
                     {isForAdmin && <PlaceStatusPill place={place} />}
 
                     {/* Place Details Section */}
-                    <PlaceDetailsSection setPlace={setPlace} isForAdmin={isForAdmin} loading={loading} place={place} mapUrl={mapUrl} />
+                    <PlaceDetailsSection
+                        setPlace={setPlace}
+                        isForAdmin={isForAdmin}
+                        loading={loading}
+                        place={place}
+                        weatherData={weatherData}
+                    />
 
                     {/* Owner Buttons Section */}
                     {
