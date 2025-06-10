@@ -5,7 +5,4 @@ namespace Explorify.Application.Reviews.GetReviews.Deleted;
 public record GetDeletedReviewsQuery(
     Guid CurrentUserId,
     bool IsCurrUserAdmin,
-    int Page,
-    bool IsForAdmin,
-    OrderEnum Order,
-    IEnumerable<int> StarFilters) : IQuery<ReviewsListResponseModel>;
+    ModeratedReviewsRequestDto Model) : IQuery<ReviewsListResponseModel>;

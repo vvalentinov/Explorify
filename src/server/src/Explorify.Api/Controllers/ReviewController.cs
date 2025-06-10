@@ -1,12 +1,15 @@
 ﻿using Explorify.Api.DTOs;
-using Explorify.Application;
-using Explorify.Infrastructure;
 using Explorify.Api.Extensions;
+
+using Explorify.Infrastructure;
+
+using Explorify.Application;
 using Explorify.Application.Reviews.Edit;
 using Explorify.Application.Reviews.Upload;
 using Explorify.Application.Reviews.Delete;
 using Explorify.Application.Reviews.Revert;
 using Explorify.Application.ReviewsLikes.Like;
+using Explorify.Application.Reviews.GetReviews;
 using Explorify.Application.Reviews.GetEditInfo;
 using Explorify.Application.ReviewsLikes.Dislike;
 using Explorify.Application.Reviews.GetReviews.Deleted;
@@ -75,26 +78,16 @@ public class ReviewController : BaseController
     [HttpPut(nameof(Revert))]
     public async Task<IActionResult> Revert(Guid reviewId)
     {
-        var command = new RevertReviewCommand(
-            reviewId,
-            User.GetId(),
-            User.IsAdmin());
-
+        var command = new RevertReviewCommand(reviewId, User.GetId(), User.IsAdmin());
         var result = await _mediator.Send(command);
-
         return this.OkOrProblemDetails(result);
     }
 
     [HttpDelete(nameof(Delete))]
     public async Task<IActionResult> Delete(DeleteReviewRequestDto model)
     {
-        var command = new DeleteReviewCommand(
-            model,
-            User.GetId(),
-            User.IsAdmin());
-
+        var command = new DeleteReviewCommand(model, User.GetId(), User.IsAdmin());
         var result = await _mediator.Send(command);
-
         return this.OkOrProblemDetails(result);
     }
 
@@ -107,18 +100,20 @@ public class ReviewController : BaseController
         [FromQuery] IEnumerable<int> starsFilter,
         [FromQuery] int page = 1)
     {
-        var query = new GetReviewsForPlaceQuery(
-            placeId,
-            page,
-            order,
-            starsFilter,
-            User.GetId());
+        var model = new PlaceReviewsRequestDto
+        {
+            Order = order,
+            Page = page,
+            PlaceId = placeId,
+            StarsFilter = starsFilter
+        };
 
+        var query = new GetReviewsForPlaceQuery(User.GetId(), model);
         var result = await _mediator.Send(query);
-
         return this.OkOrProblemDetails(result);
     }
 
+    [AllowAnonymous]
     [PageValidationFilter]
     [HttpGet(nameof(GetApproved))]
     public async Task<IActionResult> GetApproved(
@@ -127,19 +122,20 @@ public class ReviewController : BaseController
         [FromQuery] IEnumerable<int> starsFilter,
         [FromQuery] int page = 1)
     {
-        var query = new GetApprovedReviewsQuery(
-            User.GetId(),
-            User.IsAdmin(),
-            page,
-            isForAdmin,
-            order,
-            starsFilter);
+        var model = new ModeratedReviewsRequestDto
+        {
+            Order = order,
+            Page = page,
+            StarsFilter = starsFilter,
+            IsForAdmin = isForAdmin,
+        };
 
+        var query = new GetApprovedReviewsQuery(User.GetId(), User.IsAdmin(), model);
         var result = await _mediator.Send(query);
-
         return this.OkOrProblemDetails(result);
     }
 
+    [AllowAnonymous]
     [PageValidationFilter]
     [HttpGet(nameof(GetUnapproved))]
     public async Task<IActionResult> GetUnapproved(
@@ -148,37 +144,38 @@ public class ReviewController : BaseController
         [FromQuery] IEnumerable<int> starsFilter,
         [FromQuery] int page = 1)
     {
-        var query = new GetUnapprovedReviewsQuery(
-            User.GetId(),
-            User.IsAdmin(),
-            page,
-            isForAdmin,
-            order,
-            starsFilter);
+        var model = new ModeratedReviewsRequestDto
+        {
+            Order = order,
+            Page = page,
+            StarsFilter = starsFilter,
+            IsForAdmin = isForAdmin,
+        };
 
+        var query = new GetUnapprovedReviewsQuery(User.GetId(), User.IsAdmin(), model);
         var result = await _mediator.Send(query);
-
         return this.OkOrProblemDetails(result);
     }
 
+    [AllowAnonymous]
     [PageValidationFilter]
     [HttpGet(nameof(GetDeleted))]
     public async Task<IActionResult> GetDeleted(
-        bool isForAdmin,
+        [FromQuery] bool isForAdmin,
         [FromQuery] OrderEnum order,
         [FromQuery] IEnumerable<int> starsFilter,
-        int page = 1)
+        [FromQuery] int page = 1)
     {
-        var query = new GetDeletedReviewsQuery(
-            User.GetId(),
-            User.IsAdmin(),
-            page,
-            isForAdmin,
-            order,
-            starsFilter);
+        var model = new ModeratedReviewsRequestDto
+        {
+            Order = order,
+            Page = page,
+            StarsFilter = starsFilter,
+            IsForAdmin = isForAdmin,
+        };
 
+        var query = new GetDeletedReviewsQuery(User.GetId(), User.IsAdmin(), model);
         var result = await _mediator.Send(query);
-
         return this.OkOrProblemDetails(result);
     }
 }

@@ -6,11 +6,26 @@ public class PageValidationFilter : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.ActionArguments.TryGetValue("page", out var page) ||
-            page == null ||
-            (page is int pageNumber && pageNumber <= 0))
+        foreach (var arg in context.ActionArguments.Values)
         {
-            context.ActionArguments["page"] = 1;
+            if (arg is int pageValue && pageValue <= 0)
+            {
+                context.ActionArguments["page"] = 1;
+            }
+            else if (arg is not null)
+            {
+                var pageProperty = arg.GetType().GetProperty("Page");
+
+                if (pageProperty != null && pageProperty.PropertyType == typeof(int))
+                {
+                    var value = (int)pageProperty.GetValue(arg)!;
+
+                    if (value <= 0)
+                    {
+                        pageProperty.SetValue(arg, 1);
+                    }
+                }
+            }
         }
 
         base.OnActionExecuting(context);

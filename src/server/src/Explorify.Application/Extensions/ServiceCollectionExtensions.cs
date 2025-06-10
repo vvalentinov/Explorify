@@ -1,7 +1,8 @@
 ﻿using System.Data;
+
 using Explorify.Application.Place.Search;
 using Explorify.Application.Place.Upload;
-
+using Explorify.Application.Reviews.GetReviews;
 using FluentValidation;
 
 using Microsoft.Data.SqlClient;
@@ -32,6 +33,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<INotificationQueueService, NotificationQueueService>();
         services.AddScoped<IBadgeService, BadgeService>();
+
+        services.AddScoped<IReviewQueryService, ReviewQueryService>();
 
         return services;
     }
