@@ -11,6 +11,8 @@ public class NotificationConfiguration
 {
     public void Configure(EntityTypeBuilder<Notification> builder)
     {
+        builder.HasQueryFilter(x => !x.IsDeleted);
+
         builder
             .Property(x => x.Content)
             .IsRequired()

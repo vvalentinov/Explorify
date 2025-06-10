@@ -8,7 +8,7 @@ public class UserBadge : BaseModel
 
     public int BadgeId { get; set; }
 
-    public Badge Badge { get; set; } = new();
+    public Badge Badge { get; set; } = default!;
 
     public DateTime EarnedOn { get; set; }
 }
