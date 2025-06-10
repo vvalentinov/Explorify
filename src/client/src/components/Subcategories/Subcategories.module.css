@@ -3,7 +3,7 @@
     flex-direction: row;
     justify-content: space-evenly;
     flex-wrap: wrap;
-    padding: 2rem 8rem;
+    padding: 2rem 10rem;
     gap: 0.5rem;
 }
 

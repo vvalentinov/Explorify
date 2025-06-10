@@ -1,19 +1,61 @@
 .reviewsSectionContainer {
-    padding: 0;
-    margin-left: 3rem;
-    margin-right: 3rem;
-    padding-bottom: 3rem;
+    border: solid 1px red;
+    padding: 2rem 12rem;
 }
 
 :global(.radio-large .ant-radio-button-wrapper) {
     padding: 20px 24px;
-    font-size: 2rem !important;
+    font-size: 1.5rem !important;
     height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
 }
 
-:global(.radio-large .ant-radio-button-wrapper-checked) {
-    font-weight: 600;
+.filterReviewsCard {
+    background: #d0f0d8;
+
+    border-radius: 12px;
+    padding: 3rem 0;
+
+    border: solid 1px lightgray;
+
+    margin-bottom: 2rem;
+}
+
+.customCheckboxGroupWrapper {
+    /* border: solid 1px black; */
+    padding: 0 5rem !important;
+
+    margin-top: 1rem;
+
+    width: 100% !important;
+}
+
+.customCheckboxGroupWrapper :global(.ant-checkbox-wrapper) {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background-color: #f4fdf7;
+    border: 1px solid #c2e3d0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    flex: 1 1 200px;
+    text-align: center;
+    justify-content: center;
+}
+
+/* Hide the default checkbox box */
+.customCheckboxGroupWrapper :global(.ant-checkbox-inner) {
+    display: none;
+}
+
+/* Checked state styling */
+.customCheckboxGroupWrapper :global(.ant-checkbox-wrapper-checked) {
+    background-color: #7fc47d;
+    color: #fff;
 }

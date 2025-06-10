@@ -45,3 +45,5 @@ export const userPlaces = "/:userName/places";
 export const accountSettingsPath = '/account/settings';
 
 export const favPlacesPath = '/favorite-places';
+
+export const leaderboardPath = '/leaderboard';

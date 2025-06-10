@@ -90,7 +90,7 @@ html {
 
 
 .ant-message .ant-message-notice-content {
-    font-size: 1.6rem !important;
+    font-size: 1.1rem !important;
     padding: 1rem 2rem !important;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
@@ -169,4 +169,43 @@ html {
 
 .ant-form-item-explain-error {
     font-size: 1.2rem;
+}
+
+.swal2-popup .sweetAlertPopup {
+    font-size: 1.5rem !important;
+}
+
+.sweetAlertHtmlContainer {
+    font-size: 1.5rem !important;
+    /* Specifically for the error message */
+}
+
+.sweetAlertConfirmBtn {
+    font-size: 1.5rem !important;
+}
+
+.ant-notification-notice-message {
+    font-size: 20px !important;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ant-notification-notice-description {
+    font-size: 20px !important;
+    margin: 0 !important;
+}
+
+.ant-notification-notice-close {
+    font-size: 1.1rem !important;
+}
+
+.radio-large .ant-radio-button-wrapper {
+    flex: 1 1 200px;
+    /* minimum width of 200px, adjust as needed */
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
 }

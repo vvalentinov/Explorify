@@ -93,10 +93,9 @@ export const renderEmptyState = (isForAdmin) => (
 
 export const renderOrderReviewsCard = (options, sortOption, handleSortChange) => {
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Card
                 style={{
-                    width: '60%',
                     padding: '1rem 2rem',
                     backgroundColor: '#f3e9fe',
                     border: '1px solid #9c4dcc',
@@ -121,10 +120,6 @@ export const renderOrderReviewsCard = (options, sortOption, handleSortChange) =>
                         },
                     }}
                 >
-                    <Typography.Paragraph style={{ fontSize: '1.5rem' }} italic={true}>
-                        Order Reviews
-                    </Typography.Paragraph>
-
                     <div className="radio-large">
                         <Radio.Group
                             options={options}
@@ -134,11 +129,12 @@ export const renderOrderReviewsCard = (options, sortOption, handleSortChange) =>
                             buttonStyle="solid"
                             size="large"
                             style={{
-                                width: '100%',
+                                // width: '100%',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 gap: '1rem',
                                 flexWrap: 'wrap',
+                                fontSize: '10px'
                             }}
                             onChange={handleSortChange}
                             name="Sort"

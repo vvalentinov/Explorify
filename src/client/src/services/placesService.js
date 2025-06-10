@@ -17,6 +17,7 @@ export const placesServiceFactory = (token) => {
         getApproved: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetApproved?page=${page}&isForAdmin=${isForAdmin}`),
         getUnapproved: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetUnapproved?page=${page}&isForAdmin=${isForAdmin}`),
         getDeleted: (page, isForAdmin) => request.get(`${baseUrl}/Place/GetDeleted?page=${page}&isForAdmin=${isForAdmin}`),
-        searchPlace: (queryParms) => request.get(`${baseUrl}/Place/Search?${queryParms}`)
+        searchPlace: (queryParms) => request.get(`${baseUrl}/Place/Search?${queryParms}`),
+        getPlaceWeatherData: (placeId) => request.get(`${baseUrl}/Place/GetPlaceWeatherInfo?placeId=${placeId}`)
     }
 };

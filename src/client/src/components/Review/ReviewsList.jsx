@@ -191,11 +191,9 @@ const ReviewsList = ({
                     style={{
                         display: 'flex',
                         flexWrap: 'wrap',
-                        gap: '2rem',
+                        gap: '1.5rem',
                         justifyContent: 'center',
-                        marginTop: '1.5rem',
                         // border: 'solid 1px black',
-                        width: '80%',
                     }}
                 >
                     {reviews.map(review => (
@@ -203,7 +201,7 @@ const ReviewsList = ({
                             key={review.id}
                             variants={cardVariants}
                             style={{
-                                flexBasis: '30%',
+                                flexBasis: '32%',
                             }}
                         >
 
