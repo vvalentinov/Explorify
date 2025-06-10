@@ -18,6 +18,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Place.GetPlaceWeatherInfo;
 
 namespace Explorify.Api.Controllers;
 
@@ -31,7 +32,7 @@ public class PlaceController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
-    [RequestSizeLimit(5 * 1024 * 1024)]
+    [RequestSizeLimit(10 * 1024 * 1024)]
     public async Task<IActionResult> Upload([FromForm] UploadPlaceRequestDto model)
     {
         var applicationModel = await model.ToApplicationModelAsync(User.GetId());
@@ -72,6 +73,15 @@ public class PlaceController : BaseController
 
         var result = await _mediator.Send(query);
 
+        return this.OkOrProblemDetails(result);
+    }
+
+    [AllowAnonymous]
+    [HttpGet(nameof(GetPlaceWeatherInfo))]
+    public async Task<IActionResult> GetPlaceWeatherInfo(Guid placeId)
+    {
+        var query = new GetPlaceWeatherInfoQuery(placeId);
+        var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
 

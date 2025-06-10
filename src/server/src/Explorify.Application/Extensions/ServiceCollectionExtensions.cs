@@ -30,6 +30,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlaceSearchQueryBuilder, PlaceSearchQueryBuilder>();
         services.AddScoped<IPlaceSearchQueryValidator, PlaceSearchQueryValidator>();
 
+        services.AddScoped<INotificationQueueService, NotificationQueueService>();
+        services.AddScoped<IBadgeService, BadgeService>();
+
         return services;
     }
 }

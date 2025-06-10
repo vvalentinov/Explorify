@@ -12,4 +12,6 @@ public interface IIdentityService
     Task<Result<AuthResponseModel>> RegisterUserAsync(RegisterRequestModel model);
 
     Task<Result<IEnumerable<Claim>>> GetUserClaims(string userId);
+
+    Task<Result<AuthResponseModel>> LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal);
 }

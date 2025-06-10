@@ -19,20 +19,23 @@ public class ApprovePlaceCommandHandler
     private readonly IRepository _repository;
 
     private readonly IUserService _userService;
-    private readonly INotificationService _notificationHubService;
+    private readonly IBadgeService _badgeService;
+    private readonly INotificationQueueService _notificationQueueService;
 
     private readonly IDbConnection _dbConnection;
 
     public ApprovePlaceCommandHandler(
         IRepository repository,
         IUserService userService,
-        INotificationService notificationHubService,
-        IDbConnection dbConnection)
+        IDbConnection dbConnection,
+        IBadgeService badgeService,
+        INotificationQueueService notificationQueueService)
     {
         _repository = repository;
 
         _userService = userService;
-        _notificationHubService = notificationHubService;
+        _badgeService = badgeService;
+        _notificationQueueService = notificationQueueService;
 
         _dbConnection = dbConnection;
     }
@@ -56,61 +59,103 @@ public class ApprovePlaceCommandHandler
 
         var isPlaceOwner = place.UserId == request.CurrentUserId;
 
+        // Check eligibility BEFORE approving
+        var approvedPlacesCount = await _repository
+            .AllAsNoTracking<Domain.Entities.Place>()
+            .CountAsync(x => x.UserId == place.UserId && x.IsApproved, cancellationToken);
+
+        var shouldGrantFirstPlaceBadge = approvedPlacesCount == 0;
+
         place.IsApproved = true;
 
         var review = place.Reviews.FirstOrDefault(x => x.UserId == place.UserId);
 
-        if (review != null)
+        if (review is not null)
         {
             review.IsApproved = true;
         }
 
-        await _userService.IncreaseUserPointsAsync(place.UserId.ToString(), UserPlaceUploadPoints);
+        var increaseUserPointsRes = await _userService.IncreaseUserPointsAsync(place.UserId.ToString(), UserPlaceUploadPoints);
 
-        var followerIds = await _repository
-            .AllAsNoTracking<Domain.Entities.UserFollow>()
-            .Where(x => x.FolloweeId == place.UserId)
-            .Select(x => x.FollowerId)
-            .ToListAsync(cancellationToken);
+        if (increaseUserPointsRes.IsFailure)
+        {
+            return increaseUserPointsRes;
+        }
+
+        // Check for any point milestone badges (100, 500, 1000)
+        var pointBadges = await _badgeService.GrantPointThresholdBadgesAsync(place.UserId, increaseUserPointsRes.Data);
+
+        foreach (var pointBadge in pointBadges)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: request.CurrentUserId,
+                receiverId: place.UserId,
+                notificationContent: $"You've unlocked the \"{pointBadge.BadgeName}\" badge. You are making progress, keep it up!",
+                realTimeMessage: "You reached a new milestone!"
+            );
+        }
+
+        // Check if we need to grant the "Place Pioneer" badge
+        if (shouldGrantFirstPlaceBadge)
+        {
+            var badgeResult = await _badgeService.GrantBadgeAsync(place.UserId, "Place Pioneer");
+
+            if (badgeResult is not null)
+            {
+                _notificationQueueService.QueueNotification(
+                    senderId: request.CurrentUserId,
+                    receiverId: place.UserId,
+                    notificationContent: $"Congrats! You've unlocked the \"{badgeResult.BadgeName}\" badge. Keep exploring!",
+                    realTimeMessage: "You earned a new badge!"
+                );
+            }
+        }
+
+        const string getFollowerIdsSql = @"
+            SELECT FollowerId
+            FROM UserFollows
+            WHERE FolloweeId = @FolloweeId";
+
+        var followerIds = (await _dbConnection.QueryAsync<Guid>(
+            getFollowerIdsSql,
+            new { FolloweeId = place.UserId }))
+                .ToList();
 
         const string getUsernameSql = @"SELECT UserName FROM AspNetUsers WHERE Id = @UserId";
         var username = await _dbConnection.QueryFirstOrDefaultAsync<string>(getUsernameSql, new { place.UserId });
 
-        if (followerIds.Count > 0)
+        // Queue notifications for followers
+        foreach (var followerId in followerIds)
         {
-            var followerNotifications = followerIds.Select(followerId => new Domain.Entities.Notification
-            {
-                ReceiverId = followerId,
-                SenderId = place.UserId,
-                Content = $"{username} just uploaded a new place: \"{place.Name}\". Check it out!"
-            }).ToList();
-
-            await _repository.AddRangeAsync(followerNotifications);
+            _notificationQueueService.QueueNotification(
+                senderId: place.UserId,
+                receiverId: followerId,
+                notificationContent: $"{username} just uploaded a new place: \"{place.Name}\". Check it out!",
+                realTimeMessage: $"{username} uploaded a new place!"
+            );
         }
 
+        // Notify the place owner if someone else approved their place
         if (!isPlaceOwner)
         {
-            var notification = new Domain.Entities.Notification
-            {
-                ReceiverId = place.UserId,
-                SenderId = request.CurrentUserId,
-                Content = $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned 10 adventure points – keep exploring!"
-            };
-
-            await _repository.AddAsync(notification);
+            _notificationQueueService.QueueNotification(
+                senderId: request.CurrentUserId,
+                receiverId: place.UserId,
+                notificationContent: $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned {UserPlaceUploadPoints} adventure points – keep exploring!",
+                realTimeMessage: "Admin approved your place upload!"
+            );
         }
-        
+
+        var notifications = _notificationQueueService.GetPendingNotifications();
+
+        if (notifications.Count > 0)
+        {
+            await _repository.AddRangeAsync(notifications);
+        }
+
         await _repository.SaveChangesAsync();
 
-        if (!isPlaceOwner)
-        {
-            await _notificationHubService.NotifyAsync("Admin approved your place upload!", place.UserId);
-        }
-
-        foreach (var followerId in followerIds.Take(50))
-        {
-            await _notificationHubService.NotifyAsync($"{username} uploaded a new place!", followerId);
-        }
+        await _notificationQueueService.FlushAsync();
 
         return Result.Success("Successfully approved place!");
     }

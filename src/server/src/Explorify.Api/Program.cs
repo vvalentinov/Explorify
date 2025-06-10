@@ -3,6 +3,8 @@ using Explorify.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddServices(builder.Configuration);
 
 var connectionString = builder.Configuration["AzureMonitor:ConnectionString"];

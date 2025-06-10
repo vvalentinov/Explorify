@@ -9,6 +9,7 @@ using Explorify.Application.Notification.GetUnreadNotificationsCount;
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+using Explorify.Application.Notification.DeleteAll;
 
 namespace Explorify.Api.Controllers;
 
@@ -50,6 +51,14 @@ public class NotificationController : BaseController
     public async Task<IActionResult> MarkAllAsRead()
     {
         var command = new MarkAllNotificationsAsReadCommand(User.GetId());
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpDelete(nameof(DeleteAll))]
+    public async Task<IActionResult> DeleteAll()
+    {
+        var command = new DeleteAllNotificationsCommand(User.GetId());
         var result = await _mediator.Send(command);
         return this.OkOrProblemDetails(result);
     }

@@ -1,4 +1,5 @@
 ﻿using Explorify.Api.DTOs;
+using Explorify.Application;
 using Explorify.Infrastructure;
 using Explorify.Api.Extensions;
 using Explorify.Application.Reviews.Edit;
@@ -6,9 +7,7 @@ using Explorify.Application.Reviews.Upload;
 using Explorify.Application.Reviews.Delete;
 using Explorify.Application.Reviews.Revert;
 using Explorify.Application.ReviewsLikes.Like;
-using Explorify.Application.Reviews.GetReviews;
 using Explorify.Application.Reviews.GetEditInfo;
-using Explorify.Application.Abstractions.Models;
 using Explorify.Application.ReviewsLikes.Dislike;
 using Explorify.Application.Reviews.GetReviews.Deleted;
 using Explorify.Application.Reviews.GetReviews.ForPlace;
@@ -78,7 +77,7 @@ public class ReviewController : BaseController
     {
         var command = new RevertReviewCommand(
             reviewId,
-            User.GetId(), 
+            User.GetId(),
             User.IsAdmin());
 
         var result = await _mediator.Send(command);
@@ -103,14 +102,16 @@ public class ReviewController : BaseController
     [PageValidationFilter]
     [HttpGet(nameof(GetReviewsForPlace))]
     public async Task<IActionResult> GetReviewsForPlace(
-        Guid placeId,
-        [FromQuery] ReviewsOrderEnum order,
-        int page = 1)
+        [FromQuery] Guid placeId,
+        [FromQuery] OrderEnum order,
+        [FromQuery] IEnumerable<int> starsFilter,
+        [FromQuery] int page = 1)
     {
         var query = new GetReviewsForPlaceQuery(
             placeId,
             page,
             order,
+            starsFilter,
             User.GetId());
 
         var result = await _mediator.Send(query);
@@ -120,19 +121,19 @@ public class ReviewController : BaseController
 
     [PageValidationFilter]
     [HttpGet(nameof(GetApproved))]
-    public async Task<IActionResult> GetApproved(bool isForAdmin, int page)
+    public async Task<IActionResult> GetApproved(
+        [FromQuery] bool isForAdmin,
+        [FromQuery] OrderEnum order,
+        [FromQuery] IEnumerable<int> starsFilter,
+        [FromQuery] int page = 1)
     {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all approved reviews.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
         var query = new GetApprovedReviewsQuery(
             User.GetId(),
             User.IsAdmin(),
             page,
-            isForAdmin);
+            isForAdmin,
+            order,
+            starsFilter);
 
         var result = await _mediator.Send(query);
 
@@ -141,19 +142,19 @@ public class ReviewController : BaseController
 
     [PageValidationFilter]
     [HttpGet(nameof(GetUnapproved))]
-    public async Task<IActionResult> GetUnapproved(bool isForAdmin, int page = 1)
+    public async Task<IActionResult> GetUnapproved(
+        [FromQuery] bool isForAdmin,
+        [FromQuery] OrderEnum order,
+        [FromQuery] IEnumerable<int> starsFilter,
+        [FromQuery] int page = 1)
     {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all unapproved reviews.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
         var query = new GetUnapprovedReviewsQuery(
             User.GetId(),
             User.IsAdmin(),
             page,
-            isForAdmin);
+            isForAdmin,
+            order,
+            starsFilter);
 
         var result = await _mediator.Send(query);
 
@@ -162,19 +163,19 @@ public class ReviewController : BaseController
 
     [PageValidationFilter]
     [HttpGet(nameof(GetDeleted))]
-    public async Task<IActionResult> GetDeleted(bool isForAdmin, int page = 1)
+    public async Task<IActionResult> GetDeleted(
+        bool isForAdmin,
+        [FromQuery] OrderEnum order,
+        [FromQuery] IEnumerable<int> starsFilter,
+        int page = 1)
     {
-        if (!User.IsAdmin() && isForAdmin)
-        {
-            var error = new Error("Only admins can access all recently deleted reviews.", ErrorType.Validation);
-            return this.OkOrProblemDetails(Result.Failure(error));
-        }
-
         var query = new GetDeletedReviewsQuery(
             User.GetId(),
             User.IsAdmin(),
             page,
-            isForAdmin);
+            isForAdmin,
+            order,
+            starsFilter);
 
         var result = await _mediator.Send(query);
 

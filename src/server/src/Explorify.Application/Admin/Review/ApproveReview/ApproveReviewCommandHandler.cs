@@ -22,22 +22,25 @@ public class ApproveReviewCommandHandler
     private readonly IRepository _repository;
 
     private readonly IUserService _userService;
-    private readonly INotificationService _notificationService;
 
     private readonly IDbConnection _dbConnection;
+    private readonly IBadgeService _badgeService;
+    private readonly INotificationQueueService _notificationQueueService;
 
     public ApproveReviewCommandHandler(
         IRepository repository,
         IUserService userService,
-        INotificationService notificationService,
-        IDbConnection dbConnection)
+        IDbConnection dbConnection,
+        IBadgeService badgeService,
+        INotificationQueueService notificationQueueService)
     {
         _repository = repository;
 
         _userService = userService;
-        _notificationService = notificationService;
 
         _dbConnection = dbConnection;
+        _badgeService = badgeService;
+        _notificationQueueService = notificationQueueService;
     }
 
     public async Task<Result> Handle(
@@ -63,7 +66,10 @@ public class ApproveReviewCommandHandler
             return Result.Failure(error);
         }
 
+        var isReviewOwner = review.UserId == request.CurrentUserId;
+
         review.IsApproved = true;
+        _repository.Update(review);
 
         var increasePointsResult = await _userService.IncreaseUserPointsAsync(
             review.UserId.ToString(),
@@ -74,56 +80,76 @@ public class ApproveReviewCommandHandler
             return increasePointsResult;
         }
 
-        var isReviewOwner = review.UserId == request.CurrentUserId;
+        var pointBadges = await _badgeService.GrantPointThresholdBadgesAsync(
+            review.UserId,
+            increasePointsResult.Data);
 
-        _repository.Update(review);
+        foreach (var badge in pointBadges)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: request.CurrentUserId,
+                receiverId: review.UserId,
+                notificationContent: $"You've unlocked the \"{badge.BadgeName}\" badge. Keep up the great contributions!",
+                realTimeMessage: "You reached a new milestone!"
+            );
+        }
+
+        var reviewBadge = await _badgeService.GrantFirstReviewBadgeIfEligibleAsync(review.UserId);
+        if (reviewBadge is not null)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: request.CurrentUserId,
+                receiverId: review.UserId,
+                notificationContent: $"Congrats! You've earned the \"{reviewBadge.BadgeName}\" badge. Keep up the great contributions!",
+                realTimeMessage: "You earned a new badge!"
+            );
+        }
 
         const string getUsernameSql = @"SELECT UserName FROM AspNetUsers WHERE Id = @UserId";
         var username = await _dbConnection.QueryFirstOrDefaultAsync<string>(getUsernameSql, new { review.UserId }) ?? "Someone";
 
-        var followerIds = await _repository
-            .AllAsNoTracking<Domain.Entities.UserFollow>()
-            .Where(x => x.FolloweeId == review.UserId && x.FollowerId != request.CurrentUserId)
-            .Select(x => x.FollowerId)
-            .ToListAsync(cancellationToken);
-    
-        if (followerIds.Count > 0)
-        {
-            var followerNotifications = followerIds.Select(followerId => new Domain.Entities.Notification
-            {
-                ReceiverId = followerId,
-                SenderId = review.UserId,
-                Content = $"{username} just uploaded a new review for place: \"{review.Place.Name}\". Go and check it out!"
-            }).ToList();
+        const string getFollowerIdsSql = @"
+            SELECT FollowerId FROM UserFollows
+            WHERE FolloweeId = @FolloweeId AND FollowerId != @CurrentUserId";
 
-            await _repository.AddRangeAsync(followerNotifications);
+        var followerIds = (await _dbConnection.QueryAsync<Guid>(
+          getFollowerIdsSql,
+          new
+          {
+              FolloweeId = review.UserId,
+              request.CurrentUserId
+          })).ToList();
+
+        foreach (var followerId in followerIds)
+        {
+            _notificationQueueService.QueueNotification(
+                senderId: review.UserId,
+                receiverId: followerId,
+                notificationContent: $"{username} just uploaded a new review for \"{review.Place.Name}\". Go and check it out!",
+                realTimeMessage: $"{username} uploaded a new review!"
+            );
         }
 
         if (!isReviewOwner)
         {
-            var notification = new Domain.Entities.Notification
-            {
-                ReceiverId = review.UserId,
-                SenderId = request.CurrentUserId,
-                Content = ReviewApprovedNotificationContent(review.Place.Name, UserReviewUploadPoints)
-            };
+            _notificationQueueService.QueueNotification(
+                 senderId: request.CurrentUserId,
+                 receiverId: review.UserId,
+                 notificationContent: ReviewApprovedNotificationContent(review.Place.Name, UserReviewUploadPoints),
+                 realTimeMessage: ReviewApprovedNotification
+             );
+        }
 
-            await _repository.AddAsync(notification);
+        var notifications = _notificationQueueService.GetPendingNotifications();
+
+        if (notifications.Count > 0)
+        {
+            await _repository.AddRangeAsync(notifications);
         }
 
         await _repository.SaveChangesAsync();
 
-        if (!isReviewOwner)
-        {
-            await _notificationService.NotifyAsync(
-                ReviewApprovedNotification,
-                review.UserId);
-        }
-
-        foreach (var followerId in followerIds)
-        {
-            await _notificationService.NotifyAsync($"{username} uploaded a new review!", followerId);
-        }
+        await _notificationQueueService.FlushAsync();
 
         return Result.Success(ReviewApprovedSuccess);
     }
