@@ -126,23 +126,17 @@ const Header = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-                        padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`,
+                        // padding: screens.md ? `0px ${token.paddingLG}px` : `0px ${token.padding}px`,
                         width: "100%",
-                        maxWidth: "1440px",
-                        margin: "0 auto"
+                        // margin: "0 1rem"
                     }}
                 >
 
                     {/* LEFT */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-                        <ResponsiveMenu />
-                    </div>
-
-                    {/* SPACER */}
-                    <div style={{ flex: 1 }} />
+                    <ResponsiveMenu />
 
                     {/* RIGHT */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginRight: '12rem' }}>
                         {!isAuthenticated ? (
                             <>
                                 <NavLink to={paths.signInPath}>

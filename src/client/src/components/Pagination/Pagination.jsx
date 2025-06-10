@@ -8,11 +8,11 @@ const Pagination = ({ handlePageChange, currentPage, pagesCount, isForAdmin }) =
             theme={{
                 components: {
                     Pagination: {
-                        itemActiveBg: isForAdmin ? '#e6f4ff' : '#e8fffb',
-                        itemActiveColor: isForAdmin ? '#1677ff' : '#52c41a',
-                        colorPrimary: isForAdmin ? '#1677ff' : '#52c41a',
-                        colorPrimaryHover: isForAdmin ? '#1677ff' : '#52c41a',
-                        colorBgTextHover: isForAdmin ? '#e6f4ff' : '#e8fffb',
+                        itemActiveBg: isForAdmin ? '#91d5ff' : 'lightgreen',
+                        itemActiveColor: 'black',
+                        colorPrimary: 'black', // Also impacts hover border
+                        colorPrimaryHover: 'black',
+                        colorText: 'black',
                     },
                 },
             }}

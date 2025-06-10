@@ -1,96 +1,76 @@
 .badgesSection {
-    margin-top: 10rem;
-    margin-bottom: 5rem;
-    padding: 3rem;
-    background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
-    max-width: 1200px;
-    margin-inline: auto;
+    /* border: solid 1px red; */
+
+    margin: 0 8rem;
+    margin-top: 6rem;
+    padding: 0 16rem;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
 }
 
-.sectionTitle {
-    font-size: 2.6rem !important;
-    font-weight: 700;
-    margin-bottom: 3rem;
-    text-align: center;
-    color: #003e2f;
-
+.badgeList {
     display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     justify-content: center;
     align-items: center;
 }
 
-.badgesContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    gap: 2rem;
-
-    border: solid 1px red;
+.badgeCard {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    width: 100%;
 }
 
-.badgeWrapper {
-    /* position: relative; */
-    text-align: center;
-    /* width: calc(25% - 3rem); */
+.badgeContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    flex-wrap: wrap;
+}
+
+.imageWrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    flex-shrink: 0;
+
+    background: none !important;
 }
 
 .badgeImage {
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
     object-fit: contain;
-    transition: transform 0.35s ease, box-shadow 0.3s ease;
-    border-radius: 12px;
 }
 
 .locked {
-    filter: grayscale(100%) brightness(60%);
+    filter: grayscale(100%) brightness(0.6);
 }
 
 .lockOverlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: 120px;
-    height: 120px;
-    background: rgba(0, 0, 0, 0.35);
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    color: white;
+    font-size: 1.5rem;
+    border-radius: 8px;
 }
 
-.lockIcon {
-    font-size: 28px;
-    color: #ffffff;
+.textContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.badgeLabel {
-    margin-top: 1rem;
-    font-size: 1.3rem;
-    font-weight: 500;
-    color: #333;
-}
-
-@media (max-width: 992px) {
-    .badgeWrapper {
-        width: calc(33.333% - 2rem);
-        /* 3 per row */
-    }
-}
-
-@media (max-width: 768px) {
-    .badgeWrapper {
-        width: calc(50% - 1.5rem);
-        /* 2 per row */
-    }
-}
-
-@media (max-width: 480px) {
-    .badgeWrapper {
-        width: 100%;
-        /* 1 per row */
-    }
+.progressWrapper {
+    margin-top: 0.5rem;
 }

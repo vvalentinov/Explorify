@@ -3,33 +3,27 @@ import coverImage from '../../../assets/cover.jpg';
 import styles from './Profile.module.css';
 
 import { useState, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
-import { Upload, Card, Button, Dropdown, App } from 'antd';
+import { Upload, Card, Button, App, Spin, Skeleton } from 'antd';
 import {
     LoadingOutlined,
     PlusOutlined,
-    SettingOutlined,
-    EnvironmentOutlined,
-    StarOutlined,
-    UsergroupAddOutlined,
-    HeartOutlined,
-    LockFilled
+    SettingOutlined
 } from '@ant-design/icons';
 
 import { fireError } from '../../../utils/fireError';
 
 import { usersServiceFactory } from '../../../services/usersService';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { myPlacesPath } from '../../../constants/paths';
 
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import BadgesSection from './BadgesSection';
 
 const Profile = () => {
 
     const location = useLocation();
+    const navigate = useNavigate();
 
     const { message } = App.useApp();
 
@@ -42,6 +36,8 @@ const Profile = () => {
     const [loadingProfile, setLoadingProfile] = useState(true);
     const [isFollowing, setIsFollowing] = useState(false);
 
+    const [isCoverLoaded, setIsCoverLoaded] = useState(false);
+
     const [isFollowBtnDisabled, setIsFollowBtnDisabled] = useState(false);
 
     const isOwnProfile = profileInfo?.userId === userId;
@@ -52,56 +48,6 @@ const Profile = () => {
             message.error('You can only upload JPG/PNG file!');
         }
         return isJpgOrPng;
-    };
-
-    const settingsMenu = {
-        items: [
-            {
-                key: '4',
-                label: (
-                    <Link to="/account/settings" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <SettingOutlined />
-                        Settings
-                    </Link>
-                )
-            },
-            {
-                key: '1',
-                label: (
-                    <Link to={myPlacesPath} style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <EnvironmentOutlined />
-                        My Places
-                    </Link>
-                )
-            },
-            {
-                key: '2',
-                label: (
-                    <Link to="/my-reviews" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <StarOutlined />
-                        My Reviews
-                    </Link>
-                )
-            },
-            {
-                key: '3',
-                label: (
-                    <Link to="/my-following" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <UsergroupAddOutlined />
-                        My Following
-                    </Link>
-                )
-            },
-            {
-                key: '5',
-                label: (
-                    <Link to="/favorite-places" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <HeartOutlined />
-                        Favorite Places
-                    </Link>
-                )
-            }
-        ]
     };
 
     useEffect(() => {
@@ -181,70 +127,89 @@ const Profile = () => {
             <section className={styles.profilePage}>
 
                 <div className={styles.coverWrapper}>
-                    <img src={coverImage} alt="Cover" className={styles.coverImage} />
+                    {/* <img src={coverImage} alt="Cover" className={styles.coverImage} /> */}
+
+                    <img
+                        src={coverImage}
+                        alt="Cover"
+                        className={`${styles.coverImage} ${isCoverLoaded ? styles.loaded : ''}`}
+                        onLoad={() => setIsCoverLoaded(true)}
+                    />
                 </div>
 
 
                 <Card className={styles.profileCard}>
+
                     {isOwnProfile && (
-                        <div className={styles.settingsButton}>
-                            <Dropdown menu={settingsMenu} placement="bottom" trigger={['click']}>
-                                <Button type="text" icon={<SettingOutlined style={{ fontSize: '30px' }} />} />
-                            </Dropdown>
-                        </div>
+
+                        <Button
+                            onClick={() => navigate('/account/settings')}
+                            type="text"
+                            className={styles.settingsButton}
+                            icon={<SettingOutlined style={{ fontSize: '35px' }} />}
+                        />
+
                     )}
 
                     <div className={styles.profileContent}>
 
                         <div className={styles.avatarWrapper}>
-                            {isOwnProfile ?
-                                <Upload
-                                    name="avatar"
-                                    listType="picture-circle"
-                                    showUploadList={false}
-                                    customRequest={handleCustomUpload}
-                                    beforeUpload={beforeUpload}
-                                    onChange={handleChange}
-                                >
-                                    {loadingProfile ? (
-                                        <div className={styles.avatarPlaceholder}>
-                                            <LoadingOutlined style={{ fontSize: 32 }} spin />
-                                        </div>
-                                    ) : profileInfo.profileImageUrl ? (
-                                        <div className={styles.avatarImageContainer}>
-                                            <img
-                                                src={profileInfo.profileImageUrl}
-                                                alt="avatar"
-                                                className={styles.avatarImage}
-                                            />
-                                            <div className={styles.avatarOverlay}>
-                                                <span className={styles.avatarText}>Change</span>
+
+                            {loadingProfile ? (
+                                <Skeleton.Avatar
+                                    active
+                                    size={100}
+                                    shape="circle"
+                                    className={styles.avatarSkeleton}
+                                />
+                            ) : (
+                                isOwnProfile ? (
+                                    <Upload
+                                        name="avatar"
+                                        listType="picture-circle"
+                                        showUploadList={false}
+                                        customRequest={handleCustomUpload}
+                                        beforeUpload={beforeUpload}
+                                        onChange={handleChange}
+                                    >
+                                        {profileInfo.profileImageUrl ? (
+                                            <div className={styles.avatarImageContainer}>
+                                                <img
+                                                    src={profileInfo.profileImageUrl}
+                                                    alt="avatar"
+                                                    className={styles.avatarImage}
+                                                />
+                                                <div className={styles.avatarOverlay}>
+                                                    <span className={styles.avatarText}>Change</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <div className={styles.avatarPlaceholder}>
-                                            {uploadingPic ? (
-                                                <>
-                                                    <LoadingOutlined style={{ fontSize: 24 }} spin />
-                                                    <div>Uploading...</div>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <PlusOutlined style={{ fontSize: 24 }} />
-                                                    <div>Upload</div>
-                                                </>
-                                            )}
-                                        </div>
-                                    )}
-                                </Upload> :
-                                <div className={styles.avatarImageContainer}>
-                                    <img
-                                        src={profileInfo.profileImageUrl}
-                                        alt="avatar"
-                                        className={styles.avatarImage}
-                                    />
-                                </div>
-                            }
+                                        ) : (
+                                            <div className={styles.avatarPlaceholder}>
+                                                {uploadingPic ? (
+                                                    <>
+                                                        <LoadingOutlined style={{ fontSize: 24 }} spin />
+                                                        <div>Uploading...</div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PlusOutlined style={{ fontSize: 24 }} />
+                                                        <div>Upload</div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+                                    </Upload>
+                                ) : (
+                                    <div className={styles.avatarImageContainer}>
+                                        <img
+                                            src={profileInfo.profileImageUrl}
+                                            alt="avatar"
+                                            className={styles.avatarImage}
+                                        />
+                                    </div>
+                                )
+                            )}
+
 
                             {isAuthenticated && profileInfo.userId !== userId && profileInfo && (
                                 <Button
@@ -266,13 +231,19 @@ const Profile = () => {
 
                             <div className={styles.bioBox}>
                                 <p className={styles.bioPlaceholder}>
-                                    This explorer hasn’t written a bio yet. 🌱
-                                    <br />
-                                    <span style={{ fontStyle: 'italic', fontSize: '1.3rem' }}>
-                                        Maybe they’re too busy traveling the world...
-                                    </span>
+                                    {profileInfo.bio && profileInfo.bio.trim() !== ''
+                                        ? profileInfo.bio
+                                        : <>
+                                            This explorer hasn’t written a bio yet. 🌱
+                                            <br />
+                                            <span style={{ fontStyle: 'italic', fontSize: '1.3rem' }}>
+                                                Maybe they’re too busy traveling the world...
+                                            </span>
+                                        </>
+                                    }
                                 </p>
                             </div>
+
 
                             <p>{profileInfo.email}</p>
 
@@ -298,12 +269,13 @@ const Profile = () => {
                         </div>
 
                     </div>
+
                 </Card>
 
 
             </section>
 
-            <BadgesSection />
+            <BadgesSection isOwnProfile={isOwnProfile} />
         </>
 
     );

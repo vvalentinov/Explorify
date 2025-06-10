@@ -1,62 +1,104 @@
 import styles from './BadgesSection.module.css';
+import { LockFilled, TrophyFilled } from '@ant-design/icons';
+import { Typography, Progress, Card, Spin } from 'antd';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../../contexts/AuthContext';
+import { badgesServiceFactory } from '../../../services/badgeService';
 
-import {
-    LockFilled
-} from '@ant-design/icons';
+const BadgesSection = ({ isOwnProfile = true }) => {
 
-const urls = [
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/explorifyElite.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/reviewRookie.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/firstFollower.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/influencer.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/localLegend.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/miniCommunity.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/placePioneer.png',
-    'https://explorifystorageaccount.blob.core.windows.net/explorify/Badges/risingStar.png'
-];
+    const { token } = useContext(AuthContext);
+    const [badges, setBadges] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const badgesService = badgesServiceFactory(token);
 
-const badges = [
-    { id: 1, name: 'Explorify Elite', imageUrl: urls[0], isUnlocked: true },
-    { id: 2, name: 'First Follower', imageUrl: urls[1], isUnlocked: true },
-    { id: 3, name: 'Influencer', imageUrl: urls[2], isUnlocked: false },
-    { id: 4, name: 'Local Legend', imageUrl: urls[3], isUnlocked: false },
-    { id: 5, name: 'Mini Community', imageUrl: urls[4], isUnlocked: false },
-    { id: 6, name: 'Place Pioneer', imageUrl: urls[5], isUnlocked: true },
-    { id: 7, name: 'Review Rookie', imageUrl: urls[6], isUnlocked: true },
-    { id: 8, name: 'Rising Star', imageUrl: urls[7], isUnlocked: false },
-];
+    useEffect(() => {
+        badgesService.getUserBadges()
+            .then(res => setBadges(res))
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    }, []);
 
-import { Typography } from 'antd';
-
-const BadgesSection = () => {
     return (
         <div className={styles.badgesSection}>
-            <Typography.Title level={3} className={styles.sectionTitle}>
-                <span style={{ fontSize: '5rem' }}>🏆</span>
-                <span>Achievements</span>
 
+            <Typography.Title
+                level={3}
+                style={{
+                    textAlign: 'left',
+                    marginBottom: '2.5rem',
+                    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '2.2rem',
+                    letterSpacing: '0.4px',
+                    color: '#1A7F64',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    width: '100%'
+                }}
+            >
+                <span
+                    style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: '50%',
+                        padding: '0.5rem',
+                        boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <TrophyFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                </span>
+                Achievements
             </Typography.Title>
 
-            <div className={styles.badgesContainer}>
-                {badges.map((badge) => (
-                    <div
-                        key={badge.id}
-                        className={styles.badgeWrapper}
-                    >
-                        <img
-                            src={badge.imageUrl}
-                            alt={badge.name}
-                            className={`${styles.badgeImage} ${!badge.isUnlocked ? styles.locked : ''}`}
-                        />
-                        {!badge.isUnlocked && (
-                            <div className={styles.lockOverlay}>
-                                <LockFilled className={styles.lockIcon} />
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {loading ? (
+                <Spin size="large" />
+            ) : (
+                <div className={styles.badgeList}>
+                    {badges.map((badge) => (
 
+                        <Card key={badge.id} className={styles.badgeCard}>
+
+                            <div className={styles.badgeContent}>
+                                <div className={styles.imageWrapper}>
+                                    <img
+                                        src={badge.imageUrl}
+                                        alt={badge.name}
+                                        className={`${styles.badgeImage} ${!badge.isUnlocked ? styles.locked : ''}`}
+                                    />
+                                    {!badge.isUnlocked && (
+                                        <div className={styles.lockOverlay}>
+                                            <LockFilled className={styles.lockIcon} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className={styles.textContent}>
+                                    <Typography.Title style={{ fontSize: '3rem', margin: '0', fontFamily: "'Poppins', 'Segoe UI', sans-serif", }} level={5}>{badge.name}</Typography.Title>
+                                    {isOwnProfile && <Typography.Text style={{ fontSize: '1.1rem', fontFamily: "'Poppins', 'Segoe UI', sans-serif", }}>{badge.description}</Typography.Text>}
+
+                                    <div className={styles.progressWrapper}>
+                                        <Progress
+                                            percent={badge.progressPercentage}
+                                            status="active"
+                                            showInfo
+                                            size="default"
+                                            strokeColor={
+                                                badge.progressPercentage === 100 ? '#52c41a' : '#1890ff'
+                                            }
+                                        />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

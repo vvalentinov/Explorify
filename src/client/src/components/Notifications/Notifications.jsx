@@ -7,7 +7,7 @@ import { notificationsServiceFactory } from "../../services/notificationService"
 import {
     BellOutlined,
     CheckOutlined,
-    DeleteOutlined
+    DeleteOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -17,7 +17,6 @@ import {
     App,
     Popover,
     Tag,
-    Pagination,
     Spin,
     ConfigProvider,
     Empty
@@ -26,10 +25,14 @@ import {
 import { motion } from "framer-motion";
 import { fireError } from '../../utils/fireError';
 
-const { Title, Text } = Typography;
+import Pagination from '../Pagination/Pagination';
+
+import { NotificationContext } from '../../contexts/NotificationContext';
 
 const Notifications = () => {
     const { token } = useContext(AuthContext);
+    const { notificationCount } = useContext(NotificationContext);
+
     const { message } = App.useApp();
 
     const notificationsService = notificationsServiceFactory(token);
@@ -40,6 +43,31 @@ const Notifications = () => {
     const [shouldScroll, setShouldScroll] = useState(false);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
     const [notificationsCount, setNotificationsCount] = useState(0);
+
+    const containerVariants = {
+        hidden: {},
+        show: {
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+    };
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+    };
+
+    const bellVariants = {
+        animate: {
+            rotate: [0, -10, 10, -6, 6, -3, 3, 0],
+            transition: {
+                duration: 1,
+                repeat: Infinity,
+                repeatDelay: 4,
+            },
+        },
+    };
 
     useLayoutEffect(() => {
         if (shouldScroll) {
@@ -69,7 +97,14 @@ const Notifications = () => {
             .markNotificationAsRead(id)
             .then(res => {
                 message.success(res.successMessage, 5);
-                setCurrentPage(1);
+                // setCurrentPage(1);
+
+                setNotifications(prev =>
+                    prev.map(n =>
+                        n.id === id ? { ...n, isRead: true } : n
+                    )
+                );
+                setNotificationsCount(prev => Math.max(prev - 1, 0));
             }).catch(err => fireError(err));
     }
 
@@ -99,138 +134,148 @@ const Notifications = () => {
     };
 
     return (
+
+
         <section className={styles.notificationsSection}>
 
-            <div className={styles.headerRow}>
+            <div className={styles.notificationsContainer}>
 
-                {notifications.length > 0 && (
-                    <>
-                        <Title level={3} style={{ color: "#389e0d", fontFamily: 'Poppins, sans-serif', margin: 0 }}>
-                            <BellOutlined style={{ marginRight: "0.5rem" }} />
-                            Notifications ({notificationsCount})
-                        </Title>
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <Button
-                                loading={markingAll}
-                                type="primary"
-                                onClick={handleMarkAllAsRead}
-                                style={{
-                                    backgroundColor: '#52c41a',
-                                    borderColor: '#52c41a',
-                                    fontWeight: 600
-                                }}
-                            >
-                                Mark All As Read
-                            </Button>
-                        </motion.div>
-                    </>
-                )}
-            </div>
+                {notifications?.length > 0 && !spinnerLoading && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 8.5rem' }}>
 
+                        <Typography.Title level={3} className={styles.pageTitle}>
+                            <motion.span variants={bellVariants} animate="animate" style={{ display: 'inline-block' }}>
+                                <BellOutlined />
+                            </motion.span>
+                            {" "}Notifications ({notificationCount})
+                        </Typography.Title>
 
-            {spinnerLoading ? (
-                <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: 'calc(100vh - 235.6px)'
-                    }}>
-
-                        <Spin size='large' spinning={spinnerLoading} />
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+                            <Button variant='solid' color='cyan' className={styles.notificationsButton}>Mark all as read</Button>
+                            <Button variant='solid' color='danger' className={styles.notificationsButton}>Delete All</Button>
+                        </div>
                     </div>
-                </ConfigProvider>
-            ) : (
-                <div className={styles.notificationsContainer}>
-                    {notifications.length === 0 ? (
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            minHeight: 'calc(100vh - 235.6px)'
-                        }}>
+                )}
+
+                {
+                    spinnerLoading ?
+                        (
+                            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    // border: 'solid 1px red',
+                                    minHeight: '600px'
+                                }}>
+
+                                    <Spin
+                                        className={styles.spinner}
+                                        size='large'
+                                        spinning={spinnerLoading}
+                                    />
+                                </div>
+                            </ConfigProvider>
+                        ) : notificationsCount > 0 ?
+                            <>
+                                <motion.div
+                                    className={styles.notificationsList}
+                                    variants={containerVariants}
+                                    initial="hidden"
+                                    animate="show"
+                                >
+                                    {notifications.map((notification) => (
+                                        <motion.div style={{ width: '80%' }} key={notification.id} variants={cardVariants}>
+                                            <Card className={styles.notificationCard}>
+                                                <div className={styles.cardContent}>
+                                                    <div className={styles.cardText}>
+                                                        <Typography.Text className={styles.cardTitle}>
+                                                            {notification.content}
+                                                        </Typography.Text>
+                                                        <Typography.Text
+                                                            type="secondary"
+                                                            className={styles.cardDate}
+                                                        >
+                                                            {new Date(notification.createdOn).toLocaleString()}
+                                                        </Typography.Text>
+                                                    </div>
+
+                                                    <div className={styles.cardActions}>
+                                                        {!notification.isRead ? (
+                                                            <Popover content="Mark as read">
+                                                                <Button
+                                                                    icon={<CheckOutlined />}
+                                                                    variant="solid"
+                                                                    color="green"
+                                                                    onClick={() => markNotificationAsRead(notification.id)}
+                                                                    style={{
+                                                                        color: "black",
+                                                                        fontSize: "1.5rem",
+                                                                        borderRadius: "50%",
+                                                                        padding: "1.3rem",
+                                                                    }}
+                                                                />
+                                                            </Popover>
+                                                        ) : (
+                                                            <Tag
+                                                                color="green"
+                                                                style={{
+                                                                    fontSize: "1.5rem",
+                                                                    padding: "0.5rem 1rem",
+                                                                    backgroundColor: 'lightgreen',
+                                                                    color: 'black',
+                                                                    border: 'solid 1px lightgray'
+                                                                }}
+                                                            >
+                                                                Read
+                                                            </Tag>
+                                                        )}
+                                                        <Popover content="Delete notification">
+                                                            <Button
+                                                                icon={<DeleteOutlined />}
+                                                                variant="solid"
+                                                                color="danger"
+                                                                danger
+                                                                style={{
+                                                                    color: "black",
+                                                                    fontSize: "1.5rem",
+                                                                    borderRadius: "50%",
+                                                                    padding: "1.3rem",
+                                                                }}
+                                                                onClick={() => deleteNotification(notification.id)}
+                                                            />
+                                                        </Popover>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+
+
+                                <Pagination currentPage={currentPage} handlePageChange={handlePageChange} isForAdmin={false} pagesCount={pagesCount} />
+                            </>
+                            :
                             <Empty
+                                style={{
+                                    minHeight: '600px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexDirection: 'column',
+                                    margin: '0'
+                                }}
                                 description={
-                                    <span style={{ fontSize: '1.5rem', fontWeight: 500 }}>
+                                    <span style={{ fontSize: '2rem', fontWeight: 500, fontFamily: 'Poppins, Segoe UI, sans-serif', }}>
                                         No notifications yet
                                     </span>
                                 }
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                             />
-                        </div>
-                    ) : (
-                        notifications.map((notif, index) => (
-                            <motion.div
-                                key={notif.id}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.3, delay: index * 0.05 }}
-                            >
-                                <Card className={`${styles.notificationCard} ${notif.isRead ? styles.read : ''}`}>
-                                    <div className={styles.cardContent}>
-                                        <div className={styles.cardText}>
-                                            <Text strong className={styles.cardTitle}>
-                                                {notif.content}
-                                            </Text>
-                                            <Text type="secondary" className={styles.cardDate}>
-                                                {new Date(notif.createdOn).toLocaleString()}
-                                            </Text>
-                                        </div>
-                                        <div className={styles.cardActions}>
-                                            {!notif.isRead ? (
-                                                <Popover content="Mark as read">
-                                                    <Button
-                                                        icon={<CheckOutlined />}
-                                                        type="text"
-                                                        onClick={() => markNotificationAsRead(notif.id)}
-                                                        style={{ color: "#52c41a" }}
-                                                    />
-                                                </Popover>
-                                            ) : (
-                                                <Tag color="green">Read</Tag>
-                                            )}
-                                            <Popover content="Delete notification">
-                                                <Button
-                                                    icon={<DeleteOutlined />}
-                                                    type="text"
-                                                    danger
-                                                    onClick={() => deleteNotification(notif.id)}
-                                                />
-                                            </Popover>
-                                        </div>
-                                    </div>
-                                </Card>
-                            </motion.div>
-                        ))
-                    )}
-                </div>
-            )}
+                }
 
-            {!spinnerLoading && pagesCount > 1 && (
-                <ConfigProvider theme={{
-                    components: {
-                        Pagination: {
-                            itemActiveBg: '#e8fffb',
-                            itemActiveColor: '#52c41a',
-                            colorPrimary: '#52c41a',
-                            colorPrimaryHover: '#389e0d',
-                        },
-                    }
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Pagination
-                            onChange={handlePageChange}
-                            current={currentPage}
-                            total={pagesCount * 6}
-                            pageSize={6}
-                            style={{ textAlign: 'center', marginTop: '2rem' }}
-                        />
-                    </div>
-                </ConfigProvider>
-            )}
+            </div>
+
         </section>
     );
 };

@@ -9,27 +9,9 @@ import { fireError } from '../../utils/fireError';
 
 import { Typography } from 'antd';
 
-const { Text, Title, Paragraph } = Typography;
+const { Title } = Typography;
 
-const AnimatedEmoji = () => (
-    <motion.span
-        style={{ display: 'inline-block', cursor: 'pointer' }}
-        whileHover={{
-            scale: 1.2,
-            rotate: 10,
-            transition: { type: 'spring', stiffness: 200, damping: 12 }
-        }}
-        whileTap={{
-            scale: [1, 0.8, 1],
-            rotate: 0,
-            transition: { duration: 0.3, ease: 'easeInOut' }
-        }}
-        aria-label="Globe emoji"
-        role="img"
-    >
-        🌍
-    </motion.span>
-);
+import { GlobalOutlined, StarFilled } from '@ant-design/icons';
 
 import PlacesList from '../Place/PlacesList/PlacesList';
 
@@ -71,7 +53,7 @@ const Home = () => {
                     }}
                 >
                     <Title level={1} className={styles.heroTitle}>
-                        Discover Cool Places <AnimatedEmoji />
+                        Discover Cool Places  🌍
                     </Title>
                     <Typography.Paragraph className={styles.heroDescription}>
                         Ready to embark on unforgettable adventures? Explorify helps you discover breathtaking places, share your own experiences, and connect with fellow travelers around the world. Whether you're chasing hidden waterfalls, wandering through ancient cities, or savoring local flavors off the beaten path, Explorify is your trusted companion.
@@ -85,35 +67,43 @@ const Home = () => {
                     style={{
                         marginBottom: '1.5rem',
                         padding: '0 8rem',
-                        paddingTop: '2rem'
+                        paddingTop: '2rem',
                     }}
-                    className={styles.placesContainer}
                 >
-                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            whileHover={{
-                                scale: 1.05,
-                                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
-                            }}
-                            transition={{ duration: 0.4, ease: 'easeOut' }}
+
+                    <Typography.Title
+                        level={3}
+                        style={{
+                            textAlign: 'left',
+                            marginBottom: '2.5rem',
+                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                            fontWeight: 700,
+                            fontSize: '2.2rem',
+                            letterSpacing: '0.4px',
+                            color: '#1A7F64',
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            gap: '0.6rem',
+                            marginLeft: '2rem',
+                            width: '100%'
+                        }}
+                    >
+                        <span
                             style={{
-                                background: 'linear-gradient(135deg, #b7eb8f, #87e8de)', // pastel green-teal
-                                color: '#004d40',
-                                borderRadius: '16px',
-                                padding: '0.75rem 2rem',
-                                display: 'inline-block',
-                                fontWeight: '600',
-                                fontSize: '1.4rem',
-                                letterSpacing: '0.5px',
-                                border: '1px solid rgba(0, 0, 0, 0.05)',
-                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                                backgroundColor: '#ffffff',
+                                borderRadius: '50%',
+                                padding: '0.5rem',
+                                boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                         >
-                            🌍 Recent Places
-                        </motion.div>
-                    </div>
+                            <GlobalOutlined style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                        </span>
+                        Recent Places
+                    </Typography.Title>
 
                     <PlacesList
                         places={recentPlaces}
@@ -134,31 +124,39 @@ const Home = () => {
                     className={styles.placesContainer}
                 >
 
-                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            whileHover={{
-                                scale: 1.05,
-                                boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
-                            }}
-                            transition={{ duration: 0.4, ease: 'easeOut' }}
+                    <Typography.Title
+                        level={3}
+                        style={{
+                            textAlign: 'left',
+                            marginBottom: '2.5rem',
+                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                            fontWeight: 700,
+                            fontSize: '2.2rem',
+                            letterSpacing: '0.4px',
+                            color: '#1A7F64',
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            gap: '0.6rem',
+                            marginLeft: '2rem',
+                            width: '100%'
+                        }}
+                    >
+                        <span
                             style={{
-                                background: 'linear-gradient(135deg, #b7eb8f, #87e8de)',
-                                color: '#004d40',
-                                borderRadius: '16px',
-                                padding: '0.75rem 2rem',
-                                display: 'inline-block',
-                                fontWeight: '600',
-                                fontSize: '1.4rem',
-                                letterSpacing: '0.5px',
-                                border: '1px solid rgba(0, 0, 0, 0.05)',
-                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                                backgroundColor: '#ffffff',
+                                borderRadius: '50%',
+                                padding: '0.5rem',
+                                boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                             }}
                         >
-                            ⭐ Highest Rated Places
-                        </motion.div>
-                    </div>
+                            <StarFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                        </span>
+                        Highest Rated Places
+                    </Typography.Title>
 
                     <PlacesList
                         places={highestRatedPlaces}

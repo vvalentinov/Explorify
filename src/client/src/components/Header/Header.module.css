@@ -35,9 +35,6 @@
     right: 5px !important;
 }
 
-
-
-
 .avatarHoverWrapper {
     display: inline-block;
     border-radius: 50%;
@@ -59,6 +56,8 @@
     color: #2c3e50;
     text-decoration: none;
     font-family: 'Courier New', Courier, monospace;
+    /* border: solid 1px red; */
+    margin-right: 0 !important;
 }
 
 .logoImage {
@@ -77,16 +76,13 @@
     transition: all 0.2s ease;
 }
 
-.logoMenuItem+.navItem {
-    margin-left: 2rem;
-}
-
-.navItem:nth-of-type(3) {
-    margin-left: 1rem;
+.activeNavItem {
+    color: #00AF87 !important;
+    background-color: rgba(0, 175, 135, 0.12);
 }
 
 .navItem:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 175, 135, 0.1) !important;
 }
 
 .mobileDropdownContent {

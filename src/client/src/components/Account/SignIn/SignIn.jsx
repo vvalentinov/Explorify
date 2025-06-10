@@ -1,58 +1,21 @@
 import styles from './SignIn.module.css';
 
-import { LockOutlined, UserOutlined, LoginOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Typography, Card, ConfigProvider, Image } from "antd";
-
+import { Button, Form, Input, Typography, Card } from "antd";
+import { LockOutlined, UserOutlined, LoginOutlined, GoogleOutlined } from "@ant-design/icons";
 
 import { useContext, useState } from 'react';
-import { NavLink, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { AuthContext } from '../../../contexts/AuthContext';
 import { signUpPath, homePath, forgotPasswordPath } from '../../../constants/paths';
 import { authServiceFactory } from '../../../services/authService';
 
-import myImage from '../../../assets/image.png';
-import logoImage from '../../../assets/logo.png';
-
-const { Text, Title, Paragraph } = Typography;
-
 import { motion } from 'framer-motion';
 
-const AnimatedEmoji = () => (
-    <motion.span
-        style={{
-            display: 'inline-block',
-            cursor: 'pointer',
-            fontSize: '3rem',
-            borderRadius: '8px',
-            padding: '0.2rem',
-            outline: 'none',
-            userSelect: 'none',
-            WebkitTapHighlightColor: 'transparent',
-            backgroundColor: 'transparent'
-        }}
-        whileHover={{
-            scale: 1.2,
-            rotate: 10,
-            transition: { type: 'spring', stiffness: 200, damping: 12 }
-        }}
-        whileTap={{
-            scale: [1, 0.8, 1],
-            rotate: 0,
-            transition: { duration: 0.3, ease: 'easeInOut' }
-        }}
-        aria-label="Globe emoji"
-        role="img"
-        onMouseDown={(e) => e.preventDefault()}
-        onFocus={(e) => e.target.blur()}
-    >
-        🌍
-    </motion.span>
-);
-
-
-
 const SignIn = () => {
+
+    // const [form] = Form.useForm();
+
     const navigate = useNavigate();
 
     const authService = authServiceFactory();
@@ -60,8 +23,10 @@ const SignIn = () => {
     const { userLogin } = useContext(AuthContext);
 
     const [isSigningIn, setIsSigningIn] = useState(false);
+    const [isSigningInWithGoogle, setIsSigningInWithGoogle] = useState(false);
 
-    const onFinish = (values) => {
+    const onSignInClick = (values) => {
+
         setIsSigningIn(true);
 
         authService
@@ -74,7 +39,9 @@ const SignIn = () => {
                 console.log(err);
                 setIsSigningIn(false);
             });
-    };
+    }
+
+    const googleSignIn = () => { setIsSigningInWithGoogle(true); authService.loginWithGoogle(); };
 
     return (
         <section className={styles.signInSection}>
@@ -111,9 +78,10 @@ const SignIn = () => {
                     >
 
                         <Form
+                            // form={form}
                             name="normal_login"
-                            onFinish={onFinish}
                             layout="vertical"
+                            onFinish={onSignInClick}
                         >
                             <Form.Item
                                 name="username"
@@ -164,9 +132,24 @@ const SignIn = () => {
                                     variant='solid'
                                     size='large'
                                     block="true"
-                                    htmlType="submit"
+                                    htmlType='submit'
                                 >
                                     {isSigningIn ? 'Signing you in...' : 'Sign In'}
+                                </Button>
+
+                                <Button
+                                    size="large"
+                                    block
+                                    icon={<GoogleOutlined />}
+                                    onClick={googleSignIn}
+                                    style={{
+                                        marginTop: '1.5rem',
+                                        backgroundColor: '#ffffff',
+                                        border: '1px solid #d9d9d9',
+                                        color: 'rgba(0, 0, 0, 0.85)',
+                                    }}
+                                >
+                                    {isSigningInWithGoogle ? 'Signing you in with Google...' : 'Sign In With Google'}
                                 </Button>
 
                                 <div className={styles.footer}>

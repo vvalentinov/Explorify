@@ -9,8 +9,8 @@ const Footer = () => {
     return (
         <footer
             style={{
-                backgroundColor: "#f9f9f9",
-                borderTop: "1px solid #e0e0e0",
+                // backgroundColor: "#f9f9f9",
+                borderTop: "1.5px solid #e0e0e0",
                 padding: "2.5rem 1rem",
                 width: "100%",
             }}
@@ -21,7 +21,6 @@ const Footer = () => {
                     flexDirection: isMdUp ? "row" : "column",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    maxWidth: "1200px",
                     margin: "0 auto",
                     gap: "1.5rem",
                     padding: isMdUp ? "0 2rem" : "0 1rem",
@@ -35,6 +34,7 @@ const Footer = () => {
                         justifyContent: isMdUp ? "flex-start" : "center",
                         width: isMdUp ? "auto" : "100%",
                         textAlign: "center",
+                        marginLeft: '4rem'
                     }}
                 >
                     <Button
@@ -78,9 +78,10 @@ const Footer = () => {
                 <Typography.Text
                     style={{
                         color: "#888",
-                        fontSize: "1.2rem",
+                        fontSize: "1.3rem",
                         textAlign: isMdUp ? "right" : "center",
                         width: isMdUp ? "auto" : "100%",
+                        marginRight: '4rem'
                     }}
                 >
                     © {new Date().getFullYear()} Explorify. All Rights Reserved.

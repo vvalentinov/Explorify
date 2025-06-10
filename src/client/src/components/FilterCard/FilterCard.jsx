@@ -33,9 +33,6 @@ const FilterCard = ({
                     },
                 }}
             >
-                <Typography.Paragraph style={{ fontSize: '1.5rem' }} italic={true}>
-                    Filter
-                </Typography.Paragraph>
 
                 <Radio.Group
                     options={options}

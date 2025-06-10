@@ -5,12 +5,26 @@ import { motion } from 'framer-motion';
 import styles from './Header.module.css';
 import logo from '../../assets/explorify.png';
 
-import { AppstoreOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+    AppstoreFilled,
+    SearchOutlined,
+    EnvironmentFilled,
+    UsergroupAddOutlined,
+    HeartFilled,
+    StarFilled,
+    EyeFilled
+} from '@ant-design/icons';
+
+import { useContext } from 'react';
+
+import { AuthContext } from '../../contexts/AuthContext';
 
 
 const { useBreakpoint } = Grid;
 
 const ResponsiveMenu = () => {
+
+    const { isAuthenticated } = useContext(AuthContext);
 
     const screens = useBreakpoint();
 
@@ -19,11 +33,21 @@ const ResponsiveMenu = () => {
             <NavLink to="/" className={styles.dropdownItem}>Home</NavLink>
             <NavLink to="/categories" className={styles.dropdownItem}>Categories</NavLink>
             <NavLink to="/search" className={styles.dropdownItem}>Search</NavLink>
+
+            {isAuthenticated && (
+                <>
+                    <NavLink to="/my-places" className={styles.dropdownItem}>My Places</NavLink>
+                    <NavLink to="/my-reviews" className={styles.dropdownItem}>My Reviews</NavLink>
+                    <NavLink to="/my-following" className={styles.dropdownItem}>My Following</NavLink>
+                    <NavLink to="/favorite-places" className={styles.dropdownItem}>Favorite Places</NavLink>
+                </>
+            )}
         </div>
     );
 
     const navLinks = (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '12rem' }}>
+
             <Link to="/" className={styles.logoMenuItem}>
                 <motion.div
                     whileHover={{
@@ -38,7 +62,6 @@ const ResponsiveMenu = () => {
                         alignItems: 'center',
                         gap: 15,
                         cursor: 'pointer',
-                        marginRight: screens.lg ? '5rem' : '0'
                     }}
                 >
                     <motion.img
@@ -66,15 +89,75 @@ const ResponsiveMenu = () => {
 
             </Link>
 
-            <NavLink to="/categories" className={styles.navItem}>
-                <AppstoreOutlined style={{ marginRight: '0.5rem' }} />
-                Categories
-            </NavLink>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+                <NavLink
+                    to="/categories"
+                    style={{ marginLeft: '2rem' }}
+                    className={({ isActive }) =>
+                        `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                    }
+                >
+                    <AppstoreFilled style={{ marginRight: '0.5rem' }} />
+                    Categories
+                </NavLink>
 
-            <NavLink to="/search" className={styles.navItem}>
-                <SearchOutlined style={{ marginRight: '0.5rem' }} />
-                Search
-            </NavLink>
+                <NavLink
+                    to="/search"
+                    className={({ isActive }) =>
+                        `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                    }
+                >
+                    <SearchOutlined style={{ marginRight: '0.5rem' }} />
+                    Search
+                </NavLink>
+
+
+                {isAuthenticated && (
+                    <>
+                        <NavLink
+                            to="/my-places"
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                            }
+                        >
+                            <EnvironmentFilled style={{ marginRight: '0.5rem' }} />
+                            My Places
+                        </NavLink>
+
+                        <NavLink
+                            to="/my-reviews"
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                            }
+                        >
+                            <StarFilled style={{ marginRight: '0.5rem' }} />
+                            My Reviews
+                        </NavLink>
+
+                        <NavLink
+                            to="/my-following"
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                            }
+                        >
+                            <EyeFilled style={{ marginRight: '0.5rem' }} />
+                            My Following
+                        </NavLink>
+
+                        <NavLink
+                            to="/favorite-places"
+                            className={({ isActive }) =>
+                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
+                            }
+                        >
+                            <HeartFilled color='red' style={{ marginRight: '0.5rem' }} />
+                            Favorite Places
+                        </NavLink>
+                    </>
+                )}
+            </div>
+
+
 
         </div>
 
@@ -82,7 +165,7 @@ const ResponsiveMenu = () => {
 
     return (
         <div>
-            {screens.md ? (
+            {screens.xl ? (
                 navLinks
             ) : (
                 <Dropdown

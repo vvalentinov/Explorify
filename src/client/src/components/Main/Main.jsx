@@ -43,6 +43,10 @@ import UserFollowingPlaces from '../Place/UserFollowingPlaces';
 
 import Settings from '../Account/Settings/Settings';
 
+import Leaderboard from '../Leaderboard/Leaderboard';
+
+import GoogleAuthRedirect from '../GoogleAuthRedirect';
+
 const Main = () => {
     return (
         <main>
@@ -57,6 +61,8 @@ const Main = () => {
                     <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
                     <Route path={paths.changePasswordPath} element={<ChangePassword />} />
                     <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
+
+                    <Route path="/auth/google/callback" element={<GoogleAuthRedirect />} />
 
                     <Route path={paths.homePath} element={<Home />} />
                     <Route path={paths.signInPath} element={<SignIn />} />
@@ -76,6 +82,8 @@ const Main = () => {
                     <Route path={paths.resetPasswordPath} element={<ResetPassword />} />
 
                     <Route path={paths.accountSettingsPath} element={<Settings />} />
+
+                    <Route path={paths.leaderboardPath} element={< Leaderboard />} />
 
                     <Route path='/search' element={<PlaceSearch />} />
 
