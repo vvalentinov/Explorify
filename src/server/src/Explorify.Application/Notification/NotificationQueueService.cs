@@ -1,6 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Interfaces;
 
-namespace Explorify.Application;
+namespace Explorify.Application.Notification;
 
 public class NotificationQueueService : INotificationQueueService
 {

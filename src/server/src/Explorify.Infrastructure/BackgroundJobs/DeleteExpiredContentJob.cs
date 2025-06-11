@@ -94,7 +94,7 @@ public class DeleteExpiredContentJob : IJob
             if (place.IsApproved)
             {
                await _userService.DecreaseUserPointsAsync(
-                   place.UserId.ToString(),
+                   place.UserId,
                    UserPlaceUploadPoints);
             }
         }
@@ -134,7 +134,7 @@ public class DeleteExpiredContentJob : IJob
             if (review.IsApproved && review.UserId != review.Place.UserId )
             {
                 await _userService.DecreaseUserPointsAsync(
-                    review.UserId.ToString(),
+                    review.UserId,
                     UserReviewUploadPoints);
             }
         }

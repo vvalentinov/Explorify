@@ -32,18 +32,9 @@ public class UnapprovePlaceCommandHandler
         UnapprovePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        var placeId = request.Model.PlaceId;
-        var reason = request.Model.Reason;
-        var currUserId = request.CurrentUserId;
+        var place = await LoadPlaceWithReviewsAsync(request.Model.PlaceId, cancellationToken);
 
-        var place = await _repository
-            .All<Domain.Entities.Place>()
-            .Include(x => x.Reviews)
-            .FirstOrDefaultAsync(x =>
-                x.Id == placeId,
-                cancellationToken);
-
-        if (place == null)
+        if (place is null)
         {
             var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure(error);
@@ -55,40 +46,33 @@ public class UnapprovePlaceCommandHandler
             return Result.Failure(error);
         }
 
-        place.IsApproved = false;
+        place.Unapprove();
 
-        var review = place.Reviews.FirstOrDefault(x => x.UserId == place.UserId);
-
-        if (review != null)
-        {
-            review.IsApproved = false;
-        }
-
-        await _userService.DecreaseUserPointsAsync(
-            place.UserId.ToString(),
+        var pointsResult = await _userService.DecreaseUserPointsAsync(
+            place.UserId,
             UserPlaceUploadPoints);
 
-        if (place.UserId != currUserId && string.IsNullOrWhiteSpace(reason))
+        if (pointsResult.IsFailure)
         {
-            var error = new Error("Reason for unapproving is required!", ErrorType.Validation);
-            return Result.Failure(error);
+            return pointsResult;
         }
 
-        if (place.UserId != currUserId)
-        {
-            var notification = new Domain.Entities.Notification
-            {
-                ReceiverId = place.UserId,
-                SenderId = request.CurrentUserId,
-                Content = $"Sad news! Your place \"{place.Name}\" was unapproved by an admin. Reason: {reason}."
-            };
+        var isByAdmin = IsActionByAdmin(place.UserId, request.CurrentUserId);
 
-            await _repository.AddAsync(notification);
+        if (isByAdmin)
+        {
+            if (string.IsNullOrWhiteSpace(request.Model.Reason))
+            {
+                var error = new Error("Reason for unapproving is required!", ErrorType.Validation);
+                return Result.Failure(error);
+            }
+
+            await QueueAdminNotificationAsync(place, request.CurrentUserId, request.Model.Reason);
         }
 
         await _repository.SaveChangesAsync();
 
-        if (place.UserId != currUserId)
+        if (isByAdmin)
         {
             await _notificationService.NotifyAsync(
                 "Admin unapproved one of your places! Check your notifications.",
@@ -96,5 +80,28 @@ public class UnapprovePlaceCommandHandler
         }
 
         return Result.Success("Successfully unapproved place!");
+    }
+
+    private async Task<Domain.Entities.Place?> LoadPlaceWithReviewsAsync(Guid placeId, CancellationToken ct)
+    {
+        return await _repository
+            .All<Domain.Entities.Place>()
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(x => x.Id == placeId, ct);
+    }
+
+    private static bool IsActionByAdmin(Guid placeOwnerId, Guid currentUserId)
+       => placeOwnerId != currentUserId;
+
+    private async Task QueueAdminNotificationAsync(Domain.Entities.Place place, Guid adminId, string reason)
+    {
+        var notification = new Domain.Entities.Notification
+        {
+            ReceiverId = place.UserId,
+            SenderId = adminId,
+            Content = $"Sad news! Your place \"{place.Name}\" was unapproved by an admin. Reason: {reason}."
+        };
+
+        await _repository.AddAsync(notification);
     }
 }

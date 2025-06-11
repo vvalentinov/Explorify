@@ -26,6 +26,7 @@ public class FollowController : BaseController
             CurrUserName: User.GetUserName());
 
         var result = await _mediator.Send(command);
+
         return this.OkOrProblemDetails(result);
     }
 
@@ -38,6 +39,7 @@ public class FollowController : BaseController
             CurrUserName: User.GetUserName());
 
         var result = await _mediator.Send(command);
+
         return this.OkOrProblemDetails(result);
     }
 }

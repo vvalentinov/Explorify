@@ -31,70 +31,68 @@ public class UnapproveReviewCommandHandler :
         UnapproveReviewCommand request,
         CancellationToken cancellationToken)
     {
-        var reviewId = request.Model.ReviewId;
-        var reason = request.Model.Reason;
-        var currentUserId = request.CurrentUserId;
+        var review = await GetReviewWithPlaceAsync(
+            request.Model.ReviewId,
+            cancellationToken);
 
-        var review = await _repository
-           .All<Domain.Entities.Review>()
-           .Include(x => x.Place)
-           .FirstOrDefaultAsync(x =>
-               x.Id == reviewId,
-               cancellationToken);
-
-        if (review == null)
+        if (review is null)
         {
             var error = new Error("No review with given id found!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        if (!review.IsApproved)
+        if (review.IsApproved is false)
         {
             var error = new Error("This review is already unapproved!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        review.IsApproved = false;
+        review.Unapprove();
 
-        var decreaseUserPoints = await _userService.DecreaseUserPointsAsync(
-            review.UserId.ToString(),
+        var pointResult = await _userService.DecreaseUserPointsAsync(
+            review.UserId,
             UserReviewUploadPoints);
 
-        if (decreaseUserPoints.IsFailure)
+        if (pointResult.IsFailure)
         {
-            return decreaseUserPoints;
+            return pointResult;
         }
 
-        _repository.Update(review);
+        await HandleNotificationIfNeededAsync(review, request);
 
-        if (review.UserId == request.CurrentUserId)
-        {
-            await _repository.SaveChangesAsync();
-            return Result.Success("Successfully unapproved review!");
-        }
-
-        if (review.UserId != currentUserId)
-        {
-            var notification = new Domain.Entities.Notification
-            {
-                ReceiverId = review.UserId,
-                SenderId = request.CurrentUserId,
-                Content = $"Sad news! Your review for the place \"{review.Place.Name}\" was unapproved by an admin. Reason: {request.Model.Reason}."
-            };
-
-            await _repository.AddAsync(notification);
-        }
-
-        
         await _repository.SaveChangesAsync();
 
-        if (review.UserId != currentUserId)
+        return Result.Success("Successfully unapproved review!");
+    }
+
+    private async Task<Domain.Entities.Review?> GetReviewWithPlaceAsync(
+        Guid reviewId,
+        CancellationToken ct)
+    {
+        return await _repository
+            .All<Domain.Entities.Review>()
+            .Include(r => r.Place)
+            .FirstOrDefaultAsync(r => r.Id == reviewId, ct);
+    }
+
+    private async Task HandleNotificationIfNeededAsync(Domain.Entities.Review review, UnapproveReviewCommand request)
+    {
+        if (review.UserId == request.CurrentUserId)
         {
-            await _notificationService.NotifyAsync(
-                "Admin unapproved one of your reviews! Check your notifications.",
-                review.UserId);
+            return;
         }
 
-        return Result.Success("Successfully unapproved review!");
+        var notification = new Domain.Entities.Notification
+        {
+            ReceiverId = review.UserId,
+            SenderId = request.CurrentUserId,
+            Content = $"Sad news! Your review for the place \"{review.Place.Name}\" was unapproved by an admin. Reason: {request.Model.Reason}."
+        };
+
+        await _repository.AddAsync(notification);
+
+        await _notificationService.NotifyAsync(
+            "Admin unapproved one of your reviews! Check your notifications.",
+            review.UserId);
     }
 }

@@ -31,24 +31,13 @@ public class UnfollowUserCommandHandler
         UnfollowUserCommand request,
         CancellationToken cancellationToken)
     {
-        var followerId = request.FollowerId;
-        var followeeId = request.FolloweeId;
-        var currUserName = request.CurrUserName;
-
-        if (followerId == followeeId)
+        if (request.FollowerId == request.FolloweeId)
         {
             var error = new Error("You cannot follow/unfollow yourself!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        // check if already follow exists
-
-        var userFollow = await _repository
-            .All<Domain.Entities.UserFollow>()
-            .FirstOrDefaultAsync(uf =>
-                uf.FollowerId == followerId &&
-                uf.FolloweeId == followeeId,
-                cancellationToken);
+        var userFollow = await GetUserFollowAsync(request, cancellationToken);
 
         if (userFollow is null)
         {
@@ -56,33 +45,53 @@ public class UnfollowUserCommandHandler
             return Result.Failure(error);
         }
 
-        var decreaseUserPointsResult = await _userService.DecreaseUserPointsAsync(
-            followeeId.ToString(),
+        var pointResult = await _userService.DecreaseUserPointsAsync(
+            request.FolloweeId,
             UserFollowPoints);
 
-        if (decreaseUserPointsResult.IsFailure)
+        if (pointResult.IsFailure)
         {
-            return decreaseUserPointsResult;
+            return pointResult;
         }
 
-        var notification = new Domain.Entities.Notification
-        {
-            Content = $"{currUserName} unfollowed you. Looks like it's time to win them back — you lost {UserFollowPoints} points.",
-            SenderId = followerId,
-            ReceiverId = followeeId,
-        };
+        SoftDeleteFollow(userFollow);
 
-        _repository.SoftDelete(userFollow);
-        _repository.Update(userFollow);
-
-        await _repository.AddAsync(notification);
+        await QueueUnfollowNotificationAsync(request);
 
         await _repository.SaveChangesAsync();
 
         await _notificationService.NotifyAsync(
-            $"{currUserName} unfollowed you.",
-            followeeId);
+            $"{request.CurrUserName} unfollowed you.",
+            request.FolloweeId);
 
         return Result.Success("Successfully unfollowed user!");
+    }
+
+    private async Task<Domain.Entities.UserFollow?> GetUserFollowAsync(UnfollowUserCommand request, CancellationToken ct)
+    {
+        return await _repository
+            .All<Domain.Entities.UserFollow>()
+            .FirstOrDefaultAsync(uf =>
+                uf.FollowerId == request.FollowerId &&
+                uf.FolloweeId == request.FolloweeId,
+                ct);
+    }
+
+    private void SoftDeleteFollow(Domain.Entities.UserFollow userFollow)
+    {
+        _repository.SoftDelete(userFollow);
+        _repository.Update(userFollow);
+    }
+
+    private async Task QueueUnfollowNotificationAsync(UnfollowUserCommand request)
+    {
+        var notification = new Domain.Entities.Notification
+        {
+            Content = $"{request.CurrUserName} unfollowed you. Looks like it's time to win them back — you lost {UserFollowPoints} points.",
+            SenderId = request.FollowerId,
+            ReceiverId = request.FolloweeId
+        };
+
+        await _repository.AddAsync(notification);
     }
 }

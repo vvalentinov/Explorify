@@ -1,10 +1,10 @@
-﻿using MediatR;
-
-using Explorify.Api.Extensions;
+﻿using Explorify.Api.Extensions;
 using Explorify.Infrastructure;
 using Explorify.Application.FavPlace.Add;
 using Explorify.Application.FavPlace.Remove;
 using Explorify.Application.FavPlace.GetFavPlaces;
+
+using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 

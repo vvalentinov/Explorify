@@ -1,12 +1,15 @@
 ﻿using Explorify.Api.DTOs;
 using Explorify.Api.Extensions;
+
 using Explorify.Infrastructure;
+
 using Explorify.Application.Place.Edit;
 using Explorify.Application.Place.Upload;
 using Explorify.Application.Place.Delete;
 using Explorify.Application.Place.Revert;
 using Explorify.Application.Place.Search;
 using Explorify.Application.Place.Edit.GetEditData;
+using Explorify.Application.Place.GetPlaceWeatherInfo;
 using Explorify.Application.Place.GetPlace.GetPlaceById;
 using Explorify.Application.Place.GetPlaces.GetPlacesInCategory;
 using Explorify.Application.Place.GetPlaces.GetPlacesInSubcategory;
@@ -18,7 +21,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Explorify.Application.Place.GetPlaceWeatherInfo;
 
 namespace Explorify.Api.Controllers;
 

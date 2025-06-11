@@ -13,6 +13,7 @@ public class DeletePlaceCommandHandler
     : ICommandHandler<DeletePlaceCommand>
 {
     private readonly IRepository _repository;
+
     private readonly INotificationService _notificationService;
 
     public DeletePlaceCommandHandler(
@@ -20,6 +21,7 @@ public class DeletePlaceCommandHandler
         INotificationService notificationService)
     {
         _repository = repository;
+
         _notificationService = notificationService;
     }
 
@@ -27,81 +29,71 @@ public class DeletePlaceCommandHandler
         DeletePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        var placeId = request.Model.PlaceId;
-        var reason = request.Model.Reason;
-        var currUserId = request.CurrentUserId;
-        var isCurrUserAdmin = request.IsCurrUserAdmin;
+        var place = await LoadPlaceAsync(request, cancellationToken);
 
-        var query = _repository
-            .All<Domain.Entities.Place>()
-            .Where(x => x.Id == placeId);
-
-        if (!isCurrUserAdmin)
-        {
-            query = query.Where(x => x.UserId == currUserId);
-        }
-
-        var place = await query
-            .Include(x => x.Reviews)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        // the place was not found
-        if (place == null)
+        if (place is null)
         {
             var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        // the current user is not admin
-        // the place does not belong to the current user
-        if (!request.IsCurrUserAdmin &&
-           place.UserId != request.CurrentUserId)
+        if (CanDeletePlace(request, place) is false)
         {
             var error = new Error(DeleteError, ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        // current user is admin
-        // the place to delete is not his
-        // there must be a reason provided
-        if (isCurrUserAdmin && place.UserId != currUserId && string.IsNullOrWhiteSpace(reason))
+        if (IsAdminDeletingSomeoneElse(request, place) && string.IsNullOrWhiteSpace(request.Model.Reason))
         {
             var error = new Error("A reason for the delete must be provided!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        _repository.SoftDelete(place);
+        place.MarkAsDeletedWithReviews(request.IsCurrUserAdmin);
 
-        foreach (var review in place.Reviews)
+        if (IsAdminDeletingSomeoneElse(request, place))
         {
-            _repository.SoftDelete(review);
-        }
-
-        // current user is admin
-        // the place to delete is not his
-        if (isCurrUserAdmin && place.UserId != currUserId)
-        {
-            var notification = new Domain.Entities.Notification
-            {
-                ReceiverId = place.UserId,
-                SenderId = currUserId,
-                Content = $"Your place '{place.Name}' was removed by an admin. Reason: {reason}"
-            };
-
-            await _repository.AddAsync(notification);
+            await NotifyUserOfAdminDeletionAsync(place, request);
         }
 
         await _repository.SaveChangesAsync();
 
-        // current user is admin
-        // the place to delete is not his
-        if (isCurrUserAdmin && place.UserId != currUserId)
+        return Result.Success(PlaceDeleteSuccess);
+    }
+
+    private async Task<Domain.Entities.Place?> LoadPlaceAsync(DeletePlaceCommand request, CancellationToken ct)
+    {
+        var query = _repository.All<Domain.Entities.Place>().Where(p => p.Id == request.Model.PlaceId);
+
+        if (request.IsCurrUserAdmin is false)
         {
-            await _notificationService.NotifyAsync(
-                "An admin deleted your place!",
-                place.UserId);
+            query = query.Where(p => p.UserId == request.CurrentUserId);
         }
 
-        return Result.Success(PlaceDeleteSuccess);
+        return await query.Include(p => p.Reviews).FirstOrDefaultAsync(ct);
+    }
+
+    private static bool CanDeletePlace(DeletePlaceCommand request, Domain.Entities.Place place)
+    {
+        return request.IsCurrUserAdmin || place.UserId == request.CurrentUserId;
+    }
+
+    private static bool IsAdminDeletingSomeoneElse(DeletePlaceCommand request, Domain.Entities.Place place)
+    {
+        return request.IsCurrUserAdmin && place.UserId != request.CurrentUserId;
+    }
+
+    private async Task NotifyUserOfAdminDeletionAsync(Domain.Entities.Place place, DeletePlaceCommand request)
+    {
+        var notification = new Domain.Entities.Notification
+        {
+            ReceiverId = place.UserId,
+            SenderId = request.CurrentUserId,
+            Content = $"Your place '{place.Name}' was removed by an admin. Reason: {request.Model.Reason}"
+        };
+
+        await _repository.AddAsync(notification);
+
+        await _notificationService.NotifyAsync("An admin deleted your place!", place.UserId);
     }
 }

@@ -4,8 +4,6 @@ using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
 using static Explorify.Domain.Constants.PlaceConstants.SuccessMessages;
-using static Explorify.Domain.Constants.CountryConstants.ErrorMessages;
-using static Explorify.Domain.Constants.CategoryConstants.ErrorMessages;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -40,55 +38,43 @@ public class UploadPlaceCommandHandler
         UploadPlaceCommand request,
         CancellationToken cancellationToken)
     {
-        UploadPlaceRequestModel model = request.Model;
+        var model = request.Model;
 
-        var category = await _repository
-            .AllAsNoTracking<Category>()
-            .Include(x => x.Children)
-            .FirstOrDefaultAsync(x =>
-                x.Id == model.CategoryId,
-                cancellationToken);
+        var category = await GetCategoryWithSubcategoriesAsync(
+            model.CategoryId,
+            cancellationToken);
 
-        if (category == null)
+        if (category is null)
         {
-            var error = new Error(NoCategoryWithIdError, ErrorType.Validation);
-            return Result.Failure(error);
+            return ValidationError("No category with given id found!");
         }
 
         var subcategory = category.Children.FirstOrDefault(x => x.Id == model.SubcategoryId);
 
-        if (subcategory == null)
+        if (subcategory is null)
         {
-            var error = new Error(NoSubcategoryInGivenCategoryError, ErrorType.Validation);
-            return Result.Failure(error);
+            return ValidationError("No subcategory with given id found in the specified category!");
         }
 
         var country = await _repository.GetByIdAsync<Domain.Entities.Country>(model.CountryId);
 
-        if (country == null)
+        if (country is null)
         {
-            var error = new Error(NoCountryWithIdError, ErrorType.Validation);
-            return Result.Failure(error);
+            return ValidationError("No country with given id found!");
         }
 
-        var validTagsIds = await _repository
-            .AllAsNoTracking<PlaceVibe>()
-            .Select(x => x.Id)
-            .ToListAsync(cancellationToken);
+        bool areTagsValid = await AreTagsValidAsync(model.VibesIds, cancellationToken);
 
-        var tagsAreValid = model.VibesIds.All(validTagsIds.Contains);
-
-        if (tagsAreValid == false)
+        if (areTagsValid is false)
         {
-            var error = new Error("One or more provided tags do not exist.", ErrorType.Validation);
-            return Result.Failure(error);
+            return ValidationError("One or more provided tags do not exist.");
         }
 
         var review = new Review
         {
             UserId = model.UserId,
             Rating = (short)model.ReviewRating,
-            Content = model.ReviewContent,
+            Content = model.ReviewContent
         };
 
         var place = new Domain.Entities.Place
@@ -99,71 +85,84 @@ public class UploadPlaceCommandHandler
             Description = model.Description,
             CategoryId = model.SubcategoryId,
             Reviews = new List<Review> { review },
-            SlugifiedName = _slugGenerator.GenerateSlug(model.Name),
+            SlugifiedName = _slugGenerator.GenerateSlug(model.Name)
         };
 
-        bool latProvided = model.Latitude != null && model.Latitude != 0;
-        bool longProvided = model.Longitude != null && model.Longitude != 0;
+        await AssignCoordinatesIfMissingAsync(place, model, country.Name);
 
-        if (!latProvided && !longProvided)
-        {
-            string fullAddress = !string.IsNullOrWhiteSpace(request.Model.Address)
-                ? $"{request.Model.Name}, {request.Model.Address}, {country.Name}"
-                : $"{request.Model.Name}, {country.Name}";
+        place.AssignTags(model.VibesIds);
 
-            var coordinates = await _geocodingService.GetCoordinatesAsync(fullAddress);
+        var urls = await UploadPlaceImagesAsync(model, category.Name, subcategory.Name);
+        var thumb = urls.First(url => Path.GetFileName(url).StartsWith("thumb_"));
+        var others = urls.Where(url => !Path.GetFileName(url).StartsWith("thumb_"));
 
-            if (coordinates != null)
-            {
-                place.Latitude = (decimal)coordinates.Latitude;
-                place.Longitude = (decimal)coordinates.Longitude;
-            }
-        }
-        else if (latProvided && longProvided)
-        {
-            place.Latitude = model.Latitude;
-            place.Longitude = model.Longitude;
-        }
-
-        var placeVibeAssignments = new List<PlaceVibeAssignment>();
-
-        foreach (var tagId in model.VibesIds)
-        {
-            placeVibeAssignments.Add(new PlaceVibeAssignment
-            {
-                PlaceId = place.Id,
-                PlaceVibeId = tagId,
-            });
-        }
-
-        place.PlaceVibeAssignments = placeVibeAssignments;
-
-        var placePhotos = new List<PlacePhoto>();
-
-        var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
-
-        var uploadTasks = files.Select(file =>
-            _blobService.UploadBlobAsync(
-                file.Content,
-                file.FileName,
-                $"PlacesImages/{category.Name}/{subcategory.Name}/{model.Name}/"));
-
-        var urls = await Task.WhenAll(uploadTasks);
-
-        var thumbUrl = urls.First(url => Path.GetFileName(url).StartsWith("thumb_"));
-        var otherUrls = urls.Where(url => Path.GetFileName(url).StartsWith("thumb_") == false);
-
-        foreach (var url in otherUrls)
-        {
-            placePhotos.Add(new PlacePhoto { Url = url });
-        }
-
-        place.ThumbUrl = thumbUrl;
-        place.Photos = placePhotos;
+        place.AssignPhotos(thumb, others);
 
         await _repository.AddAsync(place);
         await _repository.SaveChangesAsync();
 
         return Result.Success(PlaceUploadSuccess);
     }
+
+    private async Task<Category?> GetCategoryWithSubcategoriesAsync(int id, CancellationToken ct)
+    {
+        return await _repository.AllAsNoTracking<Category>()
+            .Include(c => c.Children)
+            .FirstOrDefaultAsync(c => c.Id == id, ct);
+    }
+
+    private async Task<bool> AreTagsValidAsync(IEnumerable<int> ids, CancellationToken ct)
+    {
+        var valid = await _repository.AllAsNoTracking<PlaceVibe>()
+            .Select(v => v.Id)
+            .ToListAsync(ct);
+
+        return ids.All(valid.Contains);
+    }
+
+    private async Task AssignCoordinatesIfMissingAsync(
+        Domain.Entities.Place place,
+        UploadPlaceRequestModel model,
+        string countryName)
+    {
+        if (model.Latitude is > 0 and <= 90 && model.Longitude is > 0 and <= 180)
+        {
+            place.AssignCoordinates(model.Latitude, model.Longitude);
+            return;
+        }
+
+        var fullAddress = string.IsNullOrWhiteSpace(model.Address)
+            ? $"{model.Name}, {countryName}"
+            : $"{model.Name}, {model.Address}, {countryName}";
+
+        var coords = await _geocodingService.GetCoordinatesAsync(fullAddress);
+
+        if (coords is not null)
+        {
+            place.AssignCoordinates(
+                (decimal)coords.Latitude,
+                (decimal)coords.Longitude);
+        }
+    }
+
+    private async Task<List<string>> UploadPlaceImagesAsync(
+        UploadPlaceRequestModel model,
+        string category,
+        string subcategory)
+    {
+        var files = await _imageService.ProcessPlaceImagesAsync(model.Files);
+
+        var path = $"PlacesImages/{category}/{subcategory}/{model.Name}/";
+
+        var tasks = files.Select(file => _blobService.UploadBlobAsync(
+            file.Content,
+            file.FileName,
+            path));
+
+        return [.. (await Task.WhenAll(tasks))];
+    }
+
+    private static Result ValidationError(string message) =>
+        Result.Failure(new Error(message, ErrorType.Validation));
+
 }

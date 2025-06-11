@@ -1,5 +1,7 @@
 ﻿using System.Data;
 
+using Explorify.Application.Badges;
+using Explorify.Application.Notification;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
@@ -44,12 +46,7 @@ public class ApprovePlaceCommandHandler
         ApprovePlaceCommand request,
         CancellationToken cancellationToken)
     {
-        var place = await _repository
-            .All<Domain.Entities.Place>()
-            .Include(x => x.Reviews)
-            .FirstOrDefaultAsync(x =>
-                x.Id == request.PlaceId,
-                cancellationToken);
+        var place = await GetPlaceWithReviewsAsync(request.PlaceId, cancellationToken);
 
         if (place is null)
         {
@@ -59,72 +56,88 @@ public class ApprovePlaceCommandHandler
 
         var isPlaceOwner = place.UserId == request.CurrentUserId;
 
-        // Check eligibility BEFORE approving
-        var approvedPlacesCount = await _repository
-            .AllAsNoTracking<Domain.Entities.Place>()
-            .CountAsync(x => x.UserId == place.UserId && x.IsApproved, cancellationToken);
+        place.Approve();
 
-        var shouldGrantFirstPlaceBadge = approvedPlacesCount == 0;
+        var pointResult = await IncreasePointsAndGrantBadges(place.UserId, request.CurrentUserId);
 
-        place.IsApproved = true;
-
-        var review = place.Reviews.FirstOrDefault(x => x.UserId == place.UserId);
-
-        if (review is not null)
+        if (pointResult.IsFailure)
         {
-            review.IsApproved = true;
+            return pointResult;
         }
 
-        var increaseUserPointsRes = await _userService.IncreaseUserPointsAsync(place.UserId.ToString(), UserPlaceUploadPoints);
+        await NotifyFollowers(place, request.CurrentUserId);
 
-        if (increaseUserPointsRes.IsFailure)
+        NotifyPlaceOwnerIfNeeded(place, request.CurrentUserId, isPlaceOwner);
+
+        await PersistNotificationsAndSave();
+
+        return Result.Success("Successfully approved place!");
+    }
+
+    private async Task<Domain.Entities.Place?> GetPlaceWithReviewsAsync(
+        Guid placeId,
+        CancellationToken token)
+    {
+        return await _repository
+            .All<Domain.Entities.Place>()
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(x => x.Id == placeId, token);
+    }
+
+    private async Task<Result> IncreasePointsAndGrantBadges(Guid userId, Guid approverId)
+    {
+        var result = await _userService.IncreaseUserPointsAsync(
+            userId,
+            UserPlaceUploadPoints);
+
+        if (result.IsFailure)
         {
-            return increaseUserPointsRes;
+            return result;
         }
 
-        // Check for any point milestone badges (100, 500, 1000)
-        var pointBadges = await _badgeService.GrantPointThresholdBadgesAsync(place.UserId, increaseUserPointsRes.Data);
+        var pointBadges = await _badgeService.TryGrantPointThresholdBadgesAsync(userId);
 
-        foreach (var pointBadge in pointBadges)
+        QueueBadgeNotifications(pointBadges, approverId, userId);
+
+        var firstPlaceBadge = await _badgeService.TryGrantFirstPlaceBadgeAsync(userId);
+
+        if (firstPlaceBadge is not null)
         {
             _notificationQueueService.QueueNotification(
-                senderId: request.CurrentUserId,
-                receiverId: place.UserId,
-                notificationContent: $"You've unlocked the \"{pointBadge.BadgeName}\" badge. You are making progress, keep it up!",
-                realTimeMessage: "You reached a new milestone!"
+                senderId: approverId,
+                receiverId: userId,
+                notificationContent: $"Congrats! You've unlocked the \"{firstPlaceBadge.BadgeName}\" badge. Keep exploring!",
+                realTimeMessage: "You earned a new badge!"
             );
         }
 
-        // Check if we need to grant the "Place Pioneer" badge
-        if (shouldGrantFirstPlaceBadge)
+        return Result.Success();
+    }
+
+    private void QueueBadgeNotifications(IEnumerable<BadgeGrantResult> badges, Guid senderId, Guid receiverId)
+    {
+        foreach (var badge in badges)
         {
-            var badgeResult = await _badgeService.GrantBadgeAsync(place.UserId, "Place Pioneer");
-
-            if (badgeResult is not null)
-            {
-                _notificationQueueService.QueueNotification(
-                    senderId: request.CurrentUserId,
-                    receiverId: place.UserId,
-                    notificationContent: $"Congrats! You've unlocked the \"{badgeResult.BadgeName}\" badge. Keep exploring!",
-                    realTimeMessage: "You earned a new badge!"
-                );
-            }
+            _notificationQueueService.QueueNotification(
+                senderId: senderId,
+                receiverId: receiverId,
+                notificationContent: $"You've unlocked the \"{badge.BadgeName}\" badge. You are making progress, keep it up!",
+                realTimeMessage: "You reached a new milestone!"
+            );
         }
+    }
 
-        const string getFollowerIdsSql = @"
-            SELECT FollowerId
-            FROM UserFollows
-            WHERE FolloweeId = @FolloweeId";
-
+    private async Task NotifyFollowers(Domain.Entities.Place place, Guid approverId)
+    {
         var followerIds = (await _dbConnection.QueryAsync<Guid>(
-            getFollowerIdsSql,
-            new { FolloweeId = place.UserId }))
-                .ToList();
+            "SELECT FollowerId FROM UserFollows WHERE FolloweeId = @FolloweeId AND FollowerId != @ApproverId",
+            new { FolloweeId = place.UserId, ApproverId = approverId }))
+            .ToList();
 
-        const string getUsernameSql = @"SELECT UserName FROM AspNetUsers WHERE Id = @UserId";
-        var username = await _dbConnection.QueryFirstOrDefaultAsync<string>(getUsernameSql, new { place.UserId });
+        var username = await _dbConnection.QueryFirstOrDefaultAsync<string>(
+            "SELECT UserName FROM AspNetUsers WHERE Id = @UserId",
+            new { place.UserId });
 
-        // Queue notifications for followers
         foreach (var followerId in followerIds)
         {
             _notificationQueueService.QueueNotification(
@@ -134,29 +147,33 @@ public class ApprovePlaceCommandHandler
                 realTimeMessage: $"{username} uploaded a new place!"
             );
         }
+    }
 
-        // Notify the place owner if someone else approved their place
-        if (!isPlaceOwner)
+    private void NotifyPlaceOwnerIfNeeded(Domain.Entities.Place place, Guid approverId, bool isOwner)
+    {
+        if (isOwner)
         {
-            _notificationQueueService.QueueNotification(
-                senderId: request.CurrentUserId,
-                receiverId: place.UserId,
-                notificationContent: $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned {UserPlaceUploadPoints} adventure points – keep exploring!",
-                realTimeMessage: "Admin approved your place upload!"
-            );
+            return;
         }
 
-        var notifications = _notificationQueueService.GetPendingNotifications();
+        _notificationQueueService.QueueNotification(
+            senderId: approverId,
+            receiverId: place.UserId,
+            notificationContent: $"Great news! Your place \"{place.Name}\" just got the seal of approval. You've earned {UserPlaceUploadPoints} adventure points – keep exploring!",
+            realTimeMessage: "Admin approved your place upload!"
+        );
+    }
 
-        if (notifications.Count > 0)
+    private async Task PersistNotificationsAndSave()
+    {
+        var pending = _notificationQueueService.GetPendingNotifications();
+
+        if (pending.Count > 0)
         {
-            await _repository.AddRangeAsync(notifications);
+            await _repository.AddRangeAsync(pending);
         }
 
         await _repository.SaveChangesAsync();
-
         await _notificationQueueService.FlushAsync();
-
-        return Result.Success("Successfully approved place!");
     }
 }

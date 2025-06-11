@@ -17,7 +17,5 @@ public class ChangeBioCommandHandler
     public async Task<Result> Handle(
         ChangeBioCommand request,
         CancellationToken cancellationToken)
-            => await _userService.ChangeBioAsync(
-                request.UserId.ToString(),
-                request.Bio);
+            => await _userService.ChangeBioAsync(request.UserId, request.Bio);
 }

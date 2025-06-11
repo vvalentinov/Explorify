@@ -108,7 +108,7 @@ public class EditReviewCommandHandler
         {
             review.IsApproved = false;
 
-            await _userService.DecreaseUserPointsAsync(currUserId.ToString(), 5);
+            await _userService.DecreaseUserPointsAsync(currUserId, 5);
         }
 
         _repository.Update(review);

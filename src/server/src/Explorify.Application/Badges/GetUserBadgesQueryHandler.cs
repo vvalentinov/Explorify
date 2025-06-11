@@ -3,6 +3,8 @@
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
+using static Explorify.Domain.Constants.BadgesConstants;
+
 using Dapper;
 
 namespace Explorify.Application.Badges;
@@ -37,10 +39,8 @@ public class GetUserBadgesQueryHandler
             WHERE UserId = @UserId";
 
         var allBadges = (await _dbConnection.QueryAsync<BadgeDto>(sqlAllBadges)).ToList();
-
         var userBadgeIds = (await _dbConnection.QueryAsync<int>(sqlUserBadges, new { request.UserId })).ToHashSet();
 
-        // Fetch dynamic progress inputs (e.g., from aggregate views or direct counts)
         var sqlStats = @"
             SELECT 
                 Points,
@@ -74,14 +74,14 @@ public class GetUserBadgesQueryHandler
 
             double progress = badge.Name switch
             {
-                "Explorify Elite" => Progress(points, 1000),
-                "Review Rookie" => Progress(reviewCount, 1),
-                "First Follower" => Progress(followerCount, 1),
-                "Influencer" => Progress(followerCount, 50),
-                "Local Legend" => Progress(points, 500),
-                "Mini Community" => Progress(followerCount, 100),
-                "Place Pioneer" => Progress(placeCount, 1),
-                "Rising Star" => Progress(points, 100),
+                ExplorifyEliteBadge => Progress(points, 1000),
+                ReviewRookieBadge => Progress(reviewCount, 1),
+                FirstFollowerBadge => Progress(followerCount, 1),
+                InfluencerBadge => Progress(followerCount, 50),
+                LocalLegendBadge => Progress(points, 500),
+                MiniCommunityBadge => Progress(followerCount, 100),
+                PlacePioneerBadge => Progress(placeCount, 1),
+                RisingStarBadge => Progress(points, 100),
                 _ => 0
             };
 
@@ -94,10 +94,12 @@ public class GetUserBadgesQueryHandler
                 IsUnlocked = isUnlocked,
                 ProgressPercentage = isUnlocked ? 100 : Math.Round(progress, 2)
             };
+
         }).ToList();
 
         return Result.Success(badgeDtos);
     }
 
-    private static double Progress(int current, int target) => Math.Min(100.0 * current / target, 100);
+    private static double Progress(int current, int target)
+        => Math.Min(100.0 * current / target, 100);
 }

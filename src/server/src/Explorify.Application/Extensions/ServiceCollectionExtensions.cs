@@ -1,5 +1,6 @@
 ﻿using System.Data;
-
+using Explorify.Application.Badges;
+using Explorify.Application.Notification;
 using Explorify.Application.Place.Search;
 using Explorify.Application.Place.Upload;
 using Explorify.Application.Reviews.GetReviews;

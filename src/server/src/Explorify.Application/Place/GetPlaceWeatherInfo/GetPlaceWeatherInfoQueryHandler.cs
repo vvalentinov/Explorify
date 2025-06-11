@@ -12,20 +12,15 @@ public class GetPlaceWeatherInfoQueryHandler
     : IQueryHandler<GetPlaceWeatherInfoQuery, GetPlaceWeatherInfoQueryResponseModel>
 {
     private readonly IDbConnection _dbConnection;
+
     private readonly IWeatherInfoService _weatherInfoService;
-
-    class Coordinates
-    {
-        public double Latitude { get; set; }
-
-        public double Longitude { get; set; }
-    }
 
     public GetPlaceWeatherInfoQueryHandler(
         IDbConnection dbConnection,
         IWeatherInfoService weatherInfoService)
     {
         _dbConnection = dbConnection;
+
         _weatherInfoService = weatherInfoService;
     }
 
@@ -35,7 +30,7 @@ public class GetPlaceWeatherInfoQueryHandler
     {
         var sql = "SELECT Latitude, Longitude FROM Places WHERE Id = @PlaceId";
 
-        var coordinates = await _dbConnection.QueryFirstOrDefaultAsync<Coordinates>(sql, new { request.PlaceId });
+        var coordinates = await _dbConnection.QueryFirstOrDefaultAsync<PlaceCoordinates>(sql, new { request.PlaceId });
 
         if (coordinates is null)
         {
@@ -43,7 +38,9 @@ public class GetPlaceWeatherInfoQueryHandler
             return Result.Failure<GetPlaceWeatherInfoQueryResponseModel>(error);
         }
 
-        var weatherData = await _weatherInfoService.GetWeatherInfo(coordinates.Latitude, coordinates.Longitude);
+        var weatherData = await _weatherInfoService.GetWeatherInfo(
+            coordinates.Latitude,
+            coordinates.Longitude);
 
         var responseModel = new GetPlaceWeatherInfoQueryResponseModel
         {

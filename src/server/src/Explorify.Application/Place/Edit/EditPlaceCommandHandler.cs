@@ -223,7 +223,7 @@ public class EditPlaceCommandHandler
         if (place.IsApproved)
         {
             await _userService.DecreaseUserPointsAsync(
-                place.UserId.ToString(),
+                place.UserId,
                 UserPlaceUploadPoints);
         }
 

@@ -27,4 +27,29 @@ public class Review : BaseDeletableEntity<Guid>
 
     public ICollection<ReviewsLikes> ReviewLikes { get; set; }
         = new List<ReviewsLikes>();
+
+    public void Approve()
+    {
+        IsApproved = true;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    public void Unapprove()
+    {
+        IsApproved = false;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    public void MarkAsDeletedByAdmin()
+    {
+        IsDeletedByAdmin = true;
+        ModifiedOn = DateTime.UtcNow;
+    }
+
+    public void RevertDeletion()
+    {
+        IsDeleted = false;
+        DeletedOn = null;
+        ModifiedOn = DateTime.UtcNow;
+    }
 }

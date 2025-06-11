@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Diagnostics;
-using FluentValidation;
 
 namespace Explorify.Api;
 
@@ -39,7 +40,9 @@ public class GlobalExceptionHandler : IExceptionHandler
 
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-            await httpContext.Response.WriteAsJsonAsync(new ObjectResult(validationProblemDetails).Value, cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(
+                new ObjectResult(validationProblemDetails).Value,
+                cancellationToken);
 
             return true;
         }
@@ -56,7 +59,9 @@ public class GlobalExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-        await httpContext.Response.WriteAsJsonAsync(new ObjectResult(problemDetails).Value, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(
+            new ObjectResult(problemDetails).Value,
+            cancellationToken);
 
         return true;
     }

@@ -4,8 +4,8 @@ using Explorify.Application.Extensions;
 using Explorify.Infrastructure.Extensions;
 
 using FluentValidation;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace Explorify.Api.Extensions;
 
@@ -22,17 +22,14 @@ public static class ServiceCollectionExtensions
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-        services
-            .AddExceptionHandler<GlobalExceptionHandler>()
-            .AddProblemDetails();
-
         services.AddSignalR();
 
-        services.AddHttpClient();
-
-        services.AddMemoryCache();
-
         services
+            .AddHttpContextAccessor()
+            .AddHttpClient()
+            .AddMemoryCache()
+            .AddExceptionHandler<GlobalExceptionHandler>()
+            .AddProblemDetails()
             .AddPersistence(configuration)
             .AddInfrastructure(configuration)
             .AddApplication()
@@ -45,26 +42,36 @@ public static class ServiceCollectionExtensions
                 config.DisableBuiltInModelValidation = true;
                 config.EnableFormBindingSourceAutomaticValidation = true;
                 config.OverrideDefaultResultFactoryWith<CustomResultFactory>();
-            });
+            })
+            .AddAzureOpenTelemetry(configuration)
+            .AddValidatorsFromAssemblyContaining<UploadPlaceRequestDtoValidator>();
 
-        services.AddValidatorsFromAssemblyContaining<UploadPlaceRequestDtoValidator>();
+        return services;
+    }
 
-        //services.AddApplicationInsightsTelemetry();
+    private static IServiceCollection AddAzureOpenTelemetry(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        var connectionString = configuration["AzureMonitor:ConnectionString"];
 
-        
+        services
+            .AddOpenTelemetry()
+            .UseAzureMonitor(o => o.ConnectionString = connectionString);
 
         return services;
     }
 
     private static IServiceCollection AddCORS(this IServiceCollection services)
     {
-        services.AddCors(options => options.AddPolicy("CorsPolicy",
+        services.AddCors(options => options.AddPolicy(
+                "CorsPolicy",
                 builder =>
                 {
                     builder.AllowAnyHeader()
                            .AllowAnyMethod()
-                           .SetIsOriginAllowed((host) => true)
-                           .AllowCredentials();
+                           .AllowCredentials()
+                           .SetIsOriginAllowed((host) => true);
                 }));
 
         return services;

@@ -32,83 +32,100 @@ public class DeleteReviewCommandHandler
         DeleteReviewCommand request,
         CancellationToken cancellationToken)
     {
-        var reviewId = request.Model.ReviewId;
-        var reason = request.Model.Reason;
-        var currUserId = request.CurrentUserId;
-        var isCurrUserAdmin = request.IsCurrUserAdmin;
+        var review = await GetReviewWithPlaceAsync(
+            request.Model.ReviewId,
+            cancellationToken);
 
-        var review = await _repository
-            .All<Review>()
-            .Include(x => x.Place)
-            .FirstOrDefaultAsync(x =>
-                x.Id == reviewId,
-                cancellationToken);
-
-        if (review == null)
+        if (review is null)
         {
             var error = new Error("No review found!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        if (review.UserId != currUserId && !isCurrUserAdmin)
+        var validationResult = ValidateReviewAccess(request, review);
+
+        if (validationResult.IsFailure)
         {
-            var error = new Error("Only review owner or admin can delete review!", ErrorType.Validation);
+            return validationResult;
+        }
+
+        if (request.IsCurrUserAdmin && review.UserId != request.CurrentUserId)
+        {
+            review.MarkAsDeletedByAdmin();
+        }
+
+        if (review.IsApproved)
+        {
+            review.Unapprove();
+
+            var pointsResult = await _userService.DecreaseUserPointsAsync(
+                review.UserId,
+                UserReviewUploadPoints);
+
+            if (pointsResult.IsFailure)
+            {
+                return pointsResult;
+            }
+        }
+
+        _repository.SoftDelete(review);
+
+        if (review.UserId != request.CurrentUserId && request.IsCurrUserAdmin)
+        {
+            await NotifyReviewDeletionByAdminAsync(request, review);
+        }
+
+        await _repository.SaveChangesAsync();
+
+        return Result.Success("Successfully deleted review!");
+    }
+
+    private async Task<Review?> GetReviewWithPlaceAsync(Guid reviewId, CancellationToken ct)
+    {
+        return await _repository
+            .All<Review>()
+            .Include(r => r.Place)
+            .FirstOrDefaultAsync(r => r.Id == reviewId, ct);
+    }
+
+    private static Result ValidateReviewAccess(DeleteReviewCommand request, Review review)
+    {
+        if (review.UserId != request.CurrentUserId && !request.IsCurrUserAdmin)
+        {
+            var error = new Error("Only the review owner or admin can delete this review!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        if (review.Place.UserId == currUserId)
+        if (review.Place.UserId == request.CurrentUserId)
         {
-            var error = new Error("You cannot delete the review for your own place!", ErrorType.Validation);
+            var error = new Error("You cannot delete a review for your own place!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        if (isCurrUserAdmin &&
-            review.UserId != currUserId &&
-            string.IsNullOrWhiteSpace(reason))
+        if (request.IsCurrUserAdmin && review.UserId != request.CurrentUserId && string.IsNullOrWhiteSpace(request.Model.Reason))
         {
             var error = new Error("Admin must provide a reason when deleting someone else's review!", ErrorType.Validation);
             return Result.Failure(error);
         }
 
-        if (isCurrUserAdmin && review.UserId != currUserId)
-        {
-            review.IsDeletedByAdmin = true;
-        }
+        return Result.Success();
+    }
 
-        if (review.IsApproved)
-        {
-            review.IsApproved = false;
-
-            await _userService.DecreaseUserPointsAsync(
-                review.UserId.ToString(),
-                UserReviewUploadPoints);
-        }
-
-        _repository.SoftDelete(review);
-
-        if (review.UserId == currUserId)
-        {
-            await _repository.SaveChangesAsync();
-            return Result.Success("Successfully deleted review!");
-        }
-
+    private async Task NotifyReviewDeletionByAdminAsync(
+        DeleteReviewCommand request,
+        Review review)
+    {
         var notification = new Domain.Entities.Notification
         {
-            SenderId = currUserId,
+            SenderId = request.CurrentUserId,
             ReceiverId = review.UserId,
-            Content = $"Sad news! Your review for place: '{review.Place.Name}' was deleted by admin! Reason: {reason}.",
+            Content = $"Sad news! Your review for place: '{review.Place.Name}' was deleted by admin! Reason: {request.Model.Reason}."
         };
 
         await _repository.AddAsync(notification);
-        await _repository.SaveChangesAsync();
 
-        if (isCurrUserAdmin && review.UserId != currUserId)
-        {
-            await _notificationService.NotifyAsync(
-                "One of your reviews was deleted by admin! Check your notifications.",
-                review.UserId);
-        }
-
-        return Result.Success("Successfully deleted review!");
+        await _notificationService.NotifyAsync(
+            "One of your reviews was deleted by admin! Check your notifications.",
+            review.UserId);
     }
 }

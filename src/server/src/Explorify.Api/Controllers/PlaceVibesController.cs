@@ -2,6 +2,7 @@
 using Explorify.Application.Vibes.GetVibes;
 
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
