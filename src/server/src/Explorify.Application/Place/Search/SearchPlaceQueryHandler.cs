@@ -39,8 +39,8 @@ public class SearchPlaceQueryHandler
         var validationResult = await _placeSearchQueryValidator.Validate(
             model,
             request.CurrentUserId,
-            request.isCurrentUserAdmin,
-            request.isUserAuthenticated);
+            request.IsCurrentUserAdmin,
+            request.IsUserAuthenticated);
 
         if (validationResult.IsFailure)
         {
@@ -62,7 +62,7 @@ public class SearchPlaceQueryHandler
         var totalCount = await _dbConnection.ExecuteScalarAsync<int>(countSql, _placeSearchQueryBuilder.Parameters);
 
         var offset = (request.Page - 1) * PlacesPerPageCount;
-        var dataSql = _placeSearchQueryBuilder.BuildSearchQuery(offset, PlacesPerPageCount);
+        var dataSql = _placeSearchQueryBuilder.BuildSearchQuery(offset, PlacesPerPageCount, request.CurrentUserId);
 
         var places = await _dbConnection.QueryAsync<PlaceDisplayResponseModel>(dataSql, _placeSearchQueryBuilder.Parameters);
 

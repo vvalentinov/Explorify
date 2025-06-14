@@ -2,5 +2,5 @@
 
 namespace Explorify.Application.Home;
 
-public record GetHomeDataQuery
+public record GetHomeDataQuery(Guid CurrentUserId)
     : IQuery<GetHomeDataResponseModel>;

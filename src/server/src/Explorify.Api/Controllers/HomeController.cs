@@ -21,7 +21,7 @@ public class HomeController : BaseController
     [HttpGet(nameof(GetData))]
     public async Task<IActionResult> GetData()
     {
-        var query = new GetHomeDataQuery();
+        var query = new GetHomeDataQuery(User.GetId());
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

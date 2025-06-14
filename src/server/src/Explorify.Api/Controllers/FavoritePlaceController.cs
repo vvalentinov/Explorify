@@ -1,8 +1,6 @@
 ﻿using Explorify.Api.Extensions;
-using Explorify.Infrastructure;
 using Explorify.Application.FavPlace.Add;
 using Explorify.Application.FavPlace.Remove;
-using Explorify.Application.FavPlace.GetFavPlaces;
 
 using MediatR;
 
@@ -32,15 +30,6 @@ public class FavoritePlaceController : BaseController
     {
         var command = new RemoveFavPlaceCommand(placeId, User.GetId());
         var result = await _mediator.Send(command);
-        return this.OkOrProblemDetails(result);
-    }
-
-    [PageValidationFilter]
-    [HttpGet(nameof(GetUserFavorites))]
-    public async Task<IActionResult> GetUserFavorites(int page)
-    {
-        var query = new GetFavPlacesQuery(User.GetId(), page);
-        var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
 }

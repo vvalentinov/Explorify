@@ -6,5 +6,5 @@ public record SearchPlaceQuery(
     SearchPlaceRequestDto Model,
     int Page,
     Guid CurrentUserId,
-    bool isCurrentUserAdmin,
-    bool isUserAuthenticated) : IQuery<PlacesListResponseModel>;
+    bool IsCurrentUserAdmin,
+    bool IsUserAuthenticated) : IQuery<PlacesListResponseModel>;

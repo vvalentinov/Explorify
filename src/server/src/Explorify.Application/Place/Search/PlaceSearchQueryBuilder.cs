@@ -141,7 +141,7 @@ public class PlaceSearchQueryBuilder
         }
     }
 
-    public string BuildSearchQuery(int offSet, int placesPerPage)
+    public string BuildSearchQuery(int offSet, int placesPerPage, Guid userId)
     {
         var whereClause = _filters.Count > 0
             ? "WHERE " + string.Join(" AND ", _filters)
@@ -155,9 +155,12 @@ public class PlaceSearchQueryBuilder
                 p.ThumbUrl AS ImageUrl,
                 p.IsDeleted,
                 p.CreatedOn,
-                COALESCE(AVG(CAST(r.Rating AS FLOAT)), 0) AS AverageRating
+                p.UserId,
+                COALESCE(AVG(CAST(r.Rating AS FLOAT)), 0) AS AverageRating,
+                CASE WHEN fp.PlaceId IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
             FROM Places p
             LEFT JOIN Reviews r ON p.Id = r.PlaceId AND r.IsApproved = 1
+            LEFT JOIN FavoritePlaces fp ON fp.PlaceId = p.Id AND fp.UserId = @UserId
             {whereClause}
             GROUP BY
                 p.Id,
@@ -165,13 +168,16 @@ public class PlaceSearchQueryBuilder
                 p.SlugifiedName,
                 p.ThumbUrl,
                 p.IsDeleted,
-                p.CreatedOn
+                p.CreatedOn,
+                p.UserId,
+                fp.PlaceId
             ORDER BY p.CreatedOn DESC
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         ";
 
         _parameters.Add("Offset", offSet);
         _parameters.Add("PageSize", placesPerPage);
+        _parameters.Add("UserId", userId);
 
         return dataSql;
     }

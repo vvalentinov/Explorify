@@ -20,7 +20,7 @@ public interface IPlaceSearchQueryBuilder
         Guid? currentUserId,
         Guid? userFollowingId);
 
-    string BuildSearchQuery(int offSet, int placesPerPage);
+    string BuildSearchQuery(int offSet, int placesPerPage, Guid userId);
 
     string BuildCountQuery();
 

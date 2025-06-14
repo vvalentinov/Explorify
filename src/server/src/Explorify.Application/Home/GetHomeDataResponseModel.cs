@@ -1,8 +1,10 @@
-﻿namespace Explorify.Application.Home;
+﻿using Explorify.Application.Place;
+
+namespace Explorify.Application.Home;
 
 public class GetHomeDataResponseModel
 {
-    public IEnumerable<HomePlaceDisplayResponseModel> RecentPlaces { get; set; } = [];
+    public IEnumerable<PlaceDisplayResponseModel> RecentPlaces { get; set; } = [];
 
-    public IEnumerable<HomePlaceDisplayResponseModel> HighestRatedPlaces { get; set; } = [];
+    public IEnumerable<PlaceDisplayResponseModel> HighestRatedPlaces { get; set; } = [];
 }

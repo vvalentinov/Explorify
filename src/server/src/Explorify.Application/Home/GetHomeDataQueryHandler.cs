@@ -1,5 +1,6 @@
 ﻿using System.Data;
 
+using Explorify.Application.Place;
 using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
 
@@ -31,9 +32,12 @@ public class GetHomeDataQueryHandler
                	p.ThumbUrl as ImageUrl,
                	p.IsDeleted,
                 p.CreatedOn,
-                AVG(CAST(r.Rating AS FLOAT)) AS AverageRating
+                p.UserId,
+                AVG(CAST(r.Rating AS FLOAT)) AS AverageRating,
+                CASE WHEN fp.PlaceId IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
             FROM Places AS p
             JOIN Reviews AS r ON p.Id = r.PlaceId AND r.IsApproved = 1
+            LEFT JOIN FavoritePlaces fp ON fp.PlaceId = p.Id AND fp.UserId = @CurrentUserId
             WHERE p.IsDeleted = 0 AND p.IsApproved = 1
             GROUP BY
                 p.Id,
@@ -41,7 +45,9 @@ public class GetHomeDataQueryHandler
                 p.SlugifiedName,
                 p.ThumbUrl,
                 p.IsDeleted,
-                p.CreatedOn
+                p.CreatedOn,
+                p.UserId,
+                fp.PlaceId
             ORDER BY p.CreatedOn DESC
             
             """;
@@ -55,23 +61,34 @@ public class GetHomeDataQueryHandler
                 p.SlugifiedName,
                 p.ThumbUrl AS ImageUrl,
                 p.IsDeleted,
-                AVG(CAST(r.Rating AS FLOAT)) AS AverageRating
+                p.UserId,
+                AVG(CAST(r.Rating AS FLOAT)) AS AverageRating,
+                CASE WHEN fp.PlaceId IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
             FROM Places AS p
             JOIN Reviews AS r ON p.Id = r.PlaceId
+            LEFT JOIN FavoritePlaces fp ON fp.PlaceId = p.Id AND fp.UserId = @CurrentUserId
             WHERE p.IsDeleted = 0 AND r.IsApproved = 1
             GROUP BY
                 p.Id,
                 p.[Name],
                 p.SlugifiedName,
                 p.ThumbUrl,
-                p.IsDeleted
+                p.IsDeleted,
+                p.UserId,
+                fp.PlaceId
             ORDER BY AVG(CAST(r.Rating AS FLOAT)) DESC;
             
             """;
 
-        var recentPlaces = await _dbConnection.QueryAsync<HomePlaceDisplayResponseModel>(recentPlacesSql);
+        var parameters = new { request.CurrentUserId };
 
-        var highestRatedPlaces = await _dbConnection.QueryAsync<HomePlaceDisplayResponseModel>(highestRatedPlacesSql);
+        var recentPlaces = await _dbConnection.QueryAsync<PlaceDisplayResponseModel>(
+            recentPlacesSql,
+            parameters);
+
+        var highestRatedPlaces = await _dbConnection.QueryAsync<PlaceDisplayResponseModel>(
+            highestRatedPlacesSql,
+            parameters);
 
         var response = new GetHomeDataResponseModel
         {
