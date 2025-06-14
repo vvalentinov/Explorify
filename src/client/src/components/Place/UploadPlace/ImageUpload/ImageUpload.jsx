@@ -82,7 +82,7 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
         <>
             <Form.Item
                 name="Images"
-                label={<span style={{ fontSize: '1.3rem' }}>Upload Images</span>}
+                label={<span style={{ fontSize: '1.3rem' }}>Images</span>}
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
                 required={true}

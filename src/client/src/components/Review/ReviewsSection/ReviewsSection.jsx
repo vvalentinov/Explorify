@@ -100,7 +100,6 @@ const ReviewsSection = ({
     const handleFilterChange = (e) => dispatch({ type: 'SET_FILTER', payload: e.target.value });
     const handleSortChange = (e) => dispatch({ type: 'SET_SORT', payload: e.target.value });
     const handleStarFilterChange = (checkedValues) => dispatch({ type: 'SET_STAR_FILTERS', payload: checkedValues });
-    // const handlePageChange = (page) => dispatch({ type: 'SET_PAGE', payload: page });
     const handleWriteReviewClick = () => dispatch({ type: 'TOGGLE_UPLOAD_MODAL', payload: true });
 
     return (

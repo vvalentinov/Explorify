@@ -10,37 +10,50 @@ import enUS from 'antd/es/locale/en_US';
 import { ConfigProvider, App as AntdApp } from 'antd';
 
 createRoot(document.getElementById('root')).render(
-    // <StrictMode>
-    <BrowserRouter>
-        <ConfigProvider
-            locale={enUS}
-            theme={{
-                cssVar: true,
-                components: {
-                    Input: {
-                        activeShadow: '#13c2c2',
-                        colorPrimary: '#13c2c2',
-                        hoverBorderColor: '#13c2c2'
+    <StrictMode>
+        <BrowserRouter>
+            <ConfigProvider
+                locale={enUS}
+                theme={{
+                    cssVar: true,
+                    components: {
+                        Input: {
+                            activeShadow: '#13c2c2',
+                            colorPrimary: '#13c2c2',
+                            hoverBorderColor: '#13c2c2',
+                            controlHeight: 50,
+                            fontSize: 25,
+                            borderRadius: 12,
+                        },
+                        Select: {
+                            activeBorderColor: '#13c2c2',
+                            hoverBorderColor: '#13c2c2',
+                        },
+                        Cascader: {
+                            controlItemBgHover: '#e6fffb',
+                            controlHeight: 40,
+                            controlOutlineWidth: 2,
+                            controlOutline: '#13c2c2',
+                            colorPrimary: '#13c2c2',
+                            controlItemBgActive: '#e6fffb',
+                        },
+                        Pagination: {
+                            itemSize: 50,
+                            fontSize: 18,
+                            itemActiveBg: '#13c2c2',
+                            itemActiveColor: '#fff',
+                            colorText: 'black',
+                        },
                     },
-                    Select: {
-                        activeBorderColor: '#13c2c2',
-                        hoverBorderColor: '#13c2c2',
+                    token: {
+                        borderRadius: 12,
                     },
-                    Cascader: {
-                        controlItemBgHover: '#e6fffb',
-                        controlHeight: 40,
-                        controlOutlineWidth: 2,
-                        controlOutline: '#13c2c2',
-                        colorPrimary: '#13c2c2',
-                        controlItemBgActive: '#e6fffb',
-                    },
-                }
-            }}
-        >
-            <AntdApp>
-                <App />
-            </AntdApp>
-        </ConfigProvider>
-    </BrowserRouter>
-    // </StrictMode>
+                }}
+            >
+                <AntdApp>
+                    <App />
+                </AntdApp>
+            </ConfigProvider>
+        </BrowserRouter>
+    </StrictMode>
 )

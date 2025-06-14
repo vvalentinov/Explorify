@@ -1,5 +1,4 @@
 import {
-    ExclamationCircleOutlined,
     CheckCircleOutlined,
     BellOutlined,
     TrophyOutlined,

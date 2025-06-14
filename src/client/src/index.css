@@ -201,11 +201,21 @@ html {
     font-size: 1.1rem !important;
 }
 
-.radio-large .ant-radio-button-wrapper {
-    flex: 1 1 200px;
-    /* minimum width of 200px, adjust as needed */
-    text-align: center;
-    justify-content: center;
+/* Input and TextArea placeholder styling */
+.ant-input::placeholder,
+.ant-input-affix-wrapper input::placeholder {
+    font-size: 23px !important;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+    line-height: 1.5 !important;
+    /* Helps balance vertical alignment */
+}
+
+.ant-input:not(textarea),
+.ant-input-affix-wrapper {
+    /* padding-top: 10px !important;
+    padding-bottom: 10px !important; */
+    /* height: 50px !important;
+    box-sizing: border-box;
     display: flex;
-    align-items: center;
+    align-items: center; */
 }

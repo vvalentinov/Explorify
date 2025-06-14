@@ -97,7 +97,7 @@ const PlacesWithSearchPage = ({
         { ...initialState, searchContext }
     );
 
-    const [debouncedPlaceName] = useDebounce(state.placeName, 500);
+    const [debouncedPlaceName] = useDebounce(state.placeName, 300);
     const [debouncedCountrySearch] = useDebounce(state.countrySearch, 500);
 
     const skipNextSearchRef = useRef(false);
@@ -238,10 +238,6 @@ const PlacesWithSearchPage = ({
                 &&
                 (
                     <>
-                        {/* <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                            <FilterCard isForAdmin={isForAdmin} defaultValue={state.filter} value={state.filter}
-                                handleFilterChange={handleFilterChange} />
-                        </div> */}
 
                         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
 
@@ -273,7 +269,7 @@ const PlacesWithSearchPage = ({
                 />
             )}
 
-            <div style={{ padding: '0 10rem' }} className={styles.placesContainer}>
+            <div style={{ padding: '0 10rem', paddingBottom: '2.5rem' }} className={styles.placesContainer}>
                 <PlacesList
                     currentPage={state.currentPage}
                     handlePageChange={handlePageChange}

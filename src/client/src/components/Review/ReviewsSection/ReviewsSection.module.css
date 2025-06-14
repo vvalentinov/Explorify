@@ -3,7 +3,7 @@
     padding: 2rem 12rem;
 }
 
-:global(.radio-large .ant-radio-button-wrapper) {
+/* :global(.radio-large .ant-radio-button-wrapper) {
     padding: 20px 24px;
     font-size: 1.5rem !important;
     height: 60px;
@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: center;
     font-family: 'Poppins', 'Segoe UI', sans-serif !important;
-}
+} */
 
 .filterReviewsCard {
     background: #d0f0d8;

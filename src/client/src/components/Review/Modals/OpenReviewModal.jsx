@@ -19,7 +19,8 @@ const OpenReviewModal = ({
     handleCloseModal,
     selectedReview,
     onHelpfulBtnClick,
-    isForAdmin
+    isForAdmin,
+    isForUser
 }) => {
 
     return (
@@ -28,12 +29,12 @@ const OpenReviewModal = ({
             onCancel={handleCloseModal}
             footer={null}
             width={800}
-            // style={{ top: 100 }}
             styles={{
                 body: {
                     padding: '1.5rem'
                 }
             }}
+            centered
         >
             {selectedReview && (
                 <>
@@ -52,7 +53,7 @@ const OpenReviewModal = ({
                             <Rate style={{ marginLeft: '10px', fontSize: '2rem' }} disabled value={selectedReview?.rating} />
                         </div>
 
-                        {!isForAdmin && (
+                        {!isForAdmin && !isForUser && (
                             <Button
                                 color='cyan'
                                 onClick={onHelpfulBtnClick}

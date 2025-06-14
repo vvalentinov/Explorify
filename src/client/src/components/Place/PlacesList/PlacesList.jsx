@@ -1,10 +1,9 @@
 import { Spin, ConfigProvider } from "antd";
 
 import PlaceCard from "./PlaceCard";
+import DeletedPlaceCard from "./DeletedPlaceCard";
 
 import { motion } from 'framer-motion';
-
-import DeletedPlaceCard from "./DeletedPlaceCard";
 
 const containerVariants = {
     hidden: {},
@@ -16,6 +15,7 @@ const containerVariants = {
         },
     },
 };
+
 const itemVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.98 },
     visible: {
@@ -29,9 +29,7 @@ const itemVariants = {
     },
 };
 
-
 import NoPlacesFoundCard from "./NoPlacesFoundCard";
-
 import Pagination from "../../Pagination/Pagination";
 
 import styles from './PlacesList.module.css';
@@ -43,6 +41,8 @@ const PlacesList = ({
     pagesCount,
     currentPage,
     handlePageChange,
+    isForFavPlaces,
+    forceFetchPlaces
 }) => {
 
     return (
@@ -85,11 +85,20 @@ const PlacesList = ({
                                                 cursor: place.isDeleted ? 'default !important' : 'pointer !important'
                                             }}
                                         >
-                                            {place.isDeleted ? (
-                                                <DeletedPlaceCard isForAdmin={isForAdmin} place={place} />
-                                            ) : (
-                                                <PlaceCard isForAdmin={isForAdmin} place={place} />
-                                            )}
+                                            {
+                                                place.isDeleted ?
+                                                    (
+                                                        <DeletedPlaceCard isForAdmin={isForAdmin} place={place} />
+                                                    ) :
+                                                    (
+                                                        <PlaceCard
+                                                            isForFavPlaces={isForFavPlaces}
+                                                            isForAdmin={isForAdmin}
+                                                            place={place}
+                                                            forceFetchPlaces={forceFetchPlaces}
+                                                        />
+                                                    )
+                                            }
                                         </motion.div>
                                     ))}
                                 </div>
@@ -108,7 +117,6 @@ const PlacesList = ({
                             :
                             <NoPlacesFoundCard isForAdmin={isForAdmin} />
                         }
-
                     </>
             }
         </>

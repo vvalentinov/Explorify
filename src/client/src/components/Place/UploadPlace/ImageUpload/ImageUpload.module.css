@@ -1,4 +1,4 @@
-.uploadCard :global(.ant-upload) {
+/* .uploadCard :global(.ant-upload) {
     min-height: 150px !important;
     min-width: 150px !important;
 }
@@ -12,10 +12,15 @@
 .uploadCard :global(.ant-upload-select-picture-card) {
     width: 150px !important;
     height: 150px !important;
-}
+} */
 
 .customUploadButton {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.uploadCard {
+    zoom: 1.5;
+    transform-origin: top left;
 }

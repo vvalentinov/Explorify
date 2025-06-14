@@ -66,6 +66,7 @@ const DeleteReviewModal = ({
 
     return (
         <Modal
+            centered
             title={<span style={{ fontSize: '2rem' }}>Delete Review</span>}
             open={visible}
             okText="Delete"
