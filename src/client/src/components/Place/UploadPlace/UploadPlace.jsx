@@ -97,10 +97,6 @@ const UploadPlace = () => {
                     const currentLocation = { lat: latitude, lng: longitude };
 
                     setLocation(currentLocation);
-                    // form.setFieldsValue({
-                    //     Latitude: latitude.toFixed(5),
-                    //     Longitude: longitude.toFixed(5)
-                    // });
                 },
                 (error) => { console.warn('Geolocation error:', error); },
                 {

@@ -7,10 +7,11 @@ const NoPlacesFoundCard = ({ isForAdmin = false }) => {
 
     const styles = isForAdmin
         ? {
-            backgroundColor: '#e6f4ff',
-            borderColor: '#91d5ff',
-            iconColor: '#1890ff',
-            textColor: '#096dd9',
+            backgroundColor: '#2b2b3d',
+            borderColor: '#000', // black border
+            iconColor: '#cfcfe6',
+            textColor: '#c9d1d9',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
         }
         : {
             backgroundColor: '#f0fff4',
@@ -18,6 +19,7 @@ const NoPlacesFoundCard = ({ isForAdmin = false }) => {
             iconColor: '#52c41a',
             textColor: '#389e0d',
         };
+
 
     return (
         <motion.div
@@ -35,13 +37,20 @@ const NoPlacesFoundCard = ({ isForAdmin = false }) => {
                     textAlign: 'center',
                     backgroundColor: styles.backgroundColor,
                     borderRadius: '16px',
-                    boxShadow: '0 6px 18px rgba(0, 0, 0, 0.05)',
+                    boxShadow: styles.boxShadow,
                     border: `1px solid ${styles.borderColor}`,
                     width: '50%',
                 }}
             >
                 <Empty
-                    image={<EnvironmentOutlined style={{ fontSize: '80px', color: styles.iconColor }} />}
+                    image={
+                        <EnvironmentOutlined
+                            style={{
+                                fontSize: '80px',
+                                color: isForAdmin ? '#cfcfe6' : styles.iconColor, // override only for admin
+                            }}
+                        />
+                    }
                     description={
                         <div style={{ fontSize: '2rem', fontWeight: 600, color: styles.textColor }}>
                             No places found!

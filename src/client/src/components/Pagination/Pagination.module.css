@@ -1,47 +1,9 @@
-.paginationWrapper :global(.ant-pagination-item),
-.paginationWrapper :global(.ant-pagination-prev),
-.paginationWrapper :global(.ant-pagination-next),
-.adminPaginationWrapper :global(.ant-pagination-item),
-.adminPaginationWrapper :global(.ant-pagination-prev),
-.adminPaginationWrapper :global(.ant-pagination-next) {
-    min-width: 52px !important;
-    height: 52px !important;
-    line-height: 52px !important;
-    font-size: 1.5rem !important;
-    border-radius: 10px !important;
-    color: black !important;
+:global(.adminWrapper .ant-pagination-item-ellipsis) {
+    color: #ffffff !important;
+    font-size: 22px !important;
 }
 
-.paginationWrapper :global(.ant-pagination-item-active) {
-    font-weight: 600;
-    background-color: lightgreen !important;
-    border: solid 1px green !important;
-}
-
-.adminPaginationWrapper :global(.ant-pagination-item-active) {
-    font-weight: 600;
-    background-color: #91d5ff !important;
-}
-
-/* Hover effect for non-active items */
-.adminPaginationWrapper :global(.ant-pagination-item:not(.ant-pagination-item-active):hover),
-.adminPaginationWrapper :global(.ant-pagination-prev:hover),
-.adminPaginationWrapper :global(.ant-pagination-next:hover) {
-    background-color: #e6f4ff !important;
-    cursor: pointer;
-}
-
-.adminPaginationWrapper :global(.ant-pagination-prev),
-.adminPaginationWrapper :global(.ant-pagination-next) {
-    background-color: white !important;
-    color: black !important;
-    border-radius: 10px !important;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Hover effect for prev/next buttons in admin */
-.adminPaginationWrapper :global(.ant-pagination-prev:hover),
-.adminPaginationWrapper :global(.ant-pagination-next:hover) {
-    background-color: #e6f4ff !important;
-    color: white !important;
+:global(.adminWrapper .ant-pagination-item-active a) {
+    color: #ffffff !important;
+    font-size: 22px !important;
 }

@@ -1,4 +1,4 @@
-import styles from './PlacesList.module.css';
+import styles from './PlaceCard.module.css';
 
 import { message } from 'antd';
 import { HeartFilled } from '@ant-design/icons';
@@ -71,9 +71,9 @@ const PlaceCard = ({
             state={{ placeId: place.id }}
             style={{ textDecoration: 'none' }}
         >
-
-            <div className={styles.customCard}>
+            <div className={`${styles.customCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
                 <div className={styles.imageWrapper}>
+
                     <img alt={place.name} src={place.imageUrl} className={styles.placeImage} />
 
                     {!isForAdmin && place.userId !== userId && heartIcon}

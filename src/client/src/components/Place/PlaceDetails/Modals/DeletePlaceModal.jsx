@@ -52,6 +52,7 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
 
     return (
         <Modal
+            centered
             title={<span style={{ fontSize: '2rem' }}>Delete Place</span>}
             open={visible}
             okText="Delete"
@@ -87,7 +88,7 @@ const DeletePlaceModal = ({ placeId, placeUserId, visible, setVisible, isPlaceAp
                 {isPlaceApproved && placeUserId !== userId &&
                     <div>
                         <Typography.Text style={{ fontSize: '1.5rem' }} type="danger" strong>
-                            The user who uploaded it will lose points and receive notification.
+                            The user who uploaded it will lose points and receive a notification.
                         </Typography.Text>
                     </div>
                 }

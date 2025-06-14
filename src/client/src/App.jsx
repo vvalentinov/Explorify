@@ -19,24 +19,29 @@ const App = () => {
 
     return (
         <AuthProvider>
+
             <NotificationProvider>
 
                 <Alert />
 
-                {isAdminRoute ?
-                    (
-                        <Routes>
-                            <Route path="/admin/*" element={<AdminLayout />} />
-                        </Routes>
-                    ) :
-                    (
-                        <>
-                            <Header />
-                            <Main />
-                            <Footer />
-                        </>
-                    )}
+                {
+                    isAdminRoute ?
+                        (
+                            <Routes>
+                                <Route path="/admin/*" element={<AdminLayout />} />
+                            </Routes>
+                        ) :
+                        (
+                            <>
+                                <Header />
+                                <Main />
+                                <Footer />
+                            </>
+                        )
+                }
+
             </NotificationProvider>
+
         </AuthProvider>
     );
 }

@@ -1,45 +1,62 @@
 import { Pagination as AntPagination, ConfigProvider } from "antd";
 
-import styles from './Pagination.module.css';
+import "./Pagination.module.css";
 
-const Pagination = ({ handlePageChange, currentPage, pagesCount, isForAdmin }) => {
+const Pagination = ({
+    handlePageChange,
+    currentPage,
+    pagesCount,
+    isForAdmin
+}) => {
+
+    const adminTheme = {
+        itemActiveBg: '#4a4a68',
+        itemActiveColor: '#ffffff',
+        itemBg: '#2b2b3d',
+        itemLinkBg: '#2b2b3d',
+        itemInputBg: '#1e1e2f',
+        colorBgTextHover: '#3a3a52',
+        colorText: '#ffffff',
+        colorPrimary: '#4a4a68',
+        colorPrimaryHover: '#4a4a68',
+        controlOutline: 'none',
+        controlOutlineWidth: 0,
+        fontSize: 25,
+        itemSize: 50,
+    };
+
+    const publicTheme = {
+        itemActiveBg: 'lightgreen',
+        itemActiveColor: 'black',
+        colorPrimary: 'black',
+        colorPrimaryHover: 'black',
+        colorText: 'black',
+        fontSize: 25,
+        itemSize: 50,
+    };
+
     return (
-        <ConfigProvider
-            theme={{
-                components: {
-                    Pagination: {
-                        itemActiveBg: isForAdmin ? '#91d5ff' : 'lightgreen',
-                        itemActiveColor: 'black',
-                        colorPrimary: 'black',
-                        colorPrimaryHover: 'black',
-                        colorText: 'black',
+        <div className={isForAdmin ? "adminWrapper" : ""}>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Pagination: isForAdmin ? adminTheme : publicTheme,
                     },
-                },
-            }}
-        >
-            {/* <div className={isForAdmin ? styles.adminPaginationWrapper : styles.paginationWrapper}>
-
-               
+                }}
+            >
                 <AntPagination
                     align="center"
+                    showSizeChanger={false}
+                    style={{ marginTop: '2rem' }}
+                    defaultCurrent={1}
+                    total={pagesCount * 6}
                     onChange={handlePageChange}
                     current={currentPage}
-                    total={pagesCount * 6}
                     pageSize={6}
-                    style={{ textAlign: 'center', margin: '2rem 0', fontSize: '2rem' }}
                 />
-            </div> */}
-
-            <AntPagination
-                align="center"
-                showSizeChanger={false}
-                style={{ marginTop: '2rem' }} defaultCurrent={1} total={pagesCount * 6}
-                onChange={handlePageChange}
-                current={currentPage}
-                pageSize={6}
-            />
-        </ConfigProvider>
-    )
+            </ConfigProvider>
+        </div>
+    );
 };
 
 export default Pagination;

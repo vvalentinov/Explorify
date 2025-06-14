@@ -113,6 +113,7 @@ const PlacesList = ({
                                     />
 
                                 )}
+
                             </motion.section>
                             :
                             <NoPlacesFoundCard isForAdmin={isForAdmin} />

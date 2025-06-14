@@ -68,9 +68,7 @@ const PlaceDetailsSection = ({
 
             <section className={styles.heroSection}>
 
-                <div
-                    className={styles.placeCard}
-                >
+                <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
                     {loading ? (
                         <div className={styles.spinnerWrapper}>
                             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
@@ -81,34 +79,10 @@ const PlaceDetailsSection = ({
                         <>
                             <Title
                                 level={3}
-                                style={{
-                                    textAlign: 'left',
-                                    marginBottom: '1.1rem',
-                                    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                                    fontWeight: 700,
-                                    fontSize: '2.2rem',
-                                    letterSpacing: '0.4px',
-                                    color: '#1A7F64',
-                                    display: 'flex',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '0.6rem',
-                                    width: '100%'
-                                }}
+                                className={`${styles.placeTitle} ${isForAdmin ? styles.adminTitle : ''}`}
                             >
-                                <span
-                                    style={{
-                                        backgroundColor: '#ffffff',
-                                        borderRadius: '50%',
-                                        padding: '0.5rem',
-                                        boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        border: 'solid 1px lightgrey'
-                                    }}
-                                >
-                                    <EnvironmentFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                                <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
+                                    <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
                                 </span>
                                 {place?.name}
                             </Title>
@@ -123,27 +97,41 @@ const PlaceDetailsSection = ({
                     )}
                 </div>
 
-                <div className={styles.ownerReview}>
+                <div className={`${styles.ownerReview} ${isForAdmin ? styles.adminReview : styles.publicReview}`}>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
-                            alignContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'center',
                         }}
                     >
                         <div className={styles.reviewHeader}>
                             <Avatar
                                 size={60}
-                                src={place.userProfileImageUrl && place.userProfileImageUrl.trim() !== '' ? place.userProfileImageUrl : null}
-                                icon={!place.userProfileImageUrl || place.userProfileImageUrl.trim() === '' ? <UserOutlined /> : undefined}
+                                src={
+                                    place.userProfileImageUrl?.trim() !== ''
+                                        ? place.userProfileImageUrl
+                                        : null
+                                }
+                                icon={
+                                    !place.userProfileImageUrl?.trim()
+                                        ? <UserOutlined />
+                                        : undefined
+                                }
                             />
-                            <span style={{ fontSize: '1.5rem', color: 'black', fontWeight: '600', fontFamily: "'Poppins', 'Segoe UI', sans-serif", }}>{place.userName}</span>
+                            <span className={`${styles.reviewerName} ${isForAdmin ? styles.adminName : ''}`}>
+                                {place.userName}
+                            </span>
                         </div>
-                        <Rate style={{ fontSize: '2rem' }} disabled value={place.userReviewRating} />
+
+                        <div
+                            className={`${styles.rateWrapper} ${isForAdmin ? styles.adminRate : ''}`}
+                        >
+                            <Rate style={{ fontSize: '2rem' }} disabled value={place.userReviewRating} />
+                        </div>
                     </div>
 
-                    <Paragraph className={styles.reviewText}>
+                    <Paragraph className={isForAdmin ? styles.adminReviewText : styles.reviewText}>
                         {place.userReviewContent}
                     </Paragraph>
                 </div>
@@ -153,47 +141,23 @@ const PlaceDetailsSection = ({
 
             <section className={styles.descriptionTagsSection}>
 
-                <div className={styles.descriptionCard}>
-
+                <div className={`${styles.descriptionCard} ${isForAdmin ? styles.adminDescriptionCard : styles.publicDescriptionCard}`}>
                     <Title
                         level={3}
-                        style={{
-                            textAlign: 'left',
-                            marginBottom: '1.1rem',
-                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                            fontWeight: 700,
-                            fontSize: '1.7rem',
-                            letterSpacing: '0.4px',
-                            color: '#1A7F64',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            gap: '0.6rem',
-                            width: '100%'
-                        }}
+                        className={`${styles.descriptionTitle} ${isForAdmin ? styles.adminTitle : styles.publicTitle}`}
                     >
-                        <span
-                            style={{
-                                backgroundColor: '#ffffff',
-                                borderRadius: '50%',
-                                padding: '0.5rem',
-                                boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: 'solid 1px lightgrey'
-                            }}
-                        >
-                            <FileTextFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                        <span className={`${styles.descriptionIcon} ${isForAdmin ? styles.adminDescriptionIcon : ''}`}>
+                            <FileTextFilled />
                         </span>
                         Description
                     </Title>
-                    <Paragraph className={styles.descriptionText}>
+
+                    <Paragraph className={`${styles.descriptionText} ${isForAdmin ? styles.adminDescriptionText : ''}`}>
                         {place.description}
                     </Paragraph>
                 </div>
 
-                <div className={styles.tagsCard}>
+                {/* <div className={styles.tagsCard}>
 
                     <Title
                         level={3}
@@ -236,8 +200,6 @@ const PlaceDetailsSection = ({
                                     style={{
                                         fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                                         fontSize: '1.6rem',
-                                        // textAlign: 'center',
-                                        // display: 'block',
                                         width: '100%',
                                         marginTop: '1rem',
                                         color: '#888',
@@ -246,6 +208,46 @@ const PlaceDetailsSection = ({
                                     No tags available
                                 </span>
                         }
+                    </div>
+                </div> */}
+
+
+                <div
+                    className={`${styles.tagsCard} ${isForAdmin ? styles.adminTagsCard : styles.publicTagsCard
+                        }`}
+                >
+                    <Title
+                        level={3}
+                        className={`${styles.tagsTitle} ${isForAdmin ? styles.adminTitle : styles.publicTitle
+                            }`}
+                    >
+                        <span
+                            className={`${styles.tagsIcon} ${isForAdmin ? styles.adminTagsIcon : ''
+                                }`}
+                        >
+                            <TagFilled />
+                        </span>
+                        Tags
+                    </Title>
+
+                    <div className={styles.tagList}>
+                        {place.tags?.length ? (
+                            place.tags.map(t => (
+                                <span
+                                    key={t.id}
+                                    className={`${styles.tag} ${isForAdmin ? styles.adminTag : ''}`}
+                                >
+                                    {t.name}
+                                </span>
+                            ))
+                        ) : (
+                            <span
+                                className={`${styles.noTags} ${isForAdmin ? styles.adminNoTags : ''
+                                    }`}
+                            >
+                                No tags available
+                            </span>
+                        )}
                     </div>
                 </div>
 
@@ -271,7 +273,7 @@ const PlaceDetailsSection = ({
 
 
             {/* Favorite Place */}
-            {place.isFavPlace && !isOwner && isAuthenticated && (
+            {place.isFavPlace && !isOwner && isAuthenticated && !isForAdmin && (
                 <section className={styles.favPlaceSection}>
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -312,7 +314,7 @@ const PlaceDetailsSection = ({
                 </section>
             )}
 
-            {!place.isFavPlace && !isOwner && isAuthenticated && (
+            {!place.isFavPlace && !isOwner && isAuthenticated && !isForAdmin && (
 
                 <section className={styles.favPlaceSection}>
                     <motion.div

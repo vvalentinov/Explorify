@@ -13,9 +13,11 @@
     right: 0;
     z-index: 1000;
     height: 100px;
-    background-color: #001529 !important;
+    background-color: #2b2b3d !important;
     display: flex;
     align-items: center;
+
+    border-bottom: 1px solid #3a3a52;
 
     /* border: solid 1px red; */
 
@@ -39,23 +41,36 @@
 .menuItem {
     color: white;
     font-size: 1.3rem;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    /* font-weight: 600; */
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 12px;
     text-decoration: none;
-    width: 160px;
+    width: 170px;
     height: 48px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+
 }
 
 .menuItem:hover {
     background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
 }
 
+.menuItem:visited,
+.menuItem:focus,
+.menuItem:active {
+    color: #ffffff !important;
+    border: solid 1px black !important;
+}
+
+
 .activeMenuItem {
-    background-color: #1890ff;
-    color: white;
+    background-color: #4a4a68;
+    color: #ffffff;
 }

@@ -82,8 +82,6 @@ const PlaceDetails = ({ isForAdmin = false }) => {
         <>
             {place && (
                 <>
-                    {isForAdmin && <PlaceStatusPill place={place} />}
-
                     {/* Place Details Section */}
                     <PlaceDetailsSection
                         setPlace={setPlace}
@@ -99,17 +97,11 @@ const PlaceDetails = ({ isForAdmin = false }) => {
                     }
 
                     {/* Reviews Section */}
-                    {place.isApproved && !isForAdmin && (
-                        <PlaceDetailsReviewsSection
-                            // isForAdmin={false}
-                            // isForPlace={true}
-                            // isForUser={false}
-                            // placeId={place?.id}
-                            // isOwner={isOwner}
-                            isOwner={isOwner}
-                            placeId={place?.id}
-                        />
-                    )}
+                    {place.isApproved && !isForAdmin &&
+                        (
+                            <PlaceDetailsReviewsSection isOwner={isOwner} placeId={place?.id} />
+                        )
+                    }
 
                     {isForAdmin && (
                         place?.isDeleted ? (

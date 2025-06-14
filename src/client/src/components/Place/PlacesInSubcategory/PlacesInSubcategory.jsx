@@ -17,8 +17,8 @@ const PlacesInSubcategory = () => {
     const location = useLocation();
 
     const { token } = useContext(AuthContext);
-    const placeService = placesServiceFactory(token);
 
+    const placeService = placesServiceFactory(token);
 
     const [places, setPlaces] = useState([]);
 

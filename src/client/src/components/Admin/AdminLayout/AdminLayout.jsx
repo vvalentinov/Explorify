@@ -1,7 +1,7 @@
 import styles from './AdminLayout.module.css';
 
-import { Layout, Menu, FloatButton } from 'antd';
-import { Route, Routes, useNavigate, useLocation, NavLink } from 'react-router-dom';
+import { Layout, FloatButton } from 'antd';
+import { Route, Routes, useNavigate, NavLink } from 'react-router-dom';
 import {
     DashboardOutlined,
     UserOutlined,
@@ -13,7 +13,7 @@ import {
 import AdminDashboard from '../AdminDashboard';
 import AdminUsers from '../Users';
 
-import AdminPlaces from '../../Place/AdminPlaces';
+import AdminPlaces from '../../Place/AdminPlaces/AdminPlaces';
 
 import PlaceDetails from '../../Place/PlaceDetails/PlaceDetails';
 

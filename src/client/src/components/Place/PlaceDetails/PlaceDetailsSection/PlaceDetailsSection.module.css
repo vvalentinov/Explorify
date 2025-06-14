@@ -1,6 +1,5 @@
 /* Hero Section */
 .heroSection {
-    border: solid 1px red;
 
     min-height: calc(100vh - 100px);
 
@@ -25,13 +24,73 @@
 
 .placeCard {
     width: 60%;
-
-    background-color: #fff;
     border-radius: 15px;
-
     padding: 2rem;
-
     border: solid 1px lightgray;
+}
+
+/* Admin variant */
+.adminCard {
+    background: linear-gradient(145deg, #2b2b3d, #1f1f2f);
+    color: #e0e0f0;
+    border: 1px solid #3f3f55;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(50, 50, 100, 0.2);
+    backdrop-filter: blur(2px);
+}
+
+/* Public user variant */
+.publicCard {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    border: 1px solid #ddd;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.placeTitle {
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 1.1rem;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: 0.4px;
+    color: #1a7f64;
+    /* public green */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.adminTitle {
+    color: #fff !important;
+}
+
+.titleIcon {
+    background-color: #ffffff;
+    border-radius: 50%;
+    padding: 0.5rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid lightgrey;
+}
+
+.adminTitleIcon {
+    background-color: #2a2a3d;
+    border: 1px solid #3d3d55;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.icon {
+    color: #1a7f64;
+    font-size: 2rem;
+}
+
+.adminIcon {
+    color: #fff;
 }
 
 .carousel {
@@ -53,40 +112,67 @@
     border-radius: 12px;
 }
 
-
 .carousel img {
     min-height: 500px;
 }
 
 .ownerReview {
     width: 40%;
-
-    background: #f4fdf7;
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-
     padding: 2rem;
-
-    border: solid 1px lightgray;
+    border-radius: 12px;
 }
 
-.ownerReview .reviewHeader {
+.publicReview {
+    background: #f4fdf7;
+    border: 1px solid lightgray;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    color: #222;
+}
+
+.adminReview {
+    background: linear-gradient(135deg, #2c2c3d, #1f1f2f);
+    border: 1px solid #3c3c55;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    color: #d0d0e0;
+}
+
+.reviewHeader {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
-
-    /* border: solid 1px green; */
+    gap: 10px;
 }
 
-.ownerReview .reviewText {
+.reviewerName {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+.adminName {
+    color: #fff !important;
+}
+
+.reviewText {
     font-size: 1.25rem;
     text-align: justify;
     margin-top: 10px;
-
-    /* border: solid 1px red; */
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
 }
+
+.adminReviewText {
+    font-size: 1.25rem;
+    text-align: justify;
+    margin-top: 10px;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    color: #fff !important;
+}
+
+.adminRate :global(.ant-rate-star-zero svg) {
+    color: #555a7b;
+    opacity: 1;
+}
+
 
 .descriptionSection {
     border: solid 1px blue;
@@ -105,21 +191,65 @@
 }
 
 .descriptionCard {
-    border: solid 1px lightgray;
-
-    /* background-color: #fff; */
-
     border-radius: 12px;
-
     padding: 2rem;
-
-    background: #f4fdf7;
-
     width: 70%;
 }
 
+.publicDescriptionCard {
+    background: #f4fdf7;
+    border: 1px solid lightgray;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    color: #444;
+}
+
+.adminDescriptionCard {
+    background: linear-gradient(135deg, #2c2c3d, #1f1f2f);
+    border: 1px solid #3c3c55;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+    color: #d0d0e0;
+}
+
+/* Title base */
 .descriptionTitle {
-    font-size: 1.6rem !important;
+    font-size: 1.7rem;
+    margin-bottom: 1.1rem;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.descriptionIcon {
+    background-color: #ffffff;
+    border-radius: 50%;
+    padding: 0.5rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px lightgrey;
+    color: #1a7f64;
+    font-size: 2rem;
+}
+
+.adminDescriptionIcon {
+    background-color: #2a2a3d;
+    border: 1px solid #3d3d55;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    color: #fff;
+}
+
+.publicTitle {
+    color: #1a7f64;
+}
+
+.adminTitle {
+    color: #91caff;
 }
 
 .descriptionText {
@@ -127,8 +257,12 @@
     font-size: 1.2rem;
     line-height: 2;
     letter-spacing: 0.5px;
-    color: #444;
     text-align: justify;
+    color: #444;
+}
+
+.adminDescriptionText {
+    color: #d0d0e0;
 }
 
 .tagsSection {
@@ -137,42 +271,109 @@
     padding: 2rem 12rem;
 }
 
-.tagsCard {
-    /* border: solid 1px red; */
-
+/* .tagsCard {
     background: #f4fdf7;
-
     padding: 3rem;
-
     border-radius: 12px;
-
     border: solid 1px lightgray;
+    width: 30%;
+} */
 
+.tagsCard {
+    padding: 3rem;
+    border-radius: 12px;
     width: 30%;
 }
 
+.publicTagsCard {
+    background: #f4fdf7;
+    border: 1px solid lightgray;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    color: #1a1a1a;
+}
+
+.adminTagsCard {
+    background: linear-gradient(135deg, #2c2c3d, #1f1f2f);
+    border: 1px solid #3c3c55;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+    color: #d0d0e0;
+}
+
+.tagsTitle {
+    text-align: left;
+    margin: 0 0 2rem 0;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+}
+
+.publicTitle {
+    color: #1a7f64;
+}
+
+.adminTitle {
+    color: #91caff;
+}
+
+.tagsIcon {
+    background: #ffffff;
+    border-radius: 50%;
+    padding: 0.5rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #1a7f64;
+}
+
+.adminTagsIcon {
+    background: #2a2a3d;
+    border: 1px solid #3d3d55;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    color: #fff;
+}
+
 .tagList {
-    gap: 2rem;
     display: flex;
     flex-wrap: wrap;
-
-    /* border: solid 1px green; */
+    gap: 2rem;
 }
 
 .tag {
-    background-color: #e6f4ea;
-    color: #389e0d;
     padding: 6px 14px;
     border-radius: 12px;
     font-size: 1.3rem;
     font-weight: 500;
     text-align: center;
+    border: 1px solid lightgray;
+    background: #e6f4ea;
+    color: #389e0d;
+}
 
-    border: solid 1px lightgray;
+.adminTag {
+    background: #3a3a52;
+    border: 1px solid #4a4a68;
+    color: #cfe2ff;
+}
+
+.noTags {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-size: 1.6rem;
+    color: #888;
+    width: 100%;
+}
+
+.adminNoTags {
+    color: #b0b0c8;
 }
 
 .favPlaceSection {
-    border: solid 1px red;
 
     /* padding: 2rem 20rem; */
 
@@ -201,7 +402,6 @@
 }
 
 .mapWeatherSection {
-    border: solid 1px red;
 
     padding: 2rem 10rem;
 }

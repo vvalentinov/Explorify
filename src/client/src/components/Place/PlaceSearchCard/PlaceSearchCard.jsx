@@ -181,7 +181,6 @@ const PlaceSearchCard = ({
                 <Input
                     name="PlaceName"
                     allowClear
-                    // size="large"
                     placeholder="Start typing place name here..."
                     value={state.placeName}
                     onChange={(e) => dispatch({ type: 'SET_PLACE_NAME', payload: e.target.value })}
