@@ -8,7 +8,7 @@ import PlacesInSubcategory from '../Place/PlacesInSubcategory/PlacesInSubcategor
 import Notifications from '../Notifications/Notifications';
 
 import MyPlaces from '../Place/MyPlaces';
-import MyReviews from '../Review/MyReviews';
+import MyReviews from '../Review/MyReviews/MyReviews';
 import ReviewEdit from '../Review/ReviewEdit/ReviewEdit';
 
 // Account

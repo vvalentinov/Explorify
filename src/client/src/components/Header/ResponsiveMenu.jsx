@@ -9,7 +9,6 @@ import {
     AppstoreFilled,
     SearchOutlined,
     EnvironmentFilled,
-    UsergroupAddOutlined,
     HeartFilled,
     StarFilled,
     EyeFilled
@@ -46,7 +45,7 @@ const ResponsiveMenu = () => {
     );
 
     const navLinks = (
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '12rem' }}>
+        <div className={styles.leftMenu}>
 
             <Link to="/" className={styles.logoMenuItem}>
                 <motion.div
@@ -89,7 +88,7 @@ const ResponsiveMenu = () => {
 
             </Link>
 
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+            <div className={styles.leftMenuLinksContainer}>
                 <NavLink
                     to="/categories"
                     style={{ marginLeft: '2rem' }}
@@ -97,18 +96,22 @@ const ResponsiveMenu = () => {
                         `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
                     }
                 >
-                    <AppstoreFilled style={{ marginRight: '0.5rem' }} />
-                    Categories
+                    <div className={styles.navLinkContentContainer}>
+                        <AppstoreFilled />
+                        Categories
+                    </div>
+
                 </NavLink>
 
                 <NavLink
                     to="/search"
-                    className={({ isActive }) =>
-                        `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
-                    }
+                    className={({ isActive }) => `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`}
                 >
-                    <SearchOutlined style={{ marginRight: '0.5rem' }} />
-                    Search
+                    <div className={styles.navLinkContentContainer}>
+                        <SearchOutlined />
+                        Search
+                    </div>
+
                 </NavLink>
 
 
@@ -116,12 +119,12 @@ const ResponsiveMenu = () => {
                     <>
                         <NavLink
                             to="/my-places"
-                            className={({ isActive }) =>
-                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
-                            }
+                            className={({ isActive }) => `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`}
                         >
-                            <EnvironmentFilled style={{ marginRight: '0.5rem' }} />
-                            My Places
+                            <div className={styles.navLinkContentContainer}>
+                                <EnvironmentFilled />
+                                My Places
+                            </div>
                         </NavLink>
 
                         <NavLink
@@ -130,18 +133,20 @@ const ResponsiveMenu = () => {
                                 `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
                             }
                         >
-                            <StarFilled style={{ marginRight: '0.5rem' }} />
-                            My Reviews
+                            <div className={styles.navLinkContentContainer}>
+                                <StarFilled />
+                                My Reviews
+                            </div>
                         </NavLink>
 
                         <NavLink
                             to="/my-following"
-                            className={({ isActive }) =>
-                                `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
-                            }
+                            className={({ isActive }) => `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`}
                         >
-                            <EyeFilled style={{ marginRight: '0.5rem' }} />
-                            My Following
+                            <div className={styles.navLinkContentContainer}>
+                                <EyeFilled />
+                                My Following
+                            </div>
                         </NavLink>
 
                         <NavLink
@@ -150,17 +155,15 @@ const ResponsiveMenu = () => {
                                 `${styles.navItem} ${isActive ? styles.activeNavItem : ''}`
                             }
                         >
-                            <HeartFilled color='red' style={{ marginRight: '0.5rem' }} />
-                            Favorite Places
+                            <div className={styles.navLinkContentContainer}>
+                                <HeartFilled color='red' />
+                                Favorite Places
+                            </div>
                         </NavLink>
                     </>
                 )}
             </div>
-
-
-
         </div>
-
     );
 
     return (

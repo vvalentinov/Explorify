@@ -4,6 +4,7 @@ import {
     MailOutlined,
     LockOutlined,
     UserOutlined,
+    SettingFilled
 } from '@ant-design/icons';
 
 import { Link } from 'react-router-dom';
@@ -51,8 +52,36 @@ const Settings = () => {
 
                 <Typography.Title
                     level={3}
-                    style={{ fontFamily: 'Poppins, sans-serif', marginTop: '10px' }}
-                    className={styles.settingsTitle}>
+                    style={{
+                        textAlign: 'left',
+                        marginBottom: '2.5rem',
+                        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '2rem',
+                        letterSpacing: '0.4px',
+                        color: '#1A7F64',
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        paddingLeft: '10rem',
+                        width: '100%',
+                        border: 'solid 1px red'
+                    }}
+                >
+                    <span
+                        style={{
+                            backgroundColor: '#ffffff',
+                            borderRadius: '50%',
+                            padding: '0.5rem',
+                            boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <SettingFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                    </span>
                     Account Settings
                 </Typography.Title>
 

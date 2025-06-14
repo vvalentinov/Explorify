@@ -16,7 +16,9 @@ import ApprovedPlaceCard from './Cards/ApprovedPlaceCard';
 import UnapprovedPlaceCard from './Cards/UnapprovedPlaceCard';
 import DeletedPlaceCard from "./Cards/DeletedPlaceCard";
 
-import ReviewsSection from '../../Review/ReviewsSection/ReviewsSection';
+// import ReviewsSection from '../../Review/ReviewsSection/ReviewsSection';
+
+import PlaceDetailsReviewsSection from "./PlaceDetailsReviewsSection";
 
 const PlaceDetails = ({ isForAdmin = false }) => {
 
@@ -98,12 +100,14 @@ const PlaceDetails = ({ isForAdmin = false }) => {
 
                     {/* Reviews Section */}
                     {place.isApproved && !isForAdmin && (
-                        <ReviewsSection
-                            isForAdmin={false}
-                            isForPlace={true}
-                            isForUser={false}
-                            placeId={place?.id}
+                        <PlaceDetailsReviewsSection
+                            // isForAdmin={false}
+                            // isForPlace={true}
+                            // isForUser={false}
+                            // placeId={place?.id}
+                            // isOwner={isOwner}
                             isOwner={isOwner}
+                            placeId={place?.id}
                         />
                     )}
 

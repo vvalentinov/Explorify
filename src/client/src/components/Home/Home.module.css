@@ -68,6 +68,79 @@
     color: inherit !important;
 }
 
+.leaderboardSection {
+    /* background-color: #f5fefb; */
+    padding: 2rem 12rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: solid 1px red;
+
+
+}
+
+.leaderboardContent {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+
+    /* border: solid 1px green; */
+}
+
+.leaderboardImage {
+    width: 40%;
+    height: 500px;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
+
+    border: solid 1px lightgray;
+}
+
+.leaderboardContainer {
+    width: 60%;
+
+    border: solid 1px lightgray;
+
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 3rem;
+}
+
+.leaderboardTitle {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    color: #1A7F64 !important;
+    font-size: 2.5rem !important;
+    margin-bottom: 1rem;
+}
+
+.leaderboardDescription {
+    font-size: 1.5rem;
+    color: #333;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+
+    text-align: justify;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.leaderboardBtn {
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+    font-size: 1.5rem !important;
+    padding: 2rem 3rem !important;
+    background-color: #43c0c1;
+}
+
+.leaderboardBtn:hover {
+    background-color: #43c0c1 !important;
+    border: solid 1px lightgray !important;
+    color: #fff !important;
+}
+
+
 @media screen and (max-width: 1000px) {
     .placesContainer {
         padding: 0 !important;

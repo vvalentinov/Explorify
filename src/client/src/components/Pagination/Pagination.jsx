@@ -10,14 +10,16 @@ const Pagination = ({ handlePageChange, currentPage, pagesCount, isForAdmin }) =
                     Pagination: {
                         itemActiveBg: isForAdmin ? '#91d5ff' : 'lightgreen',
                         itemActiveColor: 'black',
-                        colorPrimary: 'black', // Also impacts hover border
+                        colorPrimary: 'black',
                         colorPrimaryHover: 'black',
                         colorText: 'black',
                     },
                 },
             }}
         >
-            <div className={isForAdmin ? styles.adminPaginationWrapper : styles.paginationWrapper}>
+            {/* <div className={isForAdmin ? styles.adminPaginationWrapper : styles.paginationWrapper}>
+
+               
                 <AntPagination
                     align="center"
                     onChange={handlePageChange}
@@ -26,7 +28,16 @@ const Pagination = ({ handlePageChange, currentPage, pagesCount, isForAdmin }) =
                     pageSize={6}
                     style={{ textAlign: 'center', margin: '2rem 0', fontSize: '2rem' }}
                 />
-            </div>
+            </div> */}
+
+            <AntPagination
+                align="center"
+                showSizeChanger={false}
+                style={{ marginTop: '2rem' }} defaultCurrent={1} total={pagesCount * 6}
+                onChange={handlePageChange}
+                current={currentPage}
+                pageSize={6}
+            />
         </ConfigProvider>
     )
 };

@@ -78,7 +78,7 @@ const Leaderboard = () => {
 
     const [userName, setUserName] = useState('');
 
-    const [debouncedUserName] = useDebounce(userName, 500);
+    const [debouncedUserName] = useDebounce(userName, 300);
 
     const leaderboardService = leaderboardServiceFactory();
 

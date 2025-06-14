@@ -1,13 +1,21 @@
 import styles from './PlacesList.module.css';
-import { Card, message } from 'antd';
-import { Link } from 'react-router-dom';
-import { HeartFilled, HeartOutlined } from '@ant-design/icons';
-import { favPlaceServiceFactory } from '../../../services/favPlaceService';
-import { useContext, useState } from 'react';
-import { AuthContext } from '../../../contexts/AuthContext';
-import { fireError } from '../../../utils/fireError';
 
-const PlaceCard = ({ place, isForAdmin }) => {
+import { message } from 'antd';
+import { HeartFilled } from '@ant-design/icons';
+
+import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+
+import { fireError } from '../../../utils/fireError';
+import { AuthContext } from '../../../contexts/AuthContext';
+import { favPlaceServiceFactory } from '../../../services/favPlaceService';
+
+const PlaceCard = ({
+    place,
+    isForAdmin,
+    forceFetchPlaces,
+    isForFavPlaces = false
+}) => {
 
     const { token, isAuthenticated, userId } = useContext(AuthContext);
 
@@ -16,6 +24,7 @@ const PlaceCard = ({ place, isForAdmin }) => {
     const [isFavorite, setIsFavorite] = useState(place.isFavorite);
 
     const handleHeartClick = async (e) => {
+
         e.preventDefault();
         e.stopPropagation();
 
@@ -28,6 +37,10 @@ const PlaceCard = ({ place, isForAdmin }) => {
                 const res = await favPlaceService.removeFromFavorites(place?.id);
                 setIsFavorite(false);
                 message.success(res.successMessage, 5);
+
+                if (isForFavPlaces) {
+                    forceFetchPlaces();
+                }
             }
         } catch (err) {
             fireError(err);
@@ -35,13 +48,21 @@ const PlaceCard = ({ place, isForAdmin }) => {
     };
 
     const heartIcon = isAuthenticated && place?.userId !== userId && (
-        <div className={styles.heartIcon} onClick={handleHeartClick}>
+        <>
             {isFavorite ? (
-                <HeartFilled style={{ color: '#ff4d4f', fontSize: '25px' }} />
+                <HeartFilled
+                    onClick={handleHeartClick}
+                    className={styles.heartIcon}
+                    style={{ color: '#ff4d4f' }}
+                />
             ) : (
-                <HeartOutlined style={{ color: '#999', fontSize: '25px' }} />
+                <HeartFilled
+                    onClick={handleHeartClick}
+                    className={styles.heartIcon}
+                    style={{ color: '#fff' }}
+                />
             )}
-        </div>
+        </>
     );
 
     return (
@@ -50,43 +71,24 @@ const PlaceCard = ({ place, isForAdmin }) => {
             state={{ placeId: place.id }}
             style={{ textDecoration: 'none' }}
         >
-            <Card
-                className={styles.card}
-                hoverable
-                style={{
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                    border: 'none',
-                }}
-                styles={{
-                    body: {
-                        display: 'none',
-                    },
-                }}
-                cover={
-                    <div className={styles.imageWrapper}>
-                        <img
-                            alt={place.name}
-                            src={place.imageUrl}
-                            className={styles.placeImage}
-                        />
 
-                        {heartIcon}
+            <div className={styles.customCard}>
+                <div className={styles.imageWrapper}>
+                    <img alt={place.name} src={place.imageUrl} className={styles.placeImage} />
 
-                        <div className={styles.placeTitle}>
-                            {place.name}
+                    {!isForAdmin && place.userId !== userId && heartIcon}
 
-                            <div className={styles.placeRating}>
-                                <span className={styles.star}>★</span>
-                                <span className={styles.ratingText}>
-                                    {place.averageRating?.toFixed(1) ?? 'N/A'}/5
-                                </span>
-                            </div>
+                    <div className={styles.placeTitle}>
+                        {place.name}
+                        <div className={styles.placeRating}>
+                            <span className={styles.star}>★</span>
+                            <span className={styles.ratingText}>
+                                {place.averageRating?.toFixed(1) ?? 'N/A'}/5
+                            </span>
                         </div>
                     </div>
-                }
-            />
+                </div>
+            </div>
         </Link>
     );
 };

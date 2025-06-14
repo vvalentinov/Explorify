@@ -1,12 +1,17 @@
 .searchPanel {
-    width: 100%;
-    margin-left: 12rem;
-    margin-right: 12rem;
-    padding: 3rem 10rem;
+    width: 80%;
+    /* margin-left: 25rem;
+    margin-right: 25rem; */
+    padding: 1rem 12rem;
     background-color: #d0f0d8;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.3s ease;
+
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    border: solid 1px lightgray;
 }
 
 .adminSearchPanel {
@@ -24,24 +29,41 @@
 .searchTitle {
     padding: 0 !important;
     margin: 0 !important;
+
+    /* border: solid 1px red; */
+    margin-bottom: 10px !important;
+
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.4px;
+    color: #1A7F64 !important;
+    text-align: left;
+    padding: 0 !important;
+}
+
+.placeNameInput {
+    /* height: 3rem !important;
+    font-size: 1.4rem !important; */
+    padding-left: 10px !important;
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+    margin-bottom: 10px !important;
 }
 
 .toggleButtonsWrapper {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 1rem;
     width: 100%;
 }
 
 .searchButtonFilter {
     flex: 1 1 0;
-    font-size: 1.3rem;
-    padding: 1.4rem 0;
+    font-size: 1.2rem;
     text-align: center;
     white-space: nowrap;
     transition: all 0.3s ease;
-    padding: 2rem 0;
+    padding: 1.5rem 0;
 }
 
 .searchButtonFilter:hover,
@@ -97,8 +119,9 @@
     padding: 12px 18px !important;
 }
 
-.countriesSelect :global(.ant-select-selector) {
-    height: 4rem !important;
+.countriesSelect {
+    /* border: solid 1px red !important; */
+    height: 3rem !important;
 }
 
 .countriesSelect :global(.ant-select-selection-placeholder) {
@@ -110,12 +133,12 @@
 }
 
 .countriesSelect :global(.ant-select-arrow) {
-    top: 38px !important;
+    top: 30px !important;
     transform: translateY(-50%) scale(1.4) !important;
 }
 
 .countriesSelect :global(.ant-select-clear) {
-    top: 38px !important;
+    top: 30px !important;
     transform: translateY(-50%) scale(1.4) !important;
 }
 
@@ -130,6 +153,7 @@
 
 :global(.customCountryDropdown) {
     font-size: 1.4rem;
+    width: 40% !important;
 }
 
 :global(.customCountryDropdown .ant-select-item-option-content) {
@@ -143,25 +167,32 @@
 
 .tagsSelect :global(.ant-select-selector) {
     font-size: 1.4rem;
-    height: 4rem !important;
+    height: 3rem !important;
 }
 
 .tagsSelect :global(.ant-select-selection-wrap) {
-    top: 10px !important;
+    top: 5px !important;
     font-size: 1.4rem;
 }
 
 .tagsSelect :global(.ant-select-arrow) {
-    top: 38px !important;
+    top: 30px !important;
     transform: translateY(-50%) scale(1.4) !important;
 }
 
 .tagsSelect :global(.ant-select-clear) {
-    top: 38px !important;
+    top: 30px !important;
     transform: translateY(-50%) scale(1.4) !important;
 }
 
 .tagsSelect :global(.ant-select-selection-search-input) {
+    font-size: 1.4rem;
+}
+
+.tagsSelectDropdown {
+    width: 40% !important;
+    min-width: 200px;
+    max-width: 300px;
     font-size: 1.4rem;
 }
 
@@ -189,88 +220,3 @@
     align-items: center !important;
     text-align: center !important;
 }
-
-/* Modern, Minimal CSS for ModernPlaceSearchCard */
-
-/* .cardWrapper {
-    width: 100%;
-    max-width: 960px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border-radius: 16px;
-    background: #f5fdf8;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.title {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
-    font-size: 1.8rem !important;
-    font-weight: 600 !important;
-    color: #1a7f64 !important;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0;
-}
-
-.inputBox {
-    font-size: 1.4rem;
-    height: 3.8rem;
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
-}
-
-.filterButtons {
-    display: flex;
-    gap: 1rem;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.filterBtn {
-    flex: 1;
-    font-size: 1.2rem;
-    padding: 1rem;
-    border-radius: 8px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    border: 1px solid #ccc;
-    background-color: #ffffff;
-    color: #333333;
-}
-
-.filterBtn:hover {
-    background-color: #dff5e7;
-    border-color: #a3e1c4;
-    color: #1a7f64;
-}
-
-.filterBtn.active {
-    background-color: #a8dbc0;
-    color: #1a3d2f;
-    border-color: #1a3d2f;
-    font-weight: 600;
-}
-
-.selector {
-    width: 100%;
-    font-size: 1.4rem;
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
-}
-
-.filterRadio {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-}
-
-.filterRadio :global(.ant-radio-button-wrapper) {
-    flex: 1;
-    text-align: center;
-    padding: 0.8rem 1rem;
-    font-size: 1.2rem;
-} */

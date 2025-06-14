@@ -1,7 +1,7 @@
 import styles from './AdminLayout.module.css';
 
 import { Layout, Menu, FloatButton } from 'antd';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation, NavLink } from 'react-router-dom';
 import {
     DashboardOutlined,
     UserOutlined,
@@ -32,34 +32,35 @@ const AdminLayout = () => {
             key: 'dashboard',
             icon: <DashboardOutlined style={{ fontSize: '25px' }} />,
             label: 'Dashboard',
-            onClick: () => navigate('/admin'),
+            path: '/admin',
         },
         {
             key: 'places',
             icon: <EnvironmentOutlined style={{ fontSize: '25px' }} />,
             label: 'Places',
-            onClick: () => navigate('/admin/places'),
+            path: '/admin/places',
         },
         {
             key: 'reviews',
             icon: <CommentOutlined style={{ fontSize: '25px' }} />,
             label: 'Reviews',
-            onClick: () => navigate('/admin/reviews'),
+            path: '/admin/reviews',
         },
         {
             key: 'users',
             icon: <UserOutlined style={{ fontSize: '25px' }} />,
             label: 'Users',
-            onClick: () => navigate('/admin/users'),
+            path: '/admin/users',
         },
     ];
+
 
     const rightMenuItems = [
         {
             key: 'home',
             icon: <HomeOutlined style={{ fontSize: '25px' }} />,
             label: 'Main Site',
-            onClick: () => navigate('/'),
+            path: '/',
         },
     ];
 
@@ -69,26 +70,45 @@ const AdminLayout = () => {
             <ScrollToTop />
 
             <Header className={styles.adminHeader}>
+
                 <div className={styles.adminNavContainer}>
 
                     <div className={styles.adminMenuLeft}>
-                        <Menu
-                            theme="dark"
-                            mode="horizontal"
-                            items={leftMenuItems}
-                        />
+                        {leftMenuItems.map(item => (
+                            <NavLink
+                                key={item.key}
+                                to={item.path}
+                                end={item.path === '/admin'} // only add `end` for exact match paths like dashboard
+                                className={({ isActive }) =>
+                                    `${styles.menuItem} ${isActive ? styles.activeMenuItem : ''}`
+                                }
+                            >
+                                {item.icon}
+                                <span style={{ marginLeft: 8 }}>{item.label}</span>
+                            </NavLink>
+                        ))}
                     </div>
 
+
+
                     <div className={styles.adminMenuRight}>
-                        <Menu
-                            theme="dark"
-                            mode="horizontal"
-                            items={rightMenuItems}
-                            selectable={false}
-                        />
+                        {rightMenuItems.map(item => (
+                            <NavLink
+                                key={item.key}
+                                to={item.path}
+                                end={item.path === '/admin'}
+                                className={({ isActive }) =>
+                                    `${styles.menuItem} ${isActive ? styles.activeMenuItem : ''}`
+                                }
+                            >
+                                {item.icon}
+                                <span style={{ marginLeft: 8 }}>{item.label}</span>
+                            </NavLink>
+                        ))}
                     </div>
 
                 </div>
+
             </Header>
 
 
@@ -102,7 +122,10 @@ const AdminLayout = () => {
                     <Route path='places' element={<AdminPlaces />} />
                     <Route path='place/:placeName' element={<PlaceDetails isForAdmin={true} />} />
 
-                    <Route path='reviews' element={<ReviewsSection isForPlace={false} isForUser={false} isForAdmin={true} />} />
+                    <Route
+                        path='reviews'
+                        element={<ReviewsSection isForPlace={false} isForUser={false} isForAdmin={true} />}
+                    />
                 </Routes>
 
                 <FloatButton.BackTop className="custom-backtop" />

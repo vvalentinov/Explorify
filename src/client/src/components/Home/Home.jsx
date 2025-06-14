@@ -5,9 +5,11 @@ import { motion } from 'framer-motion';
 import { homeServiceFactory } from '../../services/homeService';
 import { useState, useEffect } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 import { fireError } from '../../utils/fireError';
 
-import { Typography } from 'antd';
+import { Typography, Button } from 'antd';
 
 const { Title } = Typography;
 
@@ -15,9 +17,17 @@ import { GlobalOutlined, StarFilled } from '@ant-design/icons';
 
 import PlacesList from '../Place/PlacesList/PlacesList';
 
+import { useContext } from 'react';
+
+import { AuthContext } from '../../contexts/AuthContext';
+
 const Home = () => {
 
-    const homeService = homeServiceFactory();
+    const navigate = useNavigate();
+
+    const { token } = useContext(AuthContext);
+
+    const homeService = homeServiceFactory(token);
 
     const [recentPlaces, setRecentPlaces] = useState([]);
     const [highestRatedPlaces, setHighestRatedPlaces] = useState([]);
@@ -56,8 +66,9 @@ const Home = () => {
                         Discover Cool Places  🌍
                     </Title>
                     <Typography.Paragraph className={styles.heroDescription}>
-                        Ready to embark on unforgettable adventures? Explorify helps you discover breathtaking places, share your own experiences, and connect with fellow travelers around the world. Whether you're chasing hidden waterfalls, wandering through ancient cities, or savoring local flavors off the beaten path, Explorify is your trusted companion.
+                        Ready to embark on unforgettable adventures? Explorify is your gateway to the world’s most breathtaking places — from tucked-away waterfalls deep in the jungle to majestic castles perched on lonely hills. Discover, share, and relive travel experiences through captivating stories, stunning photos, and genuine reviews from fellow explorers like you. Whether you're strolling through ancient cities, hiking across alpine trails, diving into local street food scenes, or seeking hidden gems off the beaten path, Explorify is more than just a travel platform — it's a thriving community of passionate travelers helping each other uncover the world, one journey at a time.
                     </Typography.Paragraph>
+
                 </motion.div>
 
             </section>
@@ -167,6 +178,54 @@ const Home = () => {
                     />
                 </div>
             </section>
+
+            <section className={styles.leaderboardSection}>
+                <motion.div
+                    className={styles.leaderboardContent}
+                    initial={{ opacity: 0, x: 80 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{
+                        type: 'spring',
+                        stiffness: 80,
+                        damping: 14,
+                        duration: 1
+                    }}
+                    viewport={{ once: true }}
+                >
+                    <img
+                        src="/assets/people.svg"
+                        alt="Community Leaderboard"
+                        className={styles.leaderboardImage}
+                    />
+
+                    <div className={styles.leaderboardContainer}>
+
+                        <Title level={2} className={styles.leaderboardTitle}>
+                            🧭 Meet the Explorify Community
+                        </Title>
+
+                        <Typography.Paragraph className={styles.leaderboardDescription}>
+                            Curious about the incredible people behind Explorify? Our community is made up of passionate explorers from all walks of life — travelers who love discovering hidden gems, sharing unforgettable experiences, and connecting with others through a shared love of adventure. The Explorify Leaderboard is where you can browse everyone who’s been contributing, from first-time posters to seasoned reviewers. It's not just about who has the most points — it’s about celebrating a vibrant, growing network of curious minds. Jump in, get inspired, and find your next favorite explorer to follow!
+                        </Typography.Paragraph>
+
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <Button
+                                className={styles.leaderboardBtn}
+                                onClick={() => { navigate('/leaderboard') }}
+                            >
+                                Explore All Users
+                            </Button>
+                        </div>
+
+                    </div>
+                </motion.div>
+            </section>
+
+
 
         </>
 

@@ -1,4 +1,7 @@
-import { Card, Typography } from 'antd';
+import styles from './AdminDashboard.module.css';
+
+import { Card, Typography, Spin } from 'antd';
+
 import {
     UserOutlined,
     FileSearchOutlined,
@@ -25,11 +28,14 @@ const AdminDashboard = () => {
 
     const [dashboardInfo, setDashboardInfo] = useState({});
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         adminService
             .getDashboardInfo()
             .then(res => setDashboardInfo(res))
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
+            .finally(() => setLoading(false));
     }, []);
 
     const stats = {
@@ -68,54 +74,42 @@ const AdminDashboard = () => {
         },
     ];
 
+
     return (
-        <div>
+        <section className={styles.dashboardSection}>
 
-            <Title level={2} style={{ color: '#fff', textAlign: 'center', fontSize: '4rem', marginTop: '2rem', marginBottom: 0 }}>
-                Welcome to the Admin Dashboard
-                <motion.span
-                    animate={{ rotate: [0, 20, -10, 20, -5, 10, 0] }}
-                    transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        repeatDelay: 4,
-                        ease: 'easeInOut',
-                    }}
-                    style={{ display: 'inline-block', originX: 0.7, originY: 0.7 }}
-                >
-                    👋
-                </motion.span>
-            </Title>
+            <div className={styles.dashboardContainer}>
 
-            <Paragraph style={{ color: '#fff', textAlign: 'center', fontSize: '1.5rem' }} type="secondary">
-                Keep an eye on what’s happening in the app. Here’s a quick overview of items.
-            </Paragraph>
-
-            <div
-                style={{
-                    display: 'flex',
-                    gap: '2rem',
-                    flexWrap: 'wrap',
-                    marginTop: '2rem',
-                    justifyContent: 'center',
-                    // border: 'solid 1px red',
-                    padding: '0 6rem'
-                }}
-            >
-                {cards.map((card, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
+                <Title level={1} className={styles.dashboardTitle}>
+                    Welcome to the Admin Dashboard
+                    <motion.span
+                        animate={{ rotate: [0, 20, -10, 20, -5, 10, 0] }}
                         transition={{
-                            duration: 0.6,
-                            delay: index * 0.2,
-                            ease: 'easeOut'
+                            duration: 3,
+                            repeat: Infinity,
+                            repeatDelay: 4,
+                            ease: 'easeInOut',
                         }}
-                        style={{
-                            flexBasis: '30%'
-                        }}
+                        style={{ display: 'inline-block', originX: 0.7, originY: 0.7 }}
                     >
+                        👋
+                    </motion.span>
+                </Title>
+
+                <Paragraph className={styles.dashboardParagraph} type="secondary">
+                    Keep an eye on what’s happening in the app. Here’s a quick overview of items.
+                </Paragraph>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '30px',
+                        flexWrap: 'wrap',
+                        marginTop: '2rem',
+                        justifyContent: 'center',
+                    }}
+                >
+                    {cards.map((card, index) => (
                         <Card
                             key={index}
                             title={card.title}
@@ -123,9 +117,9 @@ const AdminDashboard = () => {
                             style={{
                                 borderRadius: '16px',
                                 background: card.background,
-                                border: `1px solid ${card.borderColor}`,
                                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                                padding: '2rem', // Increased from 1rem
+                                padding: '2rem',
+                                flexBasis: '30%',
                             }}
                             styles={{
                                 header: {
@@ -151,9 +145,14 @@ const AdminDashboard = () => {
                                 {React.cloneElement(card.icon, { style: { fontSize: '32px', color: card.iconColor } })}
                             </div>
 
-
                             <Title level={3} style={{ margin: '0 0 0.5rem 0', fontSize: '2rem' }}>
-                                {card.value}
+                                {loading ? (
+                                    <span style={{ display: 'inline-block', height: '32px', width: '40px' }}>
+                                        <Spin style={{ color: 'black' }} size="large" />
+                                    </span>
+                                ) : (
+                                    card.value
+                                )}
                             </Title>
 
                             <Paragraph type="secondary" style={{ margin: 0 }}>
@@ -161,10 +160,10 @@ const AdminDashboard = () => {
                             </Paragraph>
 
                         </Card>
-                    </motion.div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </section>
     );
 };
 

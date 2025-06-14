@@ -1,8 +1,8 @@
 .adminContent {
     background-color: #1e1e2f;
     color: white;
-    padding-top: 130px !important;
-    border: solid 1px red;
+    padding-top: 100px !important;
+    /* border: solid 1px red; */
     min-height: 100vh;
 }
 
@@ -12,39 +12,50 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    height: 130px;
+    height: 100px;
     background-color: #001529 !important;
     display: flex;
     align-items: center;
-    padding: 0 !important;
+
+    /* border: solid 1px red; */
+
+    /* padding: 5rem 0 !important; */
 }
 
 .adminNavContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    padding: 0 6rem;
     width: 100%;
 }
 
-.adminHeader :global(.ant-menu-item) {
-    font-size: 2rem !important;
-
-    border-radius: 10px !important;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.adminHeader :global(.ant-menu) {
-    gap: 1rem !important;
-}
-
 .adminMenuLeft {
-    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
-.adminMenuRight {
-    flex-shrink: 0;
+.menuItem {
+    color: white;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    text-decoration: none;
+    width: 160px;
+    height: 48px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menuItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.activeMenuItem {
+    background-color: #1890ff;
+    color: white;
 }

@@ -1,7 +1,23 @@
 .navbar {
-    background-color: aliceblue;
-    border-bottom: solid 1px black;
-    z-index: 1000 !important;
+    background-color: white;
+    border-bottom: 1px solid #f0f0f0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 1.5rem 0;
+
+    height: 100px !important;
+
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.navbarContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
 }
 
 .buttonsContainer {
@@ -26,19 +42,28 @@
     height: 20%;
 }
 
-.customBadgeDot :global(.ant-badge-dot) {
-    width: 12px !important;
-    height: 12px !important;
-    min-width: 12px !important;
-    border-radius: 50% !important;
-    top: 2px !important;
-    right: 5px !important;
-}
 
 .avatarHoverWrapper {
-    display: inline-block;
+    /* display: inline-block;
     border-radius: 50%;
-    transition: filter 0.3s ease, background-color 0.3s ease;
+    transition: filter 0.3s ease, background-color 0.3s ease; */
+
+    position: relative;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatarSpinner {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 70px;
 }
 
 .avatarHoverWrapper:hover {
@@ -68,7 +93,7 @@
 }
 
 .navItem {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #2c3e50;
     text-decoration: none;
     padding: 0.4rem 1rem;
@@ -128,4 +153,66 @@
 .navItem:hover {
     background-color: rgba(0, 0, 0, 0.05);
     color: #2c3e50;
+}
+
+.leftMenu {
+    display: flex;
+    align-items: center;
+    margin-left: 12rem;
+}
+
+.leftMenuLinksContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.rigthMenu {
+    display: flex;
+    align-items: center;
+    margin-right: 12rem;
+    gap: 2rem;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.rigthMenuBtn {
+    font-size: 1.5rem;
+    padding: 1.5rem 2rem;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.navLinkContentContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ✅ Media query: screens narrower than 768px */
+@media screen and (max-width: 1600px) {
+    .leftMenu {
+        margin-left: 2rem;
+    }
+
+    .leftMenuLinksContainer {
+        gap: 5px;
+    }
+
+    .rigthMenu {
+        margin-right: 2rem;
+    }
+}
+
+@media screen and (max-width: 1700px) {
+    .navItem {
+        font-size: 1.1rem;
+    }
+
+    .navLinkContentContainer {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
 }

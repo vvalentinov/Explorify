@@ -2,7 +2,8 @@
     padding: 2rem;
     min-height: calc(100vh - 100px);
     background-color: #f9f9f9;
-    /* border: solid 1px black; */
+
+    border: solid 1px red;
 }
 
 .settingsTitle {
@@ -18,8 +19,9 @@
     justify-content: center;
     align-items: center;
     gap: 3rem;
-    /* border: solid 1px green; */
-    padding: 0 10rem;
+    padding: 0 8rem;
+
+    border: solid 1px green;
 }
 
 .settingsCard {
@@ -30,14 +32,11 @@
     text-align: center;
     transition: transform 0.2s ease-in-out;
     font-family: 'Poppins', sans-serif !important;
-}
-
-.settingsCard:hover {
-    transform: translateY(-5px);
+    border: solid 1px lightgray;
 }
 
 .settingsIcon {
     font-size: 5rem;
-    color: lightgreen;
+    color: lightgray;
     margin-bottom: 1rem;
 }
