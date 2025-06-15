@@ -9,6 +9,8 @@ export const notificationsServiceFactory = (token) => {
         getNotifications: (page) => request.get(`${baseUrl}/Notification/GetNotifications?page=${page}`),
         getUnreadNotificationsCount: () => request.get(`${baseUrl}/Notification/GetUnreadNotificationsCount`),
         markNotificationAsRead: (notifId) => request.put(`${baseUrl}/Notification/MarkNotificationAsRead?notificationId=${notifId}`),
-        delete: (notifId) => request.delete(`${baseUrl}/Notification/Delete?notificationId=${notifId}`)
+        delete: (notifId) => request.delete(`${baseUrl}/Notification/Delete?notificationId=${notifId}`),
+        deleteAll: () => request.delete(`${baseUrl}/Notification/DeleteAll`),
+        markAllAsRead: () => request.put(`${baseUrl}/Notification/MarkAllAsRead`)
     }
 };

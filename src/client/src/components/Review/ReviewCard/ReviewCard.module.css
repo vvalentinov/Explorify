@@ -1,6 +1,8 @@
 .reviewCard {
     flex-basis: 30%;
     transition: transform 0.3s ease;
+    background-color: #fff;
+    color: #333;
 }
 
 .reviewCard:hover {
@@ -8,4 +10,27 @@
     z-index: 1;
     transform: scale(1.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 👇 Dark admin mode styling */
+.adminReviewCard {
+    background-color: #2b2b3d !important;
+    border-color: #444 !important;
+    color: #f0f0f0 !important;
+}
+
+.adminReviewCard :global(.ant-typography),
+.adminReviewCard :global(.ant-rate),
+.adminReviewCard :global(.ant-btn),
+.adminReviewCard :global(.ant-btn span),
+.adminReviewCard :global(.ant-avatar) {
+    color: #f0f0f0 !important;
+}
+
+.adminReviewCard .ant-rate-star-full .anticon {
+    color: gold !important;
+}
+
+.adminReviewCard .ant-rate-star-zero .anticon {
+    color: #bfbfbf !important;
 }

@@ -48,6 +48,7 @@ export const NotificationProvider = ({ children }) => {
 
                 connection.on('IncreaseNotificationsCount', () => setNotificationCount((prev) => prev + 1));
                 connection.on('ReduceNotificationsCount', () => setNotificationCount((prev) => Math.max(prev - 1, 0)));
+                connection.on('SetZeroNotificationsCount', () => setNotificationCount(0));
 
             }).catch((err) => console.error('SignalR Connection Error: ', err));
 

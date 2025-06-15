@@ -53,12 +53,26 @@
     padding: 2rem 0;
 }
 
+/* Shared base */
 .notificationCard {
     width: 100%;
-    border: solid 1px lightgray;
-    background-color: #f6ffed;
+    border-radius: 12px;
+    border: 1px solid transparent;
     min-height: 150px;
 }
+
+/* Unread: more saturated green */
+.notificationUnread {
+    background-color: #dff5ea;
+    border-color: #00aa6c;
+}
+
+/* Read: more muted soft green */
+.notificationRead {
+    background-color: #eafaf1;
+    border-color: #c1e9d2;
+}
+
 
 .cardContent {
     display: flex;

@@ -1,16 +1,17 @@
 import styles from './ReviewsSection.module.css';
-
 import { useContext, useEffect, useReducer } from "react";
-
 import { reviewsServiceFactory } from "../../../services/reviewsService";
-
 import { AuthContext } from "../../../contexts/AuthContext";
-
-import {
-    renderEmptyState,
-    renderSpinner
-} from '../reviewsUtil';
+import { renderEmptyState, renderSpinner } from '../reviewsUtil';
 import ReviewsList from "../ReviewsList";
+import WriteReviewCard from '../WriteReviewCard';
+import UploadReviewModal from '../Modals/UploadReviewModal';
+import { Typography, Radio, ConfigProvider, Checkbox } from "antd";
+import Pagination from '../../Pagination/Pagination';
+import { StarFilled } from '@ant-design/icons';
+import { entityState } from '../../../constants/entityState';
+import { fireError } from '../../../utils/fireError';
+import { initialState, reviewsReducer } from './reviewsSectionUtil';
 
 const sortOptions = [
     { label: 'Newest', value: 'Newest' },
@@ -24,20 +25,6 @@ const stateOptions = [
     { label: 'Recently Deleted', value: 'Deleted' },
 ];
 
-import WriteReviewCard from '../WriteReviewCard';
-import UploadReviewModal from '../Modals/UploadReviewModal';
-
-import { Typography, Radio, ConfigProvider, Checkbox } from "antd";
-
-import Pagination from '../../Pagination/Pagination';
-
-import { StarFilled } from '@ant-design/icons';
-
-import { entityState } from '../../../constants/entityState';
-import { fireError } from '../../../utils/fireError';
-
-import { initialState, reviewsReducer } from './reviewsSectionUtil';
-
 const ReviewsSection = ({
     isForAdmin = false,
     isForPlace = true,
@@ -45,15 +32,11 @@ const ReviewsSection = ({
     placeId = null,
     isOwner
 }) => {
-
     const { token } = useContext(AuthContext);
-
     const reviewsService = reviewsServiceFactory(token);
-
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
 
     const fetchReviews = async () => {
-
         dispatch({ type: 'SET_LOADING' });
 
         try {
@@ -102,208 +85,193 @@ const ReviewsSection = ({
     const handleStarFilterChange = (checkedValues) => dispatch({ type: 'SET_STAR_FILTERS', payload: checkedValues });
     const handleWriteReviewClick = () => dispatch({ type: 'TOGGLE_UPLOAD_MODAL', payload: true });
 
-    return (
-        <>
-            <div className={styles.reviewsSectionContainer}>
-
-                {/* Write Review */}
-                {isForPlace && !isOwner &&
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <WriteReviewCard handleOpenModal={handleWriteReviewClick} />
-                    </div>
+    const customTheme = isForAdmin
+        ? {
+            components: {
+                Radio: {
+                    colorPrimary: '#888',
+                    colorText: '#f0f0f0',
+                    buttonSolidCheckedBg: '#888',
+                    buttonSolidCheckedColor: '#fff',
+                    colorBorder: '#555',
+                    borderRadius: 8,
+                    fontSize: 16,
+                },
+                Checkbox: {
+                    colorPrimary: '#fadb14',
+                    borderRadius: 8,
+                    colorBgContainer: '#2b2b3d',
+                    colorText: '#f0f0f0',
+                    colorBorder: '#fadb14',
+                    colorPrimaryHover: '#ffe58f',
                 }
+            }
+        }
+        : {
+            components: {
+                Radio: {
+                    colorPrimary: '#78c57b',
+                    buttonBg: '#fff',
+                    buttonColor: '#2d6a2e',
+                    buttonSolidCheckedBg: '#78c57b',
+                    buttonSolidCheckedColor: 'white',
+                    buttonSolidCheckedHoverBg: '#65b36d',
+                    buttonSolidCheckedActiveBg: '#4f9d53',
+                    borderRadius: 12,
+                },
+                Checkbox: {
+                    colorPrimary: '#1a7f64',
+                    borderRadius: 8,
+                }
+            }
+        };
 
 
-                <div className={styles.filterReviewsCard}>
+    return (
+        <div className={styles.reviewsSectionContainer}>
+            {isForPlace && !isOwner && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <WriteReviewCard handleOpenModal={handleWriteReviewClick} />
+                </div>
+            )}
 
-                    <Typography.Title
-                        level={3}
+            <div className={`${styles.filterReviewsCard} ${isForAdmin ? styles.adminFilterCard : ''}`}>
+                <Typography.Title
+                    level={3}
+                    style={{
+                        textAlign: 'center',
+                        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '1.7rem',
+                        letterSpacing: '0.4px',
+                        color: isForAdmin ? '#fff' : '#1A7F64',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '0.6rem',
+                        width: '100%',
+                        marginTop: '0',
+                    }}
+                >
+                    <span
                         style={{
-                            textAlign: 'left',
-                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                            fontWeight: 700,
-                            fontSize: '2.2rem',
-                            letterSpacing: '0.4px',
-                            color: '#1A7F64',
+                            backgroundColor: '#ffffff',
+                            borderRadius: '50%',
+                            padding: '0.5rem',
+                            boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
                             display: 'flex',
-                            justifyContent: 'center',
                             alignItems: 'center',
-                            gap: '0.6rem',
-                            width: '100%',
-                            marginTop: '0'
+                            justifyContent: 'center',
                         }}
                     >
-                        <span
-                            style={{
-                                backgroundColor: '#ffffff',
-                                borderRadius: '50%',
-                                padding: '0.5rem',
-                                boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
+                        <StarFilled style={{ color: isForAdmin ? '#2b2b3d' : '#1A7F64', fontSize: '1.5rem' }} />
+                    </span>
+
+                    {isForPlace && `Reviews (${state.reviewsCount})`}
+                    {isForUser && `My Reviews (${state.reviewsCount})`}
+                    {isForAdmin && `${state.filter} Reviews (${state.reviewsCount})`}
+                </Typography.Title>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <ConfigProvider theme={customTheme}>
+
+                        {/* <Radio.Group
+                            name="Sort"
+                            options={sortOptions}
+                            value={state.sortOption}
+                            onChange={handleSortChange}
+                            className={styles.radioGroup}
+                            disabled={state.reviewsCount <= 1}
+                        /> */}
+
+                        <Radio.Group
+                            name="Sort"
+                            options={sortOptions}
+                            value={state.sortOption}
+                            onChange={handleSortChange}
+                            className={styles.radioGroup}
+                            disabled={state.reviewsCount <= 1}
                         >
-                            <StarFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
-                        </span>
-                        Reviews ({state.reviewsCount})
-                    </Typography.Title>
-
-                    {!isForPlace && (
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                            <ConfigProvider
-                                theme={{
-                                    components: {
-                                        Radio: {
-                                            colorPrimary: '#78c57b',
-                                            buttonBg: '#fff',
-                                            buttonColor: '#2d6a2e',
-                                            buttonSolidCheckedBg: '#78c57b',
-                                            buttonSolidCheckedColor: 'white',
-                                            buttonSolidCheckedHoverBg: '#65b36d',
-                                            buttonSolidCheckedActiveBg: '#4f9d53',
-                                            borderRadius: 12,
-                                        }
-                                    }
-                                }}
-                            >
-                                <div className="radio-large" style={{ width: '100%' }}>
-                                    <Radio.Group
-                                        options={stateOptions}
-                                        defaultValue={stateOptions}
-                                        optionType="button"
-                                        value={state.filter}
-                                        buttonStyle="solid"
-                                        size="large"
-                                        style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            gap: '1rem',
-                                            flexWrap: 'wrap',
-                                            padding: '0 5rem'
-                                        }}
-                                        onChange={handleFilterChange}
-                                        name="Sort"
-                                    />
-                                </div>
-                            </ConfigProvider>
-                        </div>
-                    )}
-
-                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                        <ConfigProvider
-                            theme={{
-                                components: {
-                                    Radio: {
-                                        colorPrimary: '#78c57b',
-                                        buttonBg: '#fff',
-                                        buttonColor: '#2d6a2e',
-                                        buttonSolidCheckedBg: '#78c57b',
-                                        buttonSolidCheckedColor: 'white',
-                                        buttonSolidCheckedHoverBg: '#65b36d',
-                                        buttonSolidCheckedActiveBg: '#4f9d53',
-                                        borderRadius: 12,
-                                    }
-                                }
-                            }}
-                        >
-                            <div className="radio-large" style={{ width: '100%', marginTop: '1rem' }}>
-                                <Radio.Group
-                                    options={sortOptions}
-                                    defaultValue={state.sortOption}
-                                    optionType="button"
-                                    value={state.sortOption}
-                                    buttonStyle="solid"
-                                    size="large"
-                                    disabled={state.reviewsCount <= 1}
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        gap: '1rem',
-                                        flexWrap: 'wrap',
-                                        padding: '0 5rem'
-                                    }}
-                                    onChange={handleSortChange}
-                                    name="Sort"
-                                />
-                            </div>
-                        </ConfigProvider>
-
-                    </div>
-
-                    <div className={styles.customCheckboxGroupWrapper}>
-                        <Checkbox.Group
-                            value={state.starFilters}
-                            onChange={handleStarFilterChange}
-                            style={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: '1rem',
-                                justifyContent: 'center',
-                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                                width: '100%'
-                            }}
-                        >
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <Checkbox key={star} value={star} className={styles.pillCheckbox}>
-                                    <StarFilled style={{ color: '#fadb14' }} /> Show {star} star{star > 1 ? 's' : ''}
-                                </Checkbox>
+                            {sortOptions.map((opt) => (
+                                <Radio key={opt.value} value={opt.value} className={styles.radioOption}>
+                                    {opt.label}
+                                </Radio>
                             ))}
-                        </Checkbox.Group>
-                    </div>
+                        </Radio.Group>
 
+                    </ConfigProvider>
+
+                    <ConfigProvider theme={customTheme}>
+                        <div>
+                            <Radio.Group
+                                name="Filter"
+                                options={stateOptions}
+                                value={state.filter}
+                                onChange={handleFilterChange}
+                                className={styles.radioGroup}
+                            />
+                        </div>
+                    </ConfigProvider>
                 </div>
 
-
-
-                {/* Upload Review Modal */}
-                {isForPlace && placeId && (
-                    <UploadReviewModal
-                        isModalOpen={state.isUploadReviewModalOpen}
-                        placeId={placeId}
-                        reviewService={reviewsService}
-                        setIsModalOpen={(isOpen) => dispatch({ type: 'TOGGLE_UPLOAD_MODAL', payload: isOpen })}
-                    />
-                )}
-
-                {/* Reviews List */}
-                {state.spinnerLoading
-                    ? renderSpinner(state.spinnerLoading, isForAdmin)
-                    : (state.reviews?.length > 0
-                        ? (
-                            <ReviewsList
-                                reviews={state.reviews}
-                                isForAdmin={isForAdmin}
-                                isForPlace={isForPlace}
-                                isForUser={isForUser}
-                                setReviews={(newReviews) =>
-                                    dispatch({
-                                        type: 'SET_REVIEWS',
-                                        payload: {
-                                            reviews: newReviews,
-                                            reviewsCount: state.reviewsCount,
-                                            pagesCount: state.pagesCount,
-                                        },
-                                    })
-                                }
-                            />
-                        ) : renderEmptyState(isForAdmin))}
-
-                {/* Pagination */}
-                {
-                    !state.spinnerLoading && state.pagesCount > 1 &&
-                    <Pagination
-                        currentPage={state.currentPage}
-                        handlePageChange={(page) => dispatch({ type: 'SET_PAGE', payload: page })}
-                        isForAdmin={isForAdmin}
-                        pagesCount={state.pagesCount}
-                    />
-                }
+                <div className={`${styles.customCheckboxGroupWrapper} ${styles.starPillCheckbox}`}>
+                    <Checkbox.Group
+                        value={state.starFilters}
+                        onChange={handleStarFilterChange}
+                        className={styles.checkboxGroup}
+                    >
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <Checkbox className={styles.checkbox} key={star} value={star}>
+                                {Array.from({ length: star }, (_, i) => (
+                                    <StarFilled key={i} style={{ color: '#fadb14' }} />
+                                ))}
+                            </Checkbox>
+                        ))}
+                    </Checkbox.Group>
+                </div>
             </div>
 
-        </>
-    )
+            {isForPlace && placeId && (
+                <UploadReviewModal
+                    isModalOpen={state.isUploadReviewModalOpen}
+                    placeId={placeId}
+                    reviewService={reviewsService}
+                    setIsModalOpen={(isOpen) => dispatch({ type: 'TOGGLE_UPLOAD_MODAL', payload: isOpen })}
+                />
+            )}
 
+            {state.spinnerLoading
+                ? renderSpinner(state.spinnerLoading, isForAdmin)
+                : (state.reviews?.length > 0
+                    ? (
+                        <ReviewsList
+                            reviews={state.reviews}
+                            isForAdmin={isForAdmin}
+                            isForPlace={isForPlace}
+                            isForUser={isForUser}
+                            setReviews={(newReviews) =>
+                                dispatch({
+                                    type: 'SET_REVIEWS',
+                                    payload: {
+                                        reviews: newReviews,
+                                        reviewsCount: state.reviewsCount,
+                                        pagesCount: state.pagesCount,
+                                    },
+                                })
+                            }
+                        />
+                    ) : renderEmptyState(isForAdmin))}
+
+            {!state.spinnerLoading && state.pagesCount > 1 && (
+                <Pagination
+                    currentPage={state.currentPage}
+                    handlePageChange={(page) => dispatch({ type: 'SET_PAGE', payload: page })}
+                    isForAdmin={isForAdmin}
+                    pagesCount={state.pagesCount}
+                />
+            )}
+        </div>
+    );
 };
 
 export default ReviewsSection;

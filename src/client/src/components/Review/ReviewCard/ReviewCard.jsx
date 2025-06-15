@@ -2,7 +2,6 @@ import styles from './ReviewCard.module.css';
 
 import {
     UserOutlined,
-    EyeOutlined,
     EditOutlined,
     DeleteOutlined,
     StopOutlined,
@@ -36,17 +35,17 @@ const ReviewCard = ({
     return (
         <Card
             key={review.id}
-            hoverable={isForPlace}
-            onClick={() => isForPlace ? handleOpenModal(review) : undefined}
+            hoverable
+            onClick={() => handleOpenModal(review)}
             style={{
                 overflow: 'hidden',
-                borderRadius: '16px',
+                borderRadius: '12px',
                 border: '1px solid #eaeaea',
                 marginBottom: '1.5rem',
                 boxShadow: '0 6px 18px rgba(0,0,0,0.05)',
-                cursor: isForPlace ? 'pointer' : 'default',
+                cursor: 'pointer',
             }}
-            className={styles.reviewCard}
+            className={`${styles.reviewCard} ${isForAdmin ? styles.adminReviewCard : ''}`}
             styles={{
                 body: {
                     padding: '1.25rem 1.5rem'
@@ -90,20 +89,6 @@ const ReviewCard = ({
                 gap: '0.5rem',
                 marginTop: '0.5rem'
             }}>
-                {/* Viewer (admin/user) */}
-                {!isForPlace && (
-                    <Button
-                        icon={<EyeOutlined />}
-                        onClick={() => handleOpenModal(review)}
-                        variant='solid'
-                        color='cyan'
-                        block
-                        size='large'
-                        style={{ fontSize: '1.4rem' }}
-                    >
-                        Open
-                    </Button>
-                )}
 
                 {/* User Controls */}
                 {isForUser && !review.isDeleted && (
@@ -111,8 +96,11 @@ const ReviewCard = ({
                         <Button
                             icon={<EditOutlined />}
                             variant='solid'
-                            color='gold'
-                            onClick={() => navigate('/review/edit', { state: { reviewId: review.id } })}
+                            color='cyan'
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate('/review/edit', { state: { reviewId: review.id } });
+                            }}
                             block
                             style={{ fontSize: '1.4rem' }} size='large'
                         >
@@ -121,7 +109,10 @@ const ReviewCard = ({
                         <Button
                             icon={<DeleteOutlined />}
                             danger
-                            onClick={() => handleDelete(review)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(review);
+                            }}
                             block
                             style={{ fontSize: '1.4rem' }} size='large'
                             variant='solid'
@@ -133,7 +124,7 @@ const ReviewCard = ({
                 )}
 
                 {isForUser && review.isDeleted && !review.isDeletedByAdmin && (
-                    <Button size='large' style={{ fontSize: '1.4rem' }} block type="primary" onClick={() => handleRevert(review.id)}>
+                    <Button size='large' style={{ fontSize: '1.4rem' }} block type="primary" onClick={(e) => { e.stopPropagation(); handleRevert(review.id); }}>
                         Revert
                     </Button>
                 )}
@@ -147,7 +138,7 @@ const ReviewCard = ({
                                 style={{ fontSize: '1.4rem' }}
                                 block
                                 type="primary"
-                                onClick={() => handleRevert(review.id)}
+                                onClick={(e) => { e.stopPropagation(); handleRevert(review.id); }}
                             >
                                 Revert
                             </Button>
@@ -157,7 +148,7 @@ const ReviewCard = ({
                                     size='large'
                                     style={{ fontSize: '1.4rem' }}
                                     block
-                                    onClick={() => handleUnapprove(review)}
+                                    onClick={(e) => { e.stopPropagation(); handleUnapprove(review); }}
                                     variant='solid'
                                     color='gold'
                                     icon={<StopOutlined />}
@@ -170,7 +161,7 @@ const ReviewCard = ({
                                     style={{ fontSize: '1.4rem' }}
                                     block
                                     danger
-                                    onClick={() => handleDelete(review)}
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(review); }}
                                     variant='solid'
                                     color='danger'
                                 >
@@ -184,8 +175,10 @@ const ReviewCard = ({
                                     icon={<CheckCircleOutlined />}
                                     style={{ fontSize: '1.4rem' }}
                                     block
-                                    type="primary"
-                                    onClick={() => approveReviewModal(review)}
+                                    variant='solid'
+                                    color='green'
+                                    // type="primary"
+                                    onClick={(e) => { e.stopPropagation(); approveReviewModal(review); }}
                                 >
                                     Approve
                                 </Button>
@@ -195,7 +188,7 @@ const ReviewCard = ({
                                     style={{ fontSize: '1.4rem' }}
                                     block
                                     danger
-                                    onClick={() => handleDelete(review)}
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(review); }}
                                     variant='solid'
                                     color='danger'
                                 >

@@ -1,61 +1,213 @@
 .reviewsSectionContainer {
-    border: solid 1px red;
     padding: 2rem 12rem;
 }
 
-/* :global(.radio-large .ant-radio-button-wrapper) {
-    padding: 20px 24px;
-    font-size: 1.5rem !important;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
-} */
-
+/* LIGHT MODE */
 .filterReviewsCard {
     background: #d0f0d8;
-
     border-radius: 12px;
-    padding: 3rem 0;
-
+    padding: 1rem 3rem;
     border: solid 1px lightgray;
-
     margin-bottom: 2rem;
 }
 
-.customCheckboxGroupWrapper {
-    /* border: solid 1px black; */
-    padding: 0 5rem !important;
-
-    margin-top: 1rem;
-
-    width: 100% !important;
+.radioOption {
+    font-size: 1.6rem !important;
+    font-family: 'Poppins', sans-serif !important;
+    color: #f0f0f0 !important;
 }
 
-.customCheckboxGroupWrapper :global(.ant-checkbox-wrapper) {
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    background-color: #f4fdf7;
-    border: 1px solid #c2e3d0;
-    font-size: 1.3rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
 
-    flex: 1 1 200px;
-    text-align: center;
+/* ADMIN DARK MODE */
+.adminFilterCard {
+    background: #1e1e2f;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3a3a50;
+    color: #f0f0f0;
+}
+
+
+.adminFilterCard .ant-checkbox-wrapper {
+    color: #f0f0f0;
+}
+
+.adminFilterCard .ant-checkbox-inner {
+    background-color: transparent;
+    border-color: #fadb14;
+}
+
+.adminFilterCard .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #fadb14;
+    border-color: #fadb14;
+}
+
+/* STAR FILTER SECTION */
+.customCheckboxGroupWrapper {
+    margin-top: 1rem;
+    width: 100% !important;
+    display: flex;
     justify-content: center;
 }
 
-/* Hide the default checkbox box */
-.customCheckboxGroupWrapper :global(.ant-checkbox-inner) {
-    display: none;
+.checkboxGroup {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
-/* Checked state styling */
-.customCheckboxGroupWrapper :global(.ant-checkbox-wrapper-checked) {
-    background-color: #7fc47d;
-    color: #fff;
+.checkbox {
+    font-size: 1.5rem !important;
+}
+
+.checkboxGroup :global(.ant-checkbox-checked .ant-checkbox-inner) {
+    background-color: #1a7f64;
+    border-color: #1a7f64;
+}
+
+/* PILL-STYLED STAR CHECKBOXES */
+.starPillCheckbox :global(.ant-checkbox-inner) {
+    display: none !important;
+}
+
+.starPillCheckbox :global(.ant-checkbox-wrapper) {
+    justify-content: center;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+    font-size: 1.3rem;
+    text-align: center;
+    width: 250px;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 35px;
+}
+
+.starPillCheckbox :global(.ant-checkbox-wrapper:not(.ant-checkbox-wrapper-checked):hover) {
+    background-color: #e6f6eb;
+    border-color: #7ec8a4;
+}
+
+.starPillCheckbox :global(.ant-checkbox-wrapper-checked) {
+    background-color: #1a7f64 !important;
+    border-color: #1a7f64 !important;
+    color: white;
+}
+
+.starPillCheckbox :global(.ant-checkbox-wrapper-checked svg) {
+    color: white !important;
+}
+
+/* RADIO STYLING */
+.radioGroup {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.radioGroup :global(.ant-radio-wrapper) {
+    font-size: 1.7rem;
+    gap: 0.4rem;
+}
+
+.radioGroup :global(.ant-radio) {
+    transform: scale(1.3);
+    font-family: 'Poppins', sans-serif !important;
+
+    color: red !important;
+}
+
+/* Checked state */
+.radioGroup :global(.ant-radio-checked .ant-radio-inner) {
+    border-color: #1a7f64;
+    background-color: #1a7f64;
+}
+
+/* Hover on radio circle */
+.radioGroup :global(.ant-radio:hover .ant-radio-inner) {
+    border-color: #1a7f64;
+}
+
+/* Hover on label wrapper */
+.radioGroup :global(.ant-radio-wrapper:hover .ant-radio-inner) {
+    border-color: #1a7f64;
+}
+
+/* Keyboard focus ring */
+.radioGroup :global(.ant-radio-input:focus + .ant-radio-inner) {
+    box-shadow: 0 0 0 2px rgba(26, 127, 100, 0.2);
+}
+
+
+.adminFilterCard .starPillCheckbox :global(.ant-checkbox-wrapper) {
+    background-color: #2b2b3d;
+    border: 1px solid #fadb14;
+    color: #f0f0f0;
+}
+
+.adminFilterCard .starPillCheckbox :global(.ant-checkbox-wrapper:hover) {
+    background-color: #393953;
+    border-color: #ffe58f;
+}
+
+.adminFilterCard .starPillCheckbox :global(.ant-checkbox-wrapper-checked) {
+    background-color: #fadb14 !important;
+    border-color: #fadb14 !important;
+    color: #1e1e2f;
+}
+
+.adminFilterCard .starPillCheckbox :global(.ant-checkbox-wrapper-checked svg) {
+    color: #1e1e2f !important;
+}
+
+/* Admin Radio Button Text - Unchecked */
+.adminFilterCard :global(.ant-radio-button-wrapper) {
+    color: #ffffff !important;
+    background-color: #2b2b3d;
+    border-color: #444 !important;
+}
+
+/* Admin Radio Button Text - Hover */
+.adminFilterCard :global(.ant-radio-button-wrapper:hover) {
+    color: #ffffff !important;
+}
+
+/* Admin Radio Button Text - Checked */
+.adminFilterCard :global(.ant-radio-button-wrapper-checked) {
+    color: #1e1e2f !important;
+    background-color: #fadb14 !important;
+    border-color: #fadb14 !important;
+}
+
+/* Admin Radio Button Focus/Active - Optional */
+:global(.adminFilterCard .ant-radio-button-wrapper:focus),
+:global(.adminFilterCard .ant-radio-button-wrapper:active) {
+    color: #ffffff !important;
+}
+
+
+/* Admin radio wrapper (label text) */
+.adminFilterCard :global(.ant-radio-wrapper) {
+    color: #f0f0f0 !important;
+}
+
+/* Admin checked radio circle */
+.adminFilterCard :global(.ant-radio-checked .ant-radio-inner) {
+    background-color: #fadb14 !important;
+    border-color: #fadb14 !important;
+}
+
+/* Admin hover on radio */
+.adminFilterCard :global(.ant-radio-wrapper:hover .ant-radio-inner),
+.adminFilterCard :global(.ant-radio:hover .ant-radio-inner) {
+    border-color: #ffe58f !important;
+}
+
+/* Focus ring */
+.adminFilterCard :global(.ant-radio-input:focus + .ant-radio-inner) {
+    box-shadow: 0 0 0 2px rgba(250, 219, 20, 0.4);
 }

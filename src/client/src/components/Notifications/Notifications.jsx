@@ -76,19 +76,25 @@ const Notifications = () => {
         }
     }, [shouldScroll]);
 
-    useEffect(() => {
+    const fetchNotifications = (page = currentPage) => {
         setSpinnerLoading(true);
         setShouldScroll(true);
 
         notificationsService
-            .getNotifications(currentPage)
+            .getNotifications(page)
             .then(res => {
                 setNotifications(res.notifications);
                 setNotificationsCount(res.pagination.recordsCount);
                 setPagesCount(res.pagination.pagesCount);
                 setSpinnerLoading(false);
             }).catch(err => fireError(err));
+    };
+
+
+    useEffect(() => {
+        fetchNotifications();
     }, [currentPage]);
+
 
     const handlePageChange = (page) => setCurrentPage(page);
 
@@ -97,41 +103,44 @@ const Notifications = () => {
             .markNotificationAsRead(id)
             .then(res => {
                 message.success(res.successMessage, 5);
-                // setCurrentPage(1);
-
-                setNotifications(prev =>
-                    prev.map(n =>
-                        n.id === id ? { ...n, isRead: true } : n
-                    )
-                );
-                setNotificationsCount(prev => Math.max(prev - 1, 0));
-            }).catch(err => fireError(err));
-    }
+                fetchNotifications(currentPage);
+            })
+            .catch(err => fireError(err));
+    };
 
     const deleteNotification = (id) => {
         notificationsService
             .delete(id)
             .then(res => {
                 message.success(res.successMessage, 5);
-                setNotificationsCount(prev => Math.max(prev - 1, 0));
                 setCurrentPage(1);
-            }).catch(err => fireError(err));
-    }
+                fetchNotifications(1);
+            })
+            .catch(err => fireError(err));
+    };
 
-    const [markingAll, setMarkingAll] = useState(false);
 
-    const handleMarkAllAsRead = () => {
-        setMarkingAll(true);
+    const markAllAsRead = () => {
         notificationsService
             .markAllAsRead()
             .then(res => {
                 message.success(res.successMessage || "All notifications marked as read", 5);
-                setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-                setNotificationsCount(0);
-            })
-            .catch(err => fireError(err))
-            .finally(() => setMarkingAll(false));
+                setCurrentPage(1);
+                fetchNotifications(1);
+            }).catch(err => fireError(err));
     };
+
+    const deleteAll = () => {
+        notificationsService
+            .deleteAll()
+            .then(res => {
+                message.success(res.successMessage, 5);
+                setCurrentPage(1);
+                fetchNotifications(1);
+            }).catch(err => {
+                fireError(err)
+            });
+    }
 
     return (
 
@@ -147,12 +156,12 @@ const Notifications = () => {
                             <motion.span variants={bellVariants} animate="animate" style={{ display: 'inline-block' }}>
                                 <BellOutlined />
                             </motion.span>
-                            {" "}Notifications ({notificationCount})
+                            {" "}New Notifications ({notificationCount})
                         </Typography.Title>
 
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-                            <Button variant='solid' color='cyan' className={styles.notificationsButton}>Mark all as read</Button>
-                            <Button variant='solid' color='danger' className={styles.notificationsButton}>Delete All</Button>
+                            <Button onClick={markAllAsRead} variant='solid' color='cyan' className={styles.notificationsButton}>Mark all as read</Button>
+                            <Button onClick={deleteAll} variant='solid' color='danger' className={styles.notificationsButton}>Delete All</Button>
                         </div>
                     </div>
                 )}
@@ -186,7 +195,7 @@ const Notifications = () => {
                                 >
                                     {notifications.map((notification) => (
                                         <motion.div style={{ width: '80%' }} key={notification.id} variants={cardVariants}>
-                                            <Card className={styles.notificationCard}>
+                                            <Card className={`${styles.notificationCard} ${notification.isRead ? styles.notificationRead : styles.notificationUnread}`}>
                                                 <div className={styles.cardContent}>
                                                     <div className={styles.cardText}>
                                                         <Typography.Text className={styles.cardTitle}>
@@ -201,7 +210,7 @@ const Notifications = () => {
                                                     </div>
 
                                                     <div className={styles.cardActions}>
-                                                        {!notification.isRead ? (
+                                                        {!notification.isRead && (
                                                             <Popover content="Mark as read">
                                                                 <Button
                                                                     icon={<CheckOutlined />}
@@ -216,19 +225,6 @@ const Notifications = () => {
                                                                     }}
                                                                 />
                                                             </Popover>
-                                                        ) : (
-                                                            <Tag
-                                                                color="green"
-                                                                style={{
-                                                                    fontSize: "1.5rem",
-                                                                    padding: "0.5rem 1rem",
-                                                                    backgroundColor: 'lightgreen',
-                                                                    color: 'black',
-                                                                    border: 'solid 1px lightgray'
-                                                                }}
-                                                            >
-                                                                Read
-                                                            </Tag>
                                                         )}
                                                         <Popover content="Delete notification">
                                                             <Button
@@ -253,7 +249,12 @@ const Notifications = () => {
                                 </motion.div>
 
 
-                                <Pagination currentPage={currentPage} handlePageChange={handlePageChange} isForAdmin={false} pagesCount={pagesCount} />
+                                {pagesCount > 1 && <Pagination
+                                    currentPage={currentPage}
+                                    handlePageChange={handlePageChange}
+                                    isForAdmin={false}
+                                    pagesCount={pagesCount}
+                                />}
                             </>
                             :
                             <Empty

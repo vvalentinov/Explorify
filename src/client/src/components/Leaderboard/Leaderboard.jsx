@@ -15,6 +15,8 @@ import Pagination from '../Pagination/Pagination';
 
 import { useDebounce } from 'use-debounce';
 
+import { useNavigate } from 'react-router-dom';
+
 const getMedalEmoji = (rank) => {
     if (rank === 1) return '🥇';
     if (rank === 2) return '🥈';
@@ -35,27 +37,6 @@ const medalAnimation = {
     },
 };
 
-const containerVariants = {
-    hidden: {},
-    show: {
-        transition: {
-            staggerChildren: 0.15,
-        },
-    },
-};
-
-// const cardVariants = {
-//     hidden: { opacity: 0, y: 30 },
-//     show: {
-//         opacity: 1,
-//         y: 0,
-//         transition: {
-//             duration: 0.4,
-//             ease: 'easeOut',
-//         },
-//     },
-// };
-
 const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: (i) => ({
@@ -70,6 +51,8 @@ const cardVariants = {
 };
 
 const Leaderboard = () => {
+
+    const navigate = useNavigate();
 
     const [users, setUsers] = useState([]);
 
@@ -222,6 +205,7 @@ const Leaderboard = () => {
                                             : ''
                                     }`}
                                 hoverable
+                                onClick={() => navigate(`/profile/${user.userName}`, { state: { userId: user.id } })}
                             >
                                 <List.Item>
                                     <div className={styles.userCardContent}>

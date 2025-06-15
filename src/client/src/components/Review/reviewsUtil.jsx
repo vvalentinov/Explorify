@@ -18,7 +18,7 @@ export const renderSpinner = (spinnerLoading, isForAdmin) => (
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            minHeight: 'calc(100vh - 63px)'
+            height: 'calc(100vh - 140px)'
         }}
     >
         <ConfigProvider
