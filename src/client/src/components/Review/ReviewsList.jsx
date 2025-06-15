@@ -235,6 +235,7 @@ const ReviewsList = ({
                 reviewUserId={selectedReview?.userId}
                 setVisible={setIsDeletedModalOpen}
                 visible={isDeletedModalOpen}
+                isForAdmin={isForAdmin}
             />
 
             <OpenReviewModal
@@ -243,6 +244,7 @@ const ReviewsList = ({
                 onHelpfulBtnClick={onHelpfulBtnClick}
                 selectedReview={selectedReview}
                 isForAdmin={isForAdmin}
+                isForUser={isForUser}
             />
 
         </>

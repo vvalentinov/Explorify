@@ -20,7 +20,8 @@ const OpenReviewModal = ({
     selectedReview,
     onHelpfulBtnClick,
     isForAdmin,
-    isForUser
+    isForUser,
+    isReviewApproved
 }) => {
 
     return (

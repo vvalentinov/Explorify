@@ -106,7 +106,7 @@ const UploadReviewModal = ({
                             alignItems: 'center',
                         }}
                     >
-                        <UploadReviewImages />
+                        <UploadReviewImages fileList={fileList} onFileChange={handleFileChange} />
 
                     </Form.Item>
                 </Card>

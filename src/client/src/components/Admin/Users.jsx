@@ -1,144 +1,136 @@
-import { Table, Avatar, Button, Space, Typography } from 'antd';
-import { EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { Table, Avatar, Button, Space, Typography, message } from 'antd';
+import { EditOutlined, UserOutlined } from '@ant-design/icons';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
+import { adminServiceFactory } from '../../services/adminService';
+
+import styles from './Users.module.css';
 
 const { Title } = Typography;
 
-// More dummy users to trigger pagination
-const users = [
-    {
-        id: 1,
-        username: 'john_doe',
-        email: 'john@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=1',
-    },
-    {
-        id: 2,
-        username: 'jane_smith',
-        email: 'jane@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=2',
-    },
-    {
-        id: 3,
-        username: 'admin_user',
-        email: 'admin@explorify.com',
-        avatar: null,
-    },
-    {
-        id: 4,
-        username: 'alex_jones',
-        email: 'alex@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=3',
-    },
-    {
-        id: 5,
-        username: 'emily_wu',
-        email: 'emily@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=4',
-    },
-    {
-        id: 6,
-        username: 'michael_chen',
-        email: 'michael@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=5',
-    },
-    {
-        id: 7,
-        username: 'nina_patel',
-        email: 'nina@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=6',
-    },
-    {
-        id: 8,
-        username: 'will_khan',
-        email: 'will@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=7',
-    },
-    {
-        id: 9,
-        username: 'chloe_davis',
-        email: 'chloe@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=8',
-    },
-    {
-        id: 10,
-        username: 'luke_taylor',
-        email: 'luke@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=9',
-    },
-    {
-        id: 11,
-        username: 'sofia_roberts',
-        email: 'sofia@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=10',
-    },
-    {
-        id: 12,
-        username: 'noah_martin',
-        email: 'noah@example.com',
-        avatar: 'https://i.pravatar.cc/150?img=11',
-    },
-];
-
 const AdminUsers = () => {
+
+    const { token } = useContext(AuthContext);
+
+    const adminService = adminServiceFactory(token);
+
+    const [users, setUsers] = useState([]);
+
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 6,
+        total: 0,
+    });
+
+    const [loading, setLoading] = useState(false);
+
+    const fetchUsers = async (page = 1) => {
+
+        try {
+            setLoading(true);
+
+            const result = await adminService.getUsers(page);
+
+            setUsers(result.users);
+
+            setPagination((prev) => ({
+                ...prev,
+                current: result.pagination.pageNumber,
+                total: result.pagination.recordsCount,
+            }));
+
+        } catch (err) {
+            message.error('Failed to load users');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchUsers(pagination.current); }, [pagination.current]);
+
+    const handlePageChange = (page) => { setPagination((prev) => ({ ...prev, current: page })); };
+
     const columns = [
         {
             title: 'Avatar',
-            dataIndex: 'avatar',
+            dataIndex: 'profileImageUrl',
             key: 'avatar',
             render: (avatar) =>
                 avatar ? (
-                    <Avatar src={avatar} size="large" />
+                    <Avatar size={60} src={avatar} />
                 ) : (
-                    <Avatar icon={<UserOutlined />} size="large" />
+                    <Avatar size={60} icon={<UserOutlined />} />
                 ),
         },
         {
             title: 'Username',
-            dataIndex: 'username',
+            dataIndex: 'userName',
             key: 'username',
-            render: (text) => <span style={{ fontWeight: 500 }}>{text}</span>,
+            render: (text) => <span style={{ fontSize: '1.1rem' }}>{text}</span>,
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
-            render: (email) => <span style={{ color: '#888' }}>{email}</span>,
+            render: (email) => <span style={{ fontSize: '1.1rem' }}>{email}</span>,
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+            key: 'role',
+            render: (role) => (
+                <span style={{ fontSize: '1.1rem' }}>{role}</span>
+            ),
         },
         {
             title: 'Actions',
             key: 'actions',
             render: (_, record) => (
                 <Space>
-                    <Button variant='solid' icon={<EditOutlined />} size="large">
-                        Edit
-                    </Button>
-                    <Button variant='solid' icon={<DeleteOutlined />} size="large">
-                        Delete
-                    </Button>
+                    {record.role !== 'Administrator' && (
+                        <Button
+                            variant='solid'
+                            color='danger'
+                            icon={<EditOutlined />}
+                            onClick={() => handleMakeAdmin(record.id)}
+                            style={{ fontSize: '1.1rem', padding: '20px 20px' }}
+                        >
+                            Make Admin
+                        </Button>
+                    )}
                 </Space>
             ),
         },
     ];
 
-    return (
-        <div style={{ padding: '2rem' }}>
-            <Title level={2}>Manage Users 👥</Title>
+    const handleMakeAdmin = async (userId) => {
+        try {
+            await adminService.makeUserAdmin(userId);
+            message.success('User promoted to admin');
+            fetchUsers(pagination.current);
+        } catch (err) {
+            message.error('Failed to promote user');
+        }
+    };
 
-            <div style={{ marginTop: '2rem' }}>
-                <Table
-                    columns={columns}
-                    dataSource={users}
-                    rowKey="id"
-                    pagination={{ pageSize: 5 }}
-                    bordered
-                    style={{
-                        background: '#fff',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                    }}
-                />
-            </div>
+    return (
+        <div className={styles.tableContainer}>
+
+            <Table
+                columns={columns}
+                dataSource={users}
+                rowKey="id"
+                loading={loading}
+                pagination={{
+                    current: pagination.current,
+                    pageSize: pagination.pageSize,
+                    total: pagination.total,
+                    onChange: handlePageChange,
+                }}
+                bordered
+                className={styles.table}
+            />
+
         </div>
     );
 };

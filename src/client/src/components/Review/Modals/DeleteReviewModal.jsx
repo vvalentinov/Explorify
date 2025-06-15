@@ -1,13 +1,7 @@
 import { useContext } from 'react';
 
 import { Modal, Typography, Form, Input, Space, Divider } from 'antd';
-
-import {
-    ExclamationCircleOutlined,
-    DeleteOutlined,
-    WarningOutlined,
-    BellOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, WarningOutlined, BellOutlined } from '@ant-design/icons';
 
 import { reviewsServiceFactory } from '../../../services/reviewsService';
 
@@ -24,7 +18,8 @@ const DeleteReviewModal = ({
     reviewUserId,
     visible,
     setVisible,
-    isReviewApproved
+    isReviewApproved,
+    isForAdmin
 }) => {
 
     const navigate = useNavigate();
@@ -40,18 +35,15 @@ const DeleteReviewModal = ({
         form.validateFields()
             .then(values => {
 
-                const payload = {
-                    reviewId,
-                    ...values
-                };
+                const payload = { reviewId, ...values };
 
                 reviewService
                     .deleteReview(payload)
                     .then(res => {
-                        navigate('/admin', { state: { successOperation: { message: res.successMessage } } });
+                        navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } });
                     }).catch(err => {
                         fireError(err);
-                    })
+                    });
 
             })
             .catch(errorInfo => {

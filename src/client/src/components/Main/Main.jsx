@@ -16,9 +16,6 @@ import Profile from '../Account/Profile/Profile';
 import Logout from '../Account/Logout/Logout';
 import SignIn from '../Account/SignIn/SignIn';
 import SignUp from '../Account/SignUp/SignUp';
-import ChangeUsername from '../Account/ChangeUsername/ChangeUsername';
-import ChangePassword from '../Account/ChangePassword/ChangePassword';
-import ChangeEmail from '../Account/ChangeEmail/ChangeEmail';
 import ForgotPassword from '../Account/ForgotPassword/ForgotPassword';
 import ResetPassword from '../Account/ResetPassword/ResetPassword';
 
@@ -58,9 +55,6 @@ const Main = () => {
                 <Routes>
 
                     <Route path={paths.profilePath} element={<Profile />} />
-                    <Route path={paths.changeUsernamePath} element={<ChangeUsername />} />
-                    <Route path={paths.changePasswordPath} element={<ChangePassword />} />
-                    <Route path={paths.changeEmailPath} element={<ChangeEmail />} />
 
                     <Route path="/auth/google/callback" element={<GoogleAuthRedirect />} />
 

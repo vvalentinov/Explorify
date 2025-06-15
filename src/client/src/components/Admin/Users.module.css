@@ -1,0 +1,73 @@
+.tableContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: calc(100vh - 100px);
+    background-color: #1e1e2f;
+    /* padding: 3rem 1rem; */
+}
+
+
+.table {
+    width: 70%;
+    background: #2a2a40;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table :global(.ant-table) {
+    background: transparent !important;
+    color: #fff;
+}
+
+.table :global(.ant-table-thead>tr>th) {
+    background-color: #2a2a40 !important;
+    color: #ccc !important;
+    font-weight: 500;
+}
+
+.table :global(.ant-table-tbody>tr>td) {
+    background-color: #1e1e2f !important;
+    color: #eee !important;
+}
+
+.table :global(.ant-pagination-item),
+.table :global(.ant-pagination-prev),
+.table :global(.ant-pagination-next) {
+    background-color: #2a2a40 !important;
+    border-color: #3e3e55 !important;
+    color: #fff !important;
+}
+
+.table :global(.ant-pagination-item a),
+.table :global(.ant-pagination-prev a),
+.table :global(.ant-pagination-next a) {
+    color: #fff !important;
+}
+
+.table :global(.ant-pagination-item-active) {
+    background-color: #3c3c58 !important;
+    border-color: #5a5a8f !important;
+    color: #fff !important;
+}
+
+.table :global(.ant-pagination-item-active a) {
+    color: #fff !important;
+}
+
+.table :global(.ant-table-thead) {
+    font-size: 1.5rem !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.table :global(.ant-table-tbody > tr > td) {
+    background-color: #1e1e2f !important;
+    color: #fff !important;
+    text-align: center;
+    font-family: 'Poppins', sans-serif !important;
+    /* horizontal centering */
+    vertical-align: middle !important;
+    /* vertical centering */
+}

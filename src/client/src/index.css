@@ -88,6 +88,9 @@ html {
     padding: 3rem !important;
 }
 
+.ant-message {
+    top: 100px !important;
+}
 
 .ant-message .ant-message-notice-content {
     font-size: 1.1rem !important;
@@ -101,10 +104,8 @@ html {
 
 .ant-message .anticon {
     font-size: 2rem !important;
-    /* or any size you prefer */
     vertical-align: middle;
     margin-right: 8px;
-    /* optional spacing */
 }
 
 

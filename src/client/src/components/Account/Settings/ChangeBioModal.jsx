@@ -1,48 +1,55 @@
-import { useState, useContext } from 'react';
-import { Modal, Typography, Form, Input, App } from 'antd';
-
+import { useState, useContext, useEffect } from 'react';
+import { Modal, Form, Input, App } from 'antd';
 
 import { AuthContext } from '../../../contexts/AuthContext';
-
-import { useNavigate } from 'react-router-dom';
-
-import { fireError } from '../../../utils/fireError';
-
 import { usersServiceFactory } from '../../../services/usersService';
+import { fireError } from '../../../utils/fireError';
 
 const { TextArea } = Input;
 
-const ChangeBioModal = ({ visible, setVisible, userBio }) => {
-
+const ChangeBioModal = ({ visible, setVisible }) => {
     const { message } = App.useApp();
-
-    const navigate = useNavigate();
-
-    const { token, userId } = useContext(AuthContext);
-
+    const { token } = useContext(AuthContext);
     const usersService = usersServiceFactory(token);
 
-    const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [bio, setBio] = useState('');
+
+    useEffect(() => {
+        if (visible) {
+            setLoading(true);
+            usersService
+                .getUserBio()
+                .then(res => {
+                    setBio(res.bio);
+                })
+                .catch(err => fireError(err))
+                .finally(() => setLoading(false));
+        } else {
+            setBio('');
+        }
+    }, [visible]);
 
     const handleOk = () => {
+        if (!bio || bio.length < 15 || bio.length > 350) {
+            message.error('Bio must be between 15 and 350 characters.');
+            return;
+        }
 
-        form
-            .validateFields()
-            .then(values => {
-                usersService
-                    .changeBio(values)
-                    .then(res => { message.success(res.successMessage) })
-                    .catch(err => fireError(err));
-
+        setLoading(true);
+        usersService
+            .changeBio({ Bio: bio })
+            .then(res => {
+                message.success(res.successMessage);
+                setVisible(false);
             })
-            .catch(errorInfo => {
-                console.log('Validation failed:', errorInfo);
-            });
+            .catch(err => fireError(err))
+            .finally(() => setLoading(false));
     };
 
     const handleCancel = () => {
         setVisible(false);
-        form.resetFields();
+        setBio('');
     };
 
     return (
@@ -50,16 +57,18 @@ const ChangeBioModal = ({ visible, setVisible, userBio }) => {
             centered
             title={<span style={{ fontSize: '2rem' }}>Change Bio</span>}
             open={visible}
-            okText="Change"
             onOk={handleOk}
             onCancel={handleCancel}
+            confirmLoading={loading}
             width={800}
+            okText="Change"
             okButtonProps={{
                 style: {
                     height: '48px',
                     fontSize: '1.5rem',
                     padding: '0 2rem',
                     fontWeight: 600,
+                    backgroundColor: '#13c2c2'
                 },
             }}
             cancelButtonProps={{
@@ -69,36 +78,34 @@ const ChangeBioModal = ({ visible, setVisible, userBio }) => {
                     padding: '0 2rem',
                     fontWeight: 600,
                 },
+                disabled: loading,
             }}
         >
-
-            <Form form={form} layout="vertical" initialValues={{ Bio: userBio }}>
-
+            <Form layout="vertical">
                 <Form.Item
-                    name="Bio"
                     label={<span style={{ fontSize: '1.5rem' }}>Bio</span>}
-                    rules={[
-                        {
-                            required: true,
-                            message: 'You must provide bio.'
-                        },
-                        {
-                            type: 'string',
-                            min: 15,
-                            max: 350,
-                            message: 'Bio must be between 15 and 350 characters.'
-                        }
-                    ]}
+                    validateStatus={
+                        bio.length > 0 && (bio.length < 15 || bio.length > 350)
+                            ? 'error'
+                            : ''
+                    }
+                    help={
+                        bio.length > 0 && (bio.length < 15 || bio.length > 350)
+                            ? 'Bio must be between 15 and 350 characters.'
+                            : ''
+                    }
                 >
                     <TextArea
                         rows={4}
                         maxLength={350}
                         minLength={15}
+                        value={bio}
+                        onChange={e => setBio(e.target.value)}
                         placeholder="Enter your cool bio here..."
                         style={{ fontSize: '1.5rem' }}
+                        disabled={loading}
                     />
                 </Form.Item>
-
             </Form>
         </Modal>
     );
