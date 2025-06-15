@@ -34,7 +34,7 @@ public class GetHomeDataQueryHandler
                 p.CreatedOn,
                 p.UserId,
                 AVG(CAST(r.Rating AS FLOAT)) AS AverageRating,
-                CASE WHEN fp.PlaceId IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
+                CASE WHEN MAX(fp.PlaceId) IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
             FROM Places AS p
             JOIN Reviews AS r ON p.Id = r.PlaceId AND r.IsApproved = 1
             LEFT JOIN FavoritePlaces fp ON fp.PlaceId = p.Id AND fp.UserId = @CurrentUserId
@@ -46,8 +46,7 @@ public class GetHomeDataQueryHandler
                 p.ThumbUrl,
                 p.IsDeleted,
                 p.CreatedOn,
-                p.UserId,
-                fp.PlaceId
+                p.UserId
             ORDER BY p.CreatedOn DESC
             
             """;
@@ -63,7 +62,7 @@ public class GetHomeDataQueryHandler
                 p.IsDeleted,
                 p.UserId,
                 AVG(CAST(r.Rating AS FLOAT)) AS AverageRating,
-                CASE WHEN fp.PlaceId IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
+                CASE WHEN MAX(fp.PlaceId) IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsFavorite
             FROM Places AS p
             JOIN Reviews AS r ON p.Id = r.PlaceId
             LEFT JOIN FavoritePlaces fp ON fp.PlaceId = p.Id AND fp.UserId = @CurrentUserId
@@ -74,8 +73,7 @@ public class GetHomeDataQueryHandler
                 p.SlugifiedName,
                 p.ThumbUrl,
                 p.IsDeleted,
-                p.UserId,
-                fp.PlaceId
+                p.UserId
             ORDER BY AVG(CAST(r.Rating AS FLOAT)) DESC;
             
             """;

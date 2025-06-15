@@ -7,4 +7,6 @@ public interface INotificationClient
     Task IncreaseNotificationsCount();
 
     Task ReduceNotificationsCount();
+
+    Task SetZeroNotificationsCount();
 }

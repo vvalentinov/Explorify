@@ -1,5 +1,5 @@
-﻿using Explorify.Application.Abstractions.Interfaces;
-using Explorify.Infrastructure.Hubs;
+﻿using Explorify.Infrastructure.Hubs;
+using Explorify.Application.Abstractions.Interfaces;
 
 using Microsoft.AspNetCore.SignalR;
 
@@ -42,5 +42,13 @@ public class NotificationService
             .Clients
             .User(receiverId.ToString())
             .ReduceNotificationsCount();
+    }
+
+    public async Task SetZeroNotificationsCount(Guid receiverId)
+    {
+        await _notificationHub
+            .Clients
+            .User(receiverId.ToString())
+            .SetZeroNotificationsCount();
     }
 }

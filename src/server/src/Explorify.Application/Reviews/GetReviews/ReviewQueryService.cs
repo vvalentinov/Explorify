@@ -31,6 +31,9 @@ public class ReviewQueryService : IReviewQueryService
             r.Likes,
             r.UserId,
             r.CreatedOn,
+            r.IsApproved,
+            r.IsDeleted,
+            r.IsDeletedByAdmin,
             u.UserName,
             u.ProfileImageUrl,
             p.Name AS PlaceName

@@ -10,10 +10,12 @@ public class MarkAllNotificationsAsReadCommandHandler
     : ICommandHandler<MarkAllNotificationsAsReadCommand>
 {
     private readonly IRepository _repository;
+    private readonly INotificationService _notificationService;
 
-    public MarkAllNotificationsAsReadCommandHandler(IRepository repository)
+    public MarkAllNotificationsAsReadCommandHandler(IRepository repository, INotificationService notificationService)
     {
         _repository = repository;
+        _notificationService = notificationService;
     }
 
     public async Task<Result> Handle(
@@ -35,6 +37,8 @@ public class MarkAllNotificationsAsReadCommandHandler
 
         await _repository.SaveChangesAsync();
 
-        return Result.Success("Successfully marked all notifications as read!");
+        await _notificationService.SetZeroNotificationsCount(currentUserId);
+
+        return Result.Success("Marked all notifications as read!");
     }
 }
