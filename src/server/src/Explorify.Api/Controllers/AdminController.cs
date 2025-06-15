@@ -1,5 +1,8 @@
 ﻿using Explorify.Api.Extensions;
 
+using Explorify.Infrastructure;
+using Explorify.Application.Admin.GetUsers;
+using Explorify.Application.Admin.MakeUserAdmin;
 using Explorify.Application.Admin.GetDashboardInfo;
 using Explorify.Application.Admin.Place.ApprovePlace;
 using Explorify.Application.Admin.Place.UnapprovePlace;
@@ -61,6 +64,23 @@ public class AdminController : BaseController
     public async Task<IActionResult> GetDashboardInfo()
     {
         var query = new GetDashboardInfoQuery();
+        var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [HttpPut(nameof(MakeUserAdmin))]
+    public async Task<IActionResult> MakeUserAdmin(Guid userId)
+    {
+        var command = new MakeUserAdminCommand(userId);
+        var result = await _mediator.Send(command);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [PageValidationFilter]
+    [HttpGet(nameof(GetUsers))]
+    public async Task<IActionResult> GetUsers(int page = 1)
+    {
+        var query = new GetUsersQuery(page);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }

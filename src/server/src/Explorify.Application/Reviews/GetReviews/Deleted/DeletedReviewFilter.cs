@@ -15,7 +15,12 @@ public class DeletedReviewFilter : IReviewQueryFilter
         parameters.Add("Offset", (context.Page - 1) * context.ItemsPerPage);
         parameters.Add("Take", context.ItemsPerPage);
         parameters.Add("StarsFilter", stars);
-        parameters.Add("HasStarsFilter", stars.Any() ? 1 : 0);
+        parameters.Add("HasStarsFilter", stars.Count != 0 ? 1 : 0);
+
+        if (context.DeletedCutoff.HasValue)
+        {
+            parameters.Add("DeletedCutoff", context.DeletedCutoff.Value);
+        }
 
         return parameters;
     }
@@ -24,6 +29,7 @@ public class DeletedReviewFilter : IReviewQueryFilter
     {
         return """
             WHERE r.IsDeleted = 1 AND r.IsCleaned = 0
+                AND r.DeletedOn >= @DeletedCutoff
               AND (
                 (@IsAdmin = 1 AND r.UserId != p.UserId)
                 OR

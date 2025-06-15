@@ -1,6 +1,7 @@
 ﻿using Explorify.Application.Abstractions.Models;
 using Explorify.Application.Abstractions.Interfaces;
 using Explorify.Application.Abstractions.Interfaces.Messaging;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Explorify.Application.Notification.DeleteAll;
@@ -9,10 +10,14 @@ public class DeleteAllNotificationsCommandHandler :
     ICommandHandler<DeleteAllNotificationsCommand>
 {
     private readonly IRepository _repository;
+    private readonly INotificationService _notificationService;
 
-    public DeleteAllNotificationsCommandHandler(IRepository repository)
+    public DeleteAllNotificationsCommandHandler(
+        IRepository repository,
+        INotificationService notificationService)
     {
         _repository = repository;
+        _notificationService = notificationService;
     }
 
     public async Task<Result> Handle(
@@ -33,6 +38,8 @@ public class DeleteAllNotificationsCommandHandler :
         }
 
         await _repository.SaveChangesAsync();
+
+        await _notificationService.SetZeroNotificationsCount(currUserId);
 
         return Result.Success("Successfully deleted all notifications!");
     }

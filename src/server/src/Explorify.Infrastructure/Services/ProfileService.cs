@@ -133,7 +133,7 @@ public class ProfileService : IProfileService
     {
         var user = await _userManager.FindByIdAsync(userId);
 
-        if (user == null)
+        if (user is null)
         {
             return Result.Failure();
         }
@@ -144,8 +144,6 @@ public class ProfileService : IProfileService
         var encodedEmail = HttpUtility.UrlEncode(newEmail);
 
         var changeEmailLink = $"https://localhost:7189/api/User/ChangeEmail?userId={user.Id}&token={encodedToken}&newEmail={encodedEmail}";
-
-        //var safeLink = HtmlEncoder.Default.Encode(changeEmailLink);
 
         var client = new SendGridClient(_sendGridSettings.ApiKey);
 

@@ -43,19 +43,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeocodingService, GeocodingService>();
         services.AddScoped<IWeatherInfoService, WeatherInfoService>();
 
+        services.AddScoped<IEnvironmentService, EnvironmentService>();
+
         var env = configuration["ASPNETCORE_ENVIRONMENT"];
 
         services.AddQuartz(q =>
         {
-            //var jobKey = nameof(DeleteExpiredContentJob);
-
-            //q
-            //    .AddJob<DeleteExpiredContentJob>(JobKey.Create(jobKey))
-            //    .AddTrigger(triggerConfig =>
-            //        triggerConfig
-            //        .ForJob(jobKey)
-            //        .WithSimpleSchedule(x => x.WithIntervalInMinutes(5).RepeatForever()));
-
             var jobKey = JobKey.Create(nameof(DeleteExpiredContentJob));
             q.AddJob<DeleteExpiredContentJob>(jobKey);
 

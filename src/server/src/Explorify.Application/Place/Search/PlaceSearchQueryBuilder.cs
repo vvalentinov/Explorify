@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Explorify.Application.Abstractions.Interfaces;
 
 namespace Explorify.Application.Place.Search;
 
@@ -8,9 +9,12 @@ public class PlaceSearchQueryBuilder
     private List<string> _filters = new();
     private DynamicParameters _parameters = new();
 
-    public PlaceSearchQueryBuilder()
+    private readonly IEnvironmentService _environmentService;
+
+    public PlaceSearchQueryBuilder(IEnvironmentService environmentService)
     {
         Reset();
+        _environmentService = environmentService;
     }
 
     public DynamicParameters Parameters => _parameters;
@@ -97,7 +101,11 @@ public class PlaceSearchQueryBuilder
                 }
                 else if (entityStatus == EntityStatus.Deleted)
                 {
-                    var cutoff = DateTime.UtcNow.AddMinutes(-5);
+                    var env = _environmentService.GetCurrentEnvironment();
+
+                    var cutoff = env == "Development"
+                        ? DateTime.UtcNow.AddMinutes(-1)
+                        : DateTime.UtcNow.AddDays(-7);
 
                     _parameters.Add("Cutoff", cutoff);
 
@@ -120,7 +128,12 @@ public class PlaceSearchQueryBuilder
                 }
                 else if (entityStatus == EntityStatus.Deleted)
                 {
-                    var cutoff = DateTime.UtcNow.AddMinutes(-5);
+                    var env = _environmentService.GetCurrentEnvironment();
+
+                    var cutoff = env == "Development"
+                        ? DateTime.UtcNow.AddMinutes(-1)
+                        : DateTime.UtcNow.AddDays(-7);
+
                     _parameters.Add("Cutoff", cutoff);
                     _filters.Add("p.IsDeleted = 1 AND p.DeletedOn >= @Cutoff");
                 }

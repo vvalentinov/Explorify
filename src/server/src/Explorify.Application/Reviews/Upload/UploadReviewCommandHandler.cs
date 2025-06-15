@@ -30,14 +30,12 @@ public class UploadReviewCommandHandler
         UploadReviewCommand request,
         CancellationToken cancellationToken)
     {
-        //var place = await _repository.GetByIdAsync<Place>(request.Model.PlaceId);
-
         var place = await _repository
             .AllAsNoTracking<Domain.Entities.Place>()
             .Include(x => x.Category)
             .FirstOrDefaultAsync(x => x.Id == request.Model.PlaceId, cancellationToken);
 
-        if (place == null)
+        if (place is null)
         {
             var error = new Error(NoPlaceWithIdError, ErrorType.Validation);
             return Result.Failure(error);

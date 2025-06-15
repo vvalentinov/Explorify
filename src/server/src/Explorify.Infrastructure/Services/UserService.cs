@@ -11,10 +11,14 @@ namespace Explorify.Infrastructure.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public UserService(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task<Result<int>> IncreaseUserPointsAsync(Guid userId, int points)
@@ -91,6 +95,35 @@ public class UserService : IUserService
         }
             
         return Result.Success("Successfully changed user bio!");
+    }
+
+    public async Task<Result> ChangeUserRoleAsync(Guid userId, string newRole)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null || await _roleManager.RoleExistsAsync(newRole) is false)
+        {
+            var error = new Error("User was not found or role does not exist!", ErrorType.NotFound);
+            return Result.Failure(error);
+        }
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+        if (removeResult.Succeeded is false)
+        {
+            return Result.Failure();
+        }
+
+        var addResult = await _userManager.AddToRoleAsync(user, newRole);
+
+        if (addResult.Succeeded is false)
+        {
+            return Result.Failure();
+        }
+
+        return Result.Success();
     }
 
     private async Task<ApplicationUser?> FindUserAsync(Guid userId)

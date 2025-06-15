@@ -16,4 +16,6 @@ public class ReviewQueryContext
 
     // This is only needed for place-specific queries
     public Guid? PlaceId { get; init; }
+
+    public DateTime? DeletedCutoff { get; init; }
 }

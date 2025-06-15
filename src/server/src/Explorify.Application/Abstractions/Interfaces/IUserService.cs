@@ -9,4 +9,6 @@ public interface IUserService
     Task<Result<int>> DecreaseUserPointsAsync(Guid userId, int points);
 
     Task<Result> ChangeBioAsync(Guid userId, string bio);
+
+    Task<Result> ChangeUserRoleAsync(Guid userId, string newRole);
 }

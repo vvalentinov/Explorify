@@ -7,6 +7,7 @@ using Quartz;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace Explorify.Infrastructure.BackgroundJobs;
 
@@ -16,27 +17,30 @@ public class DeleteExpiredContentJob : IJob
 
     private readonly IBlobService _blobService;
     private readonly IUserService _userService;
-
+    private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<DeleteExpiredContentJob> _logger;
 
     public DeleteExpiredContentJob(
         IRepository repository,
         IBlobService blobService,
         ILogger<DeleteExpiredContentJob> logger,
-        IUserService userService)
+        IUserService userService,
+        IHostEnvironment hostEnvironment)
     {
         _logger = logger;
 
         _repository = repository;
 
         _userService = userService;
+        _hostEnvironment = hostEnvironment;
         _blobService = blobService;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        // var cutoff = DateTime.UtcNow.AddDays(-30);
-        var cutoff = DateTime.UtcNow.AddMinutes(-5);
+        var cutoff = _hostEnvironment.IsDevelopment()
+            ? DateTime.UtcNow.AddMinutes(-1)
+            : DateTime.UtcNow.AddDays(-7);
 
         try
         {
