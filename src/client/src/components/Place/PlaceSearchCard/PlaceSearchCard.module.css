@@ -1,8 +1,8 @@
 .searchPanel {
-    width: 80%;
+    width: 50%;
     /* margin-left: 25rem;
     margin-right: 25rem; */
-    padding: 1rem 12rem;
+    padding: 1rem 2rem;
     background-color: #d0f0d8;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
@@ -38,8 +38,9 @@
     font-size: 1.5rem;
     letter-spacing: 0.4px;
     color: #1A7F64 !important;
-    text-align: left;
+    text-align: center !important;
     padding: 0 !important;
+    justify-content: center;
 }
 
 .placeNameInput {
@@ -212,11 +213,17 @@
     font-weight: 600;
 }
 
-/* :global(.fullWidthRadioGroup .ant-radio-button-wrapper) {
-    flex: 1 !important;
-    min-width: 0 !important;
-    justify-content: center !important;
-    display: flex !important;
-    align-items: center !important;
-    text-align: center !important;
-} */
+.radioGroup {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.radioOption {
+    font-size: 1.6rem !important;
+    font-family: 'Poppins', sans-serif !important;
+    color: black !important;
+}

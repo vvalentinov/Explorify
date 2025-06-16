@@ -10,7 +10,6 @@ import enUS from 'antd/es/locale/en_US';
 import { ConfigProvider, App as AntdApp } from 'antd';
 
 createRoot(document.getElementById('root')).render(
-    // <StrictMode>
     <BrowserRouter>
         <ConfigProvider
             locale={enUS}
@@ -55,5 +54,4 @@ createRoot(document.getElementById('root')).render(
             </AntdApp>
         </ConfigProvider>
     </BrowserRouter>
-    //</StrictMode> 
 )

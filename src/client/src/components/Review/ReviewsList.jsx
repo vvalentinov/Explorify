@@ -140,11 +140,13 @@ const ReviewsList = ({
     };
 
     const handleRevert = (reviewId) => {
-        reviewsService.revertReview(reviewId).then(res => {
-            navigate('/admin', { state: { successOperation: { message: res.successMessage } } })
-        }).catch(err => {
-            fireError(err);
-        });
+        reviewsService
+            .revertReview(reviewId)
+            .then(res => {
+                navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } })
+            }).catch(err => {
+                fireError(err);
+            });
     }
 
     const onHelpfulBtnClick = () => {

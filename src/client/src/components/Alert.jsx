@@ -19,7 +19,17 @@ const Alert = () => {
         // Check for success operation in location state
         if (location.state?.successOperation) {
             const successMessage = location.state.successOperation.message;
-            notification.success({ message: 'Success', description: successMessage });
+            notification.success({ message: 'Success', description: successMessage, duration: 0 });
+            window.history.replaceState({}, '');
+        }
+
+        if (location.state?.errorMessage) {
+            notification.error({
+                message: 'Error',
+                description: location.state?.errorMessage,
+                duration: 0, // stays open until manually closed
+            });
+
             window.history.replaceState({}, '');
         }
 
@@ -30,24 +40,25 @@ const Alert = () => {
         const emailChanged = searchParams.get("emailChanged");
 
         if (emailConfirmed === "true") {
-            notification.success({ message: 'Email Confirmed', description: 'Your email has been successfully confirmed.' });
+            notification.success({ message: 'Email Confirmed', description: 'Your email has been successfully confirmed.', duration: 0 });
             searchParams.delete("emailConfirmed");
             window.history.replaceState({}, '', `${location.pathname}?${searchParams.toString()}`);
         } else if (emailConfirmed === "false") {
-            notification.error({ message: 'Error', description: 'Error with confirming your email!' });
+            notification.error({ message: 'Error', description: 'Error with confirming your email!', duration: 0 });
             searchParams.delete("emailConfirmed");
             window.history.replaceState({}, '', `${location.pathname}?${searchParams.toString()}`);
         }
 
         if (emailChanged === "true") {
-            notification.success({ message: 'Email Changed', description: 'Your email has been successfully changed.' });
+            notification.success({ message: 'Email Changed', description: 'Your email has been successfully changed.', duration: 0 });
             searchParams.delete("emailChanged");
             window.history.replaceState({}, '', `${location.pathname}?${searchParams.toString()}`);
         } else if (emailChanged === "false") {
-            notification.error({ message: 'Error', description: 'Error with changing your email!' });
+            notification.error({ message: 'Error', description: 'Error with changing your email!', duration: 0 });
             searchParams.delete("emailChanged");
             window.history.replaceState({}, '', `${location.pathname}?${searchParams.toString()}`);
         }
+
     }, [location.state, location.search]);
 
     return null;

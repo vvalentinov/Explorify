@@ -85,12 +85,12 @@ const ChangeBioModal = ({ visible, setVisible }) => {
                 <Form.Item
                     label={<span style={{ fontSize: '1.5rem' }}>Bio</span>}
                     validateStatus={
-                        bio.length > 0 && (bio.length < 15 || bio.length > 350)
+                        bio?.length > 0 && (bio?.length < 15 || bio?.length > 350)
                             ? 'error'
                             : ''
                     }
                     help={
-                        bio.length > 0 && (bio.length < 15 || bio.length > 350)
+                        bio?.length > 0 && (bio?.length < 15 || bio?.length > 350)
                             ? 'Bio must be between 15 and 350 characters.'
                             : ''
                     }

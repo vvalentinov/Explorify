@@ -9,7 +9,8 @@ import {
     Cascader,
     Button,
     Typography,
-    Radio
+    Radio,
+    Avatar
 } from "antd";
 
 import {
@@ -36,7 +37,8 @@ const PlaceSearchCard = ({
     tags,
     isForAdmin,
     userFollowingUserName,
-    skipNextSearchRef
+    skipNextSearchRef,
+    userFollowingProfilePic
 }) => {
 
     const [showTagsSearch, setShowTagsSearch] = useState(false);
@@ -115,6 +117,8 @@ const PlaceSearchCard = ({
         dispatch({ type: 'SET_FILTER', payload: e.target.value });
     };
 
+    console.log(userFollowingProfilePic);
+
     return (
 
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -126,8 +130,13 @@ const PlaceSearchCard = ({
                     {state.searchContext === PlaceSearchContext.Global && 'Search Places'}
                     {state.searchContext === PlaceSearchContext.UserPlaces && `Search in My ${state.filter} Places`}
                     {state.searchContext === PlaceSearchContext.Admin && `Search in ${state.filter} Places`}
-                    {state.searchContext === PlaceSearchContext.UserFollowing && `Search in ${userFollowingUserName}'s places`}
-                    {state.searchContext === PlaceSearchContext.FavPlace && `Search in Favorite Places`}
+                    {state.searchContext === PlaceSearchContext.UserFollowing && (
+                        <>
+                            <Avatar size={60} src={userFollowingProfilePic}></Avatar>
+                            <span>Search in {userFollowingUserName}'s places</span>
+                        </>
+                    )}
+                    {state.searchContext === PlaceSearchContext.FavPlace && `Search in My Favorite Places Collection`}
                 </Typography.Title>
 
                 {(state.searchContext === PlaceSearchContext.Admin || state.searchContext === PlaceSearchContext.UserPlaces) && (
@@ -136,44 +145,36 @@ const PlaceSearchCard = ({
                             display: 'flex',
                             justifyContent: 'center',
                             width: '100%',
-                            backgroundColor: '#d0f0d8',
-                            padding: '1rem 0',
-                            borderRadius: '12px',
-                            // border: 'solid 1px red'
                         }}
                     >
+
                         <ConfigProvider
                             theme={{
                                 components: {
                                     Radio: {
-                                        borderRadius: 12,
-                                        colorPrimary: isForAdmin ? '#1890ff' : '#3f9142',
-                                        buttonBg: isForAdmin ? '#cce4ff' : '#e0f2e5',
-                                        buttonColor: isForAdmin ? '#0958d9' : '#2d6a2e',
-                                        buttonSolidCheckedBg: isForAdmin ? '#1890ff' : '#3f9142',
-                                        buttonSolidCheckedColor: 'white',
-                                        buttonSolidCheckedHoverBg: isForAdmin ? '#1677ff' : '#357a39',
-                                        buttonSolidCheckedActiveBg: isForAdmin ? '#0958d9' : '#2f6530',
+                                        colorPrimary: 'green',
+                                        colorText: '#f0f0f0',
+                                        buttonSolidCheckedBg: 'red',
+                                        buttonSolidCheckedColor: 'red',
+                                        colorBorder: '#555',
+                                        borderRadius: 8,
+                                        fontSize: 16,
                                     },
                                 },
                             }}
                         >
                             <Radio.Group
-                                options={filterOptions}
-                                defaultValue={state.filter}
-                                optionType="button"
                                 value={state.filter}
-                                buttonStyle="solid"
-                                size="large"
                                 onChange={handleFilterChange}
                                 name="Sort"
-                                className="fullWidthRadioGroup"
-                                style={{
-                                    display: 'flex',
-                                    width: '100%',
-                                    gap: '0.5rem',
-                                }}
-                            />
+                                className={styles.radioGroup}
+                            >
+                                {filterOptions.map((opt) => (
+                                    <Radio key={opt.value} value={opt.value} className={styles.radioOption}>
+                                        {opt.label}
+                                    </Radio>
+                                ))}
+                            </Radio.Group>
                         </ConfigProvider>
                     </div>
                 )}

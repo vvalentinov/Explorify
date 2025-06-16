@@ -74,7 +74,7 @@ const UnapprovedPlaceCard = ({ place }) => {
         <>
             <Card
                 style={{
-                    margin: '2rem 20rem',
+                    margin: '2rem 10rem',
                     backgroundColor: '#f6ffed',
                     border: '1px solid #b7eb8f',
                     borderRadius: '12px',

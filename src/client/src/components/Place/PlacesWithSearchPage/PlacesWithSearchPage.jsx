@@ -68,7 +68,8 @@ const PlacesWithSearchPage = ({
     searchContext = PlaceSearchContext.Global,
     isForAdmin = false,
     userFollowingId = null,
-    userFollowingUserName = null
+    userFollowingUserName = null,
+    userFollowingProfilePic = null
 }) => {
 
     const { token } = useContext(AuthContext);
@@ -251,6 +252,7 @@ const PlacesWithSearchPage = ({
                                 isForAdmin={isForAdmin}
                                 skipNextSearchRef={skipNextSearchRef}
                             />
+
                         </div>
                     </>
                 )}
@@ -266,6 +268,7 @@ const PlacesWithSearchPage = ({
                     isForAdmin={isForAdmin}
                     userFollowingUserName={userFollowingUserName}
                     skipNextSearchRef={skipNextSearchRef}
+                    userFollowingProfilePic={userFollowingProfilePic}
                 />
             )}
 

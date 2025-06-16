@@ -9,7 +9,10 @@ const OwnerPlaceButtonsSection = ({ placeService, place }) => {
 
     const handlePlaceDelete = () => {
         placeService
-            .deletePlace(place?.id)
+            .deletePlace({
+                placeId: place?.id,
+                reason: null
+            })
             .then(res => {
                 navigate('/', { state: { successOperation: { message: res.successMessage } } })
             }).catch(err => {
