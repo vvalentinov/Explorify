@@ -13,14 +13,19 @@ public class RevertReviewCommandHandler
     private readonly IRepository _repository;
 
     private readonly INotificationService _notificationService;
+    private readonly IUserService _userService;
+    private readonly IEnvironmentService _environmentService;
 
     public RevertReviewCommandHandler(
         IRepository repository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IUserService userService,
+        IEnvironmentService environmentService)
     {
         _repository = repository;
-
         _notificationService = notificationService;
+        _userService = userService;
+        _environmentService = environmentService;
     }
 
     public async Task<Result> Handle(
@@ -31,7 +36,11 @@ public class RevertReviewCommandHandler
         var currUserId = request.CurrentUserId;
         var isCurrUserAdmin = request.IsCurrentUserAdmin;
 
-        var cutoff = DateTime.UtcNow.AddMinutes(-5);
+        var env = _environmentService.GetCurrentEnvironment();
+
+        var cutoff = env == "Development"
+            ? DateTime.UtcNow.AddMinutes(-1)
+            : DateTime.UtcNow.AddDays(-7);
 
         var review = await _repository
             .All<Review>(ignoreQueryFilters: true)
@@ -45,7 +54,7 @@ public class RevertReviewCommandHandler
                 x => x.Id == reviewId,
                 cancellationToken);
 
-        if (review == null)
+        if (review is null)
         {
             var error = new Error("No review was found!", ErrorType.Validation);
             return Result.Failure(error);
@@ -57,7 +66,6 @@ public class RevertReviewCommandHandler
             return Result.Failure(error);
         }
 
-        review.IsApproved = false;
         review.IsDeleted = false;
         review.DeletedOn = null;
         review.IsCleaned = false;
@@ -67,6 +75,12 @@ public class RevertReviewCommandHandler
         if (review.UserId == currUserId)
         {
             await _repository.SaveChangesAsync();
+
+            if (review.IsApproved)
+            {
+                await _userService.IncreaseUserPointsAsync(review.UserId, 5);
+            }
+
             return Result.Success("Successfully reverted review!");
         }
 

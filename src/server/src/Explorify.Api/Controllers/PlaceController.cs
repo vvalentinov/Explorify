@@ -97,7 +97,7 @@ public class PlaceController : BaseController
     }
 
     [HttpDelete(nameof(Delete))]
-    public async Task<IActionResult> Delete(DeletePlaceDto model)
+    public async Task<IActionResult> Delete([FromBody]DeletePlaceDto model)
     {
         var command = new DeletePlaceCommand(model, User.GetId(), User.IsAdmin());
         var result = await _mediator.Send(command);

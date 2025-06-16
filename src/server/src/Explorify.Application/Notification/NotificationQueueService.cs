@@ -24,9 +24,7 @@ public class NotificationQueueService : INotificationQueueService
         {
             if (!string.IsNullOrWhiteSpace(realTimeMessage))
             {
-                await _notificationService.NotifyAsync(
-                    realTimeMessage,
-                    notification.ReceiverId);
+                await _notificationService.NotifyAsync(realTimeMessage, notification.ReceiverId);
             }
         }
 

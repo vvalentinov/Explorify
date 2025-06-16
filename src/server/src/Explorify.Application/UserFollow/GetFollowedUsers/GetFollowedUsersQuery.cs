@@ -2,5 +2,7 @@
 
 namespace Explorify.Application.UserFollow.GetFollowedUsers;
 
-public record GetFollowedUsersQuery(Guid CurrentUserId, int Page)
-    : IQuery<GetFollowedUsersDto>;
+public record GetFollowedUsersQuery(
+    Guid CurrentUserId,
+    int Page,
+    string SortDirection = "asc") : IQuery<GetFollowedUsersDto>;

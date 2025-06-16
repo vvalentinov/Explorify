@@ -56,8 +56,6 @@ public class DeleteReviewCommandHandler
 
         if (review.IsApproved)
         {
-            review.Unapprove();
-
             var pointsResult = await _userService.DecreaseUserPointsAsync(
                 review.UserId,
                 UserReviewUploadPoints);

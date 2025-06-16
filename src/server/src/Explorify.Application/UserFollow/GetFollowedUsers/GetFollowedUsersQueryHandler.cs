@@ -23,46 +23,64 @@ public class GetFollowedUsersQueryHandler :
     {
         var currentUserId = request.CurrentUserId;
         var page = request.Page;
-
+        var sortDirection = request.SortDirection.Equals("desc", StringComparison.CurrentCultureIgnoreCase) ? "DESC" : "ASC";
         const int PageSize = 6;
-
         var offset = (page - 1) * PageSize;
 
-        const string sql = @"
+        var sql = $@"
+
+            WITH RankedUsers AS (
+                SELECT 
+                    u.Id,
+                    u.UserName,
+                    u.ProfileImageUrl,
+                    u.Points,
+                    ROW_NUMBER() OVER (ORDER BY u.Points DESC) AS Rank
+                FROM AspNetUsers u
+            )
+
             SELECT 
-                u.Id,
-                u.UserName,
-                u.ProfileImageUrl
-            FROM UserFollows f
-            JOIN AspNetUsers u ON u.Id = f.FolloweeId
+                ru.Id,
+                ru.UserName,
+                ru.ProfileImageUrl,
+                ru.Points,
+                ru.Rank,
+                (
+                    SELECT COUNT(*) 
+                    FROM Places p 
+                    WHERE p.UserId = ru.Id AND p.IsApproved = 1 AND p.IsDeleted = 0
+                ) AS PlacesCount,
+                (
+                    SELECT COUNT(*) 
+                    FROM Reviews r 
+                    WHERE r.UserId = ru.Id AND r.IsApproved = 1 AND r.IsDeleted = 0
+                ) AS ReviewsCount
+            FROM RankedUsers ru
+            JOIN UserFollows f ON f.FolloweeId = ru.Id
             WHERE f.FollowerId = @CurrentUserId AND f.IsDeleted = 0
-            ORDER BY u.UserName
+            ORDER BY ru.Rank {sortDirection}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+
+            SELECT COUNT(*) 
+            FROM UserFollows 
+            WHERE FollowerId = @CurrentUserId AND IsDeleted = 0;
         ";
 
-        var users = await _dbConnection.QueryAsync<UserDto>(sql, new
+        using var multi = await _dbConnection.QueryMultipleAsync(sql, new
         {
             CurrentUserId = currentUserId,
             Offset = offset,
             PageSize
         });
 
-        const string countSql = @"
-            SELECT COUNT(*)
-            FROM UserFollows
-            WHERE FollowerId = @CurrentUserId AND IsDeleted = 0;
-        ";
-
-        var totalCount = await _dbConnection.ExecuteScalarAsync<int>(countSql, new
-        {
-            CurrentUserId = currentUserId
-        });
+        var users = (await multi.ReadAsync<FollowedUserDto>()).ToList();
+        var totalCount = await multi.ReadFirstAsync<int>();
 
         var response = new GetFollowedUsersDto
         {
             Pagination = new PaginationResponseModel
             {
-                ItemsPerPage = 6,
+                ItemsPerPage = PageSize,
                 PageNumber = page,
                 RecordsCount = totalCount,
             },

@@ -10,10 +10,12 @@ public class PlaceSearchQueryBuilder
     private DynamicParameters _parameters = new();
 
     private readonly IEnvironmentService _environmentService;
+    private bool _isCurrentUserAdmin;
 
     public PlaceSearchQueryBuilder(IEnvironmentService environmentService)
     {
         Reset();
+
         _environmentService = environmentService;
     }
 
@@ -109,12 +111,25 @@ public class PlaceSearchQueryBuilder
 
                     _parameters.Add("Cutoff", cutoff);
 
-                    _filters.Add(@"
-                        p.IsDeleted = 1 AND
-                        p.IsDeletedByAdmin = 0 AND
-                        p.DeletedOn >= @Cutoff AND
-                        p.IsCleaned = 0");
+                    if (_isCurrentUserAdmin)
+                    {
+                        // Allow admins to see *their own* deleted places regardless of who deleted them
+                        _filters.Add(@"
+                            p.IsDeleted = 1 AND
+                            p.DeletedOn >= @Cutoff AND
+                            p.IsCleaned = 0 AND
+                            (p.UserId = @CurrentUserId OR p.IsDeletedByAdmin = 0)");
+                    }
+                    else
+                    {
+                        _filters.Add(@"
+                            p.IsDeleted = 1 AND
+                            p.IsDeletedByAdmin = 0 AND
+                            p.DeletedOn >= @Cutoff AND
+                            p.IsCleaned = 0");
+                    }
                 }
+
                 break;
 
             case SearchContext.Admin:
@@ -202,5 +217,10 @@ public class PlaceSearchQueryBuilder
             : string.Empty;
 
         return $"SELECT COUNT(*) FROM Places p {whereClause}";
+    }
+
+    public void SetIsCurrentUserAdmin(bool isAdmin)
+    {
+        _isCurrentUserAdmin = isAdmin;
     }
 }

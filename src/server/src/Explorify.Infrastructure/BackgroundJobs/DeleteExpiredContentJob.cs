@@ -8,6 +8,7 @@ using Quartz;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Explorify.Application.Notification;
 
 namespace Explorify.Infrastructure.BackgroundJobs;
 
@@ -18,14 +19,18 @@ public class DeleteExpiredContentJob : IJob
     private readonly IBlobService _blobService;
     private readonly IUserService _userService;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly INotificationQueueService _notificationQueueService;
     private readonly ILogger<DeleteExpiredContentJob> _logger;
+
+    private static readonly Guid SystemUserId = Guid.Parse("11111111-1111-1111-1111-111111111111");
 
     public DeleteExpiredContentJob(
         IRepository repository,
         IBlobService blobService,
         ILogger<DeleteExpiredContentJob> logger,
         IUserService userService,
-        IHostEnvironment hostEnvironment)
+        IHostEnvironment hostEnvironment,
+        INotificationQueueService notificationQueueService)
     {
         _logger = logger;
 
@@ -33,6 +38,7 @@ public class DeleteExpiredContentJob : IJob
 
         _userService = userService;
         _hostEnvironment = hostEnvironment;
+        _notificationQueueService = notificationQueueService;
         _blobService = blobService;
     }
 
@@ -46,6 +52,8 @@ public class DeleteExpiredContentJob : IJob
         {
             await DeleteExpiredPlaces(cutoff);
             await DeleteExpiredReviews(cutoff);
+
+            await _notificationQueueService.FlushAsync();
 
             _logger.LogInformation($"DeleteExpiredContentJob finished execution: {DateTime.UtcNow}");
         }
@@ -101,6 +109,21 @@ public class DeleteExpiredContentJob : IJob
                    place.UserId,
                    UserPlaceUploadPoints);
             }
+
+            var notification = new Notification
+            {
+                Content = $"Your place: {place.Name} was deleted!",
+                SenderId = SystemUserId,
+                ReceiverId = place.UserId,
+            };
+
+            await _repository.AddAsync(notification);
+
+            _notificationQueueService.QueueNotification(
+                SystemUserId,
+                place.UserId,
+                $"Your place: {place.Name} was deleted!",
+                "One of your places got deleted!");
         }
 
         await _repository.SaveChangesAsync();
@@ -141,6 +164,24 @@ public class DeleteExpiredContentJob : IJob
                     review.UserId,
                     UserReviewUploadPoints);
             }
+
+            if (review.UserId != review.Place.UserId)
+            {
+                var notification = new Notification
+                {
+                    Content = $"Your review for place: {review.Place.Name} was deleted!",
+                    SenderId = SystemUserId,
+                    ReceiverId = review.UserId,
+                };
+
+                await _repository.AddAsync(notification);
+
+                _notificationQueueService.QueueNotification(
+                    SystemUserId,
+                    review.UserId,
+                    $"Your review for place: {review.Place.Name} was deleted!",
+                    "One of your reviews got deleted!");
+            }  
         }
 
         await _repository.SaveChangesAsync();

@@ -25,4 +25,6 @@ public interface IPlaceSearchQueryBuilder
     string BuildCountQuery();
 
     DynamicParameters Parameters { get; }
+
+    void SetIsCurrentUserAdmin(bool isAdmin);
 }

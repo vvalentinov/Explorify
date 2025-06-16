@@ -30,7 +30,7 @@ public static class GetPlaceSqlGenerator
             JOIN AspNetUsers AS u ON u.Id = p.UserId
             WHERE p.Id = @PlaceId;
             
-            SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId;
+            SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId AND IsDeleted = 0;
             
             SELECT
                 pv.Id,
@@ -76,7 +76,7 @@ public static class GetPlaceSqlGenerator
             SELECT
                 Url
             FROM PlacePhotos
-            WHERE PlaceId = (SELECT Id FROM Places WHERE SlugifiedName = @SlugifiedName);
+            WHERE PlaceId = (SELECT Id FROM Places WHERE SlugifiedName = @SlugifiedName) AND IsDeleted = 0;
 
             SELECT
                 pv.Id,
@@ -112,7 +112,7 @@ public static class GetPlaceSqlGenerator
             JOIN AspNetUsers AS u ON u.Id = p.UserId
             WHERE p.Id = @PlaceId;
             
-            SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId;
+            SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId AND IsDeleted = 0;
             
             SELECT
                 pv.Id,

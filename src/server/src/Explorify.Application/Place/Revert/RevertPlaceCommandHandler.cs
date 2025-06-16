@@ -12,14 +12,20 @@ public class RevertPlaceCommandHandler
     private readonly IRepository _repository;
 
     private readonly INotificationService _notificationService;
+    private readonly IUserService _userService;
+    private readonly IEnvironmentService _environmentService;
 
     public RevertPlaceCommandHandler(
         IRepository repository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IUserService userService,
+        IEnvironmentService environmentService)
     {
         _repository = repository;
 
         _notificationService = notificationService;
+        _userService = userService;
+        _environmentService = environmentService;
     }
 
     public async Task<Result> Handle(
@@ -43,6 +49,11 @@ public class RevertPlaceCommandHandler
 
         await _repository.SaveChangesAsync();
 
+        if (place.IsApproved)
+        {
+            await _userService.IncreaseUserPointsAsync(place.UserId, 10);
+        }
+
         if (IsAdminRevertingOthersPlace(request, place))
         {
             await _notificationService.NotifyAsync(
@@ -57,7 +68,11 @@ public class RevertPlaceCommandHandler
         RevertPlaceCommand request,
         CancellationToken ct)
     {
-        var cutoff = DateTime.UtcNow.AddMinutes(-5);
+        var env = _environmentService.GetCurrentEnvironment();
+
+        var cutoff = env == "Development"
+            ? DateTime.UtcNow.AddMinutes(-1)
+            : DateTime.UtcNow.AddDays(-7);
 
         var query = _repository
             .All<Domain.Entities.Place>(ignoreQueryFilters: true)

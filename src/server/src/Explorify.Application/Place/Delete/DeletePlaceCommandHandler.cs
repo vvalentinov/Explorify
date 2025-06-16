@@ -15,14 +15,17 @@ public class DeletePlaceCommandHandler
     private readonly IRepository _repository;
 
     private readonly INotificationService _notificationService;
+    private readonly IUserService _userService;
 
     public DeletePlaceCommandHandler(
         IRepository repository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IUserService userService)
     {
         _repository = repository;
 
         _notificationService = notificationService;
+        _userService = userService;
     }
 
     public async Task<Result> Handle(
@@ -57,6 +60,11 @@ public class DeletePlaceCommandHandler
         }
 
         await _repository.SaveChangesAsync();
+
+        if (place.IsApproved)
+        {
+            await _userService.DecreaseUserPointsAsync(request.CurrentUserId, 10);
+        }
 
         return Result.Success(PlaceDeleteSuccess);
     }

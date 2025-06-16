@@ -33,6 +33,7 @@ public class SearchPlaceQueryHandler
         CancellationToken cancellationToken)
     {
         _placeSearchQueryBuilder.Reset();
+        _placeSearchQueryBuilder.SetIsCurrentUserAdmin(request.IsCurrentUserAdmin);
 
         var model = request.Model;
 

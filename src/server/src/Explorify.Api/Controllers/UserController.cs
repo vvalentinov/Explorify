@@ -147,9 +147,11 @@ public class UserController : BaseController
 
     [PageValidationFilter]
     [HttpGet(nameof(GetFollowing))]
-    public async Task<IActionResult> GetFollowing(int page)
+    public async Task<IActionResult> GetFollowing(
+        int page = 1,
+        string sortDirection = "asc")
     {
-        var query = new GetFollowedUsersQuery(User.GetId(), page);
+        var query = new GetFollowedUsersQuery(User.GetId(), page, sortDirection);
         var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
