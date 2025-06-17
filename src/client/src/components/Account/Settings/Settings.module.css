@@ -3,7 +3,7 @@
     min-height: calc(100vh - 100px);
     background-color: #f9f9f9;
 
-    border: solid 1px red;
+    /* border: solid 1px red; */
 }
 
 .settingsTitle {
@@ -21,18 +21,24 @@
     gap: 3rem;
     padding: 0 8rem;
 
-    border: solid 1px green;
+    /* border: solid 1px green; */
 }
 
 .settingsCard {
     flex-basis: 30%;
     padding: 1.5rem;
     border-radius: 20px;
-    box-shadow: 0 6px 18px rgba(0, 128, 0, 0.15);
+    /* box-shadow: 0 6px 18px rgba(0, 128, 0, 0.15); */
     text-align: center;
     transition: transform 0.2s ease-in-out;
     font-family: 'Poppins', sans-serif !important;
     border: solid 1px lightgray;
+}
+
+.settingsCard:hover {
+    transform: scale(1.05);
+    /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); */
+    cursor: pointer;
 }
 
 .settingsIcon {

@@ -55,7 +55,7 @@ const UploadReviewModal = ({
                     message: 'Review Submitted',
                     description: 'Your review has been submitted successfully and is pending approval.',
                     placement: 'topRight',
-                    duration: 5,
+                    duration: 0,
                 });
             }).catch(err => fireError(err));
 

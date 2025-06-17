@@ -117,8 +117,6 @@ const PlaceSearchCard = ({
         dispatch({ type: 'SET_FILTER', payload: e.target.value });
     };
 
-    console.log(userFollowingProfilePic);
-
     return (
 
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -263,7 +261,7 @@ const PlaceSearchCard = ({
                             >
                                 <Select
                                     className={styles.countriesSelect}
-                                    classNames={{ popup: { root: 'customCountryDropdown' } }}
+                                    classNames={{ popup: { root: 'placeSearchCardCountryDropdown' } }}
                                     prefix={<GlobalOutlined style={{ color: isForAdmin ? '#1677ff' : '#52c41a', fontSize: 20, marginRight: 10 }} />}
                                     size='large'
                                     showSearch

@@ -1,10 +1,8 @@
-import { Form, Image, Upload, App, Card, Button } from "antd";
+import { Form, Image, Upload, App } from "antd";
 
 import { useState } from "react";
 
 import { PlusOutlined } from '@ant-design/icons';
-
-import { motion } from "framer-motion";
 
 import styles from './ImageUpload.module.css';
 
@@ -23,11 +21,11 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
 
     const beforeUpload = (file) => {
 
-        // const isValid = validTypes.includes(file.type);
+        const isValid = validTypes.includes(file.type);
 
-        // if (!isValid) {
-        //     message.error(`File "${file.name}" is not a valid image.`);
-        // }
+        if (!isValid) {
+            message.error(`File "${file.name}" is not a valid image.`);
+        }
 
         const isDuplicate = fileList.some(f => f.name === file.name);
 
@@ -101,10 +99,12 @@ const ImageUpload = ({ setToBeRemovedImagesIds }) => {
                     className={styles.uploadCard}
                 >
 
-                    <div className={styles.customUploadButton}>
-                        <PlusOutlined style={{ fontSize: 20 }} />
-                        <span style={{ fontSize: '1.1rem', marginTop: 8 }}>Upload</span>
-                    </div>
+                    {fileList.length < 10 && (
+                        <div className={styles.customUploadButton}>
+                            <PlusOutlined style={{ fontSize: 20 }} />
+                            <span style={{ fontSize: '1.1rem', marginTop: 8 }}>Upload</span>
+                        </div>
+                    )}
 
                 </Upload>
 

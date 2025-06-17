@@ -43,7 +43,7 @@ export const NotificationProvider = ({ children }) => {
                 console.log('SignalR Connected');
 
                 connection.on('Notify', (message) => {
-                    notification.info({ message: 'Notification', description: message });
+                    notification.info({ message: 'Notification', description: message, duration: 0 });
                 });
 
                 connection.on('IncreaseNotificationsCount', () => setNotificationCount((prev) => prev + 1));

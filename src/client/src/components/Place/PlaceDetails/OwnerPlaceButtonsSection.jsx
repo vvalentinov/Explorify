@@ -46,7 +46,8 @@ const OwnerPlaceButtonsSection = ({ placeService, place }) => {
             okText: 'Delete',
             okType: 'danger',
             cancelText: 'Cancel',
-            onOk: () => handlePlaceDelete()
+            onOk: () => handlePlaceDelete(),
+            centered: true
         });
     };
 

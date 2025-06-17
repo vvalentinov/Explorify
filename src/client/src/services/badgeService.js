@@ -7,6 +7,6 @@ export const badgesServiceFactory = (token) => {
     const request = requestFactory(token);
 
     return {
-        getUserBadges: () => request.get(`${baseUrl}/Badge/GetUserBadges`),
+        getUserBadges: (userId) => request.get(`${baseUrl}/Badge/GetUserBadges?userId=${userId}`),
     }
 };

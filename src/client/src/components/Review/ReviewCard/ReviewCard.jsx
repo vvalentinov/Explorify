@@ -27,7 +27,8 @@ const ReviewCard = ({
     handleDelete,
     handleRevert,
     handleUnapprove,
-    approveReviewModal
+    approveReviewModal,
+    isForFollowedUser
 }) => {
 
     const navigate = useNavigate();
@@ -65,19 +66,23 @@ const ReviewCard = ({
                         <Typography.Text strong style={{ fontSize: '25px' }}>{review.userName}</Typography.Text>
                         <br />
                         <Typography.Text type="secondary" style={{ fontSize: '18px' }}>
-                            {new Date(review.createdOn).toLocaleDateString()}
+                            {new Date(review.createdOn).toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                            })}
                         </Typography.Text>
                     </div>
                 </div>
 
                 {/* Rating */}
-                <Rate disabled value={review.rating} style={{ fontSize: '25px' }} />
+                <Rate disabled value={review.rating} style={{ fontSize: isForPlace ? '30px' : '25px' }} />
             </div>
 
             {/* Review Content */}
             <Typography.Paragraph
                 style={{ fontSize: 20, lineHeight: 1.6, textAlign: 'justify', marginBottom: '1rem' }}
-                ellipsis={{ rows: isForPlace ? 10 : 5 }}
+                ellipsis={{ rows: isForPlace || isForFollowedUser ? 10 : 5 }}
             >
                 {review.content}
             </Typography.Paragraph>
@@ -124,7 +129,17 @@ const ReviewCard = ({
                 )}
 
                 {isForUser && review.isDeleted && !review.isDeletedByAdmin && (
-                    <Button size='large' style={{ fontSize: '1.4rem' }} block type="primary" onClick={(e) => { e.stopPropagation(); handleRevert(review.id); }}>
+                    <Button
+                        size='large'
+                        style={{ fontSize: '1.4rem' }}
+                        block
+                        variant='solid'
+                        color='green'
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleRevert(review.id);
+                        }}
+                    >
                         Revert
                     </Button>
                 )}
@@ -137,7 +152,8 @@ const ReviewCard = ({
                                 size='large'
                                 style={{ fontSize: '1.4rem' }}
                                 block
-                                type="primary"
+                                variant='solid'
+                                color='green'
                                 onClick={(e) => { e.stopPropagation(); handleRevert(review.id); }}
                             >
                                 Revert
@@ -145,16 +161,25 @@ const ReviewCard = ({
                         ) : review.isApproved ? (
                             <>
                                 <Button
-                                    size='large'
-                                    style={{ fontSize: '1.4rem' }}
+                                    size="large"
+                                    type="default"
+                                    style={{
+                                        fontSize: '1.4rem',
+                                        backgroundColor: '#fadb14',
+                                        color: 'black',
+                                        border: 'none',
+                                        fontWeight: 600,
+                                    }}
                                     block
-                                    onClick={(e) => { e.stopPropagation(); handleUnapprove(review); }}
-                                    variant='solid'
-                                    color='gold'
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleUnapprove(review);
+                                    }}
                                     icon={<StopOutlined />}
                                 >
                                     Unapprove
                                 </Button>
+
                                 <Button
                                     icon={<DeleteOutlined />}
                                     size='large'
@@ -177,7 +202,6 @@ const ReviewCard = ({
                                     block
                                     variant='solid'
                                     color='green'
-                                    // type="primary"
                                     onClick={(e) => { e.stopPropagation(); approveReviewModal(review); }}
                                 >
                                     Approve

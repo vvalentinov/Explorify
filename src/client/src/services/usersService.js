@@ -20,7 +20,7 @@ export const usersServiceFactory = (token) => {
             ),
         followUser: (userId) => request.post(`${baseUrl}/Follow/${userId}`),
         unfollowUser: (userId) => request.delete(`${baseUrl}/Follow/${userId}`),
-        getFollowing: (page, sortDirection = "asc") => request.get(`${baseUrl}/User/GetFollowing?page=${page}&sortDirection=${sortDirection}`),
+        getFollowing: (page, sortDirection = "asc", userName = '') => request.get(`${baseUrl}/Follow/GetFollowing?page=${page}&sortDirection=${sortDirection}&userName=${userName}`),
         changeBio: (bio) => request.put(`${baseUrl}/User/ChangeBio`, bio),
         getUserBio: () => request.get(`${baseUrl}/User/GetBio`)
     }

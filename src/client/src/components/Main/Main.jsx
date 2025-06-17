@@ -26,6 +26,8 @@ import PlaceDetails from '../Place/PlaceDetails/PlaceDetails';
 
 import FavPlaces from '../Place/FavPlaces/FavPlaces';
 
+import FollowedUserReviews from '../Review/FollowedUserReviews';
+
 import PlaceSearch from '../Place/PlaceSearch/PlaceSearch';
 
 import ScrollToTop from '../ScrollToTop/ScrollToTop';
@@ -78,6 +80,8 @@ const Main = () => {
                     <Route path={paths.accountSettingsPath} element={<Settings />} />
 
                     <Route path={paths.leaderboardPath} element={< Leaderboard />} />
+
+                    <Route path='/reviews/:userName' element={<FollowedUserReviews />} />
 
                     <Route path='/search' element={<PlaceSearch />} />
 

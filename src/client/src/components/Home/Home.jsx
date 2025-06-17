@@ -77,7 +77,7 @@ const Home = () => {
                 <div
                     style={{
                         marginBottom: '1.5rem',
-                        padding: '0 8rem',
+                        padding: '0 10rem',
                         paddingTop: '2rem',
                     }}
                 >
@@ -86,7 +86,7 @@ const Home = () => {
                         level={3}
                         style={{
                             textAlign: 'left',
-                            marginBottom: '2.5rem',
+                            // marginBottom: '2.5rem',
                             fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                             fontWeight: 700,
                             fontSize: '2.2rem',
@@ -129,7 +129,7 @@ const Home = () => {
                 <div
                     style={{
                         marginBottom: '1.5rem',
-                        padding: '0 8rem',
+                        padding: '0 10rem',
                         marginTop: '4rem'
                     }}
                     className={styles.placesContainer}
@@ -139,7 +139,7 @@ const Home = () => {
                         level={3}
                         style={{
                             textAlign: 'left',
-                            marginBottom: '2.5rem',
+                            // marginBottom: '2.5rem',
                             fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                             fontWeight: 700,
                             fontSize: '2.2rem',

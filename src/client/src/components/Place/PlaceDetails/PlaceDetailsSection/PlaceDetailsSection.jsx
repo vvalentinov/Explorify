@@ -84,7 +84,7 @@ const PlaceDetailsSection = ({
                                 <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
                                     <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
                                 </span>
-                                {place?.name}
+                                {place?.name}, {place?.countryName}
                             </Title>
 
                             <Carousel className={styles.carousel} autoplay arrows dotPosition="bottom">
@@ -156,61 +156,6 @@ const PlaceDetailsSection = ({
                         {place.description}
                     </Paragraph>
                 </div>
-
-                {/* <div className={styles.tagsCard}>
-
-                    <Title
-                        level={3}
-                        style={{
-                            textAlign: 'left',
-                            marginBottom: '2rem',
-                            fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                            fontWeight: 700,
-                            fontSize: '2.2rem',
-                            letterSpacing: '0.4px',
-                            color: '#1A7F64',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            gap: '0.6rem',
-                            width: '100%',
-                            marginTop: 0
-                        }}
-                    >
-                        <span
-                            style={{
-                                backgroundColor: '#ffffff',
-                                borderRadius: '50%',
-                                padding: '0.5rem',
-                                boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <TagFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
-                        </span>
-                        Tags
-                    </Title>
-                    <div className={styles.tagList}>
-                        {
-                            place.tags?.length > 0 ?
-                                place.tags?.map(tag => (<span key={tag.id} className={styles.tag}>{tag.name}</span>)) :
-                                <span
-                                    style={{
-                                        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                                        fontSize: '1.6rem',
-                                        width: '100%',
-                                        marginTop: '1rem',
-                                        color: '#888',
-                                    }}
-                                >
-                                    No tags available
-                                </span>
-                        }
-                    </div>
-                </div> */}
-
 
                 <div
                     className={`${styles.tagsCard} ${isForAdmin ? styles.adminTagsCard : styles.publicTagsCard

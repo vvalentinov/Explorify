@@ -50,10 +50,12 @@ const ReviewsList = ({
     setReviews,
     isForAdmin = false,
     isForUser = false,
-    isForPlace = true
+    isForPlace = true,
+    isForFollowedUser = false,
+    onRefresh = () => { },
 }) => {
 
-    const { modal } = App.useApp();
+    const { modal, message } = App.useApp();
 
     const { userId, token, isAuthenticated } = useContext(AuthContext);
 
@@ -123,7 +125,8 @@ const ReviewsList = ({
         adminService
             .approveReview(review.id)
             .then(res => {
-                navigate('/admin', { state: { successOperation: { message: res.successMessage } } })
+                onRefresh();
+                message.success(res.successMessage);
             }).catch(err => {
                 fireError(err);
             });
@@ -143,7 +146,10 @@ const ReviewsList = ({
         reviewsService
             .revertReview(reviewId)
             .then(res => {
-                navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } })
+                // navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } })
+
+                onRefresh();
+                message.success(res.successMessage);
             }).catch(err => {
                 fireError(err);
             });
@@ -156,6 +162,7 @@ const ReviewsList = ({
         }
 
         const review = selectedReview;
+
         if (!review) return;
 
         const isLiked = !!review.hasLikedReview;
@@ -173,9 +180,16 @@ const ReviewsList = ({
                 };
 
                 setSelectedReview(updatedReview);
-                setReviews(prev =>
-                    prev.map(r => r.id === updatedReview.id ? updatedReview : r)
-                );
+
+                // Patch to update the review list via dispatched payload
+                setReviews((prevReviews) => {
+                    const updatedReviews = prevReviews.map(r =>
+                        r.id === updatedReview.id ? updatedReview : r
+                    );
+
+                    return updatedReviews;
+                });
+
             })
             .catch(err => {
                 fireError(err);
@@ -197,7 +211,7 @@ const ReviewsList = ({
                         // border: 'solid 1px black',
                     }}
                 >
-                    {reviews.map(review => (
+                    {reviews?.map(review => (
                         <motion.div
                             key={review.id}
                             variants={cardVariants}
@@ -216,6 +230,7 @@ const ReviewsList = ({
                                 review={review}
                                 isForUser={isForUser}
                                 isForAdmin={isForAdmin}
+                                isForFollowedUser={isForFollowedUser}
                             />
 
                         </motion.div>
@@ -238,6 +253,10 @@ const ReviewsList = ({
                 setVisible={setIsDeletedModalOpen}
                 visible={isDeletedModalOpen}
                 isForAdmin={isForAdmin}
+                onDeleteSuccess={(successMessage) => {
+                    onRefresh(); // ✅ refresh reviews
+                    message.success(successMessage);
+                }}
             />
 
             <OpenReviewModal
@@ -247,6 +266,7 @@ const ReviewsList = ({
                 selectedReview={selectedReview}
                 isForAdmin={isForAdmin}
                 isForUser={isForUser}
+                isForFollowedUser={isForFollowedUser}
             />
 
         </>

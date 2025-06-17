@@ -6,7 +6,7 @@ import { renderEmptyState, renderSpinner } from '../reviewsUtil';
 import ReviewsList from "../ReviewsList";
 import WriteReviewCard from '../WriteReviewCard';
 import UploadReviewModal from '../Modals/UploadReviewModal';
-import { Typography, Radio, ConfigProvider, Checkbox } from "antd";
+import { Typography, Radio, ConfigProvider, Checkbox, Avatar } from "antd";
 import Pagination from '../../Pagination/Pagination';
 import { StarFilled } from '@ant-design/icons';
 import { entityState } from '../../../constants/entityState';
@@ -30,13 +30,16 @@ const ReviewsSection = ({
     isForPlace = true,
     isForUser = false,
     placeId = null,
-    isOwner
+    isOwner,
+    isForFollowedUser = false,
+    followedUser = null
 }) => {
     const { token } = useContext(AuthContext);
     const reviewsService = reviewsServiceFactory(token);
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
 
     const fetchReviews = async () => {
+
         dispatch({ type: 'SET_LOADING' });
 
         try {
@@ -59,6 +62,8 @@ const ReviewsSection = ({
                 }
             } else if (isForPlace && placeId) {
                 response = await reviewsService.getPlaceReviews(placeId, currentPage, sortOption, starFilters);
+            } else if (isForFollowedUser && followedUser) {
+                response = await reviewsService.getFollowedUserReviews(currentPage, sortOption, starFilters, followedUser.id)
             }
 
             dispatch({
@@ -170,19 +175,19 @@ const ReviewsSection = ({
                     {isForPlace && `Reviews (${state.reviewsCount})`}
                     {isForUser && `My Reviews (${state.reviewsCount})`}
                     {isForAdmin && `${state.filter} Reviews (${state.reviewsCount})`}
+
+                    {isForFollowedUser && (
+                        <>
+                            <Avatar size={60} src={followedUser.profileImageUrl} />
+                            <span>{followedUser.userName} Reviews</span>
+                        </>
+                    )}
+
                 </Typography.Title>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <ConfigProvider theme={customTheme}>
+                <div style={{ display: 'flex', justifyContent: !isForFollowedUser && !isForPlace ? 'space-between' : ' center', width: '100%' }}>
 
-                        {/* <Radio.Group
-                            name="Sort"
-                            options={sortOptions}
-                            value={state.sortOption}
-                            onChange={handleSortChange}
-                            className={styles.radioGroup}
-                            disabled={state.reviewsCount <= 1}
-                        /> */}
+                    <ConfigProvider theme={customTheme}>
 
                         <Radio.Group
                             name="Sort"
@@ -201,17 +206,20 @@ const ReviewsSection = ({
 
                     </ConfigProvider>
 
-                    <ConfigProvider theme={customTheme}>
-                        <div>
-                            <Radio.Group
-                                name="Filter"
-                                options={stateOptions}
-                                value={state.filter}
-                                onChange={handleFilterChange}
-                                className={styles.radioGroup}
-                            />
-                        </div>
-                    </ConfigProvider>
+                    {!isForFollowedUser && !isForPlace && (
+                        <ConfigProvider theme={customTheme}>
+                            <div>
+                                <Radio.Group
+                                    name="Filter"
+                                    options={stateOptions}
+                                    value={state.filter}
+                                    onChange={handleFilterChange}
+                                    className={styles.radioGroup}
+                                />
+                            </div>
+                        </ConfigProvider>
+                    )}
+
                 </div>
 
                 <div className={`${styles.customCheckboxGroupWrapper} ${styles.starPillCheckbox}`}>
@@ -249,16 +257,25 @@ const ReviewsSection = ({
                             isForAdmin={isForAdmin}
                             isForPlace={isForPlace}
                             isForUser={isForUser}
-                            setReviews={(newReviews) =>
+                            setReviews={(newReviewsOrUpdater) => {
+                                const updatedReviews = typeof newReviewsOrUpdater === 'function'
+                                    ? newReviewsOrUpdater(state.reviews)
+                                    : newReviewsOrUpdater;
+
                                 dispatch({
                                     type: 'SET_REVIEWS',
                                     payload: {
-                                        reviews: newReviews,
+                                        reviews: updatedReviews,
                                         reviewsCount: state.reviewsCount,
                                         pagesCount: state.pagesCount,
                                     },
-                                })
-                            }
+                                });
+                            }}
+                            isForFollowedUser={isForFollowedUser}
+                            onRefresh={() => {
+                                dispatch({ type: 'SET_PAGE', payload: 1 }); // ✅ go to page 1
+                                fetchReviews(); // ✅ re-fetch from server
+                            }}
                         />
                     ) : renderEmptyState(isForAdmin))}
 

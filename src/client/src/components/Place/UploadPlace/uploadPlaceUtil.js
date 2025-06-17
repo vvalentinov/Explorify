@@ -35,8 +35,6 @@ export const mapTagsOptions = (tags) => {
 
 export const generateFormData = (data) => {
 
-    console.log(data.CategoryId);
-
     const formData = new FormData();
 
     formData.append("Name", data.Name ?? "");

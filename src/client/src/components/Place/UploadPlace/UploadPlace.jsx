@@ -18,7 +18,8 @@ import {
     Rate,
     Spin,
     Checkbox,
-    Empty
+    Empty,
+    Typography
 } from 'antd';
 
 import { UploadOutlined, CommentOutlined } from '@ant-design/icons';
@@ -237,7 +238,7 @@ const UploadPlace = () => {
                         <Select
                             showSearch
                             className={styles.countriesSelect}
-                            classNames={{ popup: { root: 'customCountryDropdown' } }}
+                            classNames={{ popup: { root: 'uploadCountryDropdown' } }}
                             placeholder="Start typing and select a country..."
                             optionFilterProp="label"
                             onSearch={(value) => {
@@ -268,7 +269,7 @@ const UploadPlace = () => {
                                     </div>
                                 ) : <Empty style={{ transform: 'scale(1.2)', margin: '2rem 0' }} />
                             }
-                            open={openDropdown}
+                            open={openDropdown && countryName.trim() !== ''}
                             onOpenChange={(open) => {
                                 if (!selectLoading) setOpenDropdown(open);
                             }}
@@ -318,7 +319,7 @@ const UploadPlace = () => {
 
                     <ImageUpload />
 
-                    <Card type="inner" className={styles.reviewCard}>
+                    {/* <Card type="inner" className={styles.reviewCard}>
 
                         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                             <motion.div
@@ -352,6 +353,111 @@ const UploadPlace = () => {
                             rules={[{ required: true }]}
                         >
                             <Rate style={{ fontSize: '3rem' }} id="Rating" allowClear />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="ReviewContent"
+                            label={<span style={{ fontSize: '1.3rem' }}>Content</span>}
+                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
+                        >
+                            <Input.TextArea
+                                placeholder="Share your experience..."
+                                rows={10}
+                                maxLength={1000}
+                                style={{ fontSize: '1.5rem' }}
+                            />
+                        </Form.Item>
+
+                    </Card> */}
+
+                    <Card type="inner" className={styles.reviewCard}>
+
+                        <Typography.Title
+                            level={3}
+                            style={{
+                                textAlign: 'center',
+                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                                fontWeight: 700,
+                                fontSize: '2.5rem',
+                                letterSpacing: '0.4px',
+                                color: '#1A7F64',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '0.6rem',
+                                width: '100%',
+                                marginTop: '0'
+                            }}
+                        >
+                            <span
+                                style={{
+                                    backgroundColor: '#ffffff',
+                                    borderRadius: '50%',
+                                    padding: '0.5rem',
+                                    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.12)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <CommentOutlined style={{ color: '#1A7F64', fontSize: '2rem' }} />
+                            </span>
+                            Review
+                        </Typography.Title>
+
+                        <Form.Item
+                            style={{
+                                background: '#e8faef',
+                                padding: '2rem 4rem',
+                                borderRadius: '16px',
+                                boxShadow: '0 6px 18px rgba(0, 0, 0, 0.06)',
+                                margin: '0 auto',
+                                width: 'fit-content',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Form.Item noStyle shouldUpdate={(prev, curr) => prev.Rating !== curr.Rating}>
+                                    {({ getFieldValue }) => {
+                                        const rating = getFieldValue('Rating');
+                                        return rating ? (
+                                            <Typography.Text
+                                                style={{
+                                                    background: '#f6ffed',
+                                                    color: '#389e0d',
+                                                    fontSize: '1.5rem',
+                                                    fontWeight: 600,
+                                                    padding: '6px 16px',
+                                                    borderRadius: '12px',
+                                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                                                    marginBottom: '1rem',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                {['😖', '😞', '😐', '🙂', '🤩'][rating - 1]}{' '}
+                                                {['Terrible', 'Bad', 'Okay', 'Good', 'Excellent'][rating - 1]}
+                                            </Typography.Text>
+                                        ) : null;
+                                    }}
+                                </Form.Item>
+
+                                <Form.Item
+                                    name="Rating"
+                                    rules={[{ required: true, message: 'Please provide a rating.' }]}
+                                    noStyle
+                                >
+                                    <Rate allowClear={false}
+                                        style={{ fontSize: '3rem' }}
+                                        tooltips={['Terrible', 'Bad', 'Okay', 'Good', 'Excellent']}
+                                    />
+                                </Form.Item>
+                            </div>
                         </Form.Item>
 
                         <Form.Item

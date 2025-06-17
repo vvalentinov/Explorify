@@ -54,7 +54,7 @@
     font-weight: 700;
     font-size: 2.2rem;
     letter-spacing: 0.4px;
-    color: #1a7f64;
+    color: #1a7f64 !important;
     /* public green */
     display: flex;
     justify-content: flex-start;
@@ -154,10 +154,11 @@
 }
 
 .reviewText {
-    font-size: 1.25rem;
+    font-size: 1.20rem;
     text-align: justify;
     margin-top: 10px;
     font-family: 'Poppins', 'Segoe UI', sans-serif;
+    line-height: 1.6;
 }
 
 .adminReviewText {
@@ -377,11 +378,13 @@
 
     /* padding: 2rem 20rem; */
 
-    padding: 2rem 0;
+    padding: 2rem 12rem;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /* border: solid 1px red; */
 }
 
 
@@ -393,7 +396,7 @@
     padding: 2rem;
     box-shadow: 0 4px 14px rgba(235, 47, 150, 0.15);
 
-    width: 50%;
+    width: 100%;
 }
 
 .favoriteContent {
@@ -403,7 +406,7 @@
 
 .mapWeatherSection {
 
-    padding: 2rem 10rem;
+    padding: 2rem 12rem;
 }
 
 .mapWeatherContainer {

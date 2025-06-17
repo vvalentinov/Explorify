@@ -40,13 +40,13 @@ const DeletedPlaceCard = ({ place, isForAdmin }) => {
                     style={{
                         height: '200px',
                         objectFit: 'cover',
-                        borderTopLeftRadius: '8px',
-                        borderTopRightRadius: '8px',
+                        borderTopLeftRadius: '12px',
+                        borderTopRightRadius: '12px',
                     }}
                 />
             }
             style={{
-                borderRadius: '8px',
+                borderRadius: '12px',
                 overflow: 'hidden',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                 transition: 'transform 0.3s ease',
@@ -54,18 +54,18 @@ const DeletedPlaceCard = ({ place, isForAdmin }) => {
             }}
             styles={{
                 body: {
-                    backgroundColor: '#fff1f0',
                     textAlign: 'center',
                     padding: '1rem',
                 },
             }}
         >
-            <Card.Meta title={place.name} style={{ fontSize: '16px' }} />
+            <Card.Meta title={<span style={{ fontSize: '1.5rem', fontWeight: 600 }}>{place.name}</span>} />
             <Button
                 block
-                type="primary"
+                variant='solid'
+                color='green'
                 danger
-                style={{ marginTop: '1rem' }}
+                style={{ fontSize: '1.5rem' }}
                 onClick={() => handleRevert(place.id)}
             >
                 Revert

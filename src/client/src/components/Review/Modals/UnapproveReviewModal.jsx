@@ -62,6 +62,7 @@ const UnapproveReviewModal = ({
 
     return (
         <Modal
+            centered
             title={<span style={{ fontSize: '2rem' }}>Unapprove Review</span>}
             open={visible}
             okText="Unapprove"

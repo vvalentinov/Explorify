@@ -53,6 +53,7 @@ const UnapprovePlaceModal = ({ placeId, placeUserId, visible, setVisible }) => {
 
     return (
         <Modal
+            centered
             title={<span style={{ fontSize: '2rem' }}>Unapprove Place</span>}
             open={visible}
             okText="Unapprove"

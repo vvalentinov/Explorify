@@ -1,6 +1,6 @@
 import styles from './PlaceCard.module.css';
 
-import { message } from 'antd';
+import { App } from 'antd';
 import { HeartFilled } from '@ant-design/icons';
 
 import { Link } from 'react-router-dom';
@@ -16,6 +16,8 @@ const PlaceCard = ({
     forceFetchPlaces,
     isForFavPlaces = false
 }) => {
+
+    const { message } = App.useApp();
 
     const { token, isAuthenticated, userId } = useContext(AuthContext);
 
@@ -39,6 +41,7 @@ const PlaceCard = ({
                 message.success(res.successMessage, 5);
 
                 if (isForFavPlaces) {
+                    console.log('yes')
                     forceFetchPlaces();
                 }
             }

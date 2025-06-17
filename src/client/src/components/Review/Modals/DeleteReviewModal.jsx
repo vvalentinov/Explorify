@@ -19,7 +19,8 @@ const DeleteReviewModal = ({
     visible,
     setVisible,
     isReviewApproved,
-    isForAdmin
+    isForAdmin,
+    onDeleteSuccess
 }) => {
 
     const navigate = useNavigate();
@@ -40,7 +41,12 @@ const DeleteReviewModal = ({
                 reviewService
                     .deleteReview(payload)
                     .then(res => {
-                        navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } });
+                        // navigate(isForAdmin ? '/admin' : '/', { state: { successOperation: { message: res.successMessage } } });
+
+                        setVisible(false);
+                        form.resetFields();
+                        onDeleteSuccess?.(res.successMessage); // call callback if provided
+
                     }).catch(err => {
                         fireError(err);
                     });

@@ -32,11 +32,12 @@
 /* Review section */
 .reviewCard {
     padding: 2rem;
-    background-color: #fdf4ff;
-    border: 1px solid #e9d5ff;
+    background-color: #d0f0d8;
+    border: 1px solid lightgray;
     border-radius: 20px;
     margin-top: 2rem;
 }
+
 
 /* Upload button */
 .uploadButton {
@@ -151,17 +152,18 @@
     font-size: 1.4rem !important;
 }
 
-:global(.customCountryDropdown) {
+:global(.uploadCountryDropdown) {
     font-size: 1.4rem;
+    width: 40% !important;
 }
 
-:global(.customCountryDropdown .ant-select-item-option-content) {
+:global(.uploadCountryDropdown .ant-select-item-option-content) {
     font-size: 1.4rem;
     padding: 12px 18px;
 }
 
-:global(.customCountryDropdown .rc-virtual-list) {
-    max-height: 400px;
+:global(.uploadCountryDropdown .rc-virtual-list) {
+    max-height: 200px;
 }
 
 .customFormItemMargin {

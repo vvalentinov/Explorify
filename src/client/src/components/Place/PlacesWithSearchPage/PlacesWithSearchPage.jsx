@@ -22,6 +22,8 @@ import {
     mapTagsOptions,
 } from '../UploadPlace/uploadPlaceUtil';
 
+import Pagination from '../../Pagination/Pagination';
+
 const initialState = {
     placeName: '',
     selectedTagIds: [],
@@ -69,7 +71,8 @@ const PlacesWithSearchPage = ({
     isForAdmin = false,
     userFollowingId = null,
     userFollowingUserName = null,
-    userFollowingProfilePic = null
+    userFollowingProfilePic = null,
+    isForFavPlaces = false
 }) => {
 
     const { token } = useContext(AuthContext);
@@ -272,7 +275,10 @@ const PlacesWithSearchPage = ({
                 />
             )}
 
-            <div style={{ padding: '0 10rem', paddingBottom: '2.5rem' }} className={styles.placesContainer}>
+            <div
+                style={{ padding: '0 12rem', paddingBottom: '2.5rem' }}
+                className={styles.placesContainer}
+            >
                 <PlacesList
                     currentPage={state.currentPage}
                     handlePageChange={handlePageChange}
@@ -280,7 +286,25 @@ const PlacesWithSearchPage = ({
                     pagesCount={pagesCount}
                     places={places}
                     spinnerLoading={spinnerLoading}
+                    forceFetchPlaces={() => {
+                        dispatch({ type: 'SET_PAGE', payload: 1 });
+                        fetchPlaces();
+                    }}
+                    isForFavPlaces={isForFavPlaces}
                 />
+
+                {pagesCount > 1 && !spinnerLoading && (
+
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <Pagination
+                            currentPage={state.currentPage}
+                            handlePageChange={handlePageChange}
+                            pagesCount={pagesCount}
+                            isForAdmin={isForAdmin}
+                        />
+                    </div>
+
+                )}
             </div>
 
         </section>

@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { badgesServiceFactory } from '../../../services/badgeService';
 
-const BadgesSection = ({ isOwnProfile = true }) => {
+const BadgesSection = ({ isOwnProfile = true, userId }) => {
 
     const { token } = useContext(AuthContext);
     const [badges, setBadges] = useState([]);
@@ -13,7 +13,7 @@ const BadgesSection = ({ isOwnProfile = true }) => {
     const badgesService = badgesServiceFactory(token);
 
     useEffect(() => {
-        badgesService.getUserBadges()
+        badgesService.getUserBadges(userId)
             .then(res => setBadges(res))
             .catch(err => console.error(err))
             .finally(() => setLoading(false));

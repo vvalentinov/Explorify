@@ -69,6 +69,8 @@ function filtersReducer(state, action) {
 
 import AdminPlaceSearchCard from './AdminPlacesSearchCard';
 
+import Pagination from '../../Pagination/Pagination';
+
 const AdminPlaces = () => {
 
     const { token } = useContext(AuthContext);
@@ -241,6 +243,21 @@ const AdminPlaces = () => {
                     places={places}
                     spinnerLoading={spinnerLoading}
                 />
+
+
+                {pagesCount > 1 && !spinnerLoading && (
+
+                    <div style={{ marginBottom: '2rem' }}>
+
+                        <Pagination
+                            currentPage={state.currentPage}
+                            handlePageChange={handlePageChange}
+                            pagesCount={pagesCount}
+                            isForAdmin={true}
+                        />
+                    </div>
+
+                )}
             </div>
 
         </section>

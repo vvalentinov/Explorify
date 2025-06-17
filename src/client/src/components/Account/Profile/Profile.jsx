@@ -275,7 +275,7 @@ const Profile = () => {
 
             </section>
 
-            <BadgesSection isOwnProfile={isOwnProfile} />
+            <BadgesSection userId={location.state?.userId ?? userId} isOwnProfile={isOwnProfile} />
         </>
 
     );

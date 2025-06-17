@@ -1,0 +1,94 @@
+.modalBody {
+    background-color: #fff;
+}
+
+.adminModalBody {
+    background-color: #1f1e2f;
+    color: #f0f0f0;
+    padding: 4rem;
+}
+
+.publicModalBody {
+    /* background-color: #1f1e2f;
+    color: #f0f0f0; */
+    padding: 2rem;
+}
+
+.reviewCard {
+    margin-top: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #f6ffed;
+}
+
+.adminReviewCard {
+    background-color: #041529;
+}
+
+:global(.ant-modal-content) {
+    padding: 2.5rem !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+}
+
+:global(.adminModal .ant-modal-content) {
+    border-radius: 12px;
+    background-color: #1f1e2f;
+    color: #f0f0f0;
+    padding: 0 !important;
+}
+
+:global(.adminModal .ant-modal-close),
+:global(.adminModal .ant-modal-close-x) {
+    color: white !important;
+    font-size: 20px;
+}
+
+:global(.adminModal .ant-modal-close:hover) {
+    color: #fadb14 !important;
+}
+
+.cardHeader {
+    font-weight: bold;
+    font-size: 1.5rem;
+    padding: 1rem 0 1rem 1.5rem;
+    background-color: #e6fffb;
+}
+
+.adminCardHeader {
+    background-color: #91acfd;
+}
+
+.adminRate :global(.ant-rate) {
+    color: #f5dc2f;
+}
+
+.adminRate :global(.ant-rate-star-zero .anticon) {
+    color: #bfbfbf !important;
+}
+
+:global(.ant-image) {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+:global(.ant-image-mask) {
+    border-radius: 12px !important;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+:global(.ant-image-mask-info) {
+    font-size: 1.5rem !important;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transform: scale(1.1);
+}
+
+/* .helpfulButton {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+} */
+
+.helpfulButton:hover {
+    background-color: #6dd6d6 !important;
+    color: #fff !important;
+}

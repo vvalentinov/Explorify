@@ -1,6 +1,6 @@
 import styles from './SignUp.module.css';
 
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 
 import { LockOutlined, UserOutlined, MailOutlined, UserAddOutlined } from "@ant-design/icons";
@@ -13,6 +13,8 @@ import { AuthContext } from '../../../contexts/AuthContext';
 
 import { motion } from 'framer-motion';
 
+import { fireError } from '../../../utils/fireError';
+
 const SignUp = () => {
     const navigate = useNavigate();
 
@@ -20,14 +22,23 @@ const SignUp = () => {
 
     const { userLogin } = useContext(AuthContext);
 
+    const [isSigningUp, setIsSigningUp] = useState(false);
+
     const onFinish = (data) => {
+
+        setIsSigningUp(true);
+
+
         authService
             .register(data)
             .then(res => {
-                console.log(res);
                 userLogin(res);
-                navigate(homePath);
-            }).catch(err => console.log(err));
+                setIsSigningUp(false);
+                navigate(homePath, { state: { username: res.userName } });
+            }).catch(err => {
+                fireError(err);
+                setIsSigningUp(false);
+            });
     };
 
     return (
@@ -73,7 +84,7 @@ const SignUp = () => {
                                 name="username"
                                 layout='vertical'
                                 label={<span style={{ fontSize: '1.5rem' }}>Username</span>}
-                                style={{ marginBottom: '2.5rem' }}
+                                // style={{ marginBottom: '2.5rem' }}
                                 rules={[
                                     {
                                         type: "string",
@@ -110,7 +121,7 @@ const SignUp = () => {
                                 name="password"
                                 layout="vertical"
                                 label={<span style={{ fontSize: '1.5rem' }}>Password</span>}
-                                style={{ marginBottom: '2.5rem' }}
+                                style={{ marginBottom: '2rem' }}
                                 rules={[
                                     {
                                         required: true,
@@ -138,8 +149,7 @@ const SignUp = () => {
                                     block="true"
                                     htmlType="submit"
                                 >
-                                    {/* {isSigningIn ? 'Signing you in...' : 'Sign In'} */}
-                                    Sign Up
+                                    {isSigningUp ? 'Signing you up...' : 'Sign Up'}
                                 </Button>
 
                                 <div className={styles.footer}>

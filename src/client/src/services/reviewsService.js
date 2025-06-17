@@ -74,6 +74,22 @@ export const reviewsServiceFactory = (token) => {
         deleteReview: (data) => request.delete(`${baseUrl}/Review/Delete`, data),
         revertReview: (reviewId) => request.put(`${baseUrl}/Review/Revert?reviewId=${reviewId}`),
         getEditInfo: (reviewId) => request.get(`${baseUrl}/Review/GetEditInfo?reviewId=${reviewId}`),
-        edit: (data) => request.put(`${baseUrl}/Review/Edit`, data)
+        edit: (data) => request.put(`${baseUrl}/Review/Edit`, data),
+        getFollowedUserReviews: (page, order, starsFilter, followingUserId) => {
+
+            const queryParams = new URLSearchParams();
+
+            queryParams.append('page', page);
+            queryParams.append('followingUserId', followingUserId);
+            queryParams.append('order', order);
+
+            if (Array.isArray(starsFilter)) {
+                starsFilter.forEach(star => {
+                    queryParams.append('starsFilter', star);
+                });
+            }
+
+            return request.get(`${baseUrl}/Review/GetReviewsForFollowedUser?${queryParams}`);
+        },
     }
 };

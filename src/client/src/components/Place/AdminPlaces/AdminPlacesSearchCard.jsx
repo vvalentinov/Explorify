@@ -124,7 +124,7 @@ const AdminPlaceSearchCard = ({
                     theme={{
                         components: {
                             Radio: {
-                                colorPrimary: '#888',
+                                colorPrimary: '#f5dc2f',
                                 colorText: '#f0f0f0',
                                 buttonSolidCheckedBg: '#888',
                                 buttonSolidCheckedColor: '#fff',
@@ -333,9 +333,10 @@ const AdminPlaceSearchCard = ({
                                         }
                                     }}
                                 >
+
                                     <Select
                                         className={styles.countriesSelect}
-                                        classNames={{ popup: { root: 'customCountryDropdown' } }}
+                                        classNames={{ popup: { root: 'adminCountryDropdown' } }}
                                         prefix={<GlobalOutlined style={{ color: '#fff', fontSize: 20, marginRight: 10 }} />}
                                         size='large'
                                         showSearch
@@ -360,7 +361,8 @@ const AdminPlaceSearchCard = ({
                                             setCountryOptions([]);
                                             dispatch({ type: 'SET_OPEN_COUNTRY_DROPDOWN', payload: false });
                                         }}
-                                        open={state.openCountryDropdown}
+                                        //  open={openDropdown && countryName.trim() !== ''}
+                                        open={state.openCountryDropdown && state.countrySearch.trim() !== ''}
                                         onOpenChange={(open) => {
                                             if (!state.countryLoading) {
                                                 dispatch({ type: 'SET_OPEN_COUNTRY_DROPDOWN', payload: open });
@@ -385,6 +387,7 @@ const AdminPlaceSearchCard = ({
                                         }
                                         options={countryOptions}
                                     />
+
                                 </ConfigProvider>
 
                             </motion.div>

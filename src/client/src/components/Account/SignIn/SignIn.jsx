@@ -12,9 +12,9 @@ import { authServiceFactory } from '../../../services/authService';
 
 import { motion } from 'framer-motion';
 
-const SignIn = () => {
+import { fireError } from '../../../utils/fireError';
 
-    // const [form] = Form.useForm();
+const SignIn = () => {
 
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ const SignIn = () => {
                 setIsSigningIn(false);
                 navigate(homePath, { state: { username: res.userName } });
             }).catch(err => {
-                console.log(err);
+                fireError(err);
                 setIsSigningIn(false);
             });
     }

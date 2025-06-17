@@ -10,7 +10,7 @@ const WriteReviewCard = ({ handleOpenModal }) => {
                 textAlign: 'center',
                 // margin: '0 10rem',
                 padding: 0,
-                marginBottom: '1.5rem',
+                marginBottom: '4rem',
                 width: '100%'
             }}
         >

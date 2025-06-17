@@ -38,6 +38,24 @@ const Subcategories = () => {
     const categoriesService = categoriesServiceFactory();
     const { categoryId } = location.state || {};
 
+    const fetchData = async () => {
+        try {
+            let res;
+            if (categoryId) {
+                res = await categoriesService.getSubcategories(categoryId);
+            } else {
+                res = await categoriesService.getSubcategoriesBySlugName(slugCategoryName);
+            }
+
+            setCategoryData(res);
+        } catch (err) {
+            fireError(err);
+        } finally {
+            setShowSpinner(false);
+        }
+    };
+
+
     useEffect(() => {
         const slugCategoryName = slugify(categoryName, { lower: true });
 
@@ -45,25 +63,9 @@ const Subcategories = () => {
             navigate(`/categories/${slugCategoryName}`, { replace: true });
         }
 
-        const fetchData = async () => {
-            try {
-                let res;
-                if (categoryId) {
-                    res = await categoriesService.getSubcategories(categoryId);
-                } else {
-                    res = await categoriesService.getSubcategoriesBySlugName(slugCategoryName);
-                }
-
-                setCategoryData(res);
-            } catch (err) {
-                fireError(err);
-            } finally {
-                setShowSpinner(false);
-            }
-        };
-
         fetchData();
     }, []);
+
 
     return (
         <section className={styles.subcategoriesSection}>
@@ -97,7 +99,7 @@ const Subcategories = () => {
                                 <Link
                                     to={`/categories/${categoryName}/${x.slugifiedName}`}
 
-                                    state={{ subcategoryId: x.id }}
+                                    state={{ subcategoryId: x.id, subcategoryName: x.name }}
                                 >
                                     <ImageOverlayContainer imageUrl={x.imageUrl} text={x.name} />
                                 </Link>

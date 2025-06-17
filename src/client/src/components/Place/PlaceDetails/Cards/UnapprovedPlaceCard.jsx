@@ -56,7 +56,8 @@ const UnapprovedPlaceCard = ({ place }) => {
             okText: 'Approve',
             okType: 'danger',
             cancelText: 'Cancel',
-            onOk: () => onApprovePlace()
+            onOk: () => onApprovePlace(),
+            centered: true
         });
     };
 

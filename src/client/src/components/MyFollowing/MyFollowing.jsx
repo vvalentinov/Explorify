@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { UsergroupAddOutlined, TrophyFilled, TeamOutlined } from '@ant-design/icons';
-import { Card, Avatar, Button, Pagination, Input, List, ConfigProvider, Typography, Radio } from 'antd';
+import { TeamOutlined } from '@ant-design/icons';
+import { Card, Avatar, Button, Pagination, Input, List, Typography, Radio } from 'antd';
 import { useState, useEffect, useContext } from 'react';
 
 import { AuthContext } from "../../contexts/AuthContext";
@@ -10,8 +10,6 @@ import { usersServiceFactory } from "../../services/usersService";
 import { fireError } from "../../utils/fireError";
 
 import slugify from "slugify";
-
-import { Link } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
 
@@ -50,6 +48,8 @@ const getMedalEmoji = (rank) => {
     return `#${rank}`;
 };
 
+import { useDebounce } from 'use-debounce';
+
 const MyFollowing = () => {
 
     const navigate = useNavigate();
@@ -62,20 +62,27 @@ const MyFollowing = () => {
     const [pagesCount, setPagesCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
 
+    const [userName, setUserName] = useState('');
+
+    const [debouncedUserName] = useDebounce(userName, 300);
+
     const [sortDirection, setSortDirection] = useState("asc");
+
+    const [recordsCount, setRecordsCount] = useState(null);
 
     useEffect(() => {
 
         usersService
-            .getFollowing(currentPage, sortDirection)
+            .getFollowing(currentPage, sortDirection, debouncedUserName)
             .then(res => {
                 setUsers(res.users);
                 setPagesCount(res.pagination.pagesCount);
+                setRecordsCount(res.pagination.recordsCount);
             }).catch(err => {
                 fireError(err);
             });
 
-    }, [currentPage, sortDirection]);
+    }, [currentPage, sortDirection, debouncedUserName]);
 
     const isSearching = false;
 
@@ -84,17 +91,20 @@ const MyFollowing = () => {
 
             <div className={styles.container}>
 
-                <Radio.Group
-                    value={sortDirection}
-                    onChange={(e) => {
-                        setSortDirection(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                    className={styles.radioGroup}
-                >
-                    <Radio.Button value="asc">Rank: Low to High</Radio.Button>
-                    <Radio.Button value="desc">Rank: High to Low</Radio.Button>
-                </Radio.Group>
+                {users?.length > 1 && (
+                    <Radio.Group
+                        value={sortDirection}
+                        onChange={(e) => {
+                            setSortDirection(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        className={styles.radioGroup}
+                        disabled={users?.length === 0}
+                    >
+                        <Radio.Button value="asc">Rank: Low to High</Radio.Button>
+                        <Radio.Button value="desc">Rank: High to Low</Radio.Button>
+                    </Radio.Group>
+                )}
 
                 <Typography.Title
                     level={3}
@@ -125,28 +135,26 @@ const MyFollowing = () => {
                     >
                         <TeamOutlined style={{ color: '#1A7F64', fontSize: '2rem' }} />
                     </span>
-                    My Following Network
+                    My Following Network {users?.length > 0 && (`(${recordsCount})`)}
                 </Typography.Title>
 
-
-
-                <Input
-                    placeholder='Search for user...'
-                    style={{
-                        fontSize: '2rem',
-                        marginBottom: '2rem',
-                        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                    }}
-                    styles={{
-                        input: {
+                {users?.length > 0 && (
+                    <Input
+                        placeholder='Search for a user I follow...'
+                        style={{
+                            fontSize: '2rem',
+                            marginBottom: '2rem',
                             fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                        }
-                    }}
-                    onChange={(e) => setUserName(e.target.value)}
-                    allowClear
-                />
-
-
+                        }}
+                        styles={{
+                            input: {
+                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                            }
+                        }}
+                        onChange={(e) => setUserName(e.target.value)}
+                        allowClear
+                    />
+                )}
 
 
 
@@ -237,34 +245,67 @@ const MyFollowing = () => {
                                             </div>
                                         </div>
 
-                                        <Button
-                                            shape="round"
-                                            size="large"
-                                            style={{
-                                                backgroundColor: '#1A7F64',
-                                                borderColor: '#1A7F64',
-                                                color: '#ffffff',
-                                                fontWeight: 600,
-                                                fontSize: '1.3rem',
-                                                padding: '0.4rem 1.8rem',
-                                                transition: 'all 0.3s ease',
-                                                boxShadow: '0 4px 10px rgba(26, 127, 100, 0.2)',
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/${slugify(user.userName, { lower: true })}/places`, { state: { userState: user } });
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#166b52';
-                                                e.currentTarget.style.borderColor = '#166b52';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.backgroundColor = '#1A7F64';
-                                                e.currentTarget.style.borderColor = '#1A7F64';
-                                            }}
-                                        >
-                                            Places
-                                        </Button>
+                                        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '10px' }}>
+                                            <Button
+                                                shape="round"
+                                                size="large"
+                                                style={{
+                                                    backgroundColor: '#1A7F64',
+                                                    borderColor: '#1A7F64',
+                                                    color: '#ffffff',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.3rem',
+                                                    padding: '0.4rem 1.8rem',
+                                                    transition: 'all 0.3s ease',
+                                                    boxShadow: '0 4px 10px rgba(26, 127, 100, 0.2)',
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/${slugify(user.userName, { lower: true })}/places`, { state: { userState: user } });
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = '#166b52';
+                                                    e.currentTarget.style.borderColor = '#166b52';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = '#1A7F64';
+                                                    e.currentTarget.style.borderColor = '#1A7F64';
+                                                }}
+                                            >
+                                                Places
+                                            </Button>
+
+                                            <Button
+                                                shape="round"
+                                                size="large"
+                                                style={{
+                                                    backgroundColor: '#1A7F64',
+                                                    borderColor: '#1A7F64',
+                                                    color: '#ffffff',
+                                                    fontWeight: 600,
+                                                    fontSize: '1.3rem',
+                                                    padding: '0.4rem 1.8rem',
+                                                    transition: 'all 0.3s ease',
+                                                    boxShadow: '0 4px 10px rgba(26, 127, 100, 0.2)',
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/reviews/${slugify(user.userName, { lower: true })}`, { state: { followedUser: user } });
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = '#166b52';
+                                                    e.currentTarget.style.borderColor = '#166b52';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = '#1A7F64';
+                                                    e.currentTarget.style.borderColor = '#1A7F64';
+                                                }}
+                                            >
+                                                Reviews
+                                            </Button>
+                                        </div>
+
+
 
                                     </div>
                                 </List.Item>

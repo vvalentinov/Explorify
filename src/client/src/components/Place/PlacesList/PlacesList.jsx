@@ -38,9 +38,6 @@ const PlacesList = ({
     places,
     isForAdmin,
     spinnerLoading,
-    pagesCount,
-    currentPage,
-    handlePageChange,
     isForFavPlaces,
     forceFetchPlaces
 }) => {
@@ -75,7 +72,7 @@ const PlacesList = ({
                                 animate="visible"
                             >
 
-                                <div className={styles.placesContainer}>
+                                <div className={`${styles.placesContainer} ${isForAdmin ? styles.adminPlacesContainer : styles.publicPlacesContainer}`}>
                                     {places.map((place) => (
                                         <motion.div
                                             key={place.id}
@@ -102,17 +99,6 @@ const PlacesList = ({
                                         </motion.div>
                                     ))}
                                 </div>
-
-                                {pagesCount > 1 && !spinnerLoading && (
-
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        handlePageChange={handlePageChange}
-                                        pagesCount={pagesCount}
-                                        isForAdmin={isForAdmin}
-                                    />
-
-                                )}
 
                             </motion.section>
                             :

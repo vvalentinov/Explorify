@@ -7,7 +7,11 @@ import 'leaflet/dist/leaflet.css';
 import App from './App.jsx';
 
 import enUS from 'antd/es/locale/en_US';
-import { ConfigProvider, App as AntdApp } from 'antd';
+import { ConfigProvider, App as AntdApp, notification } from 'antd';
+
+notification.config({
+    duration: 0,
+});
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
@@ -54,4 +58,4 @@ createRoot(document.getElementById('root')).render(
             </AntdApp>
         </ConfigProvider>
     </BrowserRouter>
-)
+);

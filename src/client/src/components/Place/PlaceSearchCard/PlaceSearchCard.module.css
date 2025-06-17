@@ -152,18 +152,13 @@
     font-size: 1.4rem !important;
 }
 
-:global(.customCountryDropdown) {
-    font-size: 1.4rem;
+:global(.placeSearchCardCountryDropdown) {
     width: 40% !important;
-}
-
-:global(.customCountryDropdown .ant-select-item-option-content) {
     font-size: 1.4rem;
-    padding: 12px 18px;
 }
 
-:global(.customCountryDropdown .rc-virtual-list) {
-    max-height: 400px;
+:global(.placeSearchCardCountryDropdown .ant-select-item-option-content) {
+    font-size: 1.4rem;
 }
 
 .tagsSelect :global(.ant-select-selector) {

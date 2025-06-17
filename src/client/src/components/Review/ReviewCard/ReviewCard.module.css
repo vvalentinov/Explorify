@@ -20,17 +20,14 @@
 }
 
 .adminReviewCard :global(.ant-typography),
-.adminReviewCard :global(.ant-rate),
-.adminReviewCard :global(.ant-btn),
-.adminReviewCard :global(.ant-btn span),
 .adminReviewCard :global(.ant-avatar) {
     color: #f0f0f0 !important;
 }
 
-.adminReviewCard .ant-rate-star-full .anticon {
-    color: gold !important;
+.adminReviewCard :global(.ant-rate) {
+    color: #f5dc2f;
 }
 
-.adminReviewCard .ant-rate-star-zero .anticon {
+.adminReviewCard :global(.ant-rate-star-zero .anticon) {
     color: #bfbfbf !important;
 }
