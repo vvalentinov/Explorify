@@ -12,10 +12,6 @@ using static Explorify.Domain.Constants.ApplicationUserConstants.ErrorMessages;
 using static Explorify.Domain.Constants.ApplicationUserConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
-using SendGrid.Helpers.Mail;
-using SendGrid;
-using Microsoft.Extensions.Options;
-using Explorify.Infrastructure.Settings;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -25,17 +21,12 @@ public class ProfileService : IProfileService
 
     private readonly UserManager<ApplicationUser> _userManager;
 
-    private readonly SendGridSettings _sendGridSettings;
-
     public ProfileService(
         UserManager<ApplicationUser> userManager,
-        IEmailSender emailSender,
-        IOptions<SendGridSettings> sendGridSettingsOptions)
+        IEmailSender emailSender)
     {
         _userManager = userManager;
         _emailSender = emailSender;
-
-        _sendGridSettings = sendGridSettingsOptions.Value;
     }
 
     public async Task<Result> ChangeEmailAsync(
@@ -145,38 +136,10 @@ public class ProfileService : IProfileService
 
         var changeEmailLink = $"https://localhost:7189/api/User/ChangeEmail?userId={user.Id}&token={encodedToken}&newEmail={encodedEmail}";
 
-        var client = new SendGridClient(_sendGridSettings.ApiKey);
-
-        var from = new EmailAddress("noreply@explorify.click", "Explorify");
-        var to = new EmailAddress(newEmail);
-        var msg = new SendGridMessage
-        {
-            From = from,
-            TemplateId = _sendGridSettings.ConfirmEmailTemplateId,
-            Personalizations = new List<Personalization>
-            {
-                new Personalization
-                {
-                    Tos = new List<EmailAddress> { to },
-                    TemplateData = new Dictionary<string, object>
-                    {
-                        { "safeLink", changeEmailLink }
-                    }
-                }
-            }
-        };
-
-        var response = await client.SendEmailAsync(msg);
-
-        if (response.IsSuccessStatusCode)
-        {
-            return Result.Success($"Successfully sent an email to: {newEmail}");
-        }
-        else
-        {
-            var error = new Error("Failed to send email!", ErrorType.Validation);
-            return Result.Failure(error);
-        }
+        return await _emailSender.SendEmailChangeConfirmationAsync(
+            userId,
+            newEmail,
+            changeEmailLink);
     }
 
     // TODO: Handle uncomfirmed emails
@@ -234,30 +197,6 @@ public class ProfileService : IProfileService
 
         var error = new Error(result.GetFirstError(), ErrorType.Validation);
         return Result.Failure(error);
-    }
-
-    public async Task<Result> SendEmailConfirmationAsync(
-        string userId,
-        string userName,
-        string token,
-        string email)
-    {
-        var confirmationLink = $"https://localhost:7189/api/User/ConfirmEmail?userId={userId}&token={token}";
-
-        var safeLink = HtmlEncoder.Default.Encode(confirmationLink);
-
-        var subject = "Email Confirmation!";
-
-        var messageBody = GetEmailConfirmBody(userName ?? string.Empty, safeLink);
-
-        await _emailSender.SendEmailAsync(
-            "noreply@explorify.click",
-            "Explorify",
-            email,
-            subject,
-            messageBody);
-
-        return Result.Success();
     }
 
     public async Task<Result> ChangeProfileImageAsync(

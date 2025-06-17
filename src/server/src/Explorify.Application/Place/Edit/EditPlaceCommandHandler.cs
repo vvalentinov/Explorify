@@ -213,6 +213,8 @@ public class EditPlaceCommandHandler
         userReview.Content = request.Model.ReviewContent;
         userReview.Rating = (short)request.Model.ReviewRating;
 
+        bool isPlaceApproved = place.IsApproved;
+
         place.IsApproved = false;
         place.Name = request.Model.Name;
         place.Address = request.Model.Address;
@@ -220,17 +222,19 @@ public class EditPlaceCommandHandler
         place.Description = request.Model.Description;
         place.CategoryId = request.Model.SubcategoryId;
 
-        if (place.IsApproved)
-        {
-            await _userService.DecreaseUserPointsAsync(
-                place.UserId,
-                UserPlaceUploadPoints);
-        }
+        
 
         _repository.Update(userReview);
         _repository.Update(place);
 
         await _repository.SaveChangesAsync();
+
+        if (isPlaceApproved)
+        {
+            await _userService.DecreaseUserPointsAsync(
+                place.UserId,
+                UserPlaceUploadPoints);
+        }
 
         return Result.Success(PlaceEditSuccess);
     }

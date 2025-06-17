@@ -1,4 +1,4 @@
-﻿namespace Explorify.Application.UserFollow.GetFollowedUsers;
+﻿namespace Explorify.Application.UserFollow;
 
 public class GetFollowedUsersDto
 {

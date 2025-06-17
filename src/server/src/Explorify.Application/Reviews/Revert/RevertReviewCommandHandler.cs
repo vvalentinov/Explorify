@@ -69,6 +69,7 @@ public class RevertReviewCommandHandler
         review.IsDeleted = false;
         review.DeletedOn = null;
         review.IsCleaned = false;
+        review.IsDeletedByAdmin = false;
 
         _repository.Update(review);
 
@@ -88,7 +89,7 @@ public class RevertReviewCommandHandler
         {
             SenderId = currUserId,
             ReceiverId = review.UserId,
-            Content = $"Good news! Your review for place: {review.Place.Name} was reverted by admin! It is now pending approval. Stay tuned.",
+            Content = $"Good news! Your review for place: {review.Place.Name} was reverted by admin!",
         };
 
         await _repository.AddAsync(notification);

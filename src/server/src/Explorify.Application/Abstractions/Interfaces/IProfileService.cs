@@ -33,12 +33,6 @@ public interface IProfileService
         string token,
         string password);
 
-    Task<Result> SendEmailConfirmationAsync(
-        string userId,
-        string userName,
-        string token,
-        string email);
-
     Task<Result> ChangeProfileImageAsync(
         string userId,
         string imageUrl);

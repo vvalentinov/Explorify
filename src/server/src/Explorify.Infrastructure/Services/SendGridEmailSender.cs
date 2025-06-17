@@ -3,6 +3,8 @@ using SendGrid.Helpers.Mail;
 using Explorify.Application.Abstractions.Email;
 
 using Microsoft.Extensions.Configuration;
+using Explorify.Application.Abstractions.Models;
+using System.Web;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -61,5 +63,59 @@ public class SendGridEmailSender : IEmailSender
             Console.WriteLine(e);
             throw;
         }
+    }
+
+
+    public async Task<Result> SendEmailChangeConfirmationAsync(
+        string userId,
+        string email,
+        string changeEmailLink)
+    {
+        var msg = new SendGridMessage
+        {
+            From = new EmailAddress("noreply@explorify.click", "Explorify"),
+            TemplateId = _configuration["SendGridSettings:ConfirmEmailTemplateId"],
+            Personalizations = new List<Personalization>
+            {
+                new Personalization
+                {
+                    Tos = new List<EmailAddress> { new EmailAddress(email) },
+                    TemplateData = new Dictionary<string, object>
+                    {
+                        { "safeLink", changeEmailLink }
+                    }
+                }
+            }
+        };
+
+        var client = new SendGridClient(_configuration["SendGridSettings:ApiKey"]);
+        var response = await client.SendEmailAsync(msg);
+
+        return response.IsSuccessStatusCode
+            ? Result.Success($"Email sent to: {email}")
+            : Result.Failure(new Error("Failed to send confirmation email.", ErrorType.Validation));
+    }
+
+    public async Task<Result> SendWelcomeEmailAsync(string email)
+    {
+        var msg = new SendGridMessage
+        {
+            From = new EmailAddress("noreply@explorify.click", "Explorify"),
+            TemplateId = _configuration["SendGridSettings:WelcomeEmailTemplateId"],
+            Personalizations = new List<Personalization>
+            {
+                new Personalization
+                {
+                    Tos = new List<EmailAddress> { new EmailAddress(email) }
+                }
+            }
+        };
+
+        var client = new SendGridClient(_configuration["SendGridSettings:ApiKey"]);
+        var response = await client.SendEmailAsync(msg);
+
+        return response.IsSuccessStatusCode
+            ? Result.Success($"Email sent to: {email}")
+            : Result.Failure(new Error("Failed to send welcome email.", ErrorType.Validation));
     }
 }

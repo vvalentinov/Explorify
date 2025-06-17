@@ -112,7 +112,7 @@ public class DeleteExpiredContentJob : IJob
 
             var notification = new Notification
             {
-                Content = $"Your place: {place.Name} was deleted!",
+                Content = $"Your place: {place.Name} was permanently deleted!",
                 SenderId = SystemUserId,
                 ReceiverId = place.UserId,
             };
@@ -122,8 +122,8 @@ public class DeleteExpiredContentJob : IJob
             _notificationQueueService.QueueNotification(
                 SystemUserId,
                 place.UserId,
-                $"Your place: {place.Name} was deleted!",
-                "One of your places got deleted!");
+                $"Your place: {place.Name} was permanently deleted!",
+                "One of your places got permanently deleted!");
         }
 
         await _repository.SaveChangesAsync();
@@ -169,7 +169,7 @@ public class DeleteExpiredContentJob : IJob
             {
                 var notification = new Notification
                 {
-                    Content = $"Your review for place: {review.Place.Name} was deleted!",
+                    Content = $"Your review for place: {review.Place.Name} was permanently deleted!",
                     SenderId = SystemUserId,
                     ReceiverId = review.UserId,
                 };
@@ -179,8 +179,8 @@ public class DeleteExpiredContentJob : IJob
                 _notificationQueueService.QueueNotification(
                     SystemUserId,
                     review.UserId,
-                    $"Your review for place: {review.Place.Name} was deleted!",
-                    "One of your reviews got deleted!");
+                   $"Your review for place: {review.Place.Name} was permanently deleted!",
+                    "One of your reviews got permanently deleted!");
             }  
         }
 

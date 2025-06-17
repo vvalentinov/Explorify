@@ -6,6 +6,8 @@ public class PlaceDetailsResponseModel
 {
     public Guid Id { get; set; }
 
+    public string CountryName { get; set; } = string.Empty;
+
     public double AvgRating { get; set; } = 0.0;
 
     public double Latitude { get; set; }

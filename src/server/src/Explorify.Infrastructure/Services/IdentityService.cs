@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 using Explorify.Domain.Entities;
 using Explorify.Application.Identity;
@@ -15,6 +14,7 @@ using static Explorify.Domain.Constants.IdentityConstants.ErrorMessages;
 using static Explorify.Domain.Constants.IdentityConstants.SuccessMessages;
 
 using Microsoft.AspNetCore.Identity;
+using Explorify.Application.Abstractions.Email;
 
 namespace Explorify.Infrastructure.Services;
 
@@ -25,17 +25,20 @@ public class IdentityService : IIdentityService
     private readonly IProfileService _profileService;
 
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEmailSender _emailSender;
 
     public IdentityService(
         IRepository repository,
         ITokenService tokenService,
         IProfileService profileService,
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        IEmailSender emailSender)
     {
         _repository = repository;
         _tokenService = tokenService;
 
         _userManager = userManager;
+        _emailSender = emailSender;
         _profileService = profileService;
     }
 
@@ -294,14 +297,9 @@ public class IdentityService : IIdentityService
             IdentityModel = identityResponseModel,
         };
 
-        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var encodedToken = HttpUtility.UrlEncode(token);
+        await _emailSender.SendWelcomeEmailAsync(model.Email);
 
-        await _profileService.SendEmailConfirmationAsync(
-            user.Id.ToString(),
-            user.UserName ?? string.Empty,
-            encodedToken,
-            model.Email);
+        await _profileService.SendEmailChangeAsync(model.Email, user.Id.ToString());
 
         return Result.Success(authResponseModel, RegisterSuccess);
     }

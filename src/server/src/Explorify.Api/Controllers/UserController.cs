@@ -21,6 +21,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Leaderboard;
 
 namespace Explorify.Api.Controllers;
 
@@ -142,17 +143,6 @@ public class UserController : BaseController
             model.Token,
             model.Password));
 
-        return this.OkOrProblemDetails(result);
-    }
-
-    [PageValidationFilter]
-    [HttpGet(nameof(GetFollowing))]
-    public async Task<IActionResult> GetFollowing(
-        int page = 1,
-        string sortDirection = "asc")
-    {
-        var query = new GetFollowedUsersQuery(User.GetId(), page, sortDirection);
-        var result = await _mediator.Send(query);
         return this.OkOrProblemDetails(result);
     }
 

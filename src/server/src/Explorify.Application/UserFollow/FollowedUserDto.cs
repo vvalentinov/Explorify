@@ -1,6 +1,6 @@
 ﻿using Explorify.Application.Abstractions.Models;
 
-namespace Explorify.Application.UserFollow.GetFollowedUsers;
+namespace Explorify.Application.UserFollow;
 
 public class FollowedUserDto : UserDto
 {

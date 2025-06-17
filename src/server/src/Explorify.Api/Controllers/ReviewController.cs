@@ -21,6 +21,7 @@ using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Explorify.Application.Reviews.GetReviews.ForFollowedUser;
 
 namespace Explorify.Api.Controllers;
 
@@ -110,6 +111,26 @@ public class ReviewController : BaseController
 
         var query = new GetReviewsForPlaceQuery(User.GetId(), model);
         var result = await _mediator.Send(query);
+        return this.OkOrProblemDetails(result);
+    }
+
+    [PageValidationFilter]
+    [HttpGet(nameof(GetReviewsForFollowedUser))]
+    public async Task<IActionResult> GetReviewsForFollowedUser(
+        [FromQuery] Guid followingUserId,
+        [FromQuery] OrderEnum order,
+        [FromQuery] IEnumerable<int> starsFilter,
+        [FromQuery] int page = 1)
+    {
+        var query = new GetReviewsForFollowedUserQuery(
+            CurrentUserId: User.GetId(),
+            FollowingUserId: followingUserId,
+            Page: page,
+            Order: order,
+            StarsFilter: starsFilter);
+
+        var result = await _mediator.Send(query);
+
         return this.OkOrProblemDetails(result);
     }
 

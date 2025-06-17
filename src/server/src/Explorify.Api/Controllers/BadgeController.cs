@@ -19,10 +19,9 @@ public class BadgeController : BaseController
 
     [AllowAnonymous]
     [HttpGet(nameof(GetUserBadges))]
-    public async Task<IActionResult> GetUserBadges()
+    public async Task<IActionResult> GetUserBadges(Guid? userId = null)
     {
-        var userId = User.GetId();
-        var result = await _mediator.Send(new GetUserBadgesQuery(userId));
+        var result = await _mediator.Send(new GetUserBadgesQuery(userId ?? User.GetId()));
         return this.OkOrProblemDetails(result);
     }
 }

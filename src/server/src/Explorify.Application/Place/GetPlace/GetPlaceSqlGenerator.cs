@@ -22,12 +22,14 @@ public static class GetPlaceSqlGenerator
                 u.Id AS UserId,
                 u.UserName,
                 u.ProfileImageUrl AS UserProfileImageUrl,
+                c.[Name] AS CountryName,
                 CAST(CASE WHEN EXISTS (
                     SELECT 1 FROM FavoritePlaces fp WHERE fp.PlaceId = p.Id AND fp.UserId = @UserId
                 ) THEN 1 ELSE 0 END AS BIT) AS IsFavPlace
             FROM Places AS p
             JOIN Reviews AS r ON r.PlaceId = p.Id AND r.UserId = p.UserId
             JOIN AspNetUsers AS u ON u.Id = p.UserId
+            JOIN Countries AS c ON c.Id = p.CountryId
             WHERE p.Id = @PlaceId;
             
             SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId AND IsDeleted = 0;
@@ -49,7 +51,6 @@ public static class GetPlaceSqlGenerator
     {
         return
         """
-            -- Main place details with user review and favorite status
             SELECT
                 p.Id,
                 p.[Name],
@@ -106,10 +107,12 @@ public static class GetPlaceSqlGenerator
                 r.Content AS UserReviewContent,
                 u.Id AS UserId,
                 u.UserName,
-                u.ProfileImageUrl AS UserProfileImageUrl
+                u.ProfileImageUrl AS UserProfileImageUrl,
+                c.[Name] AS CountryName
             FROM Places AS p
             JOIN Reviews AS r ON r.PlaceId = p.Id AND r.UserId = p.UserId
             JOIN AspNetUsers AS u ON u.Id = p.UserId
+            JOIN Countries AS c ON c.Id = p.CountryId
             WHERE p.Id = @PlaceId;
             
             SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId AND IsDeleted = 0;

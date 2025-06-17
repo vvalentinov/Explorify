@@ -5,4 +5,6 @@ public class SendGridSettings
     public string ApiKey { get; set; } = string.Empty;
 
     public string ConfirmEmailTemplateId { get; set; } = string.Empty;
+
+    public string WelcomeEmailTemplateId { get; set; } = string.Empty;
 }

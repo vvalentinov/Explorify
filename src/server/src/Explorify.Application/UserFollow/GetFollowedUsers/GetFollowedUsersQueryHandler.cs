@@ -24,11 +24,14 @@ public class GetFollowedUsersQueryHandler :
         var currentUserId = request.CurrentUserId;
         var page = request.Page;
         var sortDirection = request.SortDirection.Equals("desc", StringComparison.CurrentCultureIgnoreCase) ? "DESC" : "ASC";
+
+        var hasUserNameFilter = !string.IsNullOrWhiteSpace(request.UserName);
+        var userNameFilterSql = hasUserNameFilter ? "AND ru.UserName LIKE @UserName" : string.Empty;
+
         const int PageSize = 6;
         var offset = (page - 1) * PageSize;
 
         var sql = $@"
-
             WITH RankedUsers AS (
                 SELECT 
                     u.Id,
@@ -58,19 +61,33 @@ public class GetFollowedUsersQueryHandler :
             FROM RankedUsers ru
             JOIN UserFollows f ON f.FolloweeId = ru.Id
             WHERE f.FollowerId = @CurrentUserId AND f.IsDeleted = 0
+            {userNameFilterSql}
             ORDER BY ru.Rank {sortDirection}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
 
+            WITH RankedUsers AS (
+                SELECT 
+                    u.Id,
+                    u.UserName,
+                    u.ProfileImageUrl,
+                    u.Points,
+                    ROW_NUMBER() OVER (ORDER BY u.Points DESC) AS Rank
+                FROM AspNetUsers u
+            )
+
             SELECT COUNT(*) 
-            FROM UserFollows 
-            WHERE FollowerId = @CurrentUserId AND IsDeleted = 0;
+            FROM RankedUsers ru
+            JOIN UserFollows f ON f.FolloweeId = ru.Id
+            WHERE f.FollowerId = @CurrentUserId AND f.IsDeleted = 0
+            {userNameFilterSql};
         ";
 
         using var multi = await _dbConnection.QueryMultipleAsync(sql, new
         {
-            CurrentUserId = currentUserId,
+            request.CurrentUserId,
             Offset = offset,
-            PageSize
+            PageSize,
+            UserName = hasUserNameFilter ? $"%{request.UserName}%" : null
         });
 
         var users = (await multi.ReadAsync<FollowedUserDto>()).ToList();
