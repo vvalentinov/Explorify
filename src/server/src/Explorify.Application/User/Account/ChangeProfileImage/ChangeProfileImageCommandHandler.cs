@@ -35,6 +35,7 @@ public class ChangeProfileImageCommandHandler
         CancellationToken cancellationToken)
     {
         const string sql = "SELECT ProfileImageUrl FROM AspNetUsers WHERE Id = @UserId";
+
         var profilePicUrl = await _dbConnection.QueryFirstOrDefaultAsync<string?>(sql, new { request.UserId });
 
         string? fileName = null;

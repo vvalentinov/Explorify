@@ -211,6 +211,9 @@ public class ProfileService : IProfileService
         }
 
         user.ProfileImageUrl = imageUrl;
+
+        user.ModifiedOn = DateTime.UtcNow;
+
         await _userManager.UpdateAsync(user);
 
         return Result.Success();
