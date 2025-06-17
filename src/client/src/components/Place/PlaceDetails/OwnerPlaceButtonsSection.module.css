@@ -58,3 +58,14 @@
 .deleteButton:hover {
     background-color: #a50f1a;
 }
+
+@media (max-width: 1500px) {
+    .buttonContainer {
+        flex-direction: column;
+        padding: 0 2rem;
+    }
+
+    .card {
+        width: 100%;
+    }
+}

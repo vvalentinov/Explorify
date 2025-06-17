@@ -68,7 +68,8 @@ const PlaceDetailsSection = ({
 
             <section className={styles.heroSection}>
 
-                <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
+                {/* <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
+
                     {loading ? (
                         <div className={styles.spinnerWrapper}>
                             <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
@@ -95,7 +96,56 @@ const PlaceDetailsSection = ({
                         </>
 
                     )}
+                </div> */}
+
+
+                <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
+
+                    {loading ? (
+                        <div className={styles.spinnerWrapper}>
+                            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
+                                <Spin size="large" />
+                            </ConfigProvider>
+                        </div>
+                    ) : (
+                        <>
+                            {/* <Title
+                                level={3}
+                                className={`${styles.placeTitle} ${isForAdmin ? styles.adminTitle : ''}`}
+                            >
+                                <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
+                                    <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
+                                </span>
+                                {place?.name}, {place?.countryName}
+                            </Title> */}
+
+                            <div className={styles.titleRatingRow}>
+                                <Title
+                                    level={3}
+                                    className={`${styles.placeTitle} ${isForAdmin ? styles.adminTitle : ''}`}
+                                >
+                                    <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
+                                        <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
+                                    </span>
+                                    {place?.name}, {place?.countryName}
+                                </Title>
+
+                                {!loading && (
+                                    <div className={`${styles.avgRatingBadge} ${isForAdmin ? styles.adminRatingBadge : ''}`}>
+                                        ★ {place.avgRating?.toFixed(1)} / 5.0
+                                    </div>
+                                )}
+                            </div>
+
+                            <Carousel className={styles.carousel} autoplay arrows dotPosition="bottom">
+                                {place.imagesUrls?.map((url, idx) => (
+                                    <img src={url} alt={`Slide ${idx}`} key={idx} />
+                                ))}
+                            </Carousel>
+                        </>
+                    )}
                 </div>
+
 
                 <div className={`${styles.ownerReview} ${isForAdmin ? styles.adminReview : styles.publicReview}`}>
                     <div

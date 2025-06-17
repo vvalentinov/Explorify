@@ -18,6 +18,10 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 
+import { AuthContext } from '../../../contexts/AuthContext';
+
+import { useContext } from 'react';
+
 const ReviewCard = ({
     review,
     isForPlace,
@@ -32,6 +36,8 @@ const ReviewCard = ({
 }) => {
 
     const navigate = useNavigate();
+
+    const { profileImageUrl } = useContext(AuthContext);
 
     return (
         <Card

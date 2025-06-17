@@ -1,0 +1,11 @@
+.googleMaps {
+    height: 500px;
+    border-radius: 12px;
+    border: solid 1px lightgrey;
+}
+
+@media (max-width: 1500px) {
+    .googleMaps {
+        width: 100% !important;
+    }
+}

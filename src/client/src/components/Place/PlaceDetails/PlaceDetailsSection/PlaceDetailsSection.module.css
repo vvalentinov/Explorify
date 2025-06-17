@@ -29,7 +29,51 @@
     border: solid 1px lightgray;
 }
 
-/* Admin variant */
+.titleRatingRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.titleRatingRow :global(h3) {
+    margin: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+
+.avgRatingBadge {
+    background-color: #f4fdf7;
+    color: #1a7f64;
+    font-weight: 600;
+    font-size: 1.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #b7eb8f;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.adminRatingBadge {
+    background-color: #2a2a3d;
+    color: #ffd666;
+    border: 1px solid #4a4a68;
+}
+
+.avgRatingBadge {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+
+
+
 .adminCard {
     background: linear-gradient(145deg, #2b2b3d, #1f1f2f);
     color: #e0e0f0;
@@ -272,14 +316,6 @@
     padding: 2rem 12rem;
 }
 
-/* .tagsCard {
-    background: #f4fdf7;
-    padding: 3rem;
-    border-radius: 12px;
-    border: solid 1px lightgray;
-    width: 30%;
-} */
-
 .tagsCard {
     padding: 3rem;
     border-radius: 12px;
@@ -376,20 +412,15 @@
 
 .favPlaceSection {
 
-    /* padding: 2rem 20rem; */
-
     padding: 2rem 12rem;
 
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* border: solid 1px red; */
 }
 
 
 .favoriteBox {
-    /* margin: 3rem auto; */
     background: #fff0f6;
     border: 1px solid #ffadd2;
     border-radius: 12px;
@@ -410,7 +441,6 @@
 }
 
 .mapWeatherContainer {
-    /* border: solid 1px blue; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -442,4 +472,180 @@
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     transition: all 0.3s ease-in-out;
+}
+
+.avgRatingFloating {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #eee;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.4rem;
+    border-radius: 12px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+.avgRatingNumber {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fa8c16;
+    margin-bottom: 0.4rem;
+}
+
+.avgRatingStars :global(.ant-rate-star) {
+    font-size: 1.4rem;
+}
+
+
+
+/* ------------------- Responsive Styles ------------------- */
+
+/* Tablets and below (<= 1500px) */
+@media (max-width: 1500px) {
+
+    .heroSection,
+    .descriptionTagsSection,
+    .mapWeatherContainer,
+    .favPlaceSection {
+        flex-direction: column;
+        padding: 2rem;
+    }
+
+    .mapWeatherSection {
+        width: 100% !important;
+        padding: 0;
+    }
+
+    .mapWeatherContainer {
+        width: 100% !important;
+        padding: 2rem;
+    }
+
+    .googleMaps {
+        width: 100% !important;
+    }
+
+    .placeCard,
+    .ownerReview,
+    .descriptionCard,
+    .tagsCard,
+    .weatherBox,
+    .mapIframe {
+        width: 100% !important;
+    }
+
+    .carousel :global(.slick-slide),
+    .carousel :global(.slick-slide img) {
+        height: 400px;
+    }
+
+    .carousel img {
+        min-height: 400px;
+    }
+
+    .tagList {
+        gap: 1rem;
+    }
+
+    .favoriteBox {
+        padding: 1.5rem;
+    }
+}
+
+/* Mobile (<= 768px) */
+@media (max-width: 768px) {
+
+    .placeTitle,
+    .tagsTitle,
+    .descriptionTitle {
+        font-size: 1.6rem;
+    }
+
+    .reviewerName {
+        font-size: 1.2rem;
+    }
+
+    .reviewText,
+    .adminReviewText,
+    .descriptionText,
+    .adminDescriptionText {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .tag {
+        font-size: 1rem;
+        padding: 4px 10px;
+    }
+
+    .mapWeatherSection,
+    .favPlaceSection {
+        padding: 1.5rem;
+    }
+
+    .weatherBox {
+        width: 100%;
+    }
+
+    .mapIframe {
+        height: 300px;
+    }
+
+    .carousel :global(.slick-slide),
+    .carousel :global(.slick-slide img) {
+        height: 250px;
+    }
+
+    .carousel img {
+        min-height: 250px;
+    }
+
+    .favoriteBox {
+        padding: 1rem;
+    }
+
+    .favoriteBox :global(h4) {
+        font-size: 1.6rem !important;
+    }
+
+    .favoriteBox :global(p) {
+        font-size: 1rem !important;
+    }
+
+    .favoriteBox :global(button) {
+        font-size: 1.2rem !important;
+        padding: 1rem 1.5rem !important;
+    }
+}
+
+/* Very small screens (<= 480px) */
+@media (max-width: 480px) {
+
+    .titleIcon,
+    .descriptionIcon,
+    .tagsIcon {
+        padding: 0.3rem;
+        font-size: 1.2rem;
+    }
+
+    .placeTitle,
+    .tagsTitle,
+    .descriptionTitle {
+        font-size: 1.3rem;
+    }
+
+    .reviewHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .rateWrapper {
+        align-self: flex-start;
+    }
 }

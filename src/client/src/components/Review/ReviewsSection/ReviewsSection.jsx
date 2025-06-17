@@ -34,7 +34,7 @@ const ReviewsSection = ({
     isForFollowedUser = false,
     followedUser = null
 }) => {
-    const { token } = useContext(AuthContext);
+    const { token, profileImageUrl } = useContext(AuthContext);
     const reviewsService = reviewsServiceFactory(token);
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
 
@@ -273,8 +273,8 @@ const ReviewsSection = ({
                             }}
                             isForFollowedUser={isForFollowedUser}
                             onRefresh={() => {
-                                dispatch({ type: 'SET_PAGE', payload: 1 }); // ✅ go to page 1
-                                fetchReviews(); // ✅ re-fetch from server
+                                dispatch({ type: 'SET_PAGE', payload: 1 });
+                                fetchReviews();
                             }}
                         />
                     ) : renderEmptyState(isForAdmin))}

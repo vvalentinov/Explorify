@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import styles from './GoogleMaps.module.css';
+
 const GoogleMapWithMarker = ({ lat, lng, isForAdmin }) => {
 
     const mapRef = useRef(null);
@@ -35,7 +37,7 @@ const GoogleMapWithMarker = ({ lat, lng, isForAdmin }) => {
 
     }, [lat, lng]);
 
-    return <div ref={mapRef} style={{ width: isForAdmin ? '100%' : '60%', height: '500px', borderRadius: '12px', border: 'solid 1px lightgrey' }} />;
+    return <div ref={mapRef} className={styles.googleMaps} style={{ width: isForAdmin ? '100%' : '60%' }} />;
 };
 
 export default GoogleMapWithMarker;

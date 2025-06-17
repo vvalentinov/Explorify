@@ -9,8 +9,6 @@
 }
 
 .publicModalBody {
-    /* background-color: #1f1e2f;
-    color: #f0f0f0; */
     padding: 2rem;
 }
 
@@ -83,10 +81,6 @@
     letter-spacing: 0.5px;
     transform: scale(1.1);
 }
-
-/* .helpfulButton {
-    transition: background-color 0.3s ease, transform 0.2s ease;
-} */
 
 .helpfulButton:hover {
     background-color: #6dd6d6 !important;

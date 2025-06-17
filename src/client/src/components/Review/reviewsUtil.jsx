@@ -33,63 +33,82 @@ export const renderSpinner = (spinnerLoading, isForAdmin) => (
     </div>
 );
 
-export const renderEmptyState = (isForAdmin) => (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-    >
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%',
-                marginTop: '1rem',
-            }}
+export const renderEmptyState = (isForAdmin) => {
+    const styles = isForAdmin
+        ? {
+            backgroundColor: '#2b2b3d',
+            borderColor: '#000',
+            iconColor: '#cfcfe6',
+            textColor: '#c9d1d9',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.6)',
+        }
+        : {
+            backgroundColor: '#f0fff4',
+            borderColor: '#b7eb8f',
+            iconColor: '#52c41a',
+            textColor: '#389e0d',
+            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.05)',
+        };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
         >
-            <Card
+            <div
                 style={{
-                    textAlign: 'center',
-                    backgroundColor: isForAdmin ? '#e6f7ff' : '#f0fff4',
-                    borderRadius: '16px',
-                    boxShadow: '0 6px 18px rgba(0, 0, 0, 0.05)',
-                    border: `1px solid ${isForAdmin ? '#91d5ff' : '#b7eb8f'}`,
-                    width: '50%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%',
+                    marginTop: '1rem',
                 }}
             >
-                <Empty
-                    image={
-                        <CommentOutlined
-                            style={{
-                                fontSize: '70px',
-                                color: isForAdmin ? '#1890ff' : '#52c41a',
-                            }}
-                        />
-                    }
-                    styles={{
-                        image: {
-                            marginBottom: '8px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        },
+                <Card
+                    style={{
+                        textAlign: 'center',
+                        backgroundColor: styles.backgroundColor,
+                        borderRadius: '16px',
+                        boxShadow: styles.boxShadow,
+                        border: `1px solid ${styles.borderColor}`,
+                        width: '50%',
                     }}
-                    description={
-                        <div
-                            style={{
-                                fontSize: '2rem',
-                                fontWeight: 600,
-                                color: isForAdmin ? '#096dd9' : '#389e0d',
-                            }}
-                        >
-                            No reviews found!
-                        </div>
-                    }
-                />
-            </Card>
-        </div>
-    </motion.div>
-);
+                >
+                    <Empty
+                        image={
+                            <CommentOutlined
+                                style={{
+                                    fontSize: '70px',
+                                    color: styles.iconColor,
+                                }}
+                            />
+                        }
+                        styles={{
+                            image: {
+                                marginBottom: '8px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            },
+                        }}
+                        description={
+                            <div
+                                style={{
+                                    fontSize: '2rem',
+                                    fontWeight: 600,
+                                    color: styles.textColor,
+                                }}
+                            >
+                                No reviews found!
+                            </div>
+                        }
+                    />
+                </Card>
+            </div>
+        </motion.div>
+    );
+};
+
 
 export const renderOrderReviewsCard = (options, sortOption, handleSortChange) => {
     return (

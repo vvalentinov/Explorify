@@ -27,7 +27,7 @@ const Profile = () => {
 
     const { message } = App.useApp();
 
-    const { token, userLogin, isAuthenticated, userId } = useContext(AuthContext);
+    const { token, userLogin, isAuthenticated, userId, profileImageUrl } = useContext(AuthContext);
 
     const userService = usersServiceFactory(token);
 
@@ -43,11 +43,23 @@ const Profile = () => {
     const isOwnProfile = profileInfo?.userId === userId;
 
     const beforeUpload = file => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
+
+        const allowedTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/gif',
+            'image/bmp',
+            'image/svg+xml'
+        ];
+
+        const isAllowed = allowedTypes.includes(file.type);
+
+        if (!isAllowed) {
+            message.error('You can only upload image files (JPG, PNG, WebP, GIF, BMP, SVG)!');
         }
-        return isJpgOrPng;
+
+        return isAllowed;
     };
 
     useEffect(() => {
@@ -125,10 +137,7 @@ const Profile = () => {
     return (
         <>
             <section className={styles.profilePage}>
-
                 <div className={styles.coverWrapper}>
-                    {/* <img src={coverImage} alt="Cover" className={styles.coverImage} /> */}
-
                     <img
                         src={coverImage}
                         alt="Cover"
@@ -137,118 +146,111 @@ const Profile = () => {
                     />
                 </div>
 
-
                 <Card className={styles.profileCard}>
-
                     {isOwnProfile && (
-
                         <Button
                             onClick={() => navigate('/account/settings')}
                             type="text"
                             className={styles.settingsButton}
                             icon={<SettingOutlined style={{ fontSize: '35px' }} />}
                         />
-
                     )}
 
                     <div className={styles.profileContent}>
-
                         <div className={styles.avatarWrapper}>
 
-                            {loadingProfile ? (
-                                <Skeleton.Avatar
-                                    active
-                                    size={100}
-                                    shape="circle"
-                                    className={styles.avatarSkeleton}
-                                />
-                            ) : (
-                                isOwnProfile ? (
-                                    <Upload
-                                        name="avatar"
-                                        listType="picture-circle"
-                                        showUploadList={false}
-                                        customRequest={handleCustomUpload}
-                                        beforeUpload={beforeUpload}
-                                        onChange={handleChange}
-                                    >
-                                        {profileInfo.profileImageUrl ? (
-                                            <div className={styles.avatarImageContainer}>
-                                                <img
-                                                    src={profileInfo.profileImageUrl}
-                                                    alt="avatar"
-                                                    className={styles.avatarImage}
-                                                />
-                                                <div className={styles.avatarOverlay}>
-                                                    <span className={styles.avatarText}>Change</span>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className={styles.avatarPlaceholder}>
-                                                {uploadingPic ? (
-                                                    <>
-                                                        <LoadingOutlined style={{ fontSize: 24 }} spin />
-                                                        <div>Uploading...</div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <PlusOutlined style={{ fontSize: 24 }} />
-                                                        <div>Upload</div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-                                    </Upload>
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                {loadingProfile ? (
+                                    <Skeleton.Avatar
+                                        active
+                                        size={100}
+                                        shape="circle"
+                                        className={styles.avatarSkeleton}
+                                    />
                                 ) : (
-                                    <div className={styles.avatarImageContainer}>
-                                        <img
-                                            src={profileInfo.profileImageUrl}
-                                            alt="avatar"
-                                            className={styles.avatarImage}
-                                        />
-                                    </div>
-                                )
-                            )}
+                                    isOwnProfile ? (
+                                        <Upload
+                                            name="avatar"
+                                            listType="picture-circle"
+                                            showUploadList={false}
+                                            customRequest={handleCustomUpload}
+                                            beforeUpload={beforeUpload}
+                                            onChange={handleChange}
+                                        >
+                                            {profileImageUrl ? (
+                                                <div className={styles.avatarImageContainer}>
+                                                    <img
+                                                        src={profileImageUrl}
+                                                        alt="avatar"
+                                                        className={styles.avatarImage}
+                                                    />
+                                                    <div className={styles.avatarOverlay}>
+                                                        <span className={styles.avatarText}>Change</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className={styles.avatarPlaceholder}>
+                                                    {uploadingPic ? (
+                                                        <>
+                                                            <LoadingOutlined style={{ fontSize: 24 }} spin />
+                                                            <div>Uploading...</div>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <PlusOutlined style={{ fontSize: 24 }} />
+                                                            <div>Upload</div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </Upload>
+                                    ) : (
+                                        <div className={styles.avatarImageContainer}>
+                                            <img
+                                                src={profileInfo.profileImageUrl}
+                                                alt="avatar"
+                                                className={styles.avatarImage}
+                                            />
+                                        </div>
+                                    )
+                                )}
+                            </div>
 
+
+
+                            {/* ✅ Username moved below avatar */}
+                            <h2 className={styles.usernameText}>{profileInfo.userName}</h2>
 
                             {isAuthenticated && profileInfo.userId !== userId && profileInfo && (
                                 <Button
                                     disabled={isFollowBtnDisabled}
-                                    ghost={!isFollowing}
+                                    // ghost={!isFollowing}
                                     onClick={handleFollowToggle}
                                     className={styles.followButton}
-                                    variant='solid'
-                                    color='cyan'
                                 >
                                     {isFollowing ? 'Unfollow' : 'Follow'}
                                 </Button>
                             )}
-
                         </div>
 
                         <div className={styles.userInfo}>
-                            <h2>{profileInfo.userName}</h2>
-
                             <div className={styles.bioBox}>
-                                <p className={styles.bioPlaceholder}>
+                                <p className={styles.bioText}>
                                     {profileInfo.bio && profileInfo.bio.trim() !== ''
                                         ? profileInfo.bio
-                                        : <>
-                                            This explorer hasn’t written a bio yet. 🌱
-                                            <br />
-                                            <span style={{ fontStyle: 'italic', fontSize: '1.3rem' }}>
+                                        : <div style={{ fontSize: '2rem' }}>
+                                            This explorer hasn’t written a bio yet. 🌱<br />
+                                            <span style={{ fontStyle: 'italic', fontSize: '1.5rem' }}>
                                                 Maybe they’re too busy traveling the world...
                                             </span>
-                                        </>
+                                        </div>
                                     }
                                 </p>
                             </div>
 
-
                             <p>{profileInfo.email}</p>
 
                             <div className={styles.statRow}>
-
                                 <div className={styles.statBox}>
                                     <span className={styles.statLabel}>Contributions</span>
                                     <span className={styles.statCount}>{profileInfo.contributions}</span>
@@ -267,12 +269,8 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
                 </Card>
-
-
             </section>
 
             <BadgesSection userId={location.state?.userId ?? userId} isOwnProfile={isOwnProfile} />

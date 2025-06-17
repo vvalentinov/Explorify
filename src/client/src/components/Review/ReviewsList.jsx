@@ -244,6 +244,10 @@ const ReviewsList = ({
                 reviewUserId={selectedReview?.userId}
                 setVisible={setIsUnapprovedModalOpen}
                 visible={isUnapprovedModalOpen}
+                onUnapproveSuccess={(successMessage) => {
+                    onRefresh();
+                    message.success(successMessage);
+                }}
             />
 
             <DeleteReviewModal
@@ -254,7 +258,7 @@ const ReviewsList = ({
                 visible={isDeletedModalOpen}
                 isForAdmin={isForAdmin}
                 onDeleteSuccess={(successMessage) => {
-                    onRefresh(); // ✅ refresh reviews
+                    onRefresh();
                     message.success(successMessage);
                 }}
             />
@@ -267,6 +271,7 @@ const ReviewsList = ({
                 isForAdmin={isForAdmin}
                 isForUser={isForUser}
                 isForFollowedUser={isForFollowedUser}
+
             />
 
         </>

@@ -1,8 +1,7 @@
-import { useState, useContext } from 'react';
-import { Modal, Typography, Form, Input, message, Space } from 'antd';
+import { useContext } from 'react';
+import { Modal, Typography, Form, Input, Space } from 'antd';
 
 import {
-    ExclamationCircleOutlined,
     CloseCircleOutlined,
     BellOutlined,
     WarningOutlined
@@ -10,7 +9,6 @@ import {
 
 import { adminServiceFactory } from '../../../services/adminService';
 import { AuthContext } from '../../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 import { fireError } from '../../../utils/fireError';
 
@@ -20,10 +18,9 @@ const UnapproveReviewModal = ({
     reviewId,
     reviewUserId,
     visible,
-    setVisible
+    setVisible,
+    onUnapproveSuccess
 }) => {
-
-    const navigate = useNavigate();
 
     const { token, userId } = useContext(AuthContext);
 
@@ -44,7 +41,9 @@ const UnapproveReviewModal = ({
                 adminService
                     .unapproveReview(payload)
                     .then(res => {
-                        navigate('/admin', { state: { successOperation: { message: res.successMessage } } });
+                        setVisible(false);
+                        form.resetFields();
+                        onUnapproveSuccess?.(res.successMessage);
                     }).catch(err => {
                         fireError(err);
                     })
