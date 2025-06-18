@@ -8,7 +8,7 @@ import WriteReviewCard from '../WriteReviewCard';
 import UploadReviewModal from '../Modals/UploadReviewModal';
 import { Typography, Radio, ConfigProvider, Checkbox, Avatar } from "antd";
 import Pagination from '../../Pagination/Pagination';
-import { StarFilled } from '@ant-design/icons';
+import { StarFilled, UserOutlined } from '@ant-design/icons';
 import { entityState } from '../../../constants/entityState';
 import { fireError } from '../../../utils/fireError';
 import { initialState, reviewsReducer } from './reviewsSectionUtil';
@@ -176,9 +176,20 @@ const ReviewsSection = ({
                     {isForUser && `My Reviews (${state.reviewsCount})`}
                     {isForAdmin && `${state.filter} Reviews (${state.reviewsCount})`}
 
-                    {isForFollowedUser && (
+                    {/* {isForFollowedUser && (
                         <>
                             <Avatar size={60} src={followedUser.profileImageUrl} />
+                            <span>{followedUser.userName} Reviews</span>
+                        </>
+                    )} */}
+
+                    {isForFollowedUser && (
+                        <>
+                            <Avatar
+                                size={60}
+                                src={followedUser.profileImageUrl && followedUser.profileImageUrl.trim() !== '' ? followedUser.profileImageUrl : null}
+                                icon={!followedUser.profileImageUrl || followedUser.profileImageUrl.trim() === '' ? <UserOutlined /> : undefined}
+                            />
                             <span>{followedUser.userName} Reviews</span>
                         </>
                     )}

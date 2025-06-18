@@ -217,7 +217,7 @@ const Home = () => {
                                 className={styles.leaderboardBtn}
                                 onClick={() => { navigate('/leaderboard') }}
                             >
-                                Explore All Users
+                                Explore Community
                             </Button>
                         </div>
 

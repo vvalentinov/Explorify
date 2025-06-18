@@ -37,7 +37,7 @@ const Settings = () => {
                     level={3}
                     style={{
                         textAlign: 'left',
-                        // marginBottom: '2.5rem',
+                        marginBottom: '2rem',
                         fontFamily: "'Poppins', 'Segoe UI', sans-serif",
                         fontWeight: 700,
                         fontSize: '2rem',
@@ -72,9 +72,16 @@ const Settings = () => {
                 <div className={styles.settingsFlex}>
 
                     <Card onClick={onChangeUserNameClick} hoverable className={styles.settingsCard}>
+
                         <UserOutlined className={styles.settingsIcon} />
                         <Typography.Title level={3} style={{ fontSize: '2rem', fontFamily: 'Poppins, sans-serif' }}>Change Username</Typography.Title>
-                        <Typography.Paragraph style={{ fontSize: '1.5rem', fontStyle: 'italic', fontFamily: 'Poppins, sans-serif' }}>Customize the name others see on your profile.</Typography.Paragraph>
+                        <Typography.Paragraph style={{
+                            fontSize: '1.5rem',
+                            fontStyle: 'italic',
+                            fontFamily: 'Poppins, sans-serif'
+                        }}>
+                            Customize the name others see on your profile.
+                        </Typography.Paragraph>
 
 
                     </Card>

@@ -68,36 +68,6 @@ const PlaceDetailsSection = ({
 
             <section className={styles.heroSection}>
 
-                {/* <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
-
-                    {loading ? (
-                        <div className={styles.spinnerWrapper}>
-                            <ConfigProvider theme={{ components: { Spin: { colorPrimary: 'green' } } }}>
-                                <Spin size="large" />
-                            </ConfigProvider>
-                        </div>
-                    ) : (
-                        <>
-                            <Title
-                                level={3}
-                                className={`${styles.placeTitle} ${isForAdmin ? styles.adminTitle : ''}`}
-                            >
-                                <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
-                                    <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
-                                </span>
-                                {place?.name}, {place?.countryName}
-                            </Title>
-
-                            <Carousel className={styles.carousel} autoplay arrows dotPosition="bottom">
-                                {place.imagesUrls?.map((url, idx) => (
-                                    <img src={url} alt={`Slide ${idx}`} key={idx} />
-                                ))}
-                            </Carousel>
-                        </>
-
-                    )}
-                </div> */}
-
 
                 <div className={`${styles.placeCard} ${isForAdmin ? styles.adminCard : styles.publicCard}`}>
 
@@ -109,16 +79,6 @@ const PlaceDetailsSection = ({
                         </div>
                     ) : (
                         <>
-                            {/* <Title
-                                level={3}
-                                className={`${styles.placeTitle} ${isForAdmin ? styles.adminTitle : ''}`}
-                            >
-                                <span className={`${styles.titleIcon} ${isForAdmin ? styles.adminTitleIcon : ''}`}>
-                                    <EnvironmentFilled className={`${styles.icon} ${isForAdmin ? styles.adminIcon : ''}`} />
-                                </span>
-                                {place?.name}, {place?.countryName}
-                            </Title> */}
-
                             <div className={styles.titleRatingRow}>
                                 <Title
                                     level={3}
@@ -136,6 +96,13 @@ const PlaceDetailsSection = ({
                                     </div>
                                 )}
                             </div>
+
+                            {isForAdmin && (
+                                <div className={styles.categoryBadge}>
+                                    <span className={styles.categoryLabel}>Category:</span>
+                                    <span className={styles.categoryValue}>{place.category}</span>
+                                </div>
+                            )}
 
                             <Carousel className={styles.carousel} autoplay arrows dotPosition="bottom">
                                 {place.imagesUrls?.map((url, idx) => (

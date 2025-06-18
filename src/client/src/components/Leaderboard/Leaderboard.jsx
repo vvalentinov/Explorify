@@ -67,6 +67,8 @@ const Leaderboard = () => {
 
     const [shouldScroll, setShouldScroll] = useState(false);
 
+    const [recordsCount, setRecordsCount] = useState(null);
+
     useLayoutEffect(() => {
         if (shouldScroll) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -76,12 +78,12 @@ const Leaderboard = () => {
 
     useEffect(() => {
         if (debouncedUserName.trim() === '') {
-            // If search input is empty, fall back to regular leaderboard
             leaderboardService
                 .getInfo(currentPage)
                 .then(res => {
                     setUsers(res.users);
                     setPagesCount(res.pagination.pagesCount);
+                    setRecordsCount(res.pagination.recordsCount);
                 })
                 .catch(err => fireError(err));
         } else {
@@ -90,6 +92,7 @@ const Leaderboard = () => {
                 .then(res => {
                     setUsers(res.users);
                     setPagesCount(res.pagination.pagesCount);
+                    setRecordsCount(res.pagination.recordsCount);
                 })
                 .catch(err => fireError(err));
         }
@@ -135,7 +138,7 @@ const Leaderboard = () => {
                     >
                         <TrophyFilled style={{ color: '#1A7F64', fontSize: '2rem' }} />
                     </span>
-                    Leaderboard
+                    Leaderboard ({recordsCount})
                 </Typography.Title>
 
                 <Input

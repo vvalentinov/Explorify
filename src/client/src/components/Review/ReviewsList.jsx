@@ -117,7 +117,8 @@ const ReviewsList = ({
             okText: 'Approve',
             okType: 'danger',
             cancelText: 'Cancel',
-            onOk: () => handleApprove(review)
+            onOk: () => handleApprove(review),
+            centered: true
         });
     };
 

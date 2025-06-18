@@ -18,6 +18,7 @@ import {
     AppstoreOutlined,
     GlobalOutlined,
     TagsOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 
 import { entityState } from '../../../constants/entityState';
@@ -131,7 +132,11 @@ const PlaceSearchCard = ({
                     {state.searchContext === PlaceSearchContext.Admin && `Search in ${state.filter} Places (${recordsCount})`}
                     {state.searchContext === PlaceSearchContext.UserFollowing && (
                         <>
-                            <Avatar size={60} src={userFollowingProfilePic}></Avatar>
+                            <Avatar
+                                size={60}
+                                src={userFollowingProfilePic && userFollowingProfilePic.trim() !== '' ? userFollowingProfilePic : null}
+                                icon={!userFollowingProfilePic || userFollowingProfilePic.trim() === '' ? <UserOutlined /> : undefined}
+                            />
                             <span>Search in {userFollowingUserName}'s places ({recordsCount})</span>
                         </>
                     )}

@@ -501,6 +501,32 @@
     font-size: 1.4rem;
 }
 
+.categoryBadge {
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #f0f5ff;
+    border: 1px solid #adc6ff;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #2f54eb;
+    animation: fadeInUp 0.6s ease-out;
+    margin-bottom: 1rem;
+}
+
+.categoryLabel {
+    margin-right: 0.6rem;
+    color: #1d39c4;
+    font-weight: 600;
+}
+
+.categoryValue {
+    font-weight: 500;
+    font-style: italic;
+}
+
+
 
 
 /* ------------------- Responsive Styles ------------------- */

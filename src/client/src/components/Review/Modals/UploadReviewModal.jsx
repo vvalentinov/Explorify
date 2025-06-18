@@ -8,6 +8,7 @@ import {
     Form,
     Input,
     App,
+    Spin
 } from 'antd';
 
 import { fireError } from '../../../utils/fireError';
@@ -26,6 +27,8 @@ const UploadReviewModal = ({
     const [fileList, setFileList] = useState([]);
     const [form] = Form.useForm();
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setFileList([]);
@@ -37,6 +40,8 @@ const UploadReviewModal = ({
     };
 
     const handleReviewSubmit = (values) => {
+
+        setIsSubmitting(true);
 
         const formData = new FormData();
 
@@ -51,16 +56,23 @@ const UploadReviewModal = ({
         reviewService
             .uploadReview(formData)
             .then(res => {
+
+                setIsModalOpen(false);
+                form.resetFields();
+
                 notification.success({
                     message: 'Review Submitted',
                     description: 'Your review has been submitted successfully and is pending approval.',
                     placement: 'topRight',
                     duration: 0,
                 });
-            }).catch(err => fireError(err));
+            })
+            .catch(err => fireError(err))
+            .finally(() => {
+                setIsSubmitting(false);
+            });
 
-        setIsModalOpen(false);
-        form.resetFields();
+
     };
 
     return (
@@ -127,9 +139,19 @@ const UploadReviewModal = ({
                     <Form.Item
                         name="Content"
                         label={<span style={{ fontSize: '1.5rem' }}>Your Content</span>}
-                        rules={[{ required: true }]}
+                        rules={[{
+                            required: true,
+                            min: 100,
+                            max: 1000
+                        }]}
                     >
-                        <Input.TextArea style={{ fontSize: '1.5rem' }} rows={8} placeholder="Share your thoughts..." />
+                        <Input.TextArea
+                            // minLength={100}
+                            // maxLength={1000}
+                            style={{ fontSize: '1.5rem' }}
+                            rows={8}
+                            placeholder="Share your thoughts..."
+                        />
                     </Form.Item>
 
                 </Card>
@@ -143,7 +165,14 @@ const UploadReviewModal = ({
                         block
                         style={{ fontSize: '1.5rem', padding: '2rem 0' }}
                     >
-                        Submit Review
+                        {
+                            isSubmitting ? (
+                                <>
+                                    Submitting Review... <Spin size="large" style={{ marginLeft: 8, color: '#fff' }} />
+                                </>
+                            ) : (
+                                'Submit Review'
+                            )}
                     </Button>
                 </Form.Item>
             </Form>

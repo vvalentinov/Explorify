@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { TeamOutlined } from '@ant-design/icons';
+import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Card, Avatar, Button, Pagination, Input, List, Typography, Radio } from 'antd';
 import { useState, useEffect, useContext } from 'react';
 
@@ -153,11 +153,7 @@ const MyFollowing = () => {
                     }}
                     onChange={(e) => setUserName(e.target.value)}
                     allowClear
-                    disabled={users?.length < 1}
                 />
-
-
-
 
                 <List
                     itemLayout="horizontal"

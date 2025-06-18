@@ -25,24 +25,43 @@
 }
 
 .settingsCard {
-    flex-basis: 30%;
+    /* flex-basis: 30%;
     padding: 1.5rem;
     border-radius: 20px;
-    /* box-shadow: 0 6px 18px rgba(0, 128, 0, 0.15); */
     text-align: center;
     transition: transform 0.2s ease-in-out;
     font-family: 'Poppins', sans-serif !important;
-    border: solid 1px lightgray;
+    border: solid 1px lightgray; */
+
+    flex-basis: 30%;
+    padding: 1.5rem;
+    border-radius: 20px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+    font-family: 'Poppins', sans-serif !important;
+    background-color: #e9f7f4;
+    color: #1A7F64;
+    box-shadow: 0 4px 12px rgba(26, 127, 100, 0.1);
+    border: none;
 }
 
 .settingsCard:hover {
+    /* transform: scale(1.05);
+    cursor: pointer; */
+
     transform: scale(1.05);
-    /* box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); */
+    box-shadow: 0 10px 24px rgba(26, 127, 100, 0.2);
     cursor: pointer;
+    background-color: #d4f2ec;
+    /* Slightly more vivid on hover */
 }
 
 .settingsIcon {
-    font-size: 5rem;
+    /* font-size: 5rem;
     color: lightgray;
+    margin-bottom: 1rem; */
+
+    font-size: 5rem;
+    color: #1A7F64;
     margin-bottom: 1rem;
 }
