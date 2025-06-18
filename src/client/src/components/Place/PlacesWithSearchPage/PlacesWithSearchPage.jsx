@@ -87,6 +87,8 @@ const PlacesWithSearchPage = ({
     const [pagesCount, setPagesCount] = useState(0);
     const [spinnerLoading, setSpinnerLoading] = useState(false);
 
+    const [recordsCount, setRecordsCount] = useState(null);
+
     // category state
     const [categoryOptions, setCategoryOptions] = useState([]);
 
@@ -140,8 +142,9 @@ const PlacesWithSearchPage = ({
 
             let response = await placesService.searchPlace(params);
 
-            setPagesCount(response.pagination.pagesCount);
             setPlaces(response.places);
+            setPagesCount(response.pagination.pagesCount);
+            setRecordsCount(response.pagination.recordsCount);
 
         } catch (error) {
             fireError(error);
@@ -233,6 +236,7 @@ const PlacesWithSearchPage = ({
                         dispatch={dispatch}
                         isForAdmin={isForAdmin}
                         skipNextSearchRef={skipNextSearchRef}
+                        recordsCount={recordsCount}
                     />
                 </div>
             )}
@@ -254,6 +258,7 @@ const PlacesWithSearchPage = ({
                                 dispatch={dispatch}
                                 isForAdmin={isForAdmin}
                                 skipNextSearchRef={skipNextSearchRef}
+                                recordsCount={recordsCount}
                             />
 
                         </div>
@@ -272,6 +277,7 @@ const PlacesWithSearchPage = ({
                     userFollowingUserName={userFollowingUserName}
                     skipNextSearchRef={skipNextSearchRef}
                     userFollowingProfilePic={userFollowingProfilePic}
+                    recordsCount={recordsCount}
                 />
             )}
 
@@ -291,6 +297,7 @@ const PlacesWithSearchPage = ({
                         fetchPlaces();
                     }}
                     isForFavPlaces={isForFavPlaces}
+                    recordsCount={recordsCount}
                 />
 
                 {pagesCount > 1 && !spinnerLoading && (

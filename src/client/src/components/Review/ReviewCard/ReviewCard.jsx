@@ -63,8 +63,18 @@ const ReviewCard = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 {/* User Info */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Avatar
+                    {/* <Avatar
                         src={review.profileImageUrl || undefined}
+                        size={60}
+                        icon={!review.profileImageUrl && <UserOutlined />}
+                    /> */}
+
+                    <Avatar
+                        src={
+                            review.profileImageUrl
+                                ? `${review.profileImageUrl}?t=${new Date(review.updatedOn || review.createdOn).getTime()}`
+                                : undefined
+                        }
                         size={60}
                         icon={!review.profileImageUrl && <UserOutlined />}
                     />

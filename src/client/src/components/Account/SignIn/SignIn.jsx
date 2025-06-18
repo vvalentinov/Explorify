@@ -154,7 +154,7 @@ const SignIn = () => {
 
                                 <div className={styles.footer}>
                                     <Link to={signUpPath}>Don't have an account?</Link>
-                                    <Link to={forgotPasswordPath}>Forgot Password?</Link>
+                                    {/* <Link to={forgotPasswordPath}>Forgot Password?</Link> */}
                                 </div>
 
                             </Form.Item>

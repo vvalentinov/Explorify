@@ -38,7 +38,8 @@ const PlaceSearchCard = ({
     isForAdmin,
     userFollowingUserName,
     skipNextSearchRef,
-    userFollowingProfilePic
+    userFollowingProfilePic,
+    recordsCount
 }) => {
 
     const [showTagsSearch, setShowTagsSearch] = useState(false);
@@ -125,16 +126,16 @@ const PlaceSearchCard = ({
 
                 <Typography.Title level={3} className={styles.searchTitle}>
                     <SearchOutlined />
-                    {state.searchContext === PlaceSearchContext.Global && 'Search Places'}
-                    {state.searchContext === PlaceSearchContext.UserPlaces && `Search in My ${state.filter} Places`}
-                    {state.searchContext === PlaceSearchContext.Admin && `Search in ${state.filter} Places`}
+                    {state.searchContext === PlaceSearchContext.Global && `Search Places (${recordsCount})`}
+                    {state.searchContext === PlaceSearchContext.UserPlaces && `Search in My ${state.filter} Places (${recordsCount})`}
+                    {state.searchContext === PlaceSearchContext.Admin && `Search in ${state.filter} Places (${recordsCount})`}
                     {state.searchContext === PlaceSearchContext.UserFollowing && (
                         <>
                             <Avatar size={60} src={userFollowingProfilePic}></Avatar>
-                            <span>Search in {userFollowingUserName}'s places</span>
+                            <span>Search in {userFollowingUserName}'s places ({recordsCount})</span>
                         </>
                     )}
-                    {state.searchContext === PlaceSearchContext.FavPlace && `Search in My Favorite Places Collection`}
+                    {state.searchContext === PlaceSearchContext.FavPlace && `Search in My Favorite Places Collection (${recordsCount})`}
                 </Typography.Title>
 
                 {(state.searchContext === PlaceSearchContext.Admin || state.searchContext === PlaceSearchContext.UserPlaces) && (

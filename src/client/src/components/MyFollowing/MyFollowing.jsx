@@ -138,23 +138,24 @@ const MyFollowing = () => {
                     My Following Network {users?.length > 0 && (`(${recordsCount})`)}
                 </Typography.Title>
 
-                {users?.length > 0 && (
-                    <Input
-                        placeholder='Search for a user I follow...'
-                        style={{
-                            fontSize: '2rem',
-                            marginBottom: '2rem',
+
+                <Input
+                    placeholder='Search for a user I follow...'
+                    style={{
+                        fontSize: '2rem',
+                        marginBottom: '2rem',
+                        fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+                    }}
+                    styles={{
+                        input: {
                             fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                        }}
-                        styles={{
-                            input: {
-                                fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                            }
-                        }}
-                        onChange={(e) => setUserName(e.target.value)}
-                        allowClear
-                    />
-                )}
+                        }
+                    }}
+                    onChange={(e) => setUserName(e.target.value)}
+                    allowClear
+                    disabled={users?.length < 1}
+                />
+
 
 
 

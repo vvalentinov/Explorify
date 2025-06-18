@@ -105,8 +105,8 @@ const AdminUsers = () => {
 
     const handleMakeAdmin = async (userId) => {
         try {
-            await adminService.makeUserAdmin(userId);
-            message.success('User promoted to admin');
+            const response = await adminService.makeAdmin(userId);
+            message.success(response.successMessage);
             fetchUsers(pagination.current);
         } catch (err) {
             message.error('Failed to promote user');

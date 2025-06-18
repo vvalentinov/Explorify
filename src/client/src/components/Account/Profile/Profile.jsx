@@ -4,11 +4,12 @@ import styles from './Profile.module.css';
 
 import { useState, useContext, useEffect } from 'react';
 
-import { Upload, Card, Button, App, Spin, Skeleton } from 'antd';
+import { Upload, Card, Button, App, Skeleton, Avatar } from 'antd';
 import {
     LoadingOutlined,
     PlusOutlined,
-    SettingOutlined
+    SettingOutlined,
+    UserOutlined
 } from '@ant-design/icons';
 
 import { fireError } from '../../../utils/fireError';
@@ -137,6 +138,7 @@ const Profile = () => {
     return (
         <>
             <section className={styles.profilePage}>
+
                 <div className={styles.coverWrapper}>
                     <img
                         src={coverImage}
@@ -147,6 +149,7 @@ const Profile = () => {
                 </div>
 
                 <Card className={styles.profileCard}>
+
                     {isOwnProfile && (
                         <Button
                             onClick={() => navigate('/account/settings')}
@@ -156,19 +159,19 @@ const Profile = () => {
                         />
                     )}
 
-                    <div className={styles.profileContent}>
-                        <div className={styles.avatarWrapper}>
 
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                {loadingProfile ? (
-                                    <Skeleton.Avatar
-                                        active
-                                        size={100}
-                                        shape="circle"
-                                        className={styles.avatarSkeleton}
-                                    />
-                                ) : (
-                                    isOwnProfile ? (
+                    <div style={{ display: 'flex', alignItems: 'center', height: '400px' }}>
+                        <div className={styles.profileContent}>
+                            <div className={styles.avatarWrapper}>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    {loadingProfile ? (
+                                        <Skeleton.Avatar
+                                            active
+                                            size={100}
+                                            shape="circle"
+                                            className={styles.avatarSkeleton}
+                                        />
+                                    ) : isOwnProfile ? (
                                         <Upload
                                             name="avatar"
                                             listType="picture-circle"
@@ -189,88 +192,87 @@ const Profile = () => {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className={styles.avatarPlaceholder}>
-                                                    {uploadingPic ? (
-                                                        <>
-                                                            <LoadingOutlined style={{ fontSize: 24 }} spin />
-                                                            <div>Uploading...</div>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <PlusOutlined style={{ fontSize: 24 }} />
-                                                            <div>Upload</div>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                <Avatar
+                                                    size={100}
+                                                    icon={<UserOutlined />}
+                                                    style={{ backgroundColor: '#d9d9d9' }}
+                                                />
                                             )}
                                         </Upload>
                                     ) : (
-                                        <div className={styles.avatarImageContainer}>
-                                            <img
-                                                src={profileInfo.profileImageUrl}
-                                                alt="avatar"
-                                                className={styles.avatarImage}
+                                        profileInfo.profileImageUrl ? (
+                                            <div className={styles.avatarImageContainer}>
+                                                <img
+                                                    src={profileInfo.profileImageUrl}
+                                                    alt="avatar"
+                                                    className={styles.avatarImage}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <Avatar
+                                                size={100}
+                                                icon={<UserOutlined />}
+                                                style={{ backgroundColor: '#d9d9d9' }}
                                             />
-                                        </div>
-                                    )
+                                        )
+                                    )}
+                                </div>
+
+                                <h2 className={styles.usernameText}>{profileInfo.userName}</h2>
+
+                                {isAuthenticated && profileInfo.userId !== userId && profileInfo && (
+                                    <Button
+                                        disabled={isFollowBtnDisabled}
+                                        onClick={handleFollowToggle}
+                                        className={styles.followButton}
+                                    >
+                                        {isFollowing ? 'Unfollow' : 'Follow'}
+                                    </Button>
                                 )}
                             </div>
 
-
-
-                            {/* ✅ Username moved below avatar */}
-                            <h2 className={styles.usernameText}>{profileInfo.userName}</h2>
-
-                            {isAuthenticated && profileInfo.userId !== userId && profileInfo && (
-                                <Button
-                                    disabled={isFollowBtnDisabled}
-                                    // ghost={!isFollowing}
-                                    onClick={handleFollowToggle}
-                                    className={styles.followButton}
-                                >
-                                    {isFollowing ? 'Unfollow' : 'Follow'}
-                                </Button>
-                            )}
-                        </div>
-
-                        <div className={styles.userInfo}>
-                            <div className={styles.bioBox}>
-                                <p className={styles.bioText}>
-                                    {profileInfo.bio && profileInfo.bio.trim() !== ''
-                                        ? profileInfo.bio
-                                        : <div style={{ fontSize: '2rem' }}>
+                            <div className={styles.userInfo}>
+                                <div className={styles.bioBox}>
+                                    {profileInfo.bio && profileInfo.bio.trim() !== '' ? (
+                                        <p className={styles.bioText}>{profileInfo.bio}</p>
+                                    ) : (
+                                        <div style={{ fontSize: '2rem' }}>
                                             This explorer hasn’t written a bio yet. 🌱<br />
                                             <span style={{ fontStyle: 'italic', fontSize: '1.5rem' }}>
                                                 Maybe they’re too busy traveling the world...
                                             </span>
                                         </div>
-                                    }
-                                </p>
-                            </div>
+                                    )}
+                                </div>
 
-                            <p>{profileInfo.email}</p>
+                                <p>{profileInfo.email}</p>
 
-                            <div className={styles.statRow}>
-                                <div className={styles.statBox}>
-                                    <span className={styles.statLabel}>Contributions</span>
-                                    <span className={styles.statCount}>{profileInfo.contributions}</span>
-                                </div>
-                                <div className={styles.statBox}>
-                                    <span className={styles.statLabel}>Followers</span>
-                                    <span className={styles.statCount}>{profileInfo.followersCount}</span>
-                                </div>
-                                <div className={styles.statBox}>
-                                    <span className={styles.statLabel}>Following</span>
-                                    <span className={styles.statCount}>{profileInfo.followingCount}</span>
-                                </div>
-                                <div className={styles.statBox}>
-                                    <span className={styles.statLabel}>Points</span>
-                                    <span className={styles.statCount}>{profileInfo.points}</span>
+                                <div className={styles.statRow}>
+                                    <div className={styles.statBox}>
+                                        <span className={styles.statLabel}>Contributions</span>
+                                        <span className={styles.statCount}>{profileInfo.contributions}</span>
+                                    </div>
+                                    <div className={styles.statBox}>
+                                        <span className={styles.statLabel}>Followers</span>
+                                        <span className={styles.statCount}>{profileInfo.followersCount}</span>
+                                    </div>
+                                    <div className={styles.statBox}>
+                                        <span className={styles.statLabel}>Following</span>
+                                        <span className={styles.statCount}>{profileInfo.followingCount}</span>
+                                    </div>
+                                    <div className={styles.statBox}>
+                                        <span className={styles.statLabel}>Points</span>
+                                        <span className={styles.statCount}>{profileInfo.points}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
+
                 </Card>
+
             </section>
 
             <BadgesSection userId={location.state?.userId ?? userId} isOwnProfile={isOwnProfile} />
