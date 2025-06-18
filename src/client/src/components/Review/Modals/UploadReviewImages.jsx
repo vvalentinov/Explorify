@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
+import styles from './UploadReviewImages.module.css';
+
 const UploadImages = ({ fileList, onFileChange }) => {
 
     const [previewImage, setPreviewImage] = useState('');
@@ -66,6 +68,7 @@ const UploadImages = ({ fileList, onFileChange }) => {
                 beforeUpload={beforeUpload}
                 multiple
                 onPreview={handlePreview}
+                className={styles.uploadCard}
             >
                 {fileList.length >= 5 ? null : renderUploadButton}
             </Upload>

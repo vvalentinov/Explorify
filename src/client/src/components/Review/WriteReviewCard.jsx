@@ -8,7 +8,6 @@ const WriteReviewCard = ({ handleOpenModal }) => {
                 border: '1px solid green',
                 borderRadius: '20px',
                 textAlign: 'center',
-                // margin: '0 10rem',
                 padding: 0,
                 marginBottom: '4rem',
                 width: '100%'

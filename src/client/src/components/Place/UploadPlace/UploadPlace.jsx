@@ -319,57 +319,6 @@ const UploadPlace = () => {
 
                     <ImageUpload />
 
-                    {/* <Card type="inner" className={styles.reviewCard}>
-
-                        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                whileHover={{
-                                    scale: 1.05,
-                                    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
-                                }}
-                                transition={{ duration: 0.4, ease: 'easeOut' }}
-                                style={{
-                                    background: 'linear-gradient(135deg, #b7eb8f, #87e8de)', // pastel green-teal
-                                    color: '#004d40',
-                                    borderRadius: '16px',
-                                    padding: '0.75rem 2rem',
-                                    display: 'inline-block',
-                                    fontWeight: '600',
-                                    fontSize: '1.4rem',
-                                    letterSpacing: '0.5px',
-                                    border: '1px solid rgba(0, 0, 0, 0.05)',
-                                    fontFamily: "'Poppins', 'Segoe UI', sans-serif",
-                                }}
-                            >
-                                <CommentOutlined style={{ fontSize: '2rem', marginRight: '10px' }} /> Review
-                            </motion.div>
-                        </div>
-
-                        <Form.Item
-                            name="Rating"
-                            label={<span style={{ fontSize: '1.3rem' }}>Rating</span>}
-                            rules={[{ required: true }]}
-                        >
-                            <Rate style={{ fontSize: '3rem' }} id="Rating" allowClear />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="ReviewContent"
-                            label={<span style={{ fontSize: '1.3rem' }}>Content</span>}
-                            rules={[{ required: true }, { min: 100 }, { max: 1000 }]}
-                        >
-                            <Input.TextArea
-                                placeholder="Share your experience..."
-                                rows={10}
-                                maxLength={1000}
-                                style={{ fontSize: '1.5rem' }}
-                            />
-                        </Form.Item>
-
-                    </Card> */}
-
                     <Card type="inner" className={styles.reviewCard}>
 
                         <Typography.Title
