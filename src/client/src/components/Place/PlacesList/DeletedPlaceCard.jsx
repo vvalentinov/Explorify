@@ -14,7 +14,7 @@ import { Button } from 'antd';
 
 const DeletedPlaceCard = ({ place, isForAdmin }) => {
 
-    const { token } = useContext(AuthContext);
+    const { token, isAdmin, userId } = useContext(AuthContext);
 
     const navigate = useNavigate();
 
@@ -60,16 +60,18 @@ const DeletedPlaceCard = ({ place, isForAdmin }) => {
             }}
         >
             <Card.Meta title={<span style={{ fontSize: '1.5rem', fontWeight: 600 }}>{place.name}</span>} />
+
             <Button
                 block
                 variant='solid'
                 color='green'
                 danger
-                style={{ fontSize: '1.5rem' }}
+                style={{ fontSize: '1.5rem', padding: '1rem 2rem', marginTop: '0.2rem' }}
                 onClick={() => handleRevert(place.id)}
             >
                 Revert
             </Button>
+
         </Card>
     );
 };
