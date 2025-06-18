@@ -35,7 +35,7 @@ public class ReviewController : BaseController
     }
 
     [HttpPost(nameof(Upload))]
-    public async Task<IActionResult> Upload(UploadReviewRequestDto model)
+    public async Task<IActionResult> Upload([FromForm] UploadReviewRequestDto model)
     {
         var applicationModel = await model.ToApplicationModelAsync(User.GetId());
         var command = new UploadReviewCommand(applicationModel);

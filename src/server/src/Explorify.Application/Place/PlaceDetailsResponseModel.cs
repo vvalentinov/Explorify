@@ -8,6 +8,8 @@ public class PlaceDetailsResponseModel
 
     public string CountryName { get; set; } = string.Empty;
 
+    public string Category { get; set; } = string.Empty;
+
     public double AvgRating { get; set; } = 0.0;
 
     public double Latitude { get; set; }

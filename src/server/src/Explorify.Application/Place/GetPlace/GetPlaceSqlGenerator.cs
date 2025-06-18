@@ -117,19 +117,21 @@ public static class GetPlaceSqlGenerator
             u.Id AS UserId,
             u.UserName,
             u.ProfileImageUrl AS UserProfileImageUrl,
-            c.[Name] AS CountryName
+            c.[Name] AS CountryName,
+            cat.[Name] AS Category
         FROM Places AS p
         LEFT JOIN Reviews AS ur ON ur.PlaceId = p.Id AND ur.UserId = p.UserId
         LEFT JOIN Reviews AS ar ON ar.PlaceId = p.Id AND ar.IsApproved = 1
         JOIN AspNetUsers AS u ON u.Id = p.UserId
         JOIN Countries AS c ON c.Id = p.CountryId
+        JOIN Categories AS cat ON cat.Id = p.CategoryId
         WHERE p.Id = @PlaceId
         GROUP BY
             p.Id, p.[Name], p.Description, p.SlugifiedName, p.IsApproved, p.IsDeleted,
             p.Latitude, p.Longitude,
             ur.Rating, ur.Content,
             u.Id, u.UserName, u.ProfileImageUrl,
-            c.[Name];
+            c.[Name], cat.[Name];
 
         SELECT Url FROM PlacePhotos WHERE PlaceId = @PlaceId AND IsDeleted = 0;
 
