@@ -5,14 +5,14 @@ using static Explorify.Domain.Constants.ReviewConstants.ErrorMessages;
 
 namespace Explorify.Api.DTOs.Validators;
 
-public class UploadReviewRequestDtoValidator
-    : AbstractValidator<UploadReviewRequestDto>
+public class EditReviewRequestDtoValidator
+    : AbstractValidator<EditReviewRequestDto>
 {
-    public UploadReviewRequestDtoValidator()
+    public EditReviewRequestDtoValidator()
     {
         RuleFor(x => x.Rating)
-            .InclusiveBetween(ReviewRatingMin, ReviewRatingMax)
-            .WithMessage(ReviewRatingError);
+           .InclusiveBetween(ReviewRatingMin, ReviewRatingMax)
+           .WithMessage(ReviewRatingError);
 
         RuleFor(x => x.Content)
             .NotEmpty()
@@ -22,8 +22,8 @@ public class UploadReviewRequestDtoValidator
             .MaximumLength(ReviewContentMaxLength)
             .WithMessage(ReviewContentMaxLenghtError);
 
-        RuleFor(x => x.PlaceId)
+        RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Place ID is required.");
+            .WithMessage("Review ID is required.");
     }
 }
