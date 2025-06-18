@@ -164,7 +164,8 @@ const ReviewEdit = () => {
                         name="Content"
                         rules={[
                             { required: true, message: 'Please write your review.' },
-                            { max: 1000, message: 'Review must be under 1000 characters.' }
+                            { max: 1000, message: 'Review content must be under 1000 characters.' },
+                            { min: 100, message: 'Review content must be at least 100 characters.' }
                         ]}
                         style={{ width: '100%', margin: '4rem 0' }}
                         label={<span style={{ fontSize: '1.5rem' }}>Content</span>}

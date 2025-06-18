@@ -133,6 +133,7 @@ const SignIn = () => {
                                     size='large'
                                     block="true"
                                     htmlType='submit'
+                                    className={styles.signInBtn}
                                 >
                                     {isSigningIn ? 'Signing you in...' : 'Sign In'}
                                 </Button>
@@ -142,12 +143,7 @@ const SignIn = () => {
                                     block
                                     icon={<GoogleOutlined />}
                                     onClick={googleSignIn}
-                                    style={{
-                                        marginTop: '1.5rem',
-                                        backgroundColor: '#ffffff',
-                                        border: '1px solid #d9d9d9',
-                                        color: 'rgba(0, 0, 0, 0.85)',
-                                    }}
+                                    className={styles.signInGoogle}
                                 >
                                     {isSigningInWithGoogle ? 'Signing you in with Google...' : 'Sign In With Google'}
                                 </Button>

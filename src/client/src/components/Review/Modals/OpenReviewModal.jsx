@@ -29,6 +29,8 @@ const OpenReviewModal = ({
 
     const displayHelpfulBtn = !isForAdmin && !isForUser && !isForFollowedUser && isAuthenticated && selectedReview?.userId !== userId;
 
+    console.log(selectedReview?.likes);
+
     return (
         <Modal
             open={isModalOpen}
@@ -73,6 +75,17 @@ const OpenReviewModal = ({
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+
+                            {isForFollowedUser && selectedReview?.likes !== undefined && (
+                                <div className={styles.likesDisplay}>
+                                    <LikeOutlined className={styles.likesIcon} />
+                                    <div className={styles.likesTextGroup}>
+                                        <span className={styles.likesCount}>{selectedReview.likes}</span>
+                                    </div>
+                                </div>
+                            )}
+
+
                             {displayHelpfulBtn && (
                                 <Button
                                     color="cyan"

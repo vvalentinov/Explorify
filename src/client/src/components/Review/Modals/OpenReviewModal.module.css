@@ -86,3 +86,46 @@
     background-color: #6dd6d6 !important;
     color: #fff !important;
 }
+
+
+.likesDisplay {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #e6fffb;
+    border: 1px solid #b5f5ec;
+    padding: 1.2rem 2rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-family: 'Poppins', sans-serif;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* .likesDisplay:hover {
+    background-color: #d9f7be;
+    transform: translateY(-2px);
+} */
+
+.likesIcon {
+    font-size: 3rem;
+    color: #52c41a;
+}
+
+.likesTextGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.likesLabel {
+    font-size: 1.3rem;
+    color: #389e0d;
+    font-weight: 500;
+}
+
+.likesCount {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #237804;
+}

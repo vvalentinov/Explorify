@@ -95,7 +95,7 @@
     font-size: 1.7rem !important;
 }
 
-.signInCard :global(.ant-btn) {
+.signInBtn {
     background-color: #00aa6c;
     border: none;
     color: white;
@@ -105,9 +105,23 @@
     transition: background-color 0.3s ease;
 }
 
-.signInCard :global(.ant-btn:hover) {
+.signInBtn:hover {
     background-color: #009f63 !important;
     color: #fff !important;
+}
+
+.signInGoogle {
+    margin-top: 1.5rem !important;
+    background-color: #ffffff !important;
+    border: 1px solid #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.85) !important;
+    font-size: 1.5rem;
+    padding: 1.7rem 0;
+}
+
+.signInGoogle:hover {
+    background-color: lightgrey !important;
+    /* color: #fff !important; */
 }
 
 .footer {
